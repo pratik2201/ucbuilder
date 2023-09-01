@@ -26,27 +26,4 @@ exclude {
         /*opacity: 0.4;*/
     }
     
-
-    ::-webkit-scrollbar {
-        width: 10px;
-        border-radius: 5px;
-        height: 10px;
-        background-color: rgba(0, 0, 0, 0.329);
-    }
-
-    ::-webkit-scrollbar-track {
-        background-color: rgba(0, 0, 0, 0);
-    }
-
-    ::-webkit-scrollbar-thumb {
-        background-color: rgba(0, 0, 0, 0.300);
-        border: solid 2px transparent;
-        box-sizing: border-box;
-        border-radius: 5px;
-
-    }
-
-    ::-webkit-scrollbar-thumb:hover {
-        background-color: black;
-    }
 }

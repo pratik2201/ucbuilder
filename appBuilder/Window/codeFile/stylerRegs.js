@@ -15,9 +15,10 @@ const patternList = {
     themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
     stylesFilterPattern: /(animation-name): (.*?);/gmi,
     scopeSelector: /\[SELF_]/gm,
+    rootExcludePattern: /(root)(\..*)*|(exclude)/gi,
 };
 class stylerRegs {
-    static pushPublicStyles() { 
+    static pushPublicStyles() {
         let { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
         rootPathHandler.source.forEach(row => {
             let _stylepath = row.replaceLowerCaseText + "/styles.scss";
@@ -37,7 +38,7 @@ class stylerRegs {
                 });
             }
             ///console.log();
-        });       
+        });
     }
 
     /** @type {string}  */
@@ -174,9 +175,10 @@ class stylerRegs {
      * @param {string} scopeSelectorText 
      * @param {number} callCounter 
      * @param {boolean} isForRoot 
+     * @param {rootPathRow} _rootinfo
      * @returns 
      */
-    parseStyleSeperator(data, scopeSelectorText = "", callCounter = 0, isForRoot = false) {
+    parseStyleSeperator(data, scopeSelectorText = "", callCounter = 0, isForRoot = false, _rootinfo) {
         let _this = this;
         callCounter++;
         let externalStyles = [];
@@ -184,9 +186,8 @@ class stylerRegs {
         let pstamp_key = ATTR_OF.UC.PARENT_STAMP;
         let pstamp_val = _this.stamp;
         if (isForRoot) {
-
             pstamp_key = ATTR_OF.UC.ROOT_STAMP;
-            pstamp_val = _this.rootInfo.id;
+            pstamp_val = (_rootinfo == undefined) ? _this.rootInfo.id : _rootinfo.id;
             //console.log(pstamp_key+' < === > '+pstamp_val);
         }
         let rtrn = data.replace(patternList.styleCommentRegs, "");
@@ -239,67 +240,100 @@ class stylerRegs {
                     })}{${styleContent}} `;
                 } else {
                     let trimSelector = selectorText.trim();
-
-                    switch (trimSelector) {
-                        case "exclude": externalStyles.push(styleContent); return "";
-                        case "root":
-                            externalStyles.push(
-                                this.parseStyleSeperator(
-                                    scopeSelectorText + styleContent, "",
-                                    callCounter, true)
-                            );
+                    let changed = false;
+                    trimSelector.replace(patternList.rootExcludePattern,
+                        /**
+                         * 
+                         * @param {string} match 
+                         * @param {string} mode 
+                         * @param {string} rootAlices 
+                         * @returns 
+                         */
+                        (match, mode, rootAlices) => {
+                            switch (mode) {
+                                case "root": changed = true;
+                                    if (rootAlices == undefined) {
+                                        externalStyles.push(
+                                            this.parseStyleSeperator(
+                                                scopeSelectorText + styleContent, "",
+                                                callCounter, true)
+                                        );
+                                    } else {
+                                        externalStyles.push(
+                                            this.parseStyleSeperator(
+                                                scopeSelectorText + styleContent, "",
+                                                callCounter, true,
+                                                rootPathHandler.getInfoByAlices(`@${rootAlices._trim(".")}:`))
+                                        );
+                                    }
+                                    break;
+                                case "exclude": externalStyles.push(styleContent); changed = true; return "";
+                            }
                             return "";
-                        default:
-                            let changed = false;
-                            if (selectorText.trim().startsWith("@keyframes")) {
-                                return `${trimSelector}_${this.uniqStamp}{${styleContent}} ` // selectorText.trimEnd() inplace of `trimSelector`
-                            } else {
+                        });
+                    /*
+                    case "exclude": externalStyles.push(styleContent); return "";
+                                            case "root":
+                                                externalStyles.push(
+                                                    this.parseStyleSeperator(
+                                                        scopeSelectorText + styleContent, "",
+                                                        callCounter, true)
+                                                );
+                                                return "";
+                    */
 
-                                selectorText.replace(patternList.subUcFatcher,
-                                    /**
-                                     * 
-                                     * @param {string} match 
-                                     * @param {string} quationMark 
-                                     * @param {string} filePath 
-                                     * @param {string} UCselector 
-                                     */
-                                    (match, quationMark, filePath, UCselector) => {
-                                        filePath = filePath.toLowerCase();
-                                        UCselector = UCselector.trim();
-                                        //console.log(this.children);
-                                        /** @type {stylerRegs}  */
-                                        let tree = this.children.find(s => s.path == filePath ||
-                                            s.alices == filePath);
-                                        if (tree != undefined) {
-                                            /*
-                                             tree.parseScopeSeperator({
-                                                    selectorText: UCselector,
-                                                    parent_stamp: pstamp_key,
-                                                    parent_stamp_value: pstamp_val
-                                                })
-                                             */
-                                            let nscope = callCounter == 1 ? _this.parseScopeSeperator({
+                    if (!changed) {
+                        changed = false;
+                        if (selectorText.trim().startsWith("@keyframes")) {
+                            return `${trimSelector}_${this.uniqStamp}{${styleContent}} ` // selectorText.trimEnd() inplace of `trimSelector`
+                        } else {
+
+                            selectorText.replace(patternList.subUcFatcher,
+                                /**
+                                 * 
+                                 * @param {string} match 
+                                 * @param {string} quationMark 
+                                 * @param {string} filePath 
+                                 * @param {string} UCselector 
+                                 */
+                                (match, quationMark, filePath, UCselector) => {
+                                    filePath = filePath.toLowerCase();
+                                    UCselector = UCselector.trim();
+                                    //console.log(this.children);
+                                    /** @type {stylerRegs}  */
+                                    let tree = this.children.find(s => s.path == filePath ||
+                                        s.alices == filePath);
+                                    if (tree != undefined) {
+                                        /*
+                                         tree.parseScopeSeperator({
                                                 selectorText: UCselector,
                                                 parent_stamp: pstamp_key,
                                                 parent_stamp_value: pstamp_val
-                                            }) : scopeSelectorText;
-                                            nscope = nscope.trim();
-                                            //console.log("new Uc : " + callCounter);
-                                            //console.log(nscope);
-                                            let css = tree.parseStyleSeperator(
-                                                styleContent,
-                                                nscope,
-                                                callCounter);
-                                            //console.log(css);
-                                            externalStyles.push(css);
-                                            changed = true;
-                                            return '';
-                                        }
+                                            })
+                                         */
+                                        let nscope = callCounter == 1 ? _this.parseScopeSeperator({
+                                            selectorText: UCselector,
+                                            parent_stamp: pstamp_key,
+                                            parent_stamp_value: pstamp_val
+                                        }) : scopeSelectorText;
+                                        nscope = nscope.trim();
+                                        //console.log("new Uc : " + callCounter);
+                                        //console.log(nscope);
+                                        let css = tree.parseStyleSeperator(
+                                            styleContent,
+                                            nscope,
+                                            callCounter);
+                                        //console.log(css);
+                                        externalStyles.push(css);
+                                        changed = true;
                                         return '';
-                                    });
-                            }
-                            return !changed ? `${selectorText} ${styleContent}` : "";
+                                    }
+                                    return '';
+                                });
+                        }
+                        return !changed ? `${selectorText} ${styleContent}` : "";
                     }
+
                 }
             });
 
