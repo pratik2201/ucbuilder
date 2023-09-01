@@ -1,0 +1,108 @@
+[css="@ucbuilder:/controls/common/resizer.scss"]
+
+[SELF_] {
+    box-shadow: 3px 3px 10px rgba(0, 0, 0, 0.2);
+    display: block;
+    position: absolute;
+    width: inherit;
+    height: inherit;
+  
+    box-sizing: border-box;
+    background: inherit;
+   
+}
+
+drop[dir],
+indicator[dir]{
+   position: absolute;      
+   visibility: hidden; 
+   background-color: transparent;
+   display: block;
+}   
+
+mainContainer {
+    width: 100%;
+    height: 100%;
+    display: grid;
+    box-sizing: border-box;
+    border: ridge 2px rgb(50,50,50);
+    border-top: solid 1px black;
+    grid-template-rows: max-content auto;
+}
+
+title-bar {
+    display: inline;
+    cursor: move;
+    position: relative;
+    background-color: rgb(68, 68, 68);
+}
+
+[SELF_]:focus-within title-text[SELF_] {
+    background-color:rgb(228, 148, 0); 
+    color:white;
+}
+title-text {
+    background: rgb(155, 101, 0);
+    color: black;
+    font-weight: bold;
+    font-family:Arial;
+    font-size:small!important;
+    border-radius:0px 2px 12px 0px; 
+    padding-left: 8px;
+    padding-right: 20px;
+    
+}
+
+title-bar icon {
+    width: 14px;
+    height: 14px;
+    cursor: pointer;
+    background-size: contain;
+    background-image: url(@ucbuilder:/controls/resources/close.png);
+}
+
+
+title-bar icon:hover {
+    background-image: url(@ucbuilder:/controls/resources/close-hover.png);
+}
+
+
+container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: block;
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+transperencyBack {
+    position: absolute;
+    background-color: rgba(45, 51, 48, 0.616);
+    left: 0px;
+    top: 0px;
+    right: 0px;
+    bottom: 0px;
+    filter: blur(100%);
+}
+resizer {
+    border: solid 2px transparent !important;
+    padding: 0px !important;
+    
+}
+
+corner {
+    border: solid 2px transparent !important;
+    position: absolute;
+    margin: -8px;
+    
+}
+
+resizer[role="drawSelection"] {
+    border: dashed 2px rgb(0, 0, 0)!important;
+    border-radius: 5px;
+    background-color: rgba(255, 255, 0, 0.50);
+    display: none;
+    z-index: 4;
+}
+

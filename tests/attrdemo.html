@@ -1,0 +1,16 @@
+<div id="my-id" data-ThisIsInfo="Hello, Internet">
+    <script type="text/javascript" >
+    var elem = document.getElementById("my-id");
+  for (var i = 0; i < elem.attributes.length; i++) {
+    var attrib = elem.attributes[i];
+    if (attrib.specified && attrib.name.indexOf("data-") === 0) {
+      elem.innerText += attrib.name + "='" + attrib.value + "'";
+      console.log(attrib);
+    }
+  }
+  
+  elem.innerText += elem.getAttribute("data-tHISiSiNFO");
+  
+    </script>
+    Debug:
+  </div>

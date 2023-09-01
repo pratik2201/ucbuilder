@@ -1,0 +1,89 @@
+[css="@ucbuilder:/controls/Splitter.uc.dragstyle.css"] 
+
+[SELF_] {
+    width: 100%;
+    height: 100%;
+    position: relative;overflow: hidden;
+}
+
+grid {
+    width: inherit;
+    height: inherit;
+    background-color: slategray;
+    box-sizing: border-box;
+    position: relative;
+    overflow: hidden;
+    display: grid;
+}
+
+node {
+    display: block;
+    position: relative;
+
+}
+
+[SELF_][isInDragMode="1"] view {
+    border: dotted 1px black;
+
+}
+
+view {
+    display: block;
+    position: absolute;
+    box-sizing: border-box;
+    left: -1px;
+    top: -1px;
+    right: -1px;
+    bottom: -1px;
+    border: solid 1px blueviolet;
+}
+
+
+resizer[role="top"] {
+    height: 2px;
+    background-color: transparent;
+    border-top: solid 1px black;
+    
+}
+
+resizer[role="left"] {
+    width: 2px;
+    background-color: transparent;
+    border-left: solid 1px black;
+    
+}
+
+resizer[role="left"]:hover {
+    width: 5px;
+    animation-name: left;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+}
+
+resizer[role="top"]:hover {
+    height: 5px;
+    animation-name: top;
+    animation-duration: 0.2s;
+    animation-fill-mode: forwards;
+}
+
+resizer[role="drawSelection"] {
+    background: rgba(255, 255, 255, 0.589);
+    border: dashed 2px black;    
+    box-sizing: border-box;
+}
+
+@keyframes top {
+    0%   {  background-image: linear-gradient(180deg, rgba(0,0,0,0), transparent); }
+    20%   { background-image: linear-gradient(180deg, rgba(0,0,0,.25), transparent); }
+    50%   { background-image: linear-gradient(180deg, rgba(0,0,0,.5), transparent); }
+    75%   { background-image: linear-gradient(180deg, rgba(0,0,0,.75), transparent); }
+    100%   { background-image: linear-gradient(180deg, rgba(0,0,0,1), transparent); }
+}
+@keyframes left {
+    0%   {  background-image: linear-gradient(90deg, rgba(0,0,0,0), transparent); }
+    20%   { background-image: linear-gradient(90deg, rgba(0,0,0,.25), transparent); }
+    50%   { background-image: linear-gradient(90deg, rgba(0,0,0,.5), transparent); }
+    75%   { background-image: linear-gradient(90deg, rgba(0,0,0,.75), transparent); }
+    100%   { background-image: linear-gradient(90deg, rgba(0,0,0,1), transparent); }
+}

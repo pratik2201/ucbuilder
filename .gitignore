@@ -1,0 +1,4 @@
+**/node_modules
+**/package-lock.json
+**/*.uc.designer.js
+**/*.tpt.designer.js

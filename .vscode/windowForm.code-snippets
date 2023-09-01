@@ -1,0 +1,47 @@
+{
+    "commonEvent generate":{
+		"prefix": [
+			"cmnEvt"
+		],
+		"body": [
+		"/**",
+        " * @type {{on:(callback = (",
+        " *          ${1:paramName1}:${2:param1 Datatype},",
+        " *          ${3:paramName2}:${4:param2 Datatype},",
+        " *          ${5:paramName3}:${6:param3 Datatype},",
+        " *          ${7:paramName4}:${8:param4 Datatype},",
+        " *          ${9:paramName5}:${10:param5 Datatype},",
+        " *          ${11:paramName6}:${12:param6 Datatype},",
+        " *          ${13:paramName7}:${14:param7 Datatype},",
+        " * ) =>{})} & commonEvent}",
+        " */",
+		],
+		"description": "use to generate on event with var type"
+	},
+	"show file as dialog": {
+		"prefix": [
+			"showdialog"
+		],
+		"body": [
+			"/**  @type {import ('@testnpm:/${1:codeFilePath}')} */",
+			"${2:declare Var} = Program.ref.generateUC('@ucbuilder:/${3:codeFilePath}', { parentUc:${4:undefined} }${5:perameters});",
+			"${0}",
+			
+		],
+		"description": "generate new user control"
+	},
+	"private variable" : {
+		"prefix": ["pvt"],
+		"body": [
+			"/** @private */",			
+		],
+		"description": "private variable"
+	},
+	"variable type" : {
+		"prefix": ["vt"],
+		"body": [
+			"/** @type {${1:HTMLElement}} ${2} */ $0",			
+		],
+		"description": "variable type"
+	},
+}

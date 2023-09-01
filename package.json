@@ -1,0 +1,24 @@
+{
+  "name": "ucbuilder",
+  "version": "1.0.0",
+  "description": "For Develope Large Applications In Single BrowserWindow...",
+  "main": "register.js",
+  "scripts": {
+    "start": "electron .",
+    "test": "start run main",
+    "package-win": "electron-packager . formdesign --overwrite --platform=win32 --arch=ia32 --prune=true --out=release-builds --version-string.CompanyName=CE --version-string.FileDescription=CE --version-string.ProductName=\"ACCOUNT-SOFTWARE\"",
+    "build": "electron-packager . formdesign --platform=win32 --arch=all"
+  },
+  "author": "ap",
+  "license": "ISC",
+  "devDependencies": {
+   
+  },
+  "dependencies": {
+    "module-alias": "^2.2.2",
+    "uuid": "^9.0.0"    
+  },
+  "keywords": [
+    "form-design"
+  ]
+}

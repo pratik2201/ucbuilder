@@ -1,0 +1,11 @@
+{    
+    "javascript.suggest.paths": true,
+    "javascript.preferences.useAliasesForRenames":false,
+    "javascript.updateImportsOnFileMove.enabled": "always",
+    "javascript.preferences.importModuleSpecifier": "non-relative",
+    "explorer.fileNesting.enabled": true,    
+    "explorer.fileNesting.patterns": {
+        "*.tpt.html": "${capture}.tpt.*",
+        "*.uc.html": "${capture}.uc.*"
+    }
+}

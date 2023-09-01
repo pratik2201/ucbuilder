@@ -1,0 +1,307 @@
+[
+    {
+        "id": -1,
+        "cityName": "┘ None",
+        "displayName": "┘ None"
+    },
+    {
+        "id": 1,
+        "cityName": "Surat",
+        "displayName": "Surat"
+    },
+    {
+        "id": 2,
+        "cityName": "Bharuch",
+        "displayName": "Bharuch"
+    },
+    {
+        "id": 2,
+        "cityName": "Mahuva ~ Bharuch",
+        "displayName": "Bharuch"
+    },
+    {
+        "id": 3,
+        "cityName": "Navsari",
+        "displayName": "Navsari"
+    },
+    {
+        "id": 3,
+        "cityName": "Silvasa ~ Navsari",
+        "displayName": "Navsari"
+    },
+    {
+        "id": 4,
+        "cityName": "Gandevi",
+        "displayName": "Gandevi"
+    },
+    {
+        "id": 4,
+        "cityName": "Unjha ~ Gandevi",
+        "displayName": "Gandevi"
+    },
+    {
+        "id": 5,
+        "cityName": "Amalsad",
+        "displayName": "Amalsad"
+    },
+    {
+        "id": 6,
+        "cityName": "Bilimora",
+        "displayName": "Bilimora"
+    },
+    {
+        "id": 7,
+        "cityName": "Chikhli",
+        "displayName": "Chikhli"
+    },
+    {
+        "id": 7,
+        "cityName": "Surat ~ Chikhli",
+        "displayName": "Chikhli"
+    },
+    {
+        "id": 8,
+        "cityName": "Valsad",
+        "displayName": "Valsad"
+    },
+    {
+        "id": 9,
+        "cityName": "Vapi",
+        "displayName": "Vapi"
+    },
+    {
+        "id": 10,
+        "cityName": "Vansada",
+        "displayName": "Vansada"
+    },
+    {
+        "id": 11,
+        "cityName": "Mumbai",
+        "displayName": "Mumbai"
+    },
+    {
+        "id": 12,
+        "cityName": "Mahuva",
+        "displayName": "Mahuva"
+    },
+    {
+        "id": 13,
+        "cityName": "Udvada",
+        "displayName": "Udvada"
+    },
+    {
+        "id": 14,
+        "cityName": "Unai",
+        "displayName": "Unai"
+    },
+    {
+        "id": 15,
+        "cityName": "Selvasa",
+        "displayName": "Selvasa"
+    },
+    {
+        "id": 16,
+        "cityName": "Bardoli",
+        "displayName": "Bardoli"
+    },
+    {
+        "id": 17,
+        "cityName": "Madhi",
+        "displayName": "Madhi"
+    },
+    {
+        "id": 18,
+        "cityName": "Vyara",
+        "displayName": "Vyara"
+    },
+    {
+        "id": 19,
+        "cityName": "Junagadh",
+        "displayName": "Junagadh"
+    },
+    {
+        "id": 20,
+        "cityName": "Bhuj",
+        "displayName": "Bhuj"
+    },
+    {
+        "id": 21,
+        "cityName": "Daman",
+        "displayName": "Daman"
+    },
+    {
+        "id": 22,
+        "cityName": "Bhilad",
+        "displayName": "Bhilad"
+    },
+    {
+        "id": 23,
+        "cityName": "Sanjan",
+        "displayName": "Sanjan"
+    },
+    {
+        "id": 24,
+        "cityName": "Dahnuroad",
+        "displayName": "Dahnuroad"
+    },
+    {
+        "id": 25,
+        "cityName": "Anjar(Kutch)",
+        "displayName": "Anjar(Kutch)"
+    },
+    {
+        "id": 26,
+        "cityName": "Umargam",
+        "displayName": "Umargam"
+    },
+    {
+        "id": 27,
+        "cityName": "Godhra",
+        "displayName": "Godhra"
+    },
+    {
+        "id": 28,
+        "cityName": "Ahmedabad",
+        "displayName": "Ahmedabad"
+    },
+    {
+        "id": 29,
+        "cityName": "Ankaleshvar",
+        "displayName": "Ankaleshvar"
+    },
+    {
+        "id": 30,
+        "cityName": "THALA",
+        "displayName": "THALA"
+    },
+    {
+        "id": 31,
+        "cityName": "Una (Saurashtra)",
+        "displayName": "Una (Saurashtra)"
+    },
+    {
+        "id": 32,
+        "cityName": "Palghar",
+        "displayName": "Palghar"
+    },
+    {
+        "id": 33,
+        "cityName": "Maroli",
+        "displayName": "Maroli"
+    },
+    {
+        "id": 34,
+        "cityName": "Dhorikuva",
+        "displayName": "Dhorikuva"
+    },
+    {
+        "id": 35,
+        "cityName": "Rajula",
+        "displayName": "Rajula"
+    },
+    {
+        "id": 36,
+        "cityName": "Killapardi",
+        "displayName": "Killapardi"
+    },
+    {
+        "id": 37,
+        "cityName": "Sachin",
+        "displayName": "Sachin"
+    },
+    {
+        "id": 38,
+        "cityName": "Kim",
+        "displayName": "Kim"
+    },
+    {
+        "id": 39,
+        "cityName": "Aahava",
+        "displayName": "Aahava"
+    },
+    {
+        "id": 40,
+        "cityName": "Dungari",
+        "displayName": "Dungari"
+    },
+    {
+        "id": 41,
+        "cityName": "Unjha",
+        "displayName": "Unjha"
+    },
+    {
+        "id": 42,
+        "cityName": "Silvassa",
+        "displayName": "Silvassa"
+    },
+    {
+        "id": 43,
+        "cityName": "Amreli",
+        "displayName": "Amreli"
+    },
+    {
+        "id": 44,
+        "cityName": "Bhavnagar",
+        "displayName": "Bhavnagar"
+    },
+    {
+        "id": 45,
+        "cityName": "Songadh",
+        "displayName": "Songadh"
+    },
+    {
+        "id": 46,
+        "cityName": "Lavachha",
+        "displayName": "Lavachha"
+    },
+    {
+        "id": 47,
+        "cityName": "Sarigam",
+        "displayName": "Sarigam"
+    },
+    {
+        "id": 48,
+        "cityName": "Mansa",
+        "displayName": "Mansa"
+    },
+    {
+        "id": 49,
+        "cityName": "Kurnool",
+        "displayName": "Kurnool"
+    },
+    {
+        "id": 50,
+        "cityName": "Thala",
+        "displayName": "Thala"
+    },
+    {
+        "id": 51,
+        "cityName": "Kadodara (Surat)",
+        "displayName": "Kadodara (Surat)"
+    },
+    {
+        "id": 52,
+        "cityName": "CHIKHLI",
+        "displayName": "CHIKHLI"
+    },
+    {
+        "id": 53,
+        "cityName": "SURAT",
+        "displayName": "SURAT"
+    },
+    {
+        "id": 54,
+        "cityName": "KURNOOL",
+        "displayName": "KURNOOL"
+    },
+    {
+        "id": 55,
+        "cityName": "MAROLI",
+        "displayName": "MAROLI"
+    },
+    {
+        "id": 56,
+        "cityName": "Kalol",
+        "displayName": "Kalol"
+    }
+]

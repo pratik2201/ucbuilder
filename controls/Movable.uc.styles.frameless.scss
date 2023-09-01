@@ -1,0 +1,10 @@
+[inside="@ucbuilder:/controls/Movable.uc"] {
+    [SELF_] mainContainer {
+        display: block;
+        border: none;
+    }
+
+    header {
+        display: none;
+    }
+}

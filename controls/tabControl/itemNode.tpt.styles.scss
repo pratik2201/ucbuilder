@@ -1,0 +1,74 @@
+[css="@ucbuilder:/controls/tabControl/itemNode.tpt.drag.css"]
+[SELF_] {
+    background-color: white;
+    display: inline-block;
+    box-sizing: border-box;
+    margin-top:4px;
+    min-width: 90px;
+    position: relative;
+    border: solid 1px transparent;
+    cursor: pointer;
+    border-bottom-color: transparent;
+    border-radius: 6px 6px 0px 0px;
+}
+container {
+    display: block;
+    box-sizing: border-box;
+    padding: 1px;
+    margin: 1px;
+    color: gray; box-sizing: border-box;
+    border: dashed 0px gray;
+    border-radius:4px;
+}
+span {
+    font-family: Arial;
+    font-weight: normal;
+    font-size: smaller;
+    margin-left: 3px;
+}
+[SELF_][active="1"] span{
+    font-weight: bold;
+}
+[SELF_][active="1"] container {
+    border-color: transparent;
+    
+    color: black;
+}
+
+[SELF_][active="1"] {
+    background-color: white;
+    border-color: black;
+    border-bottom-color: transparent;
+   
+}
+
+[SELF_][active="0"] {
+    border-bottom-color: black;
+    
+}
+[SELF_][active="0"]:hover container {
+   /* border:solid 1px black;*/
+    background-color: rgb(247, 243, 235);
+    color: black;
+}
+
+[SELF_]:hover icon{
+    opacity: 1;
+}
+
+icon {
+    float: right;
+    margin-left: 5px;
+    background-size: contain;
+    width: 13px;
+    height: 13px;
+    opacity: 0.15;
+}
+
+icon {
+    background-image: url(@ucbuilder:/controls/tabControl/s_delete-dis.png);
+}
+
+icon:hover {
+    background-image: url(@ucbuilder:/controls/tabControl/s_delete.png);
+}

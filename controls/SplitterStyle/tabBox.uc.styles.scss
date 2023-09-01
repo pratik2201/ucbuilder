@@ -1,0 +1,104 @@
+[css="@ucbuilder:/controls/SplitterStyle/tabBox.uc.dragstyle.css"]
+[SELF_]{
+    position: relative;
+    /*border: solid 2px black;*/
+    box-sizing: border-box;
+    overflow: hidden;
+}
+
+ [SELF_],
+ [tabdir]{
+    height: 100%;
+    width: 100%;
+    background-color: white;
+}
+
+ [tabdir]{
+    display: grid;
+    position: relative;
+    padding: 5px 0px 0px 5px; 
+    box-sizing: border-box;
+    grid-template-rows: max-content max-content auto;
+}
+
+
+
+ tablist{
+    display: block;
+    width: 100%;
+    overflow-x: auto;
+}
+
+ tablist::-webkit-scrollbar{
+    height: 5px;
+}
+
+ tablist{
+    background-color: rgb(90, 0,90,0.050);
+}
+ tablist tab[active="1"]{
+    background-color: rgb(0, 0,0,0.01);
+    border-bottom: transparent;
+    color: black;
+    white-space: nowrap;
+}
+containerwrapper{
+    position: relative;
+    height: 100%;
+    width: 100%;
+    display: block;
+    overflow: hidden;
+} 
+containerwrapper container{
+    display: block;
+    height: 100%;
+    width: 100%;
+    overflow: auto;
+}
+container[SELF_] > [active="0"]{
+    display: none; 
+} 
+ container[SELF_] > [active="1"]{
+    display: block;
+    height: 100%;
+    width: 100%;
+} 
+ tablist tab{
+    border: solid 1px black;
+    background-color: rgb(90, 0,90);
+    margin: 0px;
+    color: white;
+}
+
+ [tabdir="left"]{
+    grid-template-columns: max-content auto;
+}
+
+ [tabdir="left"] tablist tab{
+    display: block;
+}
+
+ [tabdir="top"]{
+    grid-template-rows: max-content auto;
+}
+
+[tabdir="top"] tablist tab{
+    display: inline-block;
+    padding: 5px 8px 5px 8px;
+}
+
+ [tabdir="right"]{
+    grid-template-columns: auto max-content;
+}
+
+ [tabdir="right"] tablist tab{
+    display: block;
+}
+
+ [tabdir="bottom"]{
+    grid-template-rows: auto max-content;
+}
+
+ [tabdir="bottom"] tablist tab{
+    display: inline-block;
+}
