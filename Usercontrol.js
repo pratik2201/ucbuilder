@@ -2,8 +2,7 @@
 const { propOpt, controlOpt, uniqOpt, objectOpt } = require("@ucbuilder:/build/common");
 const { filterContent } = require("@ucbuilder:/appBuilder/Window/codeFile/filterContent");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
-const { windowStates } = require("@ucbuilder:/controls/common");
-const { ucOptions, rootPathParam } = require('@ucbuilder:/enumAndMore');
+const { ucOptions,ucStates } = require('@ucbuilder:/enumAndMore');
 const { focusManage } = require("@ucbuilder:/appBuilder/Window/codeFile/focusManage");
 const { userControlStamp } = require("@ucbuilder:/appBuilder/Window/codeFile/userControlStamp");
 const { SessionManager } = require("@ucbuilder:/global/SessionManager");
@@ -11,7 +10,7 @@ const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
 const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
 const { ATTR_OF } = require("@ucbuilder:/global/runtimeOpt");
 const { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
-const { copyAttr, copyProps } = require("@ucbuilder:/global/objectOpt");
+const { copyAttr } = require("@ucbuilder:/global/objectOpt");
 
 /** 
  * @typedef {import ('@ucbuilder:/appBuilder/Window/codeFile/stylerRegs').stylerRegs} stylerRegs
@@ -20,33 +19,6 @@ const { copyAttr, copyProps } = require("@ucbuilder:/global/objectOpt");
  * @typedef {import ('@ucbuilder:/build/codeFileInfo').codeFileInfo} codeFileInfo
  */
 class Usercontrol {
-
-
-
-    /*
-     * @param {string} pathAlices 
-     * @param {string} dirpath 
-     * @param {rootPathParam} pera
-     
-    static registarMe(pathAlices, dirpath, pera) {
-        if (ACTIVE_USER_CONTROL == undefined) {
-            let { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
-            ACTIVE_USER_CONTROL = this;
-            return rootPathHandler.addRoot(pathAlices, dirpath, pera);
-        } else {
-            if (ACTIVE_USER_CONTROL.ucSTAMP === this.ucSTAMP) {
-                let { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
-                return rootPathHandler.addRoot(pathAlices, dirpath, pera);
-            } else {
-
-                return ACTIVE_USER_CONTROL.registarMe(pathAlices, dirpath, pera);
-            }
-        }
-    }*/
-
-
-
-
 
 
     /** @type {ucOptions}  */
@@ -252,7 +224,7 @@ class Usercontrol {
 
             /**
              * @type {{on:(callback = (
-             *          _state:windowStates
+             *          _state:ucStates
              * ) =>{})} & commonEvent}
              */
             winStateChanged: new commonEvent(),
@@ -302,9 +274,9 @@ class Usercontrol {
 
         /** 
          * @private 
-         * @type {"normal"|"dock"}
+         * @type {ucStates}
          */
-        _windowstate: "normal",
+        _windowstate: 'normal',
         get windowstate() { return this._windowstate; },
         set windowstate(state) { this._windowstate = state; this.Events.winStateChanged.fire(state); },
         /** @type {Usercontrol} PARENT OBJECT REFERENCE   */

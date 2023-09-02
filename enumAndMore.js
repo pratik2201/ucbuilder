@@ -87,5 +87,7 @@ module.exports = {
     ucOptions,
     tptOptions,
     sessionOptions,
-    sourceOptions
+    sourceOptions,
+    /** @type {"normal"|"dock"|"minimize"|"maximize"}  */ 
+    ucStates : "normal",
 }
