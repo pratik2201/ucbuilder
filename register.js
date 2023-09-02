@@ -23,6 +23,7 @@ const { rootPathParam } = require('./enumAndMore');
 
 
 
+
 class register {
     static ucSTAMP = uniqOpt.guidAs_;
 
@@ -38,53 +39,50 @@ class register {
 
     static getprojectname(dirpath) {
         let fpath = `${dirpath}/package.json`;
-       // console.log(fpath);
+        // console.log(fpath);
         let pjson = require(fpath);
         if (pjson != undefined) {
             return pjson.name;
         }
         return undefined;
     };
-    /**
-    * @param {string} pathAlices 
-    * @param {string} dirpath 
-    * @param {rootPathParam} pera
+    /**     
+     * @param {number} level
+     * @param {rootPathParam} pera
     */
-    static registarMe(dirpath, pera) {
-        console.log(dirpath);
+    static registarMe(level = 3, pera) {
+        let loader = require('@ucbuilder:/appBuilder/Window/codeFile/loader');
+        let dirpath = loader.getbasedir(level);     
         let pname = this.getprojectname(dirpath);
         if (pname != undefined || pname != "")
             pname = `@${pname}:`;
-        //console.log(pathAlices + "  ==>  " + pname);
-        let pathAlices = pname;
+        let pathAlices = pname;       
         if (ACTIVE_USER_CONTROL == undefined) {
-            let { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
+            //let { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
             ACTIVE_USER_CONTROL = this;
             return rootPathHandler.addRoot(pathAlices, dirpath, pera);
         } else {
             if (ACTIVE_USER_CONTROL.ucSTAMP === this.ucSTAMP) {
-                let { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
+                //let { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
+                ACTIVE_USER_CONTROL = this;
                 return rootPathHandler.addRoot(pathAlices, dirpath, pera);
             } else {
 
                 return ACTIVE_USER_CONTROL.registarMe(pathAlices, dirpath, pera);
             }
         }
+       
     }
 }
 
 
 //var loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
 
-let res = register.registarMe(__dirname, {
+let res = register.registarMe(2,{
     addModule: false
 });
-
-if (!res) return;
-
+//if (!res) return;
 module.exports = {
-    //register,
-    Events: register.Events,
-    getprojectname: register.getprojectname,
-    registarMe: register.registarMe
+    register,
+    
 }

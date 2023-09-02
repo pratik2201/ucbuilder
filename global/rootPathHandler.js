@@ -16,75 +16,91 @@ class rootPathHandler {
     static get source() { return this._source; }
 
     /**
-     * @param {string} projectName 
-     * @param {string} replaceAlicesWith 
-     * @param {rootPathParam} pera
-     */
-    static addRoot(projectName, replaceAlicesWith, pera) {
-        //let { rootPathHandler } =  require('@ucbuilder:/global/rootPathHandler');
-
-        /** @type {rootPathParam}  */
-        let param2 = clone(rootPathParam);
-        copyProps(pera, param2);
-        let pathAlicesLower = projectName.toLowerCase();
-
-        if (this.checkIfValidReplacable(pathAlicesLower)) {
-            replaceAlicesWith = replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase().trim_('/');
-            if (param2.addIntoFileDataBankAlso) {
-                let { fileDataBank } = require("@ucbuilder:/global/fileDataBank")
-                fileDataBank.pushReplacableText(projectName, replaceAlicesWith);
-            }
-            let { builder } = require("@ucbuilder:/build/builder");
-            if (param2.buildOption.addPathInProjectBuild) {
-                builder.addThisDirectories(replaceAlicesWith);
-            }
-
-            if (param2.buildOption.removeSomeSpecialPathFromProjectBuild) {
-                builder.ignoreThisDirectories(
-                    replaceAlicesWith + '/node_modules',
-                    replaceAlicesWith + '/.vscode'
-                );
-            }
-
-            if (param2.addModule) {
-                require('module-alias')
-                    .addAlias(projectName, replaceAlicesWith);
-            }
-
-            this.source.push({
-                id: this.source.length,
-                originalFinderText: projectName,
-                originalLowerCaseText: pathAlicesLower,
-                textToFind: strOpt.cleanTextForRegs(projectName),
-                replaceWith: replaceAlicesWith,
-                replaceLowerCaseText: replaceAlicesWith.toLowerCase(),
-            });
-            //console.log(param2);
-            //console.log(pathAlices+";"+replaceAlicesWith);
-            return true;
-        }
-        document.write(`    
-                ROOT ALICES ALREADY EXIST <br>
-                YOU ARE TRING TO ADD '${projectName}' THAT ALREADY EXISTED LIST <br> SEE
-                ${this._source.map(s => s.originalFinderText).join("<br>")}                                
-        `);
-        this_is_for_break_execution = true;
-        return false;
+         * @param {string} textToFindLower 
+         * @param {string} textToReplaceLower 
+         * @returns {"newRegister"|"alreadyRegistered"|"sameAlicesAlreadyExist"}
+         */
+    static checkStatus(textToFindLower, textToReplaceLower) {
+        //let textToFindLower = textToFind.toLowerCase();
+         let findex = this.source.findIndex(s =>
+             s.originalLowerCaseText.includes(textToFindLower)
+             ||
+             textToFindLower.includes(s.originalLowerCaseText)
+         );
+         if (findex == -1) {
+             return "newRegister";
+         } else {
+             let row = this.source[findex];
+             return (row.replaceLowerCaseText === textToReplaceLower.toLowerCase()) ?
+                 "alreadyRegistered"
+                 :
+                 "sameAlicesAlreadyExist";
+         }
     }
 
 
     /**
-     * @param {string} textToFindLower 
-     * @returns {boolean}
+     * @param {string} projectName 
+     * @param {string} replaceAlicesWith 
+     * @param {rootPathParam} pera
      */
-    static checkIfValidReplacable(textToFindLower) {
-        //let textToFindLower = textToFind.toLowerCase();
-        return this.source.findIndex(s =>
-            s.originalLowerCaseText.includes(textToFindLower)
-            ||
-            textToFindLower.includes(s.originalLowerCaseText)
-        ) == -1;
+    static addRoot = (projectName, replaceAlicesWith, pera) => {
+        //let { rootPathHandler } =  require('@ucbuilder:/global/rootPathHandler');
+     
+        /** @type {rootPathParam}  */
+        let param2 = clone(rootPathParam);
+        copyProps(pera, param2);
+        //console.log(param2);
+        let pathAlicesLower = projectName.toLowerCase();
+        let result = this.checkStatus(pathAlicesLower, replaceAlicesWith);
+        switch (result) {
+            case "newRegister":
+                replaceAlicesWith = replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase().trim_('/');
+                if (param2.addIntoFileDataBankAlso) {
+                    let { fileDataBank } = require("@ucbuilder:/global/fileDataBank")
+                    fileDataBank.pushReplacableText(projectName, replaceAlicesWith);
+                }
+                let { builder } = require("@ucbuilder:/build/builder");
+                if (param2.buildOption.addPathInProjectBuild) {
+                    builder.addThisDirectories(replaceAlicesWith);
+                }
+
+                if (param2.buildOption.removeSomeSpecialPathFromProjectBuild) {
+                    builder.ignoreThisDirectories(
+                        replaceAlicesWith + '/node_modules',
+                        replaceAlicesWith + '/.vscode'
+                    );
+                }
+                if (param2.addModule) {
+                    require('module-alias')
+                        .addAlias(projectName, replaceAlicesWith);
+                        
+                }
+                this.source.push({
+                    id: this.source.length,
+                    originalFinderText: projectName,
+                    originalLowerCaseText: pathAlicesLower,
+                    textToFind: strOpt.cleanTextForRegs(projectName),
+                    replaceWith: replaceAlicesWith,
+                    replaceLowerCaseText: replaceAlicesWith.toLowerCase(),
+                });
+                return true;
+            case "sameAlicesAlreadyExist":
+                document.write(`    
+                        ROOT ALICES ALREADY EXIST <br>
+                        YOU ARE TRING TO ADD '${projectName}' THAT ALREADY EXISTED LIST <br> SEE
+                        ${this._source.map(s => s.originalFinderText).join("<br>")}                                
+                `);
+                this_is_for_break_execution = true;
+                return false;
+            case "alreadyRegistered": return true;
+        }
+
+
     }
+
+
+
     static originalPath = "";
     static path = "";
     static fullPath(_pth = "") {
@@ -129,9 +145,9 @@ class rootPathHandler {
      * @param {string} alices
      * @returns {rootPathRow} 
      */
-    static getInfoByAlices(alices){
+    static getInfoByAlices(alices) {
         alices = alices.toLowerCase();
-        let findex = this.source.findIndex(s=>alices == s.originalLowerCaseText);
+        let findex = this.source.findIndex(s => alices == s.originalLowerCaseText);
         if (findex == -1) return undefined;
         let node = this.source[findex];
         let rtrn = rootPathHandler.convertToRow(node, false);

@@ -3,27 +3,32 @@
 
 const path = require('path');
 
-let getCaller = function() {
+let getCaller = function (level = 1) {
   var stack, traceFn;
   traceFn = Error.prepareStackTrace;
-  Error.prepareStackTrace = function(err, stack) {
+  Error.prepareStackTrace = function (err, stack) {
     return stack;
   };
   stack = (new Error()).stack;
   Error.prepareStackTrace = traceFn;
-  return stack[2].getFileName();
+  return stack[level].getFileName();
 };
 
-module.exports = 
-/**
- * 
- * @param {string} file  
- */
-function(file) {
-  var base;
-  base = path.dirname(getCaller());
-  console.log(module.require(file));
-  
- // console.log(path.resolve(base, file));
-  return path.resolve(base, file);//require(path.resolve(base, file));
-};
+module.exports = {
+  getbasedir: (level) => {
+    var base;
+    return path.dirname(getCaller(level));
+  },
+  /**
+   * 
+   * @param {string} file  
+   */
+  resolve: (file) => {
+    var base;
+    base = path.dirname(getCaller());
+    //console.log(module.require(file));
+    //console.log(base);
+    // console.log(path.resolve(base, file));
+    return path.resolve(base, file);//require(path.resolve(base, file));
+  }
+}
