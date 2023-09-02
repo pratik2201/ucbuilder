@@ -3,6 +3,7 @@ var ACTIVE_USER_CONTROL = undefined;
 let _clientPath = __dirname.replace(/[\\/]{1,}/g, "/") + '/';
 let alc = require('module-alias');
 alc.addAlias("@ucbuilder:", _clientPath);
+
 const { jqFeatures } = require("@ucbuilder:/global/jqFeatures");
 jqFeatures.init();
 const { uniqOpt } = require("@ucbuilder:/build/common");
@@ -37,6 +38,7 @@ class register {
 
     static getprojectname(dirpath) {
         let fpath = `${dirpath}/package.json`;
+       // console.log(fpath);
         let pjson = require(fpath);
         if (pjson != undefined) {
             return pjson.name;
@@ -48,9 +50,13 @@ class register {
     * @param {string} dirpath 
     * @param {rootPathParam} pera
     */
-    static registarMe(pathAlices, dirpath, pera) {
-        let pname = this.getprojectname(dirpath);        
+    static registarMe(dirpath, pera) {
+        console.log(dirpath);
+        let pname = this.getprojectname(dirpath);
+        if (pname != undefined || pname != "")
+            pname = `@${pname}:`;
         //console.log(pathAlices + "  ==>  " + pname);
+        let pathAlices = pname;
         if (ACTIVE_USER_CONTROL == undefined) {
             let { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
             ACTIVE_USER_CONTROL = this;
@@ -70,10 +76,15 @@ class register {
 
 //var loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
 
-let res = register.registarMe("@ucbuilder:", __dirname, {
+let res = register.registarMe(__dirname, {
     addModule: false
 });
 
 if (!res) return;
 
-module.exports = { register, Events: register.Events, registarMe: register.registarMe }
+module.exports = {
+    //register,
+    Events: register.Events,
+    getprojectname: register.getprojectname,
+    registarMe: register.registarMe
+}
