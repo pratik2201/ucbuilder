@@ -10,12 +10,12 @@ const patternList = {
     globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
     styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
     styleCommentRegs: /\/\*([\s\S]*?)\*\//gi,
-    subUcAndExcludeSelector: /\[(uc|root|exclude)(\w*)=(["'`])*([\s\S]*?)\3\]([\s\S]*?)[\n ]([\s\S]*?)\[\1\2\]/gim,
+    //subUcAndExcludeSelector: /\[(uc|root|exclude)(\w*)=(["'`])*([\s\S]*?)\3\]([\s\S]*?)[\n ]([\s\S]*?)\[\1\2\]/gim,
     subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gmi,
     themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
     stylesFilterPattern: /(animation-name): (.*?);/gmi,
     scopeSelector: /\[SELF_]/gm,
-    rootExcludePattern: /(root)(\..*)*|(exclude)/gi,
+    rootExcludePattern: /(.*?)(:root|:exclude)/gi,
 };
 class stylerRegs {
     static pushPublicStyles() {
@@ -208,13 +208,16 @@ class stylerRegs {
                     case "theme":
                         return fileDataBank.readFile(path);
                     case "css":
-                        let cssContents = _this.parseStyleSeperator(fileDataBank.readFile(path));
-                        loadGlobal.pushRow({
-                            url: path,
-                            stamp: this.stamp,
-                            reloadDesign: false,
-                            cssContents: cssContents
-                        });
+                        let isGoodToAdd = loadGlobal.isGoodToPush(path);
+                        if (isGoodToAdd) {
+                            let cssContents = _this.parseStyleSeperator(fileDataBank.readFile(path));
+                            loadGlobal.pushRow({
+                                url: path,
+                                stamp: this.stamp,
+                                reloadDesign: false,
+                                cssContents: cssContents
+                            });
+                        }
                         return "";
                 }
             });
@@ -241,33 +244,39 @@ class stylerRegs {
                 } else {
                     let trimSelector = selectorText.trim();
                     let changed = false;
+                    //console.log(trimSelector);
                     trimSelector.replace(patternList.rootExcludePattern,
                         /**
                          * 
                          * @param {string} match 
-                         * @param {string} mode 
+                         * @param {string} nmode 
                          * @param {string} rootAlices 
                          * @returns 
                          */
-                        (match, mode, rootAlices) => {
-                            switch (mode) {
-                                case "root": changed = true;
+                        (match, rootAlices, nmode) => {
+
+                            // console.log(' <=='+mode);
+                            switch (nmode) {
+                                case ":root": changed = true;
                                     if (rootAlices == undefined) {
                                         externalStyles.push(
-                                            this.parseStyleSeperator(
+                                            _this.parseStyleSeperator(
                                                 scopeSelectorText + styleContent, "",
                                                 callCounter, true)
                                         );
                                     } else {
                                         externalStyles.push(
-                                            this.parseStyleSeperator(
+                                            _this.parseStyleSeperator(
                                                 scopeSelectorText + styleContent, "",
                                                 callCounter, true,
-                                                rootPathHandler.getInfoByAlices(`@${rootAlices._trim(".")}:`))
+                                                rootPathHandler.getInfoByAlices(`@${rootAlices}:`))
                                         );
                                     }
                                     break;
-                                case "exclude": externalStyles.push(styleContent); changed = true; return "";
+                                case ":exclude":
+
+                                    externalStyles.push(styleContent); changed = true;
+                                    return "";
                             }
                             return "";
                         });
@@ -332,7 +341,7 @@ class stylerRegs {
                                 });
                         }
                         return !changed ? `${selectorText} ${styleContent}` : "";
-                    }
+                    } else return "";
 
                 }
             });

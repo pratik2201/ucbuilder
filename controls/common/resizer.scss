@@ -1,5 +1,4 @@
-exclude {
-
+:exclude {
     resizer,
     corner {
         background-color: transparent;
@@ -8,8 +7,6 @@ exclude {
         z-index: 0;
 
     }
-
-
     corner {
         padding: 5px;
     }

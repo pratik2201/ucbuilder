@@ -344,7 +344,7 @@ const __THIS = {
             if (elem.select) elem.select();
             else selectElementContents(elem);
             function selectElementContents(el) {
-                console.log(el);
+                //console.log(el);
                 var range = document.createRange();
                 range.selectNodeContents(el);
                 var sel = window.getSelection();

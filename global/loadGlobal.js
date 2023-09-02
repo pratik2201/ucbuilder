@@ -32,6 +32,15 @@ class loadGlobal {
         reloadKey: "",
         cssContents: undefined
     }
+    static isGoodToPush(url){
+        let finfo = new fileInfo();
+        finfo.parse(url);
+        if (finfo.rootInfo == undefined) return false;
+        if (!pathInfo.existFile(finfo.fullPath)) return false;
+        let pathtoFind = finfo.rootPath.toLowerCase();
+        let sindex = this.source.findIndex(s => s.fUniq == pathtoFind);
+        return (sindex == -1);
+    }
     /**
      * 
      * @param {loadGlobal.params} param0 
@@ -52,6 +61,7 @@ class loadGlobal {
         let pathtoFind = rw.finfo.rootPath.toLowerCase();
         if (reloadDesign) pathtoFind += "_" + reloadKey;
         let sindex = this.source.findIndex(s => s.fUniq == pathtoFind);
+        //console.log(sindex);
         if (sindex == -1) {
             rw.stamp = stamp;
             rw.fUniq = pathtoFind;
