@@ -49,8 +49,8 @@ class register {
     * @param {rootPathParam} pera
     */
     static registarMe(pathAlices, dirpath, pera) {
-        let pname = this.getprojectname(dirpath);
-       // console.log(pathAlices+"  ==>  "+pname);
+        let pname = this.getprojectname(dirpath);        
+        //console.log(pathAlices + "  ==>  " + pname);
         if (ACTIVE_USER_CONTROL == undefined) {
             let { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
             ACTIVE_USER_CONTROL = this;
@@ -76,4 +76,4 @@ let res = register.registarMe("@ucbuilder:", __dirname, {
 
 if (!res) return;
 
-module.exports = { register }
+module.exports = { register, Events: register.Events, registarMe: register.registarMe }

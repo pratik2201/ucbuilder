@@ -242,61 +242,44 @@ class stylerRegs {
                         parent_stamp_value: pstamp_val
                     })}{${styleContent}} `;
                 } else {
-                    let trimSelector = selectorText.trim();
+                   
                     let changed = false;
-                    //console.log(trimSelector);
-                    trimSelector.replace(patternList.rootExcludePattern,
-                        /**
-                         * 
-                         * @param {string} match 
-                         * @param {string} nmode 
-                         * @param {string} rootAlices 
-                         * @returns 
-                         */
-                        (match, rootAlices, nmode) => {
-
-                            // console.log(' <=='+mode);
-                            switch (nmode) {
-                                case ":root": changed = true;
-                                    if (rootAlices == undefined) {
-                                        externalStyles.push(
-                                            _this.parseStyleSeperator(
-                                                scopeSelectorText + styleContent, "",
-                                                callCounter, true)
-                                        );
-                                    } else {
-                                        externalStyles.push(
-                                            _this.parseStyleSeperator(
-                                                scopeSelectorText + styleContent, "",
-                                                callCounter, true,
-                                                rootPathHandler.getInfoByAlices(`@${rootAlices}:`))
-                                        );
-                                    }
-                                    break;
-                                case ":exclude":
-
-                                    externalStyles.push(styleContent); changed = true;
-                                    return "";
-                            }
-                            return "";
-                        });
-                    /*
-                    case "exclude": externalStyles.push(styleContent); return "";
-                                            case "root":
-                                                externalStyles.push(
-                                                    this.parseStyleSeperator(
-                                                        scopeSelectorText + styleContent, "",
-                                                        callCounter, true)
-                                                );
-                                                return "";
-                    */
-
+                    (selectorText.split(",")).forEach(pselctor => {
+                        (pselctor.trim()).replace(patternList.rootExcludePattern,
+                            /**
+                             * @param {string} match 
+                             * @param {string} nmode 
+                             * @param {string} rootAlices 
+                             * @returns 
+                             */
+                            (match, rootAlices, nmode) => { // console.log(' <=='+mode);
+                                switch (nmode) {
+                                    case ":root": changed = true;
+                                        if (rootAlices == undefined) {
+                                            externalStyles.push(
+                                                _this.parseStyleSeperator(
+                                                    scopeSelectorText + styleContent, "",
+                                                    callCounter, true)
+                                            );
+                                        } else {
+                                            externalStyles.push(
+                                                _this.parseStyleSeperator(
+                                                    scopeSelectorText + styleContent, "",
+                                                    callCounter, true,
+                                                    rootPathHandler.getInfoByAlices(`@${rootAlices}:`))
+                                            );
+                                        }
+                                        break;
+                                    case ":exclude": externalStyles.push(styleContent); changed = true; return "";
+                                } return "";
+                            });
+                    });
                     if (!changed) {
                         changed = false;
-                        if (selectorText.trim().startsWith("@keyframes")) {
+                        let trimSelector = selectorText.trim();
+                        if (trimSelector.startsWith("@keyframes")) {
                             return `${trimSelector}_${this.uniqStamp}{${styleContent}} ` // selectorText.trimEnd() inplace of `trimSelector`
                         } else {
-
                             selectorText.replace(patternList.subUcFatcher,
                                 /**
                                  * 
