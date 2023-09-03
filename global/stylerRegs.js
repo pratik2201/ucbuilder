@@ -1,6 +1,6 @@
 const { aliceManager } = require("@ucbuilder:/build/codefile/aliceManager");
 const { uniqOpt, propOpt } = require("@ucbuilder:/build/common");
-//const { gload } = require("@ucbuilder:/appBuilder/Window/codeFile/allInOne");
+//const { gload } = require("@ucbuilder:/global/allInOne");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
 const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
 const { rootPathHandler, rootPathRow } = require("@ucbuilder:/global/rootPathHandler");

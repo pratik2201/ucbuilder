@@ -1,5 +1,5 @@
 const { strOpt } = require("@ucbuilder:/build/common");
-const { replaceTextRow } = require("@ucbuilder:/appBuilder/Window/codeFile/findAndReplace");
+const { replaceTextRow } = require("@ucbuilder:/global/findAndReplace");
 const { readFileSync, writeFileSync, existsSync } = require("fs");
 const { fileInfo } = require("@ucbuilder:/build/codeFileInfo");
 const fileDataRow = {

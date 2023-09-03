@@ -1,11 +1,11 @@
 const { propOpt } = require("@ucbuilder:/build/common");
 const { regsManage } = require("@ucbuilder:/build/regs/regsManage");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
-const { filterContent } = require("@ucbuilder:/appBuilder/Window/codeFile/filterContent");
+const { filterContent } = require("@ucbuilder:/global/filterContent");
 const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
 const { ATTR_OF } = require("@ucbuilder:/global/runtimeOpt");
-const { stylerRegs } = require("@ucbuilder:/appBuilder/Window/codeFile/stylerRegs");
-const { userControlStampRow, userControlStamp } = require("@ucbuilder:/appBuilder/Window/codeFile/userControlStamp");
+const { stylerRegs } = require("@ucbuilder:/global/stylerRegs");
+const { userControlStampRow, userControlStamp } = require("@ucbuilder:/global/userControlStamp");
 const { Usercontrol } = require("@ucbuilder:/Usercontrol");
 const { tptOptions } = require("@ucbuilder:/enumAndMore");
 const { transferDataNode } = require("@ucbuilder:/global/drag/transferation");

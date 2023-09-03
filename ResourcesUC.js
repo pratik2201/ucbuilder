@@ -1,6 +1,6 @@
 const { codefileHandler } = require("@ucbuilder:/build/codeFileInfo");
 const { propOpt } = require("@ucbuilder:/build/common");
-const { stylerRegs } = require("@ucbuilder:/appBuilder/Window/codeFile/stylerRegs");
+const { stylerRegs } = require("@ucbuilder:/global/stylerRegs");
 const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
 const { tabIndexManager } = require("@ucbuilder:/global/tabIndexManager");
 

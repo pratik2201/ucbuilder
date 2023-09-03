@@ -51,12 +51,13 @@ class register {
      * @param {rootPathParam} pera
     */
     static registarMe(level = 3, pera) {
-        let loader = require('@ucbuilder:/appBuilder/Window/codeFile/loader');
+        let loader = require('@ucbuilder:/global/loader');
         let dirpath = loader.getbasedir(level);     
         let pname = this.getprojectname(dirpath);
         if (pname != undefined || pname != "")
             pname = `@${pname}:`;
         let pathAlices = pname;       
+        //console.log(' ===>  '+pathAlices);
         if (ACTIVE_USER_CONTROL == undefined) {
             //let { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
             ACTIVE_USER_CONTROL = this;

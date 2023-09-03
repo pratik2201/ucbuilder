@@ -1,10 +1,10 @@
 
 const { propOpt, controlOpt, uniqOpt, objectOpt } = require("@ucbuilder:/build/common");
-const { filterContent } = require("@ucbuilder:/appBuilder/Window/codeFile/filterContent");
+const { filterContent } = require("@ucbuilder:/global/filterContent");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
 const { ucOptions,ucStates } = require('@ucbuilder:/enumAndMore');
-const { focusManage } = require("@ucbuilder:/appBuilder/Window/codeFile/focusManage");
-const { userControlStamp } = require("@ucbuilder:/appBuilder/Window/codeFile/userControlStamp");
+const { focusManage } = require("@ucbuilder:/global/focusManage");
+const { userControlStamp } = require("@ucbuilder:/global/userControlStamp");
 const { SessionManager } = require("@ucbuilder:/global/SessionManager");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
 const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
@@ -13,8 +13,8 @@ const { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
 const { copyAttr } = require("@ucbuilder:/global/objectOpt");
 
 /** 
- * @typedef {import ('@ucbuilder:/appBuilder/Window/codeFile/stylerRegs').stylerRegs} stylerRegs
- * @typedef {import ('@ucbuilder:/appBuilder/Window/codeFile/userControlStamp').userControlStampRow} userControlStampRow
+ * @typedef {import ('@ucbuilder:/global/stylerRegs').stylerRegs} stylerRegs
+ * @typedef {import ('@ucbuilder:/global/userControlStamp').userControlStampRow} userControlStampRow
  * @typedef {import ('@ucbuilder:/global/drag/transferation').transferDataNode} transferDataNode
  * @typedef {import ('@ucbuilder:/build/codeFileInfo').codeFileInfo} codeFileInfo
  */

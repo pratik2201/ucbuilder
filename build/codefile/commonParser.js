@@ -2,7 +2,7 @@ const { commonGenerator } = require('@ucbuilder:/build/codefile/commonGenerator'
 const { codeFileInfo } = require('@ucbuilder:/build/codeFileInfo');
 const { buildRow } = require('@ucbuilder:/build/buildRow.js');
 const { buildOptions, objectOpt, propOpt, uniqOpt } = require('@ucbuilder:/build/common');
-const { filterContent } = require('@ucbuilder:/appBuilder/Window/codeFile/filterContent');
+const { filterContent } = require('@ucbuilder:/global/filterContent');
 const { fileDataBank } = require('@ucbuilder:/global/fileDataBank');
 const { aliceManager } = require('@ucbuilder:/build/codefile/aliceManager');
 

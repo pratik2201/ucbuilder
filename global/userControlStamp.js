@@ -12,7 +12,7 @@ class userControlStampRow {
 
     get uniqStamp() { return this.styler.uniqStamp; }
 
-    /** @type {import ("@ucbuilder:/appBuilder/Window/codeFile/stylerRegs").stylerRegs}  */
+    /** @type {import ("@ucbuilder:/global/stylerRegs").stylerRegs}  */
     styler = undefined;
 
     /** @type {string}  */
@@ -101,7 +101,7 @@ class userControlStamp {
         if (sindex == -1) {
             this.stampNo++;
             rtrn = new userControlStampRow();
-            let { stylerRegs } = require("@ucbuilder:/appBuilder/Window/codeFile/stylerRegs");
+            let { stylerRegs } = require("@ucbuilder:/global/stylerRegs");
             rtrn.styler = new stylerRegs(param0.fInfo.rootInfo, true);
             rtrn.fUniq = pathtofind;
             rtrn.cInfo = param0.fInfo;

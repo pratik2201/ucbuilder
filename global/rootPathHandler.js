@@ -1,5 +1,5 @@
 const { pathInfo, strOpt } = require("@ucbuilder:/build/common");
-const { replaceTextRow } = require("@ucbuilder:/appBuilder/Window/codeFile/findAndReplace");
+const { replaceTextRow } = require("@ucbuilder:/global/findAndReplace");
 const { rootPathParam } = require('@ucbuilder:/enumAndMore');
 let { clone, copyProps } = require("@ucbuilder:/global/objectOpt");
 const rootPathRow = {
@@ -22,20 +22,20 @@ class rootPathHandler {
          */
     static checkStatus(textToFindLower, textToReplaceLower) {
         //let textToFindLower = textToFind.toLowerCase();
-         let findex = this.source.findIndex(s =>
-             s.originalLowerCaseText.includes(textToFindLower)
-             ||
-             textToFindLower.includes(s.originalLowerCaseText)
-         );
-         if (findex == -1) {
-             return "newRegister";
-         } else {
-             let row = this.source[findex];
-             return (row.replaceLowerCaseText === textToReplaceLower.toLowerCase()) ?
-                 "alreadyRegistered"
-                 :
-                 "sameAlicesAlreadyExist";
-         }
+        let findex = this.source.findIndex(s =>
+            s.originalLowerCaseText.includes(textToFindLower)
+            ||
+            textToFindLower.includes(s.originalLowerCaseText)
+        );
+        if (findex == -1) {
+            return "newRegister";
+        } else {
+            let row = this.source[findex];
+            return (row.replaceLowerCaseText === textToReplaceLower.toLowerCase()) ?
+                "alreadyRegistered"
+                :
+                "sameAlicesAlreadyExist";
+        }
     }
 
 
@@ -46,13 +46,14 @@ class rootPathHandler {
      */
     static addRoot = (projectName, replaceAlicesWith, pera) => {
         //let { rootPathHandler } =  require('@ucbuilder:/global/rootPathHandler');
-     
+
         /** @type {rootPathParam}  */
         let param2 = clone(rootPathParam);
         copyProps(pera, param2);
         //console.log(param2);
         let pathAlicesLower = projectName.toLowerCase();
         let result = this.checkStatus(pathAlicesLower, replaceAlicesWith);
+        //console.log(projectName + '\n' + replaceAlicesWith + '\n' + result);
         switch (result) {
             case "newRegister":
                 replaceAlicesWith = replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase().trim_('/');
@@ -74,7 +75,7 @@ class rootPathHandler {
                 if (param2.addModule) {
                     require('module-alias')
                         .addAlias(projectName, replaceAlicesWith);
-                        
+
                 }
                 this.source.push({
                     id: this.source.length,
