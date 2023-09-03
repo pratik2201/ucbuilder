@@ -59,7 +59,7 @@ class commonParser {
 
         ///let alicesList= Array.from(this.formHT.attributes).filter(s=>s.nodeName.endsWith(":"));
 
-        if (!this.formHT.hasAttribute(propOpt.ATTR.FILE_STAMP)) {
+        /*if (!this.formHT.hasAttribute(propOpt.ATTR.FILE_STAMP)) {
             _row.htmlFile.stamp = uniqOpt.guidAs_;
             this.formHT.setAttribute(propOpt.ATTR.FILE_STAMP, _row.htmlFile.stamp);
             _row.htmlFile.reGenerate = true;
@@ -68,7 +68,10 @@ class commonParser {
             _row.htmlFile.stamp = this.formHT.getAttribute(propOpt.ATTR.FILE_STAMP);
             //this.formHT.setAttribute(propOpt.ATTR.FILE_STAMP, _row.htmlFile.stamp);
             _row.htmlFile.content = this.formHT.outerHTML;
-        }
+        }*/
+        /*this.formHT.removeAttribute(propOpt.ATTR.FILE_STAMP);
+        _row.htmlFile.content = this.formHT.outerHTML;
+        _row.htmlFile.reGenerate = true;*/
 
         let elem = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
 

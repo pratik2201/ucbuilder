@@ -1,4 +1,4 @@
-const { Template, TempleteNode } = require('\@ucbuilder:/Template');
+const { Template, TempleteNode } = require('\@ucbuilder:/Template.js');
 
 `{loopcls=designer.templetes}` 
 class {=name}_TEMPLATE extends TempleteNode{

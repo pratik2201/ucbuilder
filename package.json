@@ -1,6 +1,6 @@
 {
   "name": "ucbuilder",
-  "version": "1.0.0",
+  "version": "1.0.0-beta.0",
   "description": "For Developing Applications with multiple form/usercontrols etc.. In Single BrowserWindow...",
   "main": "register.js",
   "scripts": {     

@@ -10,7 +10,7 @@ class designer extends Usercontrol {
         /** @type {Usercontrol.ucOptionsStc}   */ 
         let args = fargs[fargs.length-1];
         let ucExt = this.ucExtends;
-        ucExt.fileStamp = "{=htmlFile.stamp}";        
+       
         ucExt.initializecomponent(args);        
         let CONTROLS = ucExt.designer.getAllControls();`
         {loop=designer.controls}``

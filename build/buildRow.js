@@ -48,7 +48,7 @@ class buildRow {
        
         htmlFile:{
             reGenerate:false, 
-            stamp:"",
+            //stamp:"",
             content:"",        
         },
 

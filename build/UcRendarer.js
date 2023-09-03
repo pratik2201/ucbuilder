@@ -76,7 +76,7 @@ class UcRendarer {
         let desCode = undefined;
         this.output = this.build.getOutputCode(this.fInfo, htmlContents);
 
-        console.log(this.output);
+       // console.log(this.output);
         eval(`
         ${this.output.designerCode} 
         desCode = new designer([this.tptParams]); 

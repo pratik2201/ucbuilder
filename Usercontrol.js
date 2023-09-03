@@ -86,7 +86,7 @@ class Usercontrol {
             // console.log(ar.join(","));
             return Array.from(this.self.querySelectorAll(ar.join(",")));
         },
-        fileStamp: "",
+        //fileStamp: "",
         /** @type {HTMLCollection}  */
         garbageElementsHT: undefined,
         /**
