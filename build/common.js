@@ -1,5 +1,6 @@
 const { readFileSync, writeFileSync, existsSync, unlinkSync, unwatchFile } = require("fs");
-const { v1 } = require("uuid");
+//const { v1 } = require("uuid");
+const crypto = require("crypto");
 const __THIS = {   
     numOpt: {
         gtv(ifBeingThis, equalToThis, thanHowMuchAboutThis) { return this.getThirdValue(ifBeingThis, equalToThis, thanHowMuchAboutThis); },
@@ -631,12 +632,14 @@ const __THIS = {
     
     uniqOpt: {
         get guid() {
-            let v = v1();
-            return v;
+            return crypto.randomBytes(16).toString('hex');
+            //let v = v1();
+            //return v;
         },
         get guidAs_() {
-            let v = v1().replace(/-/g, "_");
-            return v;
+            return crypto.randomBytes(16).toString('hex');
+            //let v = v1().replace(/-/g, "_");
+            //return v;
         },
         randomNo(min = 0, max = 1000000) {
             let difference = max - min;

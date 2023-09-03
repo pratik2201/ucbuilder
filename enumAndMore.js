@@ -74,6 +74,7 @@ const tptOptions = {
 
 
 const rootPathParam = {
+    level : 4,
     addIntoFileDataBankAlso : true,
     addModule : true,
     buildOption: {

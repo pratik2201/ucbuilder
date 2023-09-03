@@ -24,6 +24,7 @@ const { rootPathParam } = require('./enumAndMore');
 
 
 
+
 class register {
     static ucSTAMP = uniqOpt.guidAs_;
 
@@ -47,16 +48,20 @@ class register {
         return undefined;
     };
     /**     
-     * @param {number} level
-     * @param {rootPathParam} pera
+     * @param {rootPathParam} param2
     */
-    static registarMe(level = 3, pera) {
+    static registarMe(param2) {
+        const { copyProps, clone } = require('@ucbuilder:/global/objectOpt');
         let loader = require('@ucbuilder:/global/loader');
-        let dirpath = loader.getbasedir(level);     
+        /** @type {rootPathParam}  */
+        let pera = clone(rootPathParam);
+        copyProps(param2, pera);
+
+        let dirpath = loader.getbasedir(pera.level);
         let pname = this.getprojectname(dirpath);
         if (pname != undefined || pname != "")
             pname = `@${pname}:`;
-        let pathAlices = pname;       
+        let pathAlices = pname;
         //console.log(' ===>  '+pathAlices);
         if (ACTIVE_USER_CONTROL == undefined) {
             //let { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
@@ -72,18 +77,25 @@ class register {
                 return ACTIVE_USER_CONTROL.registarMe(pathAlices, dirpath, pera);
             }
         }
-       
+
     }
 }
 
 
 //var loadTime = window.performance.timing.domContentLoadedEventEnd - window.performance.timing.navigationStart;
 
-let res = register.registarMe(2,{
+let res = register.registarMe({
+    level: 2,
     addModule: false
 });
 //if (!res) return;
 module.exports = {
-    register,
-    
+    getprojectname: register.getprojectname,
+    get Events() { return register.Events; },
+    /**
+    * @param {rootPathParam} pera
+    */
+    registar: (pera) => {
+        register.registarMe(pera);
+    }
 }

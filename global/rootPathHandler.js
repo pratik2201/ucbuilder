@@ -45,8 +45,7 @@ class rootPathHandler {
      * @param {rootPathParam} pera
      */
     static addRoot = (projectName, replaceAlicesWith, pera) => {
-        //let { rootPathHandler } =  require('@ucbuilder:/global/rootPathHandler');
-
+        
         /** @type {rootPathParam}  */
         let param2 = clone(rootPathParam);
         copyProps(pera, param2);

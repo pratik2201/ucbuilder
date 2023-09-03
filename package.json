@@ -11,8 +11,7 @@
    
   },
   "dependencies": {
-    "module-alias": "^2.2.2",
-    "uuid": "^9.0.0"    
+    "module-alias": "^2.2.2"
   },
   "keywords": [
     "form-design","user-control","software developement"
