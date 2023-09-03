@@ -55,7 +55,7 @@ class commonParser {
         /** @type {HTMLElement}  */
         this.formHT = code.$();
         this.aliceMng.fillAlices(this.formHT);
-
+        //console.log(this.aliceMng.source.length);
 
         ///let alicesList= Array.from(this.formHT.attributes).filter(s=>s.nodeName.endsWith(":"));
 
@@ -147,14 +147,14 @@ class commonParser {
             if (scope == undefined)
                 scope = 'public';
             let proto = Object.getPrototypeOf(ele).constructor.name;
-            let res = this.aliceMng.getAliceInfo(ele);
+           /* let res = this.aliceMng.getAliceInfo(ele);
             let _subpath = "";
             if (res != undefined)
-                _subpath = res.fullPath;
+                _subpath = res.fullPath;*/
 
-            if (isUserControl && _subpath != "" /*(pathToLoad != "" || ele.hasAttribute("x-from"))*/) {
+            if (isUserControl && ele.hasAttribute("x-from")) {
 
-                //let _subpath = _subpath;(pathToLoad != "" ? pathToLoad : ele.getAttribute("x-from"));
+                let _subpath = /*(pathToLoad != "" ? pathToLoad :*/ ele.getAttribute("x-from");
              
                 let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath)); //+ ".html"
                 uFInf.parseUrl(_subpath);
