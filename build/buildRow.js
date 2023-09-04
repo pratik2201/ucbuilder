@@ -59,8 +59,8 @@ class buildRow {
             */
             baseClassName: "",
             className: "",
-            /** @type {buildRow.templete[]} */
-            templetes : [],
+            /** @type {buildRow.templete[]} 
+            templetes : [],*/
             /** @type {buildRow.control[]} */
             controls: [],
             /**  @type {buildRow.refer[]} 

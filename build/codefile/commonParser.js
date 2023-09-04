@@ -56,85 +56,66 @@ class commonParser {
         this.formHT = code.$();
         this.aliceMng.fillAlices(this.formHT);
         //console.log(this.aliceMng.source.length);
-
-        ///let alicesList= Array.from(this.formHT.attributes).filter(s=>s.nodeName.endsWith(":"));
-
-        /*if (!this.formHT.hasAttribute(propOpt.ATTR.FILE_STAMP)) {
-            _row.htmlFile.stamp = uniqOpt.guidAs_;
-            this.formHT.setAttribute(propOpt.ATTR.FILE_STAMP, _row.htmlFile.stamp);
-            _row.htmlFile.reGenerate = true;
-            _row.htmlFile.content = this.formHT.outerHTML;
-        } else {
-            _row.htmlFile.stamp = this.formHT.getAttribute(propOpt.ATTR.FILE_STAMP);
-            //this.formHT.setAttribute(propOpt.ATTR.FILE_STAMP, _row.htmlFile.stamp);
-            _row.htmlFile.content = this.formHT.outerHTML;
-        }*/
-        /*this.formHT.removeAttribute(propOpt.ATTR.FILE_STAMP);
-        _row.htmlFile.content = this.formHT.outerHTML;
-        _row.htmlFile.reGenerate = true;*/
-
         let elem = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
-
         if (!isUserControl) {
-            _row.designer.baseClassName = "Template"
-            let templates = this.formHT.querySelectorAll(":scope > tpt[x-role]");
-            if (templates.length == 0) {
-                /** @type {buildRow.templeteControls[]}  */
-                let controls = [];
-                let _htEleAr = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
-                _htEleAr.forEach(e => {
-                    let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY);
-                    if (scope == undefined)
-                        scope = 'public';
-                    controls.push({
-                        name: e.getAttribute("x-name"),
-                        nodeName: e.nodeName,
-                        proto: objectOpt.getClassName(e),
-                        scope: scope
-                    })
-                });
-                //let controls = objectOpt.clone(buildRow.templeteControls);
-                _row.designer.templetes.push({
-                    name: "primary",
-                    scope: "public",
-                    controls: controls
-                });
-            } else {
-                let tpts = _row.designer.templetes;
-                templates.forEach(template => {
-                    let role = template.getAttribute('x-role');
-                    let rolelwr = role.toLowerCase();
-                    if (tpts.findIndex(s => s.name.toLowerCase() == rolelwr) != -1) return;
+            _row.designer.baseClassName = "Template";
+            // let templates = this.formHT.querySelectorAll(":scope > tpt[x-role]");
+            // if (templates.length == 0) {
+            //     /** @type {buildRow.templeteControls[]}  */
+            //     let controls = [];
+            //     let _htEleAr = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
+            //     _htEleAr.forEach(e => {
+            //         let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY);
+            //         if (scope == undefined)
+            //             scope = 'public';
+            //         controls.push({
+            //             name: e.getAttribute("x-name"),
+            //             nodeName: e.nodeName,
+            //             proto: objectOpt.getClassName(e),
+            //             scope: scope
+            //         })
+            //     });
+            //     //let controls = objectOpt.clone(buildRow.templeteControls);
+            //     _row.designer.templetes.push({
+            //         name: "primary",
+            //         scope: "public",
+            //         controls: controls
+            //     });
+            // } else {
+            //     let tpts = _row.designer.templetes;
+            //     templates.forEach(template => {
+            //         let role = template.getAttribute('x-role');
+            //         let rolelwr = role.toLowerCase();
+            //         if (tpts.findIndex(s => s.name.toLowerCase() == rolelwr) != -1) return;
 
 
-                    /** @type {buildRow.templeteControls[]}  */
-                    let controls = [];
-                    let _htEleAr = Array.from(template.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
-                    _htEleAr.forEach(e => {
-                        let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY);
-                        if (scope == undefined)
-                            scope = 'public';
-                        controls.push({
-                            name: e.getAttribute("x-name"),
-                            nodeName: e.nodeName,
-                            proto: objectOpt.getClassName(e),
-                            scope: scope
-                        })
-                    });
+            //         /** @type {buildRow.templeteControls[]}  */
+            //         let controls = [];
+            //         let _htEleAr = Array.from(template.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
+            //         _htEleAr.forEach(e => {
+            //             let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY);
+            //             if (scope == undefined)
+            //                 scope = 'public';
+            //             controls.push({
+            //                 name: e.getAttribute("x-name"),
+            //                 nodeName: e.nodeName,
+            //                 proto: objectOpt.getClassName(e),
+            //                 scope: scope
+            //             })
+            //         });
 
 
 
-                    tpts.push({
-                        name: role,
-                        scope: "public",
-                        controls: controls
-                    });
-                });
+            //         tpts.push({
+            //             name: role,
+            //             scope: "public",
+            //             controls: controls
+            //         });
+            //     });
 
-            }
-            //console.log(_row.designer.templetes);
+            // }
         }else{
-            _row.designer.baseClassName = "Usercontrol"
+            _row.designer.baseClassName = "Usercontrol";
         }
         _row.designer.className =
         _row.codefile.baseClassName = "designer";
@@ -147,11 +128,7 @@ class commonParser {
             if (scope == undefined)
                 scope = 'public';
             let proto = Object.getPrototypeOf(ele).constructor.name;
-           /* let res = this.aliceMng.getAliceInfo(ele);
-            let _subpath = "";
-            if (res != undefined)
-                _subpath = res.fullPath;*/
-
+            
             if (isUserControl && ele.hasAttribute("x-from")) {
 
                 let _subpath = /*(pathToLoad != "" ? pathToLoad :*/ ele.getAttribute("x-from");

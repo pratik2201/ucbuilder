@@ -25,14 +25,16 @@ class Template {
         parentUc: undefined,
         regsMng: new regsManage(),
         /**
-         * @param {{}} jsonRow 
-         * @returns {string}
-         */
-        generateContent: (jsonRow) => {
-            let dta = this.extended.stampRow.content;
-            dta = this.extended.Events.onGenerateContent(dta, jsonRow);
-            dta = this.extended.regsMng.parse(jsonRow, dta);
-            dta = this.extended.Events.onGenerateContent(dta, jsonRow);
+       * @param {{}} jsonRow 
+       * @returns {string}
+       */
+        generateContent(jsonRow){
+            let dta = this.content;
+            dta = this.Events.beforeGenerateContent(dta, jsonRow);
+            ///dta = this.mainEvents.beforeGenerateContent(dta, jsonRow);
+            dta = this.regsMng.parse(jsonRow, dta);
+            dta = this.Events.onGenerateContent(dta, jsonRow);
+           // dta = this.mainEvents.onGenerateContent(dta, jsonRow);
             return dta;
         },
 
@@ -41,13 +43,16 @@ class Template {
          * @param {{}} jsonRow 
          * @returns {HTMLElement}
          */
-        generateNode: (jsonRow) => {
-            let dta = this.extended.generateContent(jsonRow);
+        generateNode (jsonRow)  {
+            let dta = this.generateContent(jsonRow);
             let element = dta.$();
-            this.extended.stampRow.passElement(element);
-            this.extended.Events.onGenerateNode(element, jsonRow);
+            this.stampRow.passElement(element);
+            this.Events.onGenerateNode(element, jsonRow);
+           // this.Events.onGenerateNode(element, jsonRow);
             return element;
         },
+
+       
 
         /** @param {tptOptions} param0 */
         initializecomponent: (param0) => {
@@ -131,9 +136,9 @@ class Template {
             return Array.from(ext.wrapper.elementHT.querySelectorAll(ar.join(",")));
         },
         /**
-           * @param {HTMLElement} fromHT 
-           * @returns {HTMLElement{}}
-           */
+       * @param {HTMLElement} fromHT 
+       * @returns {HTMLElement{}}
+       */
         getAllControls: (specific, fromHT) => {
             let childs = {};
             let uExt = this;
@@ -229,41 +234,6 @@ class TempleteNode {
 
         },
     };
-    /**
-        * @param {{}} jsonRow 
-        * @returns {string}
-        */
-    generateContent = (jsonRow) => {
-        let dta = this.content;
-        dta = this.Events.beforeGenerateContent(dta, jsonRow);
-        dta = this.mainEvents.beforeGenerateContent(dta, jsonRow);
-        dta = this.regsMng.parse(jsonRow, dta);
-        dta = this.Events.onGenerateContent(dta, jsonRow);
-        dta = this.mainEvents.onGenerateContent(dta, jsonRow);
-        return dta;
-    }
 
-
-    /**
-     * @param {{}} jsonRow 
-     * @returns {HTMLElement}
-     */
-    generateNode = (jsonRow) => {
-        let dta = this.generateContent(jsonRow);
-        let element = dta.$();
-        this.stampRow.passElement(element);
-        this.Events.onGenerateNode(element, jsonRow);
-        this.mainEvents.onGenerateNode(element, jsonRow);
-        return element;
-    }
-
-    /**
-    * @param {HTMLElement} mainNode 
-    * @returns {{ txt_name : HTMLElement, txt_name : HTMLElement,}}
-    */
-    getAllControls(mainNode) {
-
-        return this.extended.getAllControls(undefined, mainNode);
-    }
 }
 module.exports = { Template, TempleteNode }
