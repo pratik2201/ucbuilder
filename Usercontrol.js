@@ -46,7 +46,7 @@ class Usercontrol {
             .filter(s => s.nodeName.startsWith("x:"))
             .forEach(p => {
                 let atr = p.nodeName.slice(2);
-                let cv = designer.setChildValueByNameSpace(this, atr, eval(p.value));
+                let cv = designer.setChildValueByNameSpace(this, atr, eval(p.value.startsWith("=") ? "'"+p.value.slice(1)+"'":p.value));
                 if(!cv)
                     console.log("'"+ atr +"' property not set from designer");                
             });

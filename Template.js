@@ -28,13 +28,14 @@ class Template {
        * @param {{}} jsonRow 
        * @returns {string}
        */
-        generateContent(jsonRow){
-            let dta = this.content;
+        generateContent(jsonRow) {
+            let dta = this.stampRow.content;//this.content;
+            // console.log(dta);
             dta = this.Events.beforeGenerateContent(dta, jsonRow);
             ///dta = this.mainEvents.beforeGenerateContent(dta, jsonRow);
             dta = this.regsMng.parse(jsonRow, dta);
             dta = this.Events.onGenerateContent(dta, jsonRow);
-           // dta = this.mainEvents.onGenerateContent(dta, jsonRow);
+            // dta = this.mainEvents.onGenerateContent(dta, jsonRow);
             return dta;
         },
 
@@ -43,21 +44,30 @@ class Template {
          * @param {{}} jsonRow 
          * @returns {HTMLElement}
          */
-        generateNode (jsonRow)  {
+        generateNode(jsonRow) {
+
             let dta = this.generateContent(jsonRow);
             let element = dta.$();
             this.stampRow.passElement(element);
             this.Events.onGenerateNode(element, jsonRow);
-           // this.Events.onGenerateNode(element, jsonRow);
+            // this.Events.onGenerateNode(element, jsonRow);
             return element;
         },
 
-       
+
 
         /** @param {tptOptions} param0 */
         initializecomponent: (param0) => {
             let tptExt = this.extended;
             tptExt.stampRow = userControlStamp.getStamp(param0.source);
+            let ht = tptExt.stampRow.dataHT;
+            Array.from(tptExt.stampRow.dataHT.attributes)
+                .filter(s => s.nodeName.toLowerCase().startsWith("x.temp-"))
+                .forEach(s => ht.removeAttribute(s.nodeName));
+            tptExt.stampRow.content = ht.outerHTML;
+            //console.log(tptExt.stampRow.content);
+            //tptExt.stampRow.dataHT.removeAttribute(designe);
+            //tptExt.stampRow.content
             /** @type {HTMLElement}  */
             let eleHT = param0.elementHT;
             tptExt.parentUc = param0.parentUc;
@@ -70,7 +80,6 @@ class Template {
                     :
                     param0.source.cssContents));
 
-            //this.extended.ab
             loadGlobal.pushRow({
                 url: param0.source.fInfo.style.rootPath,
                 stamp: tptExt.stampRow.stamp,
@@ -78,7 +87,8 @@ class Template {
                 reloadKey: param0.source.reloadKey,
                 cssContents: param0.source.cssContents
             });
-            //console.log(tptExt.stampRow.dataHT.outerHTML);
+
+
             this.extended.fillTemplates(tptExt.stampRow.dataHT);
             tptExt.Events.onDataExport = (data) =>
                 param0.parentUc.ucExtends.Events.onDataExport(data);
