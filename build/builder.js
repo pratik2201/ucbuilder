@@ -18,7 +18,7 @@ class builder {
     init() {
         this.commonMng = new commonParser(this);
     }
-    generate() {
+    buildALL() {
         this.commonMng.rows = [];
         builder.dirsToBuild.forEach(s=>this.recursive(s));        
         this.commonMng.gen.generateFiles(this.commonMng.rows);
