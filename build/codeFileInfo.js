@@ -28,7 +28,9 @@ class codefileHandler {
             let node = new row();
             node.codefileObj = codefileObj;
             //console.log(codefileObj.code.rootPath);
-            node.obj = require(codefileObj.code.rootPath);
+            //if(codefileObj.code.rootPath.endsWith("itemNode_ComboboxSelected.tpt.js"))
+            //    debugger;
+            node.obj = require(codefileObj.code.fullPath);
             this.nodes.push(node);
             return node;
         } else return this.nodes[index];

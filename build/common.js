@@ -586,7 +586,7 @@ const __THIS = {
                     obj[lk] = valToAssign;
                     return true;
                 } return false;
-            } catch { return false; }
+            } catch (e){ console.error(e); return false; }
         },
         /**
          * @param {Object} obj 
