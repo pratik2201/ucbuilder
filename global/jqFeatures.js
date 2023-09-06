@@ -1,4 +1,6 @@
 const { looping, uniqOpt } = require("@ucbuilder:/build/common");
+const { regsManage } = require("@ucbuilder:/build/regs/regsManage");
+const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
 
 class rowInfo {
     id = "";
@@ -276,8 +278,10 @@ class jqFeatures {
             }
         }
     }
+    static regsMng = new regsManage();
     static init() {
         if (jqFeatures.isInited) return;
+
         HTMLElement.prototype.index = function () {
             var i = 0;
             let child = this;
@@ -305,18 +309,18 @@ class jqFeatures {
             return names.join(">");
         }
         HTMLElement.prototype.find = function (selector, exclude) {
-            /** @type {HTMLElement[]}  */ 
+            /** @type {HTMLElement[]}  */
             let res = [];
-            /** @type {HTMLElement[]}  */ 
-            let trec = this.querySelectorAll(selector);            
+            /** @type {HTMLElement[]}  */
+            let trec = this.querySelectorAll(selector);
             if (exclude != undefined) {
                 /** @type {string}  */
                 let selectorStr = this.selector() + ' ' + exclude;
-                trec.forEach(s=>{
-                    if(!s.matches(selectorStr))
+                trec.forEach(s => {
+                    if (!s.matches(selectorStr))
                         res.push(s);
                 });
-            }else res = Array.from(trec);
+            } else res = Array.from(trec);
             return res;
         }
         HTMLElement.prototype.fireEvent = function (eventName, bubble = true, cancable = true) {
@@ -423,7 +427,16 @@ class jqFeatures {
                 charlist = "\s";
             return this.replace(new RegExp("[" + charlist + "]+$"), "");
         };
-
+        /**
+         * @param {{}} jsonRow 
+         * @returns 
+         */
+        String.prototype.__ = function (jsonRow = undefined) {
+            let rtrn = this;
+            if (jsonRow != undefined)
+                rtrn = jqFeatures.regsMng.parse(jsonRow, rtrn);
+            return fileDataBank.getReplacedContent(rtrn);
+        };
 
         jqFeatures.isInited = true;
     }

@@ -58,9 +58,13 @@ const __THIS = {
         * @returns {string}
         */
         replaceAll: (source, textToFind, replaceWith) => {
-            return source.replace(new RegExp("(.)" + textToFind, 'g'),
+            return source.replace(new RegExp("(.){0,1}" + textToFind, 'g'),
                 (match, fkey) => {
-                    return fkey == "\\" ? textToFind : fkey + "" + replaceWith;
+                    switch(fkey){
+                        case "\\":return textToFind;
+                        case undefined:return replaceWith;
+                        default: return fkey + "" + replaceWith;
+                    }
                 });
         },
         encode_utf8: (s) => {

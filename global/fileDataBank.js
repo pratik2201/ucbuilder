@@ -95,7 +95,6 @@ class fileDataBank {
             let content = this.getReplacedContent(originalContent);
             data.originalContent = originalContent;
             data.content = content;
-
             return replaceContentWithKeys ? content : originalContent;
         }
         else {

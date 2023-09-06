@@ -91,7 +91,7 @@ class listUiHandler {
         clear() {
             this.container.innerHTML = '';
         },
-        fillAll: () => {
+        fill: () => {
             let _records = this.Records;
             _records.clear();
 

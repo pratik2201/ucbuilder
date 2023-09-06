@@ -68,6 +68,7 @@ class rootPathHandler {
                 if (param2.buildOption.removeSomeSpecialPathFromProjectBuild) {
                     builder.ignoreThisDirectories(
                         replaceAlicesWith + '/node_modules',
+                        replaceAlicesWith + '/.git',
                         replaceAlicesWith + '/.vscode'
                     );
                 }
