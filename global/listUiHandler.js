@@ -1,6 +1,8 @@
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
 const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
-
+/**
+ * @typedef {import ("@ucbuilder:/Template").Template} Template
+ */
 class listUiHandler {
     constructor() {
     }
@@ -19,12 +21,15 @@ class listUiHandler {
     source = {
         rows: []
     }
+    /** @type {Template}  */
+    itemTemplate = undefined;
+   
     get length() { return this.source.rows.length; }
     set length(val) { this.source.rows.length = val; }
     Records = {
         /** @type {HTMLElement[]}  */
         allItemHT: undefined,
-        itemAt(index) { return this.allItemHT[index]; },
+        itemAt(index) { /*console.log(this);*/ return this.allItemHT[index]; },
         /** @type {HTMLElement}  */
         container: undefined,
         /** @type {HTMLElement}  */
@@ -50,7 +55,10 @@ class listUiHandler {
          * @param {number} index 
          * @returns {HTMLElement}
          */
-        getNode(index) { return undefined; },
+        getNode:(index) => { 
+            return this.itemTemplate.extended.generateNode(this.source.rows[index]); 
+            //return this.itemTemplate.extended.generateNode(_this.source.rows[index]);
+        },
 
 
         /**
@@ -100,6 +108,34 @@ class listUiHandler {
         },
     }
     Events = {
+
+        /**
+                 * @type {{on:(callback = (
+         *          index:number,
+         *          evt:MouseEvent
+         * ) =>{})} & commonEvent}
+         */
+        itemDoubleClick: new commonEvent(),
+
+        /**
+         * @type {{on:(callback = (
+         *          index:number,
+         *          evt:MouseEvent
+         * ) =>{})} & commonEvent}
+         */
+        itemMouseDown: new commonEvent(),
+
+        /**
+         * 
+         * @type {{on:(callback = (
+         *          index:number,
+         *          evt:MouseEvent
+         * ) =>{})} & commonEvent}
+         */
+        itemMouseUp: new commonEvent(),
+
+
+
 
         /**
          * @type {{on:(callback = (
@@ -187,12 +223,36 @@ class listUiHandler {
     init(lstVw, scrollerElement) {
         this.Records.container = lstVw;
         this.scrollerElement = scrollerElement;
+        
         this.Records.allItemHT = this.Records.container.childNodes;
-        this.Records.container.addEventListener("mousedown", (e) => {
-            let item = this.Records.getItemFromChild(e.target);
-            if (item != null) this.setCurrentIndex(item.index(), e, "Mouse");
+        lstVw.addEventListener("mousedown", (e) => {
+           
         });
-        this.Records.container.addEventListener("keydown",this.keydown_listner);
+
+        lstVw.addEventListener("dblclick", (e) => {
+            let itm = this.Records.getItemFromChild(e.target);
+            if (itm != null) {
+                this.Events.itemDoubleClick.fire(this.currentIndex,e);
+            }
+        });
+        lstVw.addEventListener("mousedown", (e) => {
+            //let item = this.Records.getItemFromChild(e.target);
+            //if (item != null) this.setCurrentIndex(item.index(), e, "Mouse");
+            let itm = this.Records.getItemFromChild(e.target);
+            if (itm != null) {
+                this.setCurrentIndex(itm.index(), e, "Mouse");
+                this.Events.itemMouseDown.fire(this.currentIndex,e);
+            }
+        });
+        lstVw.addEventListener("mouseup", (e) => {
+            let itm = this.Records.getItemFromChild(e.target);
+            if (itm != null) {
+                this.Events.itemMouseUp.fire(this.currentIndex,e);
+            }
+        });
+
+
+        this.Records.container.addEventListener("keydown", this.keydown_listner);
     }
     /** @param {KeyboardEvent} e */
     keydown_listner = (e) => {

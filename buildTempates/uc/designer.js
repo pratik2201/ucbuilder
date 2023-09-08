@@ -20,7 +20,7 @@ class designer extends Usercontrol {
         
         /** 
          * @{=scope}  
-         * @type {{=proto}} ({=nodeName}) 
+         * @type {{=proto}} \<{=nodeName}\> 
          **/
         this.{=name} = CONTROLS.{=name};`
         [/case]`
@@ -28,7 +28,7 @@ class designer extends Usercontrol {
 
         /**
          * @{=scope}  
-         * @type {import ('{=src.code.rootPath}')} ({=nodeName}) 
+         * @type {import ('{=src.code.rootPath}')} \<{=nodeName}\> 
          **/
         this.{=name} = intenseGenerator.generateTPT('{=src.code.rootPath}',{ 
                             parentUc : this, 
@@ -40,7 +40,7 @@ class designer extends Usercontrol {
         `
         /** 
          * @{=scope}  
-         * @type {import ('{=src.code.rootPath}')} ({=nodeName})
+         * @type {import ('{=src.code.rootPath}')} \<{=nodeName}\>
          **/
         this.{=name} = intenseGenerator.generateUC('{=src.code.rootPath}',{ 
                             parentUc : this, 
