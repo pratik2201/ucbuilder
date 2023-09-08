@@ -1,4 +1,4 @@
-const { copyProps, clone } = require("@ucbuilder:/global/objectOpt");
+const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 const { ucOptions, tptOptions } = require('@ucbuilder:/enumAndMore');
 const { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
 const { objectOpt } = require("@ucbuilder:/build/common");
@@ -14,8 +14,8 @@ class intenseGenerator {
      * @returns {Usercontrol}
      */
     static generateUC(path, pera, ...args) {
-        let param0 = clone(ucOptions);
-        copyProps(pera, param0);
+        let param0 = newObjectOpt.clone(ucOptions);
+        newObjectOpt.copyProps(pera, param0);
 
         let row = ResourcesUC.codefilelist.getObj(path);
         param0.source.fInfo = row.codefileObj;
@@ -41,8 +41,8 @@ class intenseGenerator {
     * @returns 
     */
     static generateTPT(path, pera, ...args) {
-        let param0 = clone(tptOptions);
-        copyProps(pera, param0);
+        let param0 = newObjectOpt.clone(tptOptions);
+        newObjectOpt.copyProps(pera, param0);
 
         let row = ResourcesUC.codefilelist.getObj(path);
         param0.source.fInfo = row.codefileObj;

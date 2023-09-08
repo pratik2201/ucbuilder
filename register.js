@@ -51,11 +51,11 @@ class register {
      * @param {rootPathParam} param2
     */
     static registarMe(param2) {
-        const { copyProps, clone } = require('@ucbuilder:/global/objectOpt');
+        const { newObjectOpt } = require('@ucbuilder:/global/objectOpt');
         let loader = require('@ucbuilder:/global/loader');
         /** @type {rootPathParam}  */
-        let pera = clone(rootPathParam);
-        copyProps(param2, pera);
+        let pera = newObjectOpt.clone(rootPathParam);
+        newObjectOpt.copyProps(param2, pera);
 
         let dirpath = loader.getbasedir(pera.level);
         let pname = this.getprojectname(dirpath);

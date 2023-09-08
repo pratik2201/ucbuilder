@@ -1,5 +1,3 @@
-//const { assignIn } = require("lodash");
-
 /**
  * @param {{}} c 
  * @returns {string|undefined}
@@ -8,53 +6,91 @@ const getC = (c) => {
     if (c === undefined || c === null || c === NaN) return "";
     return c.__proto__.constructor.name;
 }
-/**
- * @param {{}} from 
- * @param {{}} to 
- */
-const copyProps = (from, to) => {
-    //assignIn(to,from);
-    //onsole.log(from);
-    //if(getC(from) == 'Object'){
+const newObjectOpt = {
+    /**
+     * @param {{}} from 
+     * @param {{}} to 
+     */
+    copyProps(from, to) {
+        
+        try {
 
-    try {
-
-        for (const key in from) {
-            //   console.log(key);
-            if (Object.hasOwnProperty.call(from, key)) {
-                const element = from[key];
-                if (getC(element) == "Object") {
-                    copyProps(element, to[key]);
-                } else {
-                    to[key] = element;
+            for (const key in from) {
+                //   console.log(key);
+                if (Object.hasOwnProperty.call(from, key)) {
+                    const element = from[key];
+                    if (getC(element) == "Object") {
+                        this.copyProps(element, to[key]);
+                    } else {
+                        to[key] = element;
+                    }
                 }
             }
+        } catch (ex) {
+            if (from === undefined) to = from;
+            return;
         }
-    } catch (ex) {
-        if (from === undefined) to = from;
-        return;
-    }
-    //}
-    //console.log(to);
+        //}
+        //console.log(to);
+    },
+    /**
+    * @template T 
+    * 
+    * @param {T} obj 
+    * @returns {T}
+    */
+    clone(obj) {
+        //console.log('here');
+        return JSON.parse(JSON.stringify(obj));
+    },
+    /**
+     * @param {HTMLElement} from 
+     * @param {HTMLElement} to 
+     */
+    copyAttr(from, to) {
+        Array.from(from.attributes).forEach(s =>
+            to.setAttribute(s.name, s.value)
+        );
+    },
+
+    /**
+     * @param {any} obj class reference
+     * @returns {string}
+     */
+    getClassName (obj) { return Object.getPrototypeOf(obj).constructor.name; },
+    /**
+     * @param {Object} obj 
+     * @param {string} ar lowercase string to find
+     */
+    analysisObject(obj) {
+        /** 
+         * @type {{
+         *    key:string,
+         *    value:object,
+         *    type:string
+         * }[]}  
+         **/
+        let rtrn = [];
+        do {
+            for (const key in Object.getOwnPropertyDescriptors(obj)) {              
+                let val = undefined;
+                try{ val = obj[key]; }catch(excp){}
+                let type = val != undefined ? this.getClassName(obj[key]) : "undefined";
+                rtrn.push({
+                    key: key,
+                    type: type,
+                    value: val
+                });
+            }
+            obj = obj.__proto__;
+        }while ((obj.__proto__ != null || obj.__proto__ != undefined)); 
+        
+        return rtrn;
+    },
+
 }
 
-/**
- * @param {HTMLElement} from 
- * @param {HTMLElement} to 
- */
-const copyAttr = (from, to) => {
-    Array.from(from.attributes).forEach(s =>
-        to.setAttribute(s.name, s.value)
-    );
-}
-/**
-* @template T 
-* 
-* @param {T} obj 
-* @returns {T}
-*/
-const clone = (obj) => {
-    //console.log('here');
-    return JSON.parse(JSON.stringify(obj));
-}
-module.exports = { copyProps, copyAttr, clone };
+
+
+
+module.exports = { newObjectOpt };

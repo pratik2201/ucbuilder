@@ -1,6 +1,6 @@
 const { builder } = require("@ucbuilder:/build/builder");
 const { tptOptions, ucOptions } = require("@ucbuilder:/enumAndMore");
-const { clone } = require("@ucbuilder:/global/objectOpt");
+const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 const { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
 /**
  * @typedef {import ('@ucbuilder:/Template').Template} Template
@@ -25,8 +25,8 @@ class UcRendarer {
      */
     init(fInfo, parentUc) {
         this.fInfo = fInfo;        
-        this.ucParams = clone(ucOptions);
-        this.tptParams = clone(tptOptions);
+        this.ucParams = newObjectOpt.clone(ucOptions);
+        this.tptParams = newObjectOpt.clone(tptOptions);
         //this._programRef = parentUc.ucExtends.program;
         ResourcesUC.rendrarCounter++;
         let tname = this.fInfo.name;
@@ -37,7 +37,7 @@ class UcRendarer {
         this.ucParams.source.reloadDesign = true;
         this.ucParams.source.reloadKey = "" + ResourcesUC.rendrarCounter;
         
-        this.tptParams = clone(tptOptions);
+        this.tptParams = newObjectOpt.clone(tptOptions);
         this.tptParams.source.fInfo = this.fInfo;
         this.tptParams.parentUc = parentUc;
         this.tptParams.elementHT = `<${tname}></${tname}>`.$();

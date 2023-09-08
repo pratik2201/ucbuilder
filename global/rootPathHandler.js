@@ -1,7 +1,7 @@
 const { pathInfo, strOpt } = require("@ucbuilder:/build/common");
 const { replaceTextRow } = require("@ucbuilder:/global/findAndReplace");
 const { rootPathParam } = require('@ucbuilder:/enumAndMore');
-let { clone, copyProps } = require("@ucbuilder:/global/objectOpt");
+let { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 const rootPathRow = {
     id: '',
     path: '',
@@ -47,8 +47,8 @@ class rootPathHandler {
     static addRoot = (projectName, replaceAlicesWith, pera) => {
         
         /** @type {rootPathParam}  */
-        let param2 = clone(rootPathParam);
-        copyProps(pera, param2);
+        let param2 = newObjectOpt.clone(rootPathParam);
+        newObjectOpt.copyProps(pera, param2);
         //console.log(param2);
         let pathAlicesLower = projectName.toLowerCase();
         let result = this.checkStatus(pathAlicesLower, replaceAlicesWith);

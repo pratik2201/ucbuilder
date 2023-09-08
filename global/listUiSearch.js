@@ -1,4 +1,6 @@
+const { objectOpt } = require("@ucbuilder:/build/common");
 const { listUiHandler } = require("@ucbuilder:/global/listUiHandler");
+const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 
 /**
  * @typedef {import ("@ucbuilder:/Template").Template} Template
@@ -20,7 +22,8 @@ class listUiSearch {
         this.experiment();
     }
     experiment(){
-        console.log(this.sampleRow);
+        //console.log(this.sampleRow);        
+        //console.log(newObjectOpt.analysisObject(this.sampleRow));
     }
 
 }

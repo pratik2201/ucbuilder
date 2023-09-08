@@ -1,4 +1,4 @@
-const { clone } = require('@ucbuilder:/global/objectOpt');
+const { newObjectOpt } = require('@ucbuilder:/global/objectOpt');
 
 /**
  * @typedef {import ('@ucbuilder:/Usercontrol').Usercontrol} Usercontrol
@@ -37,8 +37,8 @@ const sourceOptions = {
 
 
 const ucOptions = {
-    session: clone(sessionOptions),
-    source: clone(sourceOptions),
+    session: newObjectOpt.clone(sessionOptions),
+    source: newObjectOpt.clone(sourceOptions),
     /** @type {Usercontrol}  uc parent `Usercontrol` object reference */
     parentUc: undefined,
     /** @type {HTMLElement}  */
@@ -65,7 +65,7 @@ const tptOptions = {
     /** @type {HTMLElement}  */
     elementHT: undefined,
 
-    source: clone(sourceOptions),
+    source: newObjectOpt.clone(sourceOptions),
 
     /** @type {Usercontrol}  */
     parentUc: undefined,

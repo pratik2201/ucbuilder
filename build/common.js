@@ -596,31 +596,16 @@ const __THIS = {
          * @param {Object} obj 
          * @param {string} ar lowercase string to find
          */
-        getKeyFromObject: (obj, ar) => {
-            //console.log(Object.pr;
-            /*for (const key in obj) {
-    
-                if (Object.hasOwnProperty.call(obj, key))
-                    if (key.toLowerCase() == ar) return key;
-            }*/
+        getKeyFromObject: (obj, ar) => {            
             do {
                 for (const key in Object.getOwnPropertyDescriptors(obj)) {
                     if (key.toLowerCase() == ar) return key;
                 }
                 obj = obj.__proto__;
-            } while (obj != null || obj != undefined);
-            /* obj = obj.__proto__;
-             for (const key in Object.getOwnPropertyDescriptors(obj.__proto__)) {
-     
-                 if (key.toLowerCase() == ar) return key;
-             } obj = obj.__proto__;
-             console.log(obj.__proto__.__proto__.__proto__.__proto__);
-             for (const key in Object.getOwnPropertyDescriptors(obj.__proto__)) {
-     
-                 if (key.toLowerCase() == ar) return key;
-             }*/
+            } while (obj != null || obj != undefined);            
             return undefined;
         },
+         
         getParentClass: (obj) => {
             return Object.getPrototypeOf(obj.constructor);
         },

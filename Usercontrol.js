@@ -10,7 +10,7 @@ const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
 const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
 const { ATTR_OF } = require("@ucbuilder:/global/runtimeOpt");
 const { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
-const { copyAttr } = require("@ucbuilder:/global/objectOpt");
+const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 
 /** 
  * @typedef {import ('@ucbuilder:/global/stylerRegs').stylerRegs} stylerRegs
@@ -111,7 +111,7 @@ class Usercontrol {
             } else {   // usercontrol
                 ucExt.form = param0.parentUc.ucExtends.form;
                 ucExt.PARENT = param0.parentUc;
-                copyAttr(param0.wrapperHT, ucExt.wrapperHT);
+                newObjectOpt.copyAttr(param0.wrapperHT, ucExt.wrapperHT);
                 ucExt.PARENT.ucExtends.stampRow.styler
                     .pushChild(
                         ucExt.fileInfo.mainFilePath,
