@@ -1,10 +1,12 @@
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
 const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
+const { listUiSearch } = require("@ucbuilder:/global/listUiSearch");
 /**
  * @typedef {import ("@ucbuilder:/Template").Template} Template
  */
 class listUiHandler {
     constructor() {
+        this.search = new listUiSearch(this);
     }
 
     OPTIONS = {
@@ -19,11 +21,25 @@ class listUiHandler {
         currentItem: undefined,
     }
     source = {
-        rows: []
+        rows: [],
     }
+    // source = {
+    //     /** @private */
+    //     _rows: [],
+    //     get rows() {
+    //         return this._rows;
+    //     },
+    //     _this: () => { return this; },
+    //     set rows(value) {
+    //         this._rows = value;
+    //         let _ths = this._this();
+    //         if (value.length > 0)
+    //             _ths.search.takeBlueprint();
+    //     },
+    // }
     /** @type {Template}  */
     itemTemplate = undefined;
-   
+
     get length() { return this.source.rows.length; }
     set length(val) { this.source.rows.length = val; }
     Records = {
@@ -55,8 +71,8 @@ class listUiHandler {
          * @param {number} index 
          * @returns {HTMLElement}
          */
-        getNode:(index) => { 
-            return this.itemTemplate.extended.generateNode(this.source.rows[index]); 
+        getNode: (index) => {
+            return this.itemTemplate.extended.generateNode(this.source.rows[index]);
             //return this.itemTemplate.extended.generateNode(_this.source.rows[index]);
         },
 
@@ -102,7 +118,8 @@ class listUiHandler {
         fill: () => {
             let _records = this.Records;
             _records.clear();
-
+            
+            this.search.takeBlueprint();
             for (let index = 0, len = this.length - 1; index <= len; index++)
                 _records.append(index);
         },
@@ -223,16 +240,16 @@ class listUiHandler {
     init(lstVw, scrollerElement) {
         this.Records.container = lstVw;
         this.scrollerElement = scrollerElement;
-        
+
         this.Records.allItemHT = this.Records.container.childNodes;
         lstVw.addEventListener("mousedown", (e) => {
-           
+
         });
 
         lstVw.addEventListener("dblclick", (e) => {
             let itm = this.Records.getItemFromChild(e.target);
             if (itm != null) {
-                this.Events.itemDoubleClick.fire(this.currentIndex,e);
+                this.Events.itemDoubleClick.fire(this.currentIndex, e);
             }
         });
         lstVw.addEventListener("mousedown", (e) => {
@@ -241,13 +258,13 @@ class listUiHandler {
             let itm = this.Records.getItemFromChild(e.target);
             if (itm != null) {
                 this.setCurrentIndex(itm.index(), e, "Mouse");
-                this.Events.itemMouseDown.fire(this.currentIndex,e);
+                this.Events.itemMouseDown.fire(this.currentIndex, e);
             }
         });
         lstVw.addEventListener("mouseup", (e) => {
             let itm = this.Records.getItemFromChild(e.target);
             if (itm != null) {
-                this.Events.itemMouseUp.fire(this.currentIndex,e);
+                this.Events.itemMouseUp.fire(this.currentIndex, e);
             }
         });
 
