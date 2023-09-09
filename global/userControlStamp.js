@@ -144,8 +144,7 @@ class userControlStamp {
                 if(setNodeNameAsTargetTag){
                     newNodeName = rtrn.styler.nodeName = otag;
                 }        
-                return `<${newNodeName} ${ATTR_OF.UC.UC_STAMP}="${rtrn.stamp}" x-tabindex="-1" ${contents} 
-                    </${newNodeName}>`;
+                return `<${newNodeName} ${ATTR_OF.UC.UC_STAMP}="${rtrn.stamp}" x-tabindex="-1" ${contents}</${newNodeName}>`;
             });
 
         rtrn.content = rtrn.styler.parseStyle(rtrn.content);
