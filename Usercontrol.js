@@ -43,18 +43,20 @@ class Usercontrol {
             };
             super(arguments);
             Array.from(this.ucExtends.self.attributes)
-            .filter(s => s.nodeName.startsWith("x:"))
+            .filter(s => s.nodeName.startsWith("x."))
             .forEach(p => {
                 let atr = p.nodeName.slice(2);
                 let cv = designer.setChildValueByNameSpace(this, atr, eval(p.value.startsWith("=") ? "'"+p.value.slice(1)+"'":p.value));
                 if(!cv)
                     console.log("'"+ atr +"' property not set from designer");                
+                else this.ucExtends.self.removeAttribute(p.nodeName)
             });
             `;
 
     }
     static NEW_VALUE = "ANKITA LOVE PRATIK";
     constructor() {
+        
     }
     /** @private */
     static ATTR = {
@@ -97,6 +99,7 @@ class Usercontrol {
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
             ucExt.fileInfo = param0.source.fInfo;
+            
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             ucExt.stampRow = userControlStamp.getStamp(param0.source);
             ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true);
@@ -117,6 +120,7 @@ class Usercontrol {
                         ucExt.fileInfo.mainFilePath,
                         ucExt.stampRow.styler, param0.wrapperHT.nodeName);
                 ucExt.garbageElementsHT = param0.wrapperHT.children;
+                // console.log(param0.wrapperHT);
                 param0.wrapperHT.after(ucExt.wrapperHT);
                 param0.wrapperHT.remove();
             }

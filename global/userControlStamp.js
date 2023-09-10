@@ -83,13 +83,7 @@ class userControlStamp {
      * @param {sourceOptions} param0 
      * @returns {userControlStampRow}
      */
-    static getStamp(param0/*,{
-        fInfo = undefined,
-        reloadDesign = false,
-        reloadKey = "",
-        htmlContents = undefined,
-        beforeContentAssign = undefined
-    } = {}*/) {
+    static getStamp(param0) {
         this.stampCallTimes++;
         //console.log(param0);
         /** @type {userControlStampRow}  */
@@ -107,10 +101,10 @@ class userControlStamp {
             rtrn.cInfo = param0.fInfo;
             if (param0.htmlContents != undefined) {
                 rtrn.content = param0.htmlContents;
-                this.reload(rtrn, param0.beforeContentAssign,param0.setNodeNameAsTargetTag);
+                this.reload(rtrn, param0.beforeContentAssign, param0);
             } else {
                 rtrn.content = fileDataBank.readFile(param0.fInfo.html.rootPath);
-                this.reload(rtrn, param0.beforeContentAssign,param0.setNodeNameAsTargetTag);
+                this.reload(rtrn, param0.beforeContentAssign, param0);
             }
             this.source.push(rtrn);
         } else { ///  IF MORE THAN ONE TIME CALLED I.E as in 'OUTPUT.UC'
@@ -118,7 +112,7 @@ class userControlStamp {
                 rtrn = this.source[sindex];
                 /** @type {string}  */
                 rtrn.content = param0.htmlContents != undefined ? param0.htmlContents : pathInfo.readFile(rtrn.cInfo.html.path);
-                this.reload(rtrn, param0.beforeContentAssign,param0.setNodeNameAsTargetTag);
+                this.reload(rtrn, param0.beforeContentAssign, param0);
             } else {  //  IF EXIST AND NOT RELOAD
                 rtrn = this.source[sindex];
 
@@ -135,21 +129,25 @@ class userControlStamp {
     /**
      * @param {userControlStampRow} rtrn 
      * @param {Function} callback
-     * @param {boolean} setNodeNameAsTargetTag
+     * @param {sourceOptions} param0 
      */
-    static reload(rtrn, callback,setNodeNameAsTargetTag=true) {
-        let newNodeName = rtrn.styler.nodeName;
+    static reload(rtrn, callback, param0) {
+
         rtrn.content = rtrn.content.replace(/^<([\w:-]*?)([\S\s]*?)<\/\1>$/gm,
             (match, otag, contents, ctag) => {
-                if(setNodeNameAsTargetTag){
-                    newNodeName = rtrn.styler.nodeName = otag;
-                }        
+                switch (param0.nodeNameAs) {
+                    case 'targetElement': rtrn.styler.nodeName = param0.targetElementNodeName; break;
+                    case 'wrapper': rtrn.styler.nodeName = otag; break;
+                }
+                let newNodeName = rtrn.styler.nodeName;
                 return `<${newNodeName} ${ATTR_OF.UC.UC_STAMP}="${rtrn.stamp}" x-tabindex="-1" ${contents}</${newNodeName}>`;
             });
 
         rtrn.content = rtrn.styler.parseStyle(rtrn.content);
         if (callback != undefined) rtrn.content = callback(rtrn.content);
+        //console.log(rtrn.content);
         rtrn.dataHT = rtrn.content.$();
+
         if (!rtrn.dataHT.hasAttribute('x-allowtabindex'))
             rtrn.dataHT.setAttribute('x-allowtabindex', '0');
     }

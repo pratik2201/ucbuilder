@@ -22,6 +22,15 @@ class intenseGenerator {
         if (param0.wrapperHT == undefined) {
             let tname = row.codefileObj.name;
             param0.wrapperHT = (param0.parentUc == undefined) ? ResourcesUC.contentHT : `<${tname}></${tname}>`.$();
+        } else {
+            if (param0.wrapperHT.hasAttribute("x-nodeName")) {
+                param0.source.nodeNameAs = param0.wrapperHT.getAttribute("x-nodeName");
+                switch (param0.source.nodeNameAs) {
+                    case 'targetElement': param0.source.targetElementNodeName = param0.wrapperHT.nodeName; break;
+                    case 'random': break;
+                    default: param0.source.nodeNameAs = 'wrapper'; break;
+                }
+            }
         }
         args.push(param0);
         /** @type {Usercontrol}  */
@@ -59,7 +68,7 @@ class intenseGenerator {
      * @param {Template|string} val 
      * @param {Usercontrol} parentUc 
      */
-    static parseTPT(val,parentUc){
+    static parseTPT(val, parentUc) {
         if (objectOpt.parse(val, 'Template')) {
             return val;
         } else if (objectOpt.parse(val, 'String')) {

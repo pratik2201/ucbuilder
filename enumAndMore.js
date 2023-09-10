@@ -14,7 +14,10 @@ const sourceOptions = {
     /** @type {codeFileInfo}  */
     fInfo: undefined,
 
-    setNodeNameAsTargetTag: true,
+    /** @type {"wrapper"|"targetElement"|"random"}  */ 
+    nodeNameAs: 'wrapper',
+
+    targetElementNodeName:"as",
 
     reloadKey: "",
     reloadDesign: false,
