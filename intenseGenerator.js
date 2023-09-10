@@ -67,12 +67,28 @@ class intenseGenerator {
     /**
      * @param {Template|string} val 
      * @param {Usercontrol} parentUc 
+     * @return {Template}
      */
     static parseTPT(val, parentUc) {
         if (objectOpt.parse(val, 'Template')) {
             return val;
         } else if (objectOpt.parse(val, 'String')) {
             return intenseGenerator.generateTPT(val, { parentUc: parentUc });
+        }
+    }
+    /**
+     * @param {Usercontrol|string|HTMLElement} val 
+     * @param {Usercontrol} parentUc 
+     * @return {Template}
+     */
+    static parseUC(val,parentUc){
+        if (objectOpt.parse(val, 'Usercontrol')) {
+            return val;
+        } else if (objectOpt.parse(val, 'String')) {
+            return intenseGenerator.generateUC(val, { parentUc: parentUc });
+        } else if (objectOpt.parse(val, 'HTMLElement')) {
+            let _path = val.getAttribute("x-from");
+            if(_path!=undefined)return intenseGenerator.generateUC(_path, { parentUc: parentUc });
         }
     }
 }
