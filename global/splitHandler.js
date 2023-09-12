@@ -70,7 +70,6 @@ class splitHandler {
         this.initChilds();
     }
     initChilds() {
-        debugger;
         this.giveResizer();
     }
     /** @type {splitterType}  */
