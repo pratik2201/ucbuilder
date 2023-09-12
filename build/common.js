@@ -534,7 +534,6 @@ const __THIS = {
         },
         /**
         * @template T 
-        * 
         * @param {T} obj 
         * @returns {T}
         */
