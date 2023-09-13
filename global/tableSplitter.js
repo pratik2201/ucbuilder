@@ -8,4 +8,4 @@ class tableSplitter{
     
   }
 }
-module.export = {tableSplitter};
+module.exports = { tableSplitter };
