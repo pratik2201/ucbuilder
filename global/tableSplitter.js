@@ -1,5 +1,5 @@
 class tableSplitter{
-  construction (){
+  constructor(){
     
   }
   /** @type {HTMLElement} */
