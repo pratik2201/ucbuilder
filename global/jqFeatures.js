@@ -285,7 +285,7 @@ class jqFeatures {
         HTMLElement.prototype.index = function () {
             var i = 0;
             let child = this;
-            while ((child = child.previousSibling) != null)
+            while ((child = child.previousElementSibling) != null)
                 i++;
             return i;
         }
