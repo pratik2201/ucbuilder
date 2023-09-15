@@ -364,6 +364,11 @@ class jqFeatures {
             jqFeatures.data.initElement(this);
             return this;
         }
+        /*function getParentByCurName(nodeName){
+            switch(nodeName){
+                case ""
+            }
+        }*/
         String.prototype.$ = function () {
             var div = document.createElement('pre');
             div.innerHTML = this.trim();

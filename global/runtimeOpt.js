@@ -13,10 +13,10 @@ const GLOBAL_OPTIONS = {
 module.exports = {
     ATTR_OF: {
         UC: Object.freeze({
-            UC_STAMP: "a" + randNumbers(),
-            PARENT_STAMP: "b" + randNumbers(),
-            UNIQUE_STAMP: "c" + randNumbers(),
-            ROOT_STAMP: "r" + randNumbers(),
+            UC_STAMP: "uc" + randNumbers(),
+            PARENT_STAMP: "parent" + randNumbers(),
+            UNIQUE_STAMP: "uniq" + randNumbers(),
+            ROOT_STAMP: "root" + randNumbers(),
         }),
     },      
     GLOBAL_OPTIONS

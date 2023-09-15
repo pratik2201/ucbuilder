@@ -5,6 +5,7 @@ const { buildOptions, objectOpt, propOpt, uniqOpt } = require('@ucbuilder:/build
 const { filterContent } = require('@ucbuilder:/global/filterContent');
 const { fileDataBank } = require('@ucbuilder:/global/fileDataBank');
 const { aliceManager } = require('@ucbuilder:/build/codefile/aliceManager');
+const { jqFeatures } = require('@ucbuilder:/global/jqFeatures');
 
 class commonParser {
 
@@ -42,18 +43,27 @@ class commonParser {
         let _row = objectOpt.deepClone1(buildRow.commonRow);
 
         _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
-
-
+        
         _row.src.parseUrl(filePath);
-
+       
         let code = (htmlContents == undefined) ? fileDataBank.readFile(_row.src.html.rootPath, {
             replaceContentWithKeys: false
         }) : htmlContents;
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
-
+        /*if (_row.src.html.fullPath.includes("attributeTemplate")) {
+            console.log(code);
+            var div = document.createElement('pre');
+            div.innerHTML = code;
+            console.log(div.innerHTML);
+            //jqFeatures.data.initElement(div.firstChild);
+            console.log(div.firstChild);
+           // console.log(this.formHT.outerHTML);
+        }*/
+       
         //console.log(htmlContents);
         /** @type {HTMLElement}  */
         this.formHT = code.$();
+       
         this.aliceMng.fillAlices(this.formHT);
         //console.log(this.aliceMng.source.length);
         let elem = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
@@ -114,11 +124,11 @@ class commonParser {
             //     });
 
             // }
-        }else{
+        } else {
             _row.designer.baseClassName = "Usercontrol";
         }
         _row.designer.className =
-        _row.codefile.baseClassName = "designer";
+            _row.codefile.baseClassName = "designer";
         _row.codefile.className = _row.src.name;
 
         elem.forEach((ele) => {
@@ -128,11 +138,11 @@ class commonParser {
             if (scope == undefined)
                 scope = 'public';
             let proto = Object.getPrototypeOf(ele).constructor.name;
-            
+
             if (isUserControl && ele.hasAttribute("x-from")) {
 
                 let _subpath = /*(pathToLoad != "" ? pathToLoad :*/ ele.getAttribute("x-from");
-             
+
                 let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath)); //+ ".html"
                 uFInf.parseUrl(_subpath);
                 if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {

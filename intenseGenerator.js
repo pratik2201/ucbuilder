@@ -21,7 +21,7 @@ class intenseGenerator {
         param0.source.fInfo = row.codefileObj;
         if (param0.wrapperHT == undefined) {
             let tname = row.codefileObj.name;
-            param0.wrapperHT = (param0.parentUc == undefined) ? ResourcesUC.contentHT : `<${tname}></${tname}>`.$();
+            param0.wrapperHT = (param0.parentUc == undefined) ? ResourcesUC.contentHT : param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$());
         } else {
             if (param0.wrapperHT.hasAttribute("x-nodeName")) {
                 param0.source.nodeNameAs = param0.wrapperHT.getAttribute("x-nodeName");
@@ -57,7 +57,7 @@ class intenseGenerator {
         param0.source.fInfo = row.codefileObj;
         if (param0.elementHT == undefined) {
             let tname = row.codefileObj.name;
-            param0.elementHT = (param0.parentUc == undefined) ? ResourcesUC.contentHT : `<${tname}></${tname}>`.$();
+            param0.elementHT = (param0.parentUc == undefined) ? ResourcesUC.contentHT : param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$());
         }
         args.push(param0);
         /** @type {Template}  */
@@ -73,6 +73,7 @@ class intenseGenerator {
         if (objectOpt.parse(val, 'Template')) {
             return val;
         } else if (objectOpt.parse(val, 'String')) {
+           
             return intenseGenerator.generateTPT(val, { parentUc: parentUc });
         }
     }

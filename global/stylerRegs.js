@@ -303,19 +303,26 @@ class stylerRegs {
                                                 parent_stamp_value: pstamp_val
                                             })
                                          */
+                                        
                                         let nscope = callCounter == 1 ? _this.parseScopeSeperator({
                                             selectorText: UCselector,
                                             parent_stamp: pstamp_key,
                                             parent_stamp_value: pstamp_val
                                         }) : scopeSelectorText;
-                                        nscope = nscope.trim();
-                                        //console.log("new Uc : " + callCounter);
                                         //console.log(nscope);
+                                        
+                                        
+                                        //nscope = nscope.trim();    //  <---- REMOVE THIS COMMENT IF ANY MAJOR BUG FORM THIS AREA
+
+                                        
                                         let css = tree.parseStyleSeperator(
                                             styleContent,
                                             nscope,
                                             callCounter);
-                                        //console.log(css);
+                                        /*if(filePath.includes("attributetemplate")){
+                                            console.log(scopeSelectorText);
+                                            console.log(callCounter+"=>"+css);
+                                        }*/
                                         externalStyles.push(css);
                                         changed = true;
                                         return '';
@@ -401,11 +408,11 @@ class stylerRegs {
                     changed = true;
                     calltime++;
                     if (trimedVal == '[SELF_]') {
-                        return `${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.stamp}"]${scopeSelectorText}`
+                        return `${scopeSelectorText} ${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.stamp}"]`
                     } else {
                         if (calltime == 1) { // if first time call
                             if (trimedVal.startsWith('[SELF_]')) {
-                                return `[${ATTR_OF.UC.UC_STAMP}="${_this.stamp}"]${scopeSelectorText}`;
+                                return `${scopeSelectorText} [${ATTR_OF.UC.UC_STAMP}="${_this.stamp}"]`;
                             } else {
                                 preText = scopeSelectorText + " ";
                                 return `[${parent_stamp}="${parent_stamp_value}"]`;

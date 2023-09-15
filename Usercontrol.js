@@ -115,6 +115,7 @@ class Usercontrol {
                 ucExt.form = param0.parentUc.ucExtends.form;
                 ucExt.PARENT = param0.parentUc;
                 newObjectOpt.copyAttr(param0.wrapperHT, ucExt.wrapperHT);
+                
                 ucExt.PARENT.ucExtends.stampRow.styler
                     .pushChild(
                         ucExt.fileInfo.mainFilePath,
