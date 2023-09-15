@@ -53,9 +53,9 @@ class register {
     static registarMe(param2) {
         const { newObjectOpt } = require('@ucbuilder:/global/objectOpt');
         let loader = require('@ucbuilder:/global/loader');
-        /** @type {rootPathParam}  */
-        let pera = newObjectOpt.clone(rootPathParam);
-        newObjectOpt.copyProps(param2, pera);
+       
+        let pera = newObjectOpt.copyProps(param2,rootPathParam);
+
 
         let dirpath = loader.getbasedir(pera.level);
         let pname = this.getprojectname(dirpath);

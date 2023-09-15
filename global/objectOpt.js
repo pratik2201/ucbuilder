@@ -8,11 +8,18 @@ const getC = (c) => {
 }
 const newObjectOpt = {
     /**
+     * @template {{}} T
      * @param {{}} from 
-     * @param {{}} to 
+     * @param {T} to 
+     * @returns {T}
      */
     copyProps(from, to) {
-        
+        let rtrn = this.clone(to);
+        this.recursiveProp(from,rtrn);
+        return rtrn;
+    },
+    /** @private */
+    recursiveProp(from, to) {
         try {
 
             for (const key in from) {
@@ -20,7 +27,7 @@ const newObjectOpt = {
                 if (Object.hasOwnProperty.call(from, key)) {
                     const element = from[key];
                     if (getC(element) == "Object") {
-                        this.copyProps(element, to[key]);
+                        this.recursiveProp(element, to[key]);
                     } else {
                         to[key] = element;
                     }
@@ -30,8 +37,6 @@ const newObjectOpt = {
             if (from === undefined) to = from;
             return;
         }
-        //}
-        //console.log(to);
     },
     /**
     * @template T 
@@ -57,7 +62,7 @@ const newObjectOpt = {
      * @param {any} obj class reference
      * @returns {string}
      */
-    getClassName (obj) { return Object.getPrototypeOf(obj).constructor.name; },
+    getClassName(obj) { return Object.getPrototypeOf(obj).constructor.name; },
     /**
      * @param {Object} obj 
      * @param {string} ar lowercase string to find
@@ -72,9 +77,9 @@ const newObjectOpt = {
          **/
         let rtrn = [];
         do {
-            for (const key in Object.getOwnPropertyDescriptors(obj)) {              
+            for (const key in Object.getOwnPropertyDescriptors(obj)) {
                 let val = undefined;
-                try{ val = obj[key]; }catch(excp){}
+                try { val = obj[key]; } catch (excp) { }
                 let type = val != undefined ? this.getClassName(obj[key]) : "undefined";
                 rtrn.push({
                     key: key,
@@ -83,8 +88,8 @@ const newObjectOpt = {
                 });
             }
             obj = obj.__proto__;
-        }while ((obj.__proto__ != null || obj.__proto__ != undefined)); 
-        
+        } while ((obj.__proto__ != null || obj.__proto__ != undefined));
+
         return rtrn;
     },
 

@@ -26,7 +26,7 @@ class UcRendarer {
     init(fInfo, parentUc) {
         this.fInfo = fInfo;        
         this.ucParams = newObjectOpt.clone(ucOptions);
-        this.tptParams = newObjectOpt.clone(tptOptions);
+       // this.tptParams = newObjectOpt.clone(tptOptions);
         //this._programRef = parentUc.ucExtends.program;
         ResourcesUC.rendrarCounter++;
         let tname = this.fInfo.name;

@@ -46,9 +46,11 @@ class rootPathHandler {
      */
     static addRoot = (projectName, replaceAlicesWith, pera) => {
         
-        /** @type {rootPathParam}  */
-        let param2 = newObjectOpt.clone(rootPathParam);
-        newObjectOpt.copyProps(pera, param2);
+        // /** @type {rootPathParam}  */
+        // let param2 = newObjectOpt.clone(rootPathParam);
+        // newObjectOpt.copyProps(pera, param2);
+        let param2 = newObjectOpt.copyProps(pera,rootPathParam);
+        
         //console.log(param2);
         let pathAlicesLower = projectName.toLowerCase();
         let result = this.checkStatus(pathAlicesLower, replaceAlicesWith);

@@ -14,9 +14,10 @@ class intenseGenerator {
      * @returns {Usercontrol}
      */
     static generateUC(path, pera, ...args) {
-        let param0 = newObjectOpt.clone(ucOptions);
-        newObjectOpt.copyProps(pera, param0);
-
+        //let param0 = newObjectOpt.clone(ucOptions);
+        //newObjectOpt.copyProps(pera, param0);
+        let param0 = newObjectOpt.copyProps(pera,ucOptions);
+      
         let row = ResourcesUC.codefilelist.getObj(path);
         param0.source.fInfo = row.codefileObj;
         if (param0.wrapperHT == undefined) {
@@ -50,8 +51,9 @@ class intenseGenerator {
     * @returns 
     */
     static generateTPT(path, pera, ...args) {
-        let param0 = newObjectOpt.clone(tptOptions);
-        newObjectOpt.copyProps(pera, param0);
+        //let param0 = newObjectOpt.clone(tptOptions);
+        //newObjectOpt.copyProps(pera, param0);
+        let param0 = newObjectOpt.copyProps(pera,tptOptions);
 
         let row = ResourcesUC.codefilelist.getObj(path);
         param0.source.fInfo = row.codefileObj;
