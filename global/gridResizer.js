@@ -12,6 +12,9 @@ class gridResizer {
     /** @type {measurementRow[]}  */
     measurement = [];
 
+    /** @type {HTMLElement}  */
+    static rectHT = `<resizer role="drawSelection"></resizer>`.$();
+    
     get measureText() {
         return this.measurement.length <= 1 ? 'auto'
             : this.measurement
