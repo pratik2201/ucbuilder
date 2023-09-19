@@ -12,53 +12,44 @@ const gridResizerInitOptions = {
     grid: undefined,
     nodeName: "",
 }
-
-class gridResizer {
-    nameList = {
-        offsetSize: 'offsetWidth',
-        splitterText: 'splitter-width',
-        templeteOf: 'grid-template-columns',
-        point: 'x',
-        size: 'width',
-        dir: 'left',
-        pagePoint: 'pageX',
-        _OPPOSITE: {
-            scrollPoint: "scrollTop",
-            scrollSize: "scrollBarHeight",
-        },
-        /** @param {spliterType} type */
-        setByType: (type) => {
-            let _this = this.nameList;
-            switch (type) {
-                case 'grid-template-columns':
-                    _this.offsetSize = 'offsetWidth';
-                    _this.splitterText = 'splitter-width';
-                    _this.templeteOf = type;
-                    _this.size = 'width';
-                    _this.point = 'x';
-                    _this.dir = "left";
-                    _this.pagePoint = 'pageX';
-                    _this._OPPOSITE = {
-                        scrollPoint: "scrollTop",
-                        scrollSize: "scrollBarHeight",
-                    };
-                    break;
-                case 'grid-template-rows':
-                    _this.offsetSize = 'offsetHeight';
-                    _this.splitterText = 'splitter-height';
-                    _this.templeteOf = type;
-                    _this.size = 'height',
-                        _this.point = 'y';
-                    _this.dir = "top";
-                    _this.pagePoint = 'pageY';
-                    _this._OPPOSITE = {
-                        scrollPoint: "scrollLeft",
-                        scrollSize: "scrollBarWidth",
-                    };
-                    break;
-            }
-        }
+const namingConversion = {
+    offsetSize: 'offsetWidth',
+    splitterText: 'splitter-width',
+    gridTemplate: 'grid-template-columns',
+    gridAuto: 'grid-auto-rows',
+    point: 'x',
+    size: 'width',
+    dir: 'left',
+    pagePoint: 'pageX',
+    OPPOSITE: {
+        scrollPoint: "scrollTop",
+        scrollSize: "scrollBarHeight",
     }
+}
+class gridResizer {
+    /**
+     * @param {"grid-template-columns"|"grid-template-rows"} gridTemplate 
+     * @returns {namingConversion}
+     */
+    static getConvertedNames(gridTemplate = 'grid-template-columns') {
+        let _rtrn = newObjectOpt.clone(namingConversion);
+        if (gridTemplate == 'grid-template-rows') {
+            _rtrn.offsetSize = 'offsetHeight';
+            _rtrn.splitterText = 'splitter-height';
+            _rtrn.gridTemplate = gridTemplate;
+            _rtrn.gridAuto = 'grid-auto-columns'
+            _rtrn.size = 'height',
+                _rtrn.point = 'y';
+            _rtrn.dir = "top";
+            _rtrn.pagePoint = 'pageY';
+            _rtrn.OPPOSITE = {
+                scrollPoint: "scrollLeft",
+                scrollSize: "scrollBarWidth",
+            };
+        }
+        return _rtrn;
+    }
+
     constructor() {
     }
     /** @type {HTMLElement[]}  */
@@ -68,11 +59,10 @@ class gridResizer {
     /** @param {gridResizerInitOptions} options */
     init(options) {
         this.options = newObjectOpt.copyProps(options, gridResizerInitOptions);
-        
     }
     /** @type {Rect}  */
     dgvDomRect = new Rect();
-    
+
     /** @type {measurementRow[]}  */
     measurement = [];
     /** @type {"fill"|"unfill"}*/
@@ -85,13 +75,17 @@ class gridResizer {
                 .slice(0, -1)
                 .join('px ') + 'px auto';
     }
+    /** @type {"grid-template-columns"|"grid-template-rows"}  */
+    gridTemplate = namingConversion.gridTemplate;
+    /** @type {"grid-auto-columns"|"grid-auto-rows"}  */
+    gridAuto = '';
     refreshView() {
         //this, this.grid.contains
-        this.options.grid.style[this.nameList.templeteOf] = this.measureText;
+        this.options.grid.style[this.gridTemplate] = this.measureText;
     }
     get hasDefinedStyles() {
-        return this.options.grid.style[this.nameList.templeteOf] != "";
+        return this.options.grid.style[this.gridTemplate] != "";
     }
 }
 
-module.exports = { gridResizer, measurementRow }
+module.exports = { gridResizer, measurementRow, namingConversion }
