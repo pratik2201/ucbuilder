@@ -351,10 +351,11 @@ class Rect {
 
     setBy = {
         /** @param {Rect} target  */
-        point: (target) => {
+        rect: (target) => {
             this.location.setBy.point(target.location);
             this.size.setBy.size(target.size);
         },
+        
         /** @param {DOMRect} rct */
         domRect:(rct) => {
             this.location.setBy.value(rct.x, rct.y);

@@ -20,6 +20,7 @@ const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
  */
 class Usercontrol {
 
+    
 
     /** @type {ucOptions}  */
     static get ucOptionsStc() { return undefined; }

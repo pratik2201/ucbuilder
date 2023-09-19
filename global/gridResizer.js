@@ -65,8 +65,8 @@ class gridResizer {
 
     /** @type {measurementRow[]}  */
     measurement = [];
-    /** @type {"fill"|"unfill"}*/
-    fillMode = "unfill";
+    /** @type {"slider"|"unfill"}*/
+    resizeMode = "unfill";
 
     get measureText() {
         return this.measurement.length <= 1 ? 'auto'
