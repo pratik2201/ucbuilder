@@ -34,6 +34,7 @@ class Usercontrol {
     }
     static get giveMeHug() {
         let evalExp = /\(@([\w.]*?)\)/gim;
+        let thisExp = /(^|\s)(this)(\W|$)/gim;
         return `
             arguments[arguments.length-1].source.beforeContentAssign = (content) => {
                 let rtrn = content.replace(${evalExp},
@@ -47,7 +48,7 @@ class Usercontrol {
             .filter(s => s.nodeName.startsWith("x."))
             .forEach(p => {
                 let atr = p.nodeName.slice(2);
-                let cv = designer.setChildValueByNameSpace(this, atr, eval(p.value.startsWith("=") ? "'"+p.value.slice(1)+"'":p.value));
+                let cv = designer.setChildValueByNameSpace(this, atr, eval(p.value.startsWith("=") ? "'" + p.value.slice(1) + "'" : p.value.replace(${thisExp},(mch,fc,ths,lc)=>fc+'this.ucExtends.PARENT'+lc)));
                 if(!cv)
                     console.log("'"+ atr +"' property not set from designer");                
                 else this.ucExtends.self.removeAttribute(p.nodeName)
