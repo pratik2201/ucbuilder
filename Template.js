@@ -59,25 +59,15 @@ class Template {
         /** @param {tptOptions} param0 */
         initializecomponent: (param0) => {
             let tptExt = this.extended;
+            //console.log(param0.source);
             tptExt.stampRow = userControlStamp.getStamp(param0.source);
-            //if (param0.parentUc != undefined)
-            //    tptExt.stampRow.dataHT = param0.parentUc.ucExtends.passElement(tptExt.stampRow.dataHT);
-
+          
             let ht = tptExt.stampRow.dataHT;
             Array.from(tptExt.stampRow.dataHT.attributes)
                 .filter(s => s.nodeName.toLowerCase().startsWith("x.temp-"))
                 .forEach(s => ht.removeAttribute(s.nodeName));
             tptExt.stampRow.content = ht.outerHTML;
-           
-           /* if(param0.source.fInfo.html.fullPath.includes("attributetemplate")){
-                console.log(param0.parentUc.ucExtends.stampRow.stamp);
-                console.log(tptExt.stampRow.content);
-            }*/
-
-
-            //console.log(tptExt.stampRow.content);
-            //tptExt.stampRow.dataHT.removeAttribute(designe);
-            //tptExt.stampRow.content
+                      
             /** @type {HTMLElement}  */
             let eleHT = param0.elementHT;
             tptExt.parentUc = param0.parentUc;
