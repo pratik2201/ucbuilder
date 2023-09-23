@@ -23,20 +23,7 @@ class listUiHandler {
     source = {
         rows: [],
     }
-    // source = {
-    //     /** @private */
-    //     _rows: [],
-    //     get rows() {
-    //         return this._rows;
-    //     },
-    //     _this: () => { return this; },
-    //     set rows(value) {
-    //         this._rows = value;
-    //         let _ths = this._this();
-    //         if (value.length > 0)
-    //             _ths.search.takeBlueprint();
-    //     },
-    // }
+    
     /** @type {Template}  */
     itemTemplate = undefined;
 
@@ -127,7 +114,7 @@ class listUiHandler {
     Events = {
 
         /**
-                 * @type {{on:(callback = (
+         * @type {{on:(callback = (
          *          index:number,
          *          evt:MouseEvent
          * ) =>{})} & commonEvent}

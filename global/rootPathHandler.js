@@ -16,21 +16,22 @@ class rootPathHandler {
     static get source() { return this._source; }
 
     /**
-         * @param {string} textToFindLower 
-         * @param {string} textToReplaceLower 
-         * @returns {"newRegister"|"alreadyRegistered"|"sameAlicesAlreadyExist"}
-         */
+     * @param {string} textToFindLower 
+     * @param {string} textToReplaceLower 
+     * @returns {"newRegister"|"alreadyRegistered"|"sameAlicesAlreadyExist"}
+     */
     static checkStatus(textToFindLower, textToReplaceLower) {
         //let textToFindLower = textToFind.toLowerCase();
         let findex = this.source.findIndex(s =>
             s.originalLowerCaseText.includes(textToFindLower)
             ||
             textToFindLower.includes(s.originalLowerCaseText)
-        );
+        );        
         if (findex == -1) {
             return "newRegister";
         } else {
             let row = this.source[findex];
+          
             return (row.replaceLowerCaseText === textToReplaceLower.toLowerCase()) ?
                 "alreadyRegistered"
                 :

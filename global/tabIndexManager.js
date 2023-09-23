@@ -184,6 +184,7 @@ class tabIndexManager {
     /** @param {HTMLElement} htele */
     focusTo(htele) {
         htele.setAttribute('tabindex', '0');
+        console.log('focusTo');
         //if(htele.isFocusableElement){
         htele.focus();
         controlOpt.selectAllText(htele);
