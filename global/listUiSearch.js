@@ -1,5 +1,5 @@
 const { objectOpt } = require("@ucbuilder:/build/common");
-const { listUiHandler } = require("@ucbuilder:/global/listUiHandler");
+const { listUiHandler } = require("@ucbuilder:/global/listUI/extended/listUiHandler");
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 
 /**
