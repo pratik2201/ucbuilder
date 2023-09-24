@@ -370,6 +370,7 @@ const __THIS = {
          * @returns {HTMLElement[]}
          */
         getArray: (obj) => {
+            if(obj==undefined)return [];
             switch (Object.getPrototypeOf(obj.constructor)) {
                 case HTMLElement: return [obj];
                 case Element: return [obj];

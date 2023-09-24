@@ -14,25 +14,40 @@ class listUiHandler {
             currentIndex: -1,
             scrollTop: 0,
         },
-
+        
         /** @type {DOMRectReadOnly}  */
         listSize: undefined,
         /** @type {HTMLElement}  */
         currentItem: undefined,
     }
     source = {
-        rows: [],
+        _rows: [],
+        get rows() {
+            return this._rows;
+        },
+        _this : () => this,
+        set rows(value) {
+            this._rows = value;
+            
+        },
+        update(){
+            this._this().length = this._rows.length;
+        }
     }
 
     /** @type {Template}  */
     itemTemplate = undefined;
-
-    get length() { return this.source.rows.length; }
-    set length(val) { this.source.rows.length = val; }
+    /** @type {number}  */ 
+    length = 0;
+    /*get length() { return this.source.rows.length; }
+    set length(val) { this.source.rows.length = val; }*/
     Records = {
-        /** @type {HTMLElement[]}  */
-        allItemHT: undefined,
-        itemAt(index) { return this.allItemHT[index]; },
+
+        /**
+         * @param {number} index 
+         * @returns {HTMLElement}
+         */
+        itemAt(index) { return undefined; },
         /** @type {HTMLElement}  */
         container: undefined,
         /** @type {HTMLElement}  */
@@ -117,7 +132,12 @@ class listUiHandler {
          * ) =>{})} & commonEvent}
          */
         newItemGenerate: new commonEvent(),
-
+        /**
+         * @type {{on:(callback = (
+         *          rect:DOMRectReadOnly
+         * ) =>{})} & commonEvent}
+         */
+        onListUISizeChanged: new commonEvent(),
     };
     set currentIndex(val) {
         this.setCurrentIndex(val);
@@ -131,6 +151,7 @@ class listUiHandler {
             this.resizeObsrv.disconnect();
         this.resizeObsrv = new window.ResizeObserver((pera) => {
             this.OPTIONS.listSize = pera[0].contentRect;
+            this.Events.onListUISizeChanged.fire(pera[0].contentRect);
         });
         this.Records.scrollerElement = val;
         this.resizeObsrv.observe(val);
@@ -142,16 +163,11 @@ class listUiHandler {
     init(lstVw, scrollerElement) {
         this.Records.container = lstVw;
         this.scrollerElement = scrollerElement;
-
-        this.Records.allItemHT = this.Records.container.childNodes;
-
         lstVw.addEventListener("dblclick", (e) => {
             let itm = this.Records.getItemFromChild(e.target);
-            if (itm != null) {
+            if (itm != null)
                 this.Events.itemDoubleClick.fire(this.currentIndex, e);
-            }
         });
-        
         this.Records.container.addEventListener("keydown", (e) => { this.keydown_listner(e); });
     }
     /**
@@ -159,7 +175,7 @@ class listUiHandler {
     * @param {MouseEvent|KeyboardEvent} evt 
     * @param {"Other"|"Keyboard"|"Mouse"} eventType
     */
-    setCurrentIndex(val,evt,eventType) { }
+    setCurrentIndex(val, evt, eventType) { }
     /** @param {KeyboardEvent} e */
     keydown_listner(e) { }
 }
