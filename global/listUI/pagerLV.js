@@ -14,7 +14,7 @@ class pagerLV extends listUiHandler {
             this._rows = value;
             this.update();
         },
-        update(){
+        update() {
             let ths = this._this();
             ths.length =
                 ths.pageInfo.extended.length = this._rows.length;
@@ -26,6 +26,7 @@ class pagerLV extends listUiHandler {
         /** @private */
         extended: {
             perPageRecord: 20,
+
             length: 0,
             _top: 0,
             _currentIndex: 0,
@@ -73,7 +74,7 @@ class pagerLV extends listUiHandler {
      * @param {MouseEvent|KeyboardEvent} evt 
      * @param {"Other"|"Keyboard"|"Mouse"} eventType
      */
-    setCurrentIndex(val, evt, eventType = "Other") {        
+    setCurrentIndex(val, evt, eventType = "Other") {
         let oldIndex = this.currentIndex;
         let changed = (val !== oldIndex);
         let _records = this.Records;
@@ -128,13 +129,7 @@ class pagerLV extends listUiHandler {
         this.Records.itemAt = (index) => {
             return this.allItemHT[index];
         }
-        this.Records.fill = () => {
-            let _records = this.Records;
-            _records.clear();
-            this.search.takeBlueprint();
-            for (let index = 0, len = 10/*this.length - 1*/; index <= len; index++)
-                this.append(index);
-        }
+
         super.keydown_listner = (e) => {
 
             switch (e.keyCode) {
@@ -175,87 +170,149 @@ class pagerLV extends listUiHandler {
                 this.Events.itemMouseUp.fire(this.currentIndex, e);
             }
         });
+        this.initNodes();
     }
+    initNodes() {
+        this.nodes.prepend = (index) => {
+            let _this = this;
+            let nodes = _this.nodes;
+            let itemNode = nodes.getNode(index);
+            this.usercontrol.Usercontrol_extended.passElement(itemNode.get(0));
+            itemNode.attr("item-index", index);
 
-    /**
-    * @param {number} index 
-    * @param {boolean} replaceNode 
-    * @returns {HTMLElement}
-    */
-    append = (index, replaceNode = false) => {
-        let _records = this.Records;
-        let itemNode = _records.getNode(index);
-        itemNode.setAttribute('item-index', index);
-
-        let allHT = this.allItemHT;
-        if (allHT.length == 0)
-            _records.container.appendChild(itemNode);
-        else {
-            if (!replaceNode) {
-                let aa = allHT[index - 1];
-                aa.after(itemNode);
-            } else {
-                allHT[index].replaceWith(itemNode);
-            }
+            this.PageManage_extended.element.$listview.prepend(itemNode);
+            this.PageManage_extended.Events.extended._onNewItemGenerate.forEach(callback => {
+                callback(itemNode, index);
+            });
+            //this.PageManage_extended.options.commonthing.dospring(itemNode);
+            nodes.initSize(itemNode);
+            return itemNode;
         }
-        this.Events.newItemGenerate.fire(itemNode, index);
-        return itemNode;
-    }
-    /**
-     * @param {number} val 
-     * @param {MouseEvent|KeyboardEvent} evt 
-     * @param {"Other"|"Keyboard"|"Mouse"} eventType
-     */
-    setCurrentIndex(val, evt, eventType = "Other") {
-        // let pageExtended = this.__extended();
-        //if (pageExtended.isFreez) return;
-        let oldIndex = this.currentIndex;
-        let changed = (val !== oldIndex);
-        let _records = this.Records;
-        let _scrollElement = _records.scrollerElement;
-        let currentItem = this.OPTIONS.currentItem;
-        let options = this.OPTIONS;
-        let allItems = this.allItemHT;
-        let session = options.SESSION;
-        if (val >= 0 && val < allItems.length) {
-            if (currentItem != undefined)
-                currentItem.setAttribute('current-index', '0');
-            session.currentIndex = val;
-            this.OPTIONS.currentItem = allItems[val];
-            currentItem = this.OPTIONS.currentItem;
-            currentItem.setAttribute('current-index', '1');
-            currentItem.focus();
-            if (_scrollElement != undefined &&
-                options.listSize != undefined) {
-                let itemTop = currentItem.offsetTop;
-                let itemHeight = currentItem.offsetHeight;
-                let bottom = itemTop + itemHeight;
-                let B_diff = options.listSize.height - bottom;
+        this.nodes.append = (index,replaceNode = false) => {
+            /*let _this = this;
+            let nodes = _this.nodes;
+            let itemNode = nodes.getNode(index);
+            this.usercontrol.Usercontrol_extended.passElement(itemNode.get(0));
+            itemNode.attr("item-index", index);
+            this.PageManage_extended.element.$listview.append(itemNode);
+            this.PageManage_extended.Events.extended._onNewItemGenerate.forEach(callback => {
+                callback(itemNode, index);
+            });
+            //this.PageManage_extended.options.commonthing.dospring(itemNode);
+            nodes.initSize(itemNode);*/
 
-                let bDiff = B_diff + _scrollElement.scrollTop;
-                if (bDiff < 0)
-                    _scrollElement.scrollTop = Math.abs(B_diff);
 
-                let tDiff = itemTop - _scrollElement.scrollTop;
-                if (tDiff < 0)
-                    _scrollElement.scrollTop = itemTop;
-                session.scrollTop = _scrollElement.scrollTop;
+            let _records = this.Records;
+            let itemNode = _records.getNode(index);
+            itemNode.setAttribute('item-index', index);
+        
+            let allHT = this.allItemHT;
+            if (allHT.length == 0)
+                _records.container.appendChild(itemNode);
+            else {
+                if (!replaceNode) {
+                    let aa = allHT[index - 1];
+                    aa.after(itemNode);
+                } else {
+                    allHT[index].replaceWith(itemNode);
+                }
             }
+            this.Events.newItemGenerate.fire(itemNode, index);
+
+
+
+
+
+
+            return itemNode;
         }
+        this.nodes.fill = () => {
+            let _records = this.pageInfo;
+            this.nodes.clear();
+            for (let index = _records.top, len = _records.minBottomIndex; index <= len; index++)
+                this.nodes.append(index);
+            //_records.render();
+        }
+    }
+/**
+* @param {number} index 
+* @param {boolean} replaceNode 
+* @returns {HTMLElement}
+*/
+append = (index, replaceNode = false) => {
+    let _records = this.Records;
+    let itemNode = _records.getNode(index);
+    itemNode.setAttribute('item-index', index);
 
-        if (changed)
-            this.Events.currentItemIndexChange.fire(oldIndex, session.currentIndex, evt, eventType);
+    let allHT = this.allItemHT;
+    if (allHT.length == 0)
+        _records.container.appendChild(itemNode);
+    else {
+        if (!replaceNode) {
+            let aa = allHT[index - 1];
+            aa.after(itemNode);
+        } else {
+            allHT[index].replaceWith(itemNode);
+        }
+    }
+    this.Events.newItemGenerate.fire(itemNode, index);
+    return itemNode;
+}
+/**
+ * @param {number} val 
+ * @param {MouseEvent|KeyboardEvent} evt 
+ * @param {"Other"|"Keyboard"|"Mouse"} eventType
+ */
+setCurrentIndex(val, evt, eventType = "Other") {
+    // let pageExtended = this.__extended();
+    //if (pageExtended.isFreez) return;
+    let oldIndex = this.currentIndex;
+    let changed = (val !== oldIndex);
+    let _records = this.Records;
+    let _scrollElement = _records.scrollerElement;
+    let currentItem = this.OPTIONS.currentItem;
+    let options = this.OPTIONS;
+    let allItems = this.allItemHT;
+    let session = options.SESSION;
+    if (val >= 0 && val < allItems.length) {
+        if (currentItem != undefined)
+            currentItem.setAttribute('current-index', '0');
+        session.currentIndex = val;
+        this.OPTIONS.currentItem = allItems[val];
+        currentItem = this.OPTIONS.currentItem;
+        currentItem.setAttribute('current-index', '1');
+        currentItem.focus();
+        if (_scrollElement != undefined &&
+            options.listSize != undefined) {
+            let itemTop = currentItem.offsetTop;
+            let itemHeight = currentItem.offsetHeight;
+            let bottom = itemTop + itemHeight;
+            let B_diff = options.listSize.height - bottom;
+
+            let bDiff = B_diff + _scrollElement.scrollTop;
+            if (bDiff < 0)
+                _scrollElement.scrollTop = Math.abs(B_diff);
+
+            let tDiff = itemTop - _scrollElement.scrollTop;
+            if (tDiff < 0)
+                _scrollElement.scrollTop = itemTop;
+            session.scrollTop = _scrollElement.scrollTop;
+        }
     }
 
-    /**
-            * @param {number} index 
-            * @returns {HTMLElement}
-            */
-    update = (index) => {
-        let rec = this.Records
-        let ele = this.append(index, true);
-        this.setCurrentIndex(this.currentIndex);
-        return ele;
-    }
+    if (changed)
+        this.Events.currentItemIndexChange.fire(oldIndex, session.currentIndex, evt, eventType);
+}
+
+/**
+        * @param {number} index 
+        * @returns {HTMLElement}
+        */
+update = (index) => {
+    let rec = this.Records
+    let ele = this.append(index, true);
+    this.setCurrentIndex(this.currentIndex);
+    return ele;
+}
 }
 module.exports = { pagerLV }

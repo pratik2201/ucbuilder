@@ -9,6 +9,7 @@ const { userControlStampRow, userControlStamp } = require("@ucbuilder:/global/us
 const { Usercontrol } = require("@ucbuilder:/Usercontrol");
 const { tptOptions } = require("@ucbuilder:/enumAndMore");
 const { transferDataNode } = require("@ucbuilder:/global/drag/transferation");
+const { commonEvent } = require("@ucbuilder:/global/commonEvent");
 
 class Template {
     /** @type {tptOptions}  */
@@ -61,20 +62,20 @@ class Template {
             let tptExt = this.extended;
             //console.log(param0.source);
             tptExt.stampRow = userControlStamp.getStamp(param0.source);
-          
+
             let ht = tptExt.stampRow.dataHT;
             Array.from(tptExt.stampRow.dataHT.attributes)
                 .filter(s => s.nodeName.toLowerCase().startsWith("x.temp-"))
                 .forEach(s => ht.removeAttribute(s.nodeName));
             tptExt.stampRow.content = ht.outerHTML;
-                      
+
             /** @type {HTMLElement}  */
             let eleHT = param0.elementHT;
             tptExt.parentUc = param0.parentUc;
 
             if (tptExt.parentUc != undefined)
                 tptExt.parentUc.ucExtends
-                    .stampRow.styler.pushChild(param0.source.fInfo.mainFilePath, 
+                    .stampRow.styler.pushChild(param0.source.fInfo.mainFilePath,
                         tptExt.stampRow.styler, eleHT.nodeName);
             param0.source.cssContents = tptExt.stampRow.styler.parseStyleSeperator(
                 (param0.source.cssContents == undefined ?
@@ -95,7 +96,7 @@ class Template {
             tptExt.Events.onDataExport = (data) =>
                 param0.parentUc.ucExtends.Events.onDataExport(data);
 
-                
+
             param0.elementHT.remove();
         },
         Events: {
@@ -120,6 +121,14 @@ class Template {
             onGenerateNode: (mainNode, jsonRow) => {
 
             },
+            /*
+            **
+             * @type {{on:(callback = (
+             *          itemnode:HTMLElement,
+             *          index:number
+             * ) =>{})} & commonEvent}
+             *
+            newItemGenerate: new commonEvent(),*/
 
             /** @param {transferDataNode} data @returns bool whether successful or not */
             onDataExport: (data) => {

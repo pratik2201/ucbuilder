@@ -15,14 +15,40 @@ class scrollerLV extends listUiHandler {
         this.allItemHT = lstVw.childNodes;
         this.Records.itemAt = (index) => {
             return this.allItemHT[index];
-        }
-        this.Records.fill = () => {
-            let _records = this.Records;
-            _records.clear();
+        };
+        this.nodes.fill = () => {
+            let _nodes = this.nodes;
+            _nodes.clear();
             this.search.takeBlueprint();
             for (let index = 0, len = this.length - 1; index <= len; index++)
-                this.append(index);
-        }
+                _nodes.append(index);
+        };
+
+        /**
+        * @param {number} index 
+        * @param {boolean} replaceNode 
+        * @returns {HTMLElement}
+        */
+        this.nodes.append = (index, replaceNode = false) => {
+            let _records = this.Records;
+            let _nodex = this.nodes;
+            let itemNode = _nodex.getNode(index);
+            itemNode.setAttribute('item-index', index);
+            let allHT = this.allItemHT;
+            if (allHT.length == 0)
+                _records.container.appendChild(itemNode);
+            else {
+                if (!replaceNode) {
+                    let aa = allHT[index - 1];
+                    aa.after(itemNode);
+                } else {
+                    allHT[index].replaceWith(itemNode);
+                }
+            }
+            this.Events.newItemGenerate.fire(itemNode, index);
+            return itemNode;
+        };
+        
         super.keydown_listner = (e) => {
 
             switch (e.keyCode) {
@@ -47,7 +73,7 @@ class scrollerLV extends listUiHandler {
                     e.preventDefault();
                     break;
             }
-        }
+        };
 
 
         lstVw.addEventListener("mousedown", (e) => {
@@ -65,30 +91,7 @@ class scrollerLV extends listUiHandler {
         });
     }
 
-    /**
-    * @param {number} index 
-    * @param {boolean} replaceNode 
-    * @returns {HTMLElement}
-    */
-    append = (index, replaceNode = false) => {
-        let _records = this.Records;
-        let itemNode = _records.getNode(index);
-        itemNode.setAttribute('item-index', index);
 
-        let allHT = this.allItemHT;
-        if (allHT.length == 0)
-            _records.container.appendChild(itemNode);
-        else {
-            if (!replaceNode) {
-                let aa = allHT[index - 1];
-                aa.after(itemNode);
-            } else {
-                allHT[index].replaceWith(itemNode);
-            }
-        }
-        this.Events.newItemGenerate.fire(itemNode, index);
-        return itemNode;
-    }
     /**
      * @param {number} val 
      * @param {MouseEvent|KeyboardEvent} evt 
@@ -135,15 +138,6 @@ class scrollerLV extends listUiHandler {
             this.Events.currentItemIndexChange.fire(oldIndex, session.currentIndex, evt, eventType);
     }
 
-    /**
-            * @param {number} index 
-            * @returns {HTMLElement}
-            */
-    update = (index) => {
-        let rec = this.Records
-        let ele = this.append(index, true);
-        this.setCurrentIndex(this.currentIndex);
-        return ele;
-    }
+
 }
 module.exports = { scrollerLV }

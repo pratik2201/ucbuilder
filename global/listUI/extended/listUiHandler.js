@@ -1,5 +1,4 @@
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
-const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
 const { listUiSearch } = require("@ucbuilder:/global/listUiSearch");
 /**
  * @typedef {import ("@ucbuilder:/Template").Template} Template
@@ -14,7 +13,7 @@ class listUiHandler {
             currentIndex: -1,
             scrollTop: 0,
         },
-        
+
         /** @type {DOMRectReadOnly}  */
         listSize: undefined,
         /** @type {HTMLElement}  */
@@ -25,22 +24,66 @@ class listUiHandler {
         get rows() {
             return this._rows;
         },
-        _this : () => this,
+        _this: () => this,
         set rows(value) {
             this._rows = value;
-            
+
         },
-        update(){
+        update() {
             this._this().length = this._rows.length;
         }
     }
 
     /** @type {Template}  */
     itemTemplate = undefined;
-    /** @type {number}  */ 
+    /** @type {number}  */
     length = 0;
-    /*get length() { return this.source.rows.length; }
-    set length(val) { this.source.rows.length = val; }*/
+
+    nodes = {
+        itemSize: {
+            hasSet: false,
+            height: 0,
+            width: 0,
+        },
+        /**
+        * @param {number} index 
+        * @returns {HTMLElement}
+        */
+        getNode: (index) => {
+            return this.itemTemplate.extended.generateNode(this.source.rows[index]);
+        },
+        /**
+        * @param {number} index 
+        * @returns {HTMLElement}
+        */
+        prepend: (index) => {
+        },
+        /**
+        * @param {number} index 
+        * @param {boolean} replaceNode 
+        * @returns {HTMLElement}
+        */
+        append: (index, replaceNode = false) => {
+        },
+        /**
+           * @param {number} index 
+           * @returns {HTMLElement}
+           */
+        update:(index)=>{
+            let nodes = this.nodes;
+            let ele = nodes.append(index, true);
+            this.setCurrentIndex(this.currentIndex);
+            return ele;
+        },
+        clear: () => {
+            this.Records.container.innerHTML = '';
+        },
+        fill: () => {
+            console.log('ds');
+        },
+    }
+
+
     Records = {
 
         /**
@@ -76,14 +119,6 @@ class listUiHandler {
         },
 
 
-
-
-        clear() {
-            this.container.innerHTML = '';
-        },
-        fill: () => {
-            console.log('ds');
-        },
     }
     Events = {
 
@@ -175,8 +210,8 @@ class listUiHandler {
     * @param {MouseEvent|KeyboardEvent} evt 
     * @param {"Other"|"Keyboard"|"Mouse"} eventType
     */
-    setCurrentIndex(val, evt, eventType) { }
+    setCurrentIndex(val, evt, eventType) { };
     /** @param {KeyboardEvent} e */
-    keydown_listner(e) { }
+    keydown_listner(e) { };
 }
 module.exports = { listUiHandler }
