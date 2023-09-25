@@ -80,7 +80,7 @@ class intenseGenerator {
         }
     }
     /**
-     * @param {Usercontrol|string|HTMLElement} val 
+     * @param {Usercontrol|string|container} val 
      * @param {Usercontrol} parentUc 
      * @return {Template}
      */

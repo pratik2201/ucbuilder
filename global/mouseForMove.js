@@ -31,7 +31,7 @@ class mouseForMove {
 
     }
     /**
-     * @param {HTMLElement} targetElement 
+     * @param {container} targetElement 
      * @param {options} pera 
      */
     bind(targetElement, pera) {

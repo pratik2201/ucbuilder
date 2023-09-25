@@ -11,7 +11,7 @@ const dragElementEventRow = {
 };
 
 class dragrow {
-    /** @type {HTMLElement[]}  */
+    /** @type {container[]}  */
     elements = [];
     event = new commonEvent();
 
@@ -23,12 +23,12 @@ class dragNode {
 
     source = {};
 
-    /** @type {HTMLElement[]}  */
+    /** @type {container[]}  */
     elementList = [];
     callback = undefined;
     hasBound = false;
     /**
-     * @param {HTMLElement[]} elementList 
+     * @param {container[]} elementList 
      * @param {Function} callback 
      */
     generateEvent(elementList, callback) {
@@ -40,7 +40,7 @@ class dragNode {
         if (elementList != undefined)
             this.elementList.push(...elementList);
     }
-    /** @param {HTMLElement[]} htAr @param {boolean} clearOldIfExists @param {boolean} bindEvent */
+    /** @param {container[]} htAr @param {boolean} clearOldIfExists @param {boolean} bindEvent */
     reFill(htAr, clearOldIfExists, bindEvent) {
         if (clearOldIfExists)
             this.elementList = [];
@@ -136,7 +136,7 @@ class dragHelper {
 
     static dragEventCallback = /** @param {DragEvent} ev */(ev) => { };
     /**
-     * @param {HTMLElement[]} htEleAr  
+     * @param {container[]} htEleAr  
      * @param {boolean} clearOldIfExists 
      * @returns {dragHelper}
      */
@@ -150,7 +150,7 @@ class dragHelper {
     lastDragEvent = undefined;
     /**
      * @param {dragHelper.dragEventCallback} callback 
-     * @param {HTMLElement[]} htEleAr 
+     * @param {container[]} htEleAr 
      * @param {boolean} clearOldIfExists 
      * @returns {dragHelper}
      */
@@ -161,7 +161,7 @@ class dragHelper {
     }
     /**
      * @param {dragHelper.dragEventCallback} callback 
-     * @param {HTMLElement[]} htEleAr 
+     * @param {container[]} htEleAr 
      * @param {boolean} clearOldIfExists 
      * @returns {dragHelper}
      */
@@ -172,7 +172,7 @@ class dragHelper {
     }
     /**
      * @param {dragHelper.dragEventCallback} callback 
-     * @param {HTMLElement[]} htEleAr 
+     * @param {container[]} htEleAr 
      * @param {boolean} clearOldIfExists 
      * @returns {dragHelper}
      */
@@ -183,7 +183,7 @@ class dragHelper {
     }
     /**
      * @param {dragHelper.dragEventCallback} callback  
-     * @param {HTMLElement[]} htEleAr 
+     * @param {container[]} htEleAr 
      * @param {boolean} clearOldIfExists 
      * @returns {dragHelper}
      */
@@ -230,7 +230,7 @@ class dragHelper {
     }
 
     /**
-     * @param {HTMLElement|HTMLElement[]} elements 
+     * @param {container|container[]} elements 
     */
     static DRAG_ME(elements,
         callOnDragStart =
@@ -328,7 +328,7 @@ class dragHelper {
 
 
     /** 
-     * @param {HTMLElement} ele 
+     * @param {container} ele 
      * @param {"dragenter"|"drop"|"dragleave"|"dragover"}  eventName
      * @returns {string}
      */

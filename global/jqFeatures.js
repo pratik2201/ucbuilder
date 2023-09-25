@@ -22,7 +22,7 @@ class dataManager {
     /** @private */
     elementIncrementId = 0;
     /**
-     * @param {HTMLElement} element 
+     * @param {container} element 
      * @returns {rowInfo}
      */
     getId = (element) => {
@@ -43,7 +43,7 @@ class dataManager {
     }
 
     /**
-     * @param {HTMLElement} targetObject 
+     * @param {container} targetObject 
      * @param {[]} arr 
      */
     fillObjectRef(targetObject, arr) {
@@ -83,7 +83,7 @@ class dataManager {
     compareElements(ele1, ele2) {
         return this.getId(ele1).id === this.getId(ele2).id;
     }
-    /** @param {HTMLElement} target */
+    /** @param {container} target */
     initElement(target) {
         target = target.querySelectorAll('*').forEach((ele) => {
             this.getId(ele);
@@ -91,7 +91,7 @@ class dataManager {
     }
     /**
      * 
-     * @param {HTMLElement} element 
+     * @param {container} element 
      * @param {string} eventName 
      * @param {string} key 
      * @param {Function} handler 
@@ -110,7 +110,7 @@ class dataManager {
     }
     /**
          * 
-         * @param {HTMLElement} element 
+         * @param {container} element 
          * @param {string} eventName 
          * @param {string} key 
          * @param {Function} handler 
@@ -133,7 +133,7 @@ class dataManager {
 
     }
     /**
-     * @param {HTMLElement} element 
+     * @param {container} element 
      * @param {string} eventName 
      * @param {Function} handler 
      */
@@ -309,9 +309,9 @@ class jqFeatures {
             return names.join(">");
         }
         HTMLElement.prototype.find = function (selector, exclude) {
-            /** @type {HTMLElement[]}  */
+            /** @type {container[]}  */
             let res = [];
-            /** @type {HTMLElement[]}  */
+            /** @type {container[]}  */
             let trec = this.querySelectorAll(selector);
             if (exclude != undefined) {
                 /** @type {string}  */
@@ -393,7 +393,7 @@ class jqFeatures {
             function (eventList, handlerCallback) {
                 let splEvt = eventList.split(" ");
                 this.forEach(
-                    /** @type {HTMLElement}  */
+                    /** @type {container}  */
                     (tar) => {
                         splEvt.forEach(function (e) {
                             jqFeatures.data.onHandler(tar, e, handlerCallback);

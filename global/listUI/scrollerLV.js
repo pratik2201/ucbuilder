@@ -4,11 +4,11 @@ class scrollerLV extends listUiHandler {
     constructor() {
         super();
     }
-    /** @type {HTMLElement[]}  */
+    /** @type {container[]}  */
     allItemHT = undefined;
     /**
-    * @param {HTMLElement} lstVw 
-    * @param {HTMLElement} scrollContainer 
+    * @param {container} lstVw 
+    * @param {container} scrollContainer 
     */
     init(lstVw, scrollContainer) {
         super.init(lstVw, scrollContainer);
@@ -27,7 +27,7 @@ class scrollerLV extends listUiHandler {
         /**
         * @param {number} index 
         * @param {boolean} replaceNode 
-        * @returns {HTMLElement}
+        * @returns {container}
         */
         this.nodes.append = (index, replaceNode = false) => {
             let _records = this.Records;
@@ -36,7 +36,7 @@ class scrollerLV extends listUiHandler {
             itemNode.setAttribute('item-index', index);
             let allHT = this.allItemHT;
             if (allHT.length == 0)
-                _records.container.appendChild(itemNode);
+                _records.lstVWEle.appendChild(itemNode);
             else {
                 if (!replaceNode) {
                     let aa = allHT[index - 1];
@@ -49,8 +49,8 @@ class scrollerLV extends listUiHandler {
             return itemNode;
         };
         
-        super.keydown_listner = (e) => {
-
+        this.Events.onkeydown = (e) => {
+         
             switch (e.keyCode) {
                 case keyBoard.keys.up: // up key
                     this.setCurrentIndex(this.currentIndex - 1, e);

@@ -27,23 +27,38 @@ class listUiHandler {
         _this: () => this,
         set rows(value) {
             this._rows = value;
-
+            this.update();
         },
         update() {
-            this._this().length = this._rows.length;
+            //this._this().length = this._rows.length;
         }
     }
 
     /** @type {Template}  */
     itemTemplate = undefined;
-    /** @type {number}  */
-    length = 0;
+  
+
+
+    get length() {
+        return this.source.rows.length;
+    }
+
 
     nodes = {
         itemSize: {
             hasSet: false,
-            height: 0,
+            /** @type {number}  */
             width: 0,
+            /** @type {number}  */
+            height: 0,
+            /** @param {HTMLElement} htEle */
+            update(htEle) {
+                this.hasSet = true;
+                setTimeout(() => {
+                    this.width = htEle.offsetWidth;
+                    this.height = htEle.offsetHeight;
+                });
+            }
         },
         /**
         * @param {number} index 
@@ -69,30 +84,49 @@ class listUiHandler {
            * @param {number} index 
            * @returns {HTMLElement}
            */
-        update:(index)=>{
+        update: (index) => {
             let nodes = this.nodes;
             let ele = nodes.append(index, true);
             this.setCurrentIndex(this.currentIndex);
             return ele;
         },
         clear: () => {
-            this.Records.container.innerHTML = '';
+            this.Records.lstVWEle.innerHTML = '';
         },
         fill: () => {
             console.log('ds');
         },
+        callToFill: () => {
+           
+        },
+        loopVisibleRows: (callback = (ele) => { return true; }) => {
+            
+        },
+        onRendar: () => {
+            this.nodes.loopVisibleRows((ele) => { return ele; });
+        },
+        /** @private  */ 
+        __doactualRendar: () => {
+            this.nodes.onRendar();
+            this.nodes.refreshHiddenCount();
+        },
+        render() {
+            this.__doactualRendar();
+        },
+        refreshHiddenCount: () => {
+        }
     }
 
 
     Records = {
-
+        
         /**
          * @param {number} index 
          * @returns {HTMLElement}
          */
         itemAt(index) { return undefined; },
         /** @type {HTMLElement}  */
-        container: undefined,
+        lstVWEle: undefined,
         /** @type {HTMLElement}  */
         scrollerElement: undefined,
         /**
@@ -100,7 +134,7 @@ class listUiHandler {
          * @returns {HTMLElement}
          */
         getItemFromChild(ele) {
-            let _container = this.container;
+            let _container = this.lstVWEle;
             while (true) {
                 if (ele.parentElement == null) { return null; }
                 else if (_container.is(ele.parentElement)) {
@@ -173,6 +207,40 @@ class listUiHandler {
          * ) =>{})} & commonEvent}
          */
         onListUISizeChanged: new commonEvent(),
+
+    
+         /**
+          * @type {{on:(callback = (
+          *          htEle:HTMLElement
+          * ) =>{})} & commonEvent}
+          */
+          beforeOldItemRemoved: new commonEvent(),
+
+
+
+        /**
+            * @param {Function} callback mandetory to call
+            * @param {KeyboardEvent} event 
+            */
+        onRowNavigationChanged: (callback = () => { }, event) => {
+            callback();
+        },
+
+        /**
+          * @returns `true` will moveto first record `false` will remain as it is
+          */
+        onReachLastRecord: () => { return false; },
+
+        /**
+         * @returns `true` will moveto last record `false` will remain as it is
+         */
+        onReachFirstRecord: () => { return false; },
+
+
+        /** @param {KeyboardEvent} e */
+        onkeydown: (e) => {
+
+        }
     };
     set currentIndex(val) {
         this.setCurrentIndex(val);
@@ -196,14 +264,15 @@ class listUiHandler {
      * @param {HTMLElement} scrollContainer 
      */
     init(lstVw, scrollerElement) {
-        this.Records.container = lstVw;
+        this.Records.lstVWEle = lstVw;
         this.scrollerElement = scrollerElement;
         lstVw.addEventListener("dblclick", (e) => {
             let itm = this.Records.getItemFromChild(e.target);
             if (itm != null)
                 this.Events.itemDoubleClick.fire(this.currentIndex, e);
         });
-        this.Records.container.addEventListener("keydown", (e) => { this.keydown_listner(e); });
+
+        scrollerElement.addEventListener("keydown", this.keydown_listner);
     }
     /**
     * @param {number} val 
@@ -211,7 +280,7 @@ class listUiHandler {
     * @param {"Other"|"Keyboard"|"Mouse"} eventType
     */
     setCurrentIndex(val, evt, eventType) { };
-    /** @param {KeyboardEvent} e */
-    keydown_listner(e) { };
+    /** @param {KeyboardEvent} evt */
+    keydown_listner = (evt) => { this.Events.onkeydown(evt); };
 }
 module.exports = { listUiHandler }

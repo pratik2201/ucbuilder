@@ -287,7 +287,7 @@ const __THIS = {
             /** 
              * @param {HTMLElement} row 
              * @param {number} index 
-             * @returns 
+             * @returns {HTMLElement}
              */
             (row, index) => { return false; }) => {
             for (let index = 0; index < htEle.children.length; index++) {
@@ -344,7 +344,7 @@ const __THIS = {
             return $ele.is(":focus");
         },
 
-        /** @param {HTMLElement} elem  */
+        /** @param {container} elem  */
         selectAllText: (elem) => {
             if (elem.select) elem.select();
             else selectElementContents(elem);
@@ -366,8 +366,8 @@ const __THIS = {
             document.execCommand(styleName, true, value);
         },
         /**
-         * @param {HTMLElement|HTMLElement[]} obj 
-         * @returns {HTMLElement[]}
+         * @param {container|container[]} obj 
+         * @returns {container[]}
          */
         getArray: (obj) => {
             if(obj==undefined)return [];
@@ -383,7 +383,7 @@ const __THIS = {
         },
         /**
          * 
-         * @param {HTMLElement} elem  only allow jquery element of `input[type=text]`/`textarea` 
+         * @param {container} elem  only allow jquery element of `input[type=text]`/`textarea` 
          * @returns {string}
          */
         getSeletectedText: (elem) => {
@@ -396,7 +396,7 @@ const __THIS = {
             return null;
         },
         /**
-         * @param {string|HTMLElement} tagName 
+         * @param {string|container} tagName 
          * @returns {boolean}
          */
         hasClosingTag: (tagName) => {
@@ -405,12 +405,12 @@ const __THIS = {
                 switch (typeof tagName) {
                     case "string":
                         tagName = tagName.toLowerCase();
-                        /** @type {HTMLElement}  */
+                        /** @type {container}  */
                         var element = document.createElement(tagName);
                         return '<' + tagName + '>' !== element.outerHTML;
                     case "object":
                         tagName = tagName.nodeName.toLowerCase();
-                        /** @type {HTMLElement}  */
+                        /** @type {container}  */
                         var element = document.createElement(tagName);
                         return '<' + tagName + '>' !== element.outerHTML;
                 }
@@ -419,18 +419,18 @@ const __THIS = {
             }
         },
         /**
-         * @param {HTMLElement} srcEle 
-         * @param {HTMLElement|string} wrapin 
-         * @returns {HTMLElement} wrapped element
+         * @param {container} srcEle 
+         * @param {container|string} wrapin 
+         * @returns {container} wrapped element
          */
         wrap(srcEle, wrapin) {
-            /** @type {HTMLElement}  */
+            /** @type {container}  */
             let e = srcEle;
-            /** @type {HTMLElement}  */
+            /** @type {container}  */
             let ne = undefined;
             switch (typeof wrapin) {
                 case "string":
-                    /** @type {HTMLElement}  */
+                    /** @type {container}  */
                     ne = document.createElement(wrapin.toLowerCase());
                     break;
                 case "object":
@@ -442,11 +442,11 @@ const __THIS = {
             return ne;
         },
         /** 
-         * @param {HTMLElement} wrapper
-         * @returns {HTMLElement[]} array of unwrapped elements
+         * @param {container} wrapper
+         * @returns {container[]} array of unwrapped elements
          */
         unwrap(wrapper) {
-            /** @type {HTMLElement[]}  */
+            /** @type {container[]}  */
             let rtrn = [];
             rtrn = Array.from(wrapper.childNodes);
             rtrn.forEach(s => {
@@ -455,15 +455,15 @@ const __THIS = {
             wrapper.remove();
             return rtrn;
         },
-        /** @param {HTMLElement} elementHT @returns {string} */
+        /** @param {container} elementHT @returns {string} */
         xPropToAttr: (elementHT) => {
             let ar = Array.from(elementHT.attributes).filter(s => s.nodeName.startsWith("x:"));
             return ar.length == 0 ? "" : " " + ar.map(s => s.nodeName + '="' + s.value + '"').join(" ") + " ";
         },
         /**
-         * @param {HTMLElement} sourceTag 
+         * @param {container} sourceTag 
          * @param {string} newName 
-         * @returns {HTMLElement}
+         * @returns {container}
          */
         renameTag: (sourceTag, newName) => {
             var d = document.createElement(newName);
