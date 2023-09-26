@@ -27,6 +27,7 @@ class listUiHandler {
         _this: () => this,
         set rows(value) {
             this._rows = value;
+           
             this.update();
         },
         update() {
@@ -219,11 +220,11 @@ class listUiHandler {
 
 
         /**
-            * @param {Function} callback mandetory to call
+            * @param {(evt:KeyboardEvent)=>{}} callback mandetory to call
             * @param {KeyboardEvent} event 
             */
         onRowNavigationChanged: (callback = () => { }, event) => {
-            callback();
+            callback(event);
         },
 
         /**
@@ -242,12 +243,13 @@ class listUiHandler {
 
         }
     };
+    
+    get currentRecord() { return this.source.rows[this.currentIndex]; }
+    get currentIndex() { return this.OPTIONS.SESSION.currentIndex; }
     set currentIndex(val) {
         this.setCurrentIndex(val);
     }
 
-    get currentRecord() { return this.source.rows[this.currentIndex]; }
-    get currentIndex() { return this.OPTIONS.SESSION.currentIndex; }
     set scrollerElement(val) {
         if (val == undefined) return;
         if (this.resizeObsrv != undefined)
