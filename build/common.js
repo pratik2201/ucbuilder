@@ -12,6 +12,7 @@ const __THIS = {
             if (thanHowMuchAboutThis < ifBeingThis)
                 return this.SafeDivision((equalToThis * thanHowMuchAboutThis), ifBeingThis);
             else {
+                //return this.SafeDivision(thanHowMuchAboutThis,equalToThis);
                 return (this.SafeDivision(thanHowMuchAboutThis, ifBeingThis) * equalToThis);
             }
         },

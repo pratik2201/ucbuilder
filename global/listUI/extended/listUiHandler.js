@@ -27,7 +27,7 @@ class listUiHandler {
         _this: () => this,
         set rows(value) {
             this._rows = value;
-           
+
             this.update();
         },
         update() {
@@ -37,7 +37,7 @@ class listUiHandler {
 
     /** @type {Template}  */
     itemTemplate = undefined;
-  
+
 
 
     get length() {
@@ -93,20 +93,21 @@ class listUiHandler {
         },
         clear: () => {
             this.Records.lstVWEle.innerHTML = '';
+            this.Events.onClearContainer.fire();
         },
         fill: () => {
             console.log('ds');
         },
         callToFill: () => {
-           
+
         },
         loopVisibleRows: (callback = (ele) => { return true; }) => {
-            
+
         },
         onRendar: () => {
             this.nodes.loopVisibleRows((ele) => { return ele; });
         },
-        /** @private  */ 
+        /** @private  */
         __doactualRendar: () => {
             this.nodes.onRendar();
             this.nodes.refreshHiddenCount();
@@ -120,7 +121,7 @@ class listUiHandler {
 
 
     Records = {
-        
+
         /**
          * @param {number} index 
          * @returns {HTMLElement}
@@ -182,6 +183,13 @@ class listUiHandler {
          */
         itemMouseUp: new commonEvent(),
 
+        /**
+         * 
+         * @type {{on:(callback = (
+         * 
+         * ) =>{})} & commonEvent}
+         */
+        onClearContainer: new commonEvent(),
 
 
 
@@ -209,13 +217,13 @@ class listUiHandler {
          */
         onListUISizeChanged: new commonEvent(),
 
-    
-         /**
-          * @type {{on:(callback = (
-          *          htEle:HTMLElement
-          * ) =>{})} & commonEvent}
-          */
-          beforeOldItemRemoved: new commonEvent(),
+
+        /**
+         * @type {{on:(callback = (
+         *          htEle:HTMLElement
+         * ) =>{})} & commonEvent}
+         */
+        beforeOldItemRemoved: new commonEvent(),
 
 
 
@@ -243,7 +251,7 @@ class listUiHandler {
 
         }
     };
-    
+
     get currentRecord() { return this.source.rows[this.currentIndex]; }
     get currentIndex() { return this.OPTIONS.SESSION.currentIndex; }
     set currentIndex(val) {

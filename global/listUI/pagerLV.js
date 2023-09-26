@@ -1,23 +1,11 @@
 
-const { looping } = require("@ucbuilder:/build/common");
+const { looping, controlOpt, objectOpt, numOpt } = require("@ucbuilder:/build/common");
 const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
 const { listUiHandler } = require("@ucbuilder:/global/listUI/extended/listUiHandler");
 const { pagerATTR, PageNavigationResult } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
-class scrollbarHandler {
-    constructor() { }
-    /** @param {pagerLV} main */
-    init(main) {
-        this.main = main;
-        this.main.Events.onListUISizeChanged.on((rect) => {
-            setTimeout(() => {
-                let h = (this.main.Records.scrollerElement.offsetHeight / this.main.nodes.itemSize.height);
-                this.main.pageInfo.extended.perPageRecord = Math.floor(h);
-                this.main.nodes.fill();
-            });
-        });
+const { Usercontrol } = require("@ucbuilder:/Usercontrol");
+const { scrollbarHandler } = require("@ucbuilder:/global/listUI/pager/scrollbarHandler");
 
-    }
-}
 
 
 class pagerLV extends listUiHandler {
@@ -134,9 +122,11 @@ class pagerLV extends listUiHandler {
     /**
     * @param {HTMLElement} lstVw 
     * @param {HTMLElement} scrollContainer 
-    */container
-    init(lstVw, scrollContainer) {
+    * @param {Usercontrol} uc 
+    */
+    init(lstVw, scrollContainer, uc) {
         super.init(lstVw, scrollContainer);
+        this.uc = uc;
         this.scroller.init(this);
         this.allItemHT = lstVw.childNodes;
 
@@ -167,10 +157,10 @@ class pagerLV extends listUiHandler {
         });
     }
     initkeyEvents() {
-        this.Records.lstVWEle.addEventListener("wheel",(e)=>{
-            if(e.deltaY>0){
+        this.Records.lstVWEle.addEventListener("wheel", (e) => {
+            if (e.deltaY > 0) {
                 this.navigatePages.pageTo.downSide.Go(e);
-            }else{
+            } else {
                 this.navigatePages.pageTo.upSide.Go(e);
             }
         });
@@ -228,6 +218,7 @@ class pagerLV extends listUiHandler {
             let _records = this.Records;
             let itemNode = _records.getNode(index);
             itemNode.data(pagerATTR.itemIndex, index);
+            itemNode.setAttribute('iscurrent', '0');
             let allHT = this.allItemHT;
             if (allHT.length == 0)
                 _records.lstVWEle.appendChild(itemNode);

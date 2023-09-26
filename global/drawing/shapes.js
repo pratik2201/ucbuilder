@@ -191,7 +191,7 @@ class Size {
             this.height = Size.getFullHeight(elestyle);
             this.width = Size.getFullWidth(elestyle);
         },
-        /** @param {container} ele  */
+        /** @param {HTMLElement} ele  */
         HTMLEle: (ele) => {
             this.height = parseFloat(ele.offsetHeight);
             this.width = parseFloat(ele.offsetWidth);
