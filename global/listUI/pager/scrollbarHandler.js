@@ -14,15 +14,37 @@ class scrollNode {
         this.dir = dir;
         this.scrollbar.setAttribute('dir', dir);
     }
-    scrollSize = 0;
+    _scrollSize = 0;
+    get scrollSize() {
+        return this._scrollSize;
+    }
+    set scrollSize(value) {
+        this._scrollSize = value;
+        this.scroller.style.height = value + "px";
+    }
     trackSize = 0;
-    scrollTop = 0;
+    _scrollTop = 0;
+    get scrollTop() {
+        return this._scrollTop;
+    }
+    set scrollTop(value) {
+        this._scrollTop = value;
+        this.scroller.style.top = value + "px";
+        this.scrollbar.setAttribute("blink","1");
+        this.beginText.innerText = this.pagerLv.pageInfo.extended.topHiddenRowCount;
+        this.endText.innerText = this.pagerLv.pageInfo.extended.bottomHiddenRowCount;
+        this.scrollbar.setAttribute("blink","0");
+    }
     /** @type {HTMLElement}  */
     scrollbar = `<scrollbar></scrollbar>`.$();
     /** @type {HTMLElement}  */
     track = `<track></track>`.$();
     /** @type {HTMLElement}  */
     scroller = `<scroller></scroller>`.$();
+    /** @type {HTMLElement}  */
+    beginText = `<scroller-text role="begin"></scroller-text>`.$();
+    /** @type {HTMLElement}  */
+    endText = `<scroller-text role="end"></scroller-text>`.$();
     /** @type {HTMLElement}  */
     beginBtn = `<begin-btn></begin-btn>`.$();
     /** @type {HTMLElement}  */
@@ -32,6 +54,8 @@ class scrollNode {
         this.scrollbar.appendChild(this.beginBtn);
         this.scrollbar.appendChild(this.track);
         this.track.appendChild(this.scroller);
+        this.scroller.appendChild(this.beginText);
+        this.scroller.appendChild(this.endText);
         this.scrollbar.appendChild(this.endBtn);
         let sbox = this.main.scrollBox;
         this.pagerLv.uc.ucExtends.passElement(sbox.hScrollbar.scrollbar);
@@ -41,35 +65,42 @@ class scrollNode {
 
 
         let mouseMv = new mouseForMove();
-        /** @type {Point}  */
-        let dpt = undefined;
-        let len = 0;
-        let isfilling = false;
-        mouseMv.bind(this.scroller, {
-            onDown: (evt, pt) => {
-                dpt = pt;
-                len = this.main.mainlength;
-                pt.y -= this.scrollTop;
-                this.hasMouseDown = true;
-            },
-            onMove: (evt, diff) => {
-                let tp = diff.y;
-                this.scrollTop = Math.max(Math.min(tp, (this.trackSize - this.scrollSize)), 0);
-                this.scroller.style.top = this.scrollTop + "px";
-                let sch = (len / (this.trackSize - this.scrollSize)) * this.scrollTop;
-                this.pagerLv.pageInfo.top = Math.floor(sch - this.pagerLv.pageInfo.extended.perPageRecord);
-                if(isfilling)return;
-                setTimeout(()=>{                    
-                    isfilling = true;
-                    this.pagerLv.nodes.fill();
-                    isfilling = false;
-                },1)
-            },
-            onUp: (evt, diff) => {
-                this.hasMouseDown = false;
+        let tstamp = this.track.stamp();
+        this.track.addEventListener("mousedown", (e) => {
+            if (e.target.stamp() === tstamp) {
+                let hs = e.offsetY - Math.floor(this.scrollSize / 2);
+                this.doContentScrollAt(hs);
+                mouseMv.doMouseDown(e);
             }
         });
 
+        mouseMv.bind(this.scroller, {
+            onDown: (evt, pt) => {
+                pt.y -= this.scrollTop;
+                this.main.scrollBox.vScrollbar.scrollbar.setAttribute('active', '1');
+                this.hasMouseDown = true;
+            },
+            onMove: (evt, diff) => {
+                this.doContentScrollAt(diff.y);
+            },
+            onUp: (evt, diff) => {
+                this.hasMouseDown = false;
+                this.main.scrollBox.vScrollbar.scrollbar.setAttribute('active', '0');
+            }
+        });
+    }
+    isfilling = false;
+    doContentScrollAt(scrollval) {
+        if (this.isfilling) return;
+        let stop = Math.max(Math.min(scrollval, (this.trackSize - this.scrollSize)), 0);
+        let sch = (this.main.mainlength / (this.trackSize - this.scrollSize)) * stop;
+        this.pagerLv.pageInfo.top = Math.floor(sch - this.pagerLv.pageInfo.extended.perPageRecord);
+        this.isfilling = true;
+        setTimeout(() => {
+            this.pagerLv.nodes.fill();
+            this.scrollTop = stop;
+            this.isfilling = false;
+        });
     }
 }
 class scrollbarHandler {
@@ -100,10 +131,9 @@ class scrollbarHandler {
             if (this.mainlength != this.main.length) { this.refresh.scrollSize(); return; }
             let tpos = this.main.pageInfo.extended.bottomIndex;
             let ts = _scrollbar.trackSize - _scrollbar.scrollSize;
-            _scrollbar.scrollTop = numOpt.gtvc(this.mainlength, ts, tpos);
-            _scrollbar.scrollTop = Math.min(_scrollbar.scrollTop, (_scrollbar.trackSize - _scrollbar.scrollSize));
+            let stop = numOpt.gtvc(this.mainlength, ts, tpos);
+            _scrollbar.scrollTop = Math.min(stop, (_scrollbar.trackSize - _scrollbar.scrollSize));
 
-            _scrollbar.scroller.style.top = _scrollbar.scrollTop + "px";
         },
         scrollSize: () => {
             this.mainlength = this.main.length;
@@ -111,7 +141,6 @@ class scrollbarHandler {
             _scrollbar.trackSize = _scrollbar.track.offsetHeight;
             let avval = this.mainlength / this.main.pageInfo.extended.perPageRecord;
             _scrollbar.scrollSize = Math.min(Math.max((_scrollbar.trackSize / avval), 15), _scrollbar.trackSize);
-            _scrollbar.scroller.style.height = _scrollbar.scrollSize + "px";
             this.refresh.scrollPosition();
         }
     }

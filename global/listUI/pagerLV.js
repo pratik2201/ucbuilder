@@ -240,16 +240,22 @@ class pagerLV extends listUiHandler {
             for (let index = _records.top, len = _records.minBottomIndex; index <= len; index++)
                 this.nodes.append(index);
         }
+        let calledToFill = false;
         this.nodes.callToFill = () => {
-            if (this.Events.beforeOldItemRemoved.length != 0) {
-                let cntnr = this.Records.lstVWEle.children;
-                for (let index = 0; index < cntnr.length; index++) {
-                    const element = cntnr.item(index);
-                    this.Events.beforeOldItemRemoved.fire(element);
-                    element.remove();
+            if (calledToFill) return;
+            calledToFill = true;
+            setTimeout(() => {
+                if (this.Events.beforeOldItemRemoved.length != 0) {
+                    let cntnr = this.Records.lstVWEle.children;
+                    for (let index = 0; index < cntnr.length; index++) {
+                        const element = cntnr.item(index);
+                        this.Events.beforeOldItemRemoved.fire(element);
+                        element.remove();
+                    }
                 }
-            }
-            this.nodes.fill();
+                this.nodes.fill();
+                calledToFill = false;
+            });
         }
         this.nodes.loopVisibleRows = (callback = (ele) => { return true; }) => {
             let _records = this.Records;
