@@ -19,7 +19,7 @@ class Point {
     }
 
     applyHT = {
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         both: () => {
             return {
                 left: `${this.x}px`,
@@ -92,7 +92,7 @@ class Point {
                     break;
             }
         },
-        /** @param {container} ele  */
+        /** @param {HTMLElement} ele  */
         HTMLEle: (ele) => {
             this.x = parseFloat(ele.offsetLeft);
             this.y = parseFloat(ele.offsetTop);
@@ -108,7 +108,7 @@ class Point {
 class Size {
     constructor(width = 0, height = 0) { this.width = width; this.height = height; }
     applyHT = {
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         both: (elementHT) => {
 
             return {
@@ -116,13 +116,13 @@ class Size {
                 height: `${this.height}px`,
             }
         },
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         width: (elementHT) => {
             return {
                 width: `${this.width}px`,
             }
         },
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         height: (elementHT) => {
             return {
                 height: `${this.height}px`,
@@ -261,38 +261,38 @@ class Rect {
         },
     }
     applyJQ = {
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         all: (elementHT) => {
             this.size.applyJQ.both(elementHT);
             this.location.applyJQ.both(elementHT);
 
         },
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         size: (elementJQ) => {
             this.size.applyJQ.both(elementHT);
         },
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         location: (elementJQ) => {
             this.location.applyJQ.both(elementHT);
         },
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         width: (elementJQ) => {
             this.size.applyJQ.width(elementHT);
         },
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         height: (elementJQ) => {
             this.size.applyJQ.height(elementHT);
         },
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         left: (elementJQ) => {
             this.location.applyJQ.left(elementHT);
         },
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         top: (elementJQ) => {
             this.location.applyJQ.top(elementHT);
         },
 
-        /** @param {container} elementHT */
+        /** @param {HTMLElement} elementHT */
         leftwidth: (elementJQ) => {
             elementJQ.css({
                 "left": this.location.x,
@@ -366,7 +366,7 @@ class Rect {
             this.location.setBy.style(elestyle);
             this.size.setBy.style(elestyle);
         },
-        /** @param {container} ele  */
+        /** @param {HTMLElement} ele  */
         HTMLEle: (ele) => {
             this.location.setBy.HTMLEle(ele);
             this.size.setBy.HTMLEle(ele);

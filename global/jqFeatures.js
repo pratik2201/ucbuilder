@@ -22,7 +22,7 @@ class dataManager {
     /** @private */
     elementIncrementId = 0;
     /**
-     * @param {container} element 
+     * @param {HTMLElement} element 
      * @returns {rowInfo}
      */
     getId = (element) => {
@@ -43,7 +43,7 @@ class dataManager {
     }
 
     /**
-     * @param {container} targetObject 
+     * @param {HTMLElement} targetObject 
      * @param {[]} arr 
      */
     fillObjectRef(targetObject, arr) {
@@ -83,7 +83,7 @@ class dataManager {
     compareElements(ele1, ele2) {
         return this.getId(ele1).id === this.getId(ele2).id;
     }
-    /** @param {container} target */
+    /** @param {HTMLElement} target */
     initElement(target) {
         target = target.querySelectorAll('*').forEach((ele) => {
             this.getId(ele);
@@ -91,7 +91,7 @@ class dataManager {
     }
     /**
      * 
-     * @param {container} element 
+     * @param {HTMLElement} element 
      * @param {string} eventName 
      * @param {string} key 
      * @param {Function} handler 
@@ -110,7 +110,7 @@ class dataManager {
     }
     /**
          * 
-         * @param {container} element 
+         * @param {HTMLElement} element 
          * @param {string} eventName 
          * @param {string} key 
          * @param {Function} handler 
@@ -133,7 +133,7 @@ class dataManager {
 
     }
     /**
-     * @param {container} element 
+     * @param {HTMLElement} element 
      * @param {string} eventName 
      * @param {Function} handler 
      */
@@ -393,7 +393,7 @@ class jqFeatures {
             function (eventList, handlerCallback) {
                 let splEvt = eventList.split(" ");
                 this.forEach(
-                    /** @type {container}  */
+                    /** @type {HTMLElement}  */
                     (tar) => {
                         splEvt.forEach(function (e) {
                             jqFeatures.data.onHandler(tar, e, handlerCallback);

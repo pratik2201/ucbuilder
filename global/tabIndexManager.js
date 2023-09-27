@@ -2,9 +2,9 @@ const {  propOpt, controlOpt, objectOpt, strOpt } = require("@ucbuilder:/build/c
 const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
 
 const tabIndexRow = {
-    /** @type {container}  */
+    /** @type {HTMLElement}  */
     container: undefined,
-    /** @type {container}  */
+    /** @type {HTMLElement}  */
     element: undefined,
     /** @type {number}  */
     tIndex: -1,
@@ -12,12 +12,12 @@ const tabIndexRow = {
 class tabIndexManager {
     constructor() {
     }
-    /** @type {container}  */
+    /** @type {HTMLElement}  */
     mainHT = undefined;
-    /**  @param {container} mainHT */
+    /**  @param {HTMLElement} mainHT */
     init(mainHT) {
         this.mainHT = mainHT;
-        /** @type {container}  */
+        /** @type {HTMLElement}  */
         let htEle = undefined;
         /** @type {number}  */
         let tIndex = -1;
@@ -31,7 +31,7 @@ class tabIndexManager {
                     ev.preventDefault();
                     break;
                 case keyBoard.keys.left:
-                    /** @type {container}  */
+                    /** @type {HTMLElement}  */
                     htEle = ev.target;
                     tIndex = this.getTindex(htEle);
                     if (tIndex != null) {
@@ -43,7 +43,7 @@ class tabIndexManager {
                     }
                     break;
                 case keyBoard.keys.right:
-                    /** @type {container}  */
+                    /** @type {HTMLElement}  */
                     htEle = ev.target;
                     tIndex = this.getTindex(htEle);
                     if (tIndex != null) {
@@ -57,7 +57,7 @@ class tabIndexManager {
             }
         });
         document.addEventListener("mousedown", (ev) => {
-            /** @type {container}  */
+            /** @type {HTMLElement}  */
             htEle = ev.target;
             tIndex = this.getTindex(htEle);
             if (tIndex != null) {
@@ -73,7 +73,7 @@ class tabIndexManager {
     }
     /**
     * 
-    * @param {container} target 
+    * @param {HTMLElement} target 
     */
     keymovePrev(target) {
         let _this = this;
@@ -85,7 +85,7 @@ class tabIndexManager {
 
     /**
      * 
-     * @param {container} target 
+     * @param {HTMLElement} target 
      * @param {number} tIndex
      */
     movePrev(target, tIndex = -1) {
@@ -113,7 +113,7 @@ class tabIndexManager {
     }
     /**
     * 
-    * @param {container} target 
+    * @param {HTMLElement} target 
     */
     keymoveNext(target) {
         let _this = this;
@@ -125,7 +125,7 @@ class tabIndexManager {
 
     /**
      * 
-     * @param {container} target 
+     * @param {HTMLElement} target 
      * @param {number} tIndex
      */
     moveNext(target, tIndex = -1) {
@@ -181,7 +181,7 @@ class tabIndexManager {
 
 
 
-    /** @param {container} htele */
+    /** @param {HTMLElement} htele */
     focusTo(htele) {
         htele.setAttribute('tabindex', '0');
         console.log('focusTo');
@@ -192,7 +192,7 @@ class tabIndexManager {
     }
 
     /**
-     * @param {container} target 
+     * @param {HTMLElement} target 
      * @returns {number|null}
      */
     getTindex(target) {
@@ -205,14 +205,14 @@ class tabIndexManager {
 
 
     /**
-     * @param {container} target 
-     * @returns {container}
+     * @param {HTMLElement} target 
+     * @returns {HTMLElement}
      */
     getClosest(target) {
         return target.parentElement.closest("[x-tabindex]");
     }
     /** 
-     * @param {container} container 
+     * @param {HTMLElement} container 
      * @returns {tabIndexRow}
      */
     getChildIfExist(container, index, giveMeLastElement = false) {
@@ -255,7 +255,7 @@ class tabIndexManager {
         }
         /**
          * 
-         * @param {container} container 
+         * @param {HTMLElement} container 
          * @param {number} index 
          * @param {container[]} elements 
          * @param {number} calltime
@@ -264,9 +264,9 @@ class tabIndexManager {
         function getMaxTabIndexElement(container, index, elements, calltime = 0) {
             calltime++;
             let maxRtrn = {
-                /** @type {container}  */
+                /** @type {HTMLElement}  */
                 container: container,
-                /** @type {container}  */
+                /** @type {HTMLElement}  */
                 element: undefined,
                 /** @type {number}  */
                 tIndex: -1,
@@ -298,7 +298,7 @@ class tabIndexManager {
 
     allowNodePattern = /INPUT|SELECT|BUTTON|TEXTAREA/i;
     /**x
-    * @param {container} htEle
+    * @param {HTMLElement} htEle
     * @returns {boolean}
     */
     isEditableElement(htEle) {
@@ -311,7 +311,7 @@ class tabIndexManager {
     }
     /**
      * 
-     * @param {container} htEle
+     * @param {HTMLElement} htEle
      * @returns {boolean}
      */
     isFocusableElement(htEle) {
@@ -331,8 +331,8 @@ class tabIndexManager {
 
     /**
      * 
-     * @param {container} child 
-     * @param {container} container 
+     * @param {HTMLElement} child 
+     * @param {HTMLElement} container 
      */
     isDirectClose(child, container) {
         return child.parentElement.closest(`[x-tabindex]`).is(container);

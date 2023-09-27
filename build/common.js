@@ -345,7 +345,7 @@ const __THIS = {
             return $ele.is(":focus");
         },
 
-        /** @param {container} elem  */
+        /** @param {HTMLElement} elem  */
         selectAllText: (elem) => {
             if (elem.select) elem.select();
             else selectElementContents(elem);
@@ -384,7 +384,7 @@ const __THIS = {
         },
         /**
          * 
-         * @param {container} elem  only allow jquery element of `input[type=text]`/`textarea` 
+         * @param {HTMLElement} elem  only allow jquery element of `input[type=text]`/`textarea` 
          * @returns {string}
          */
         getSeletectedText: (elem) => {
@@ -406,12 +406,12 @@ const __THIS = {
                 switch (typeof tagName) {
                     case "string":
                         tagName = tagName.toLowerCase();
-                        /** @type {container}  */
+                        /** @type {HTMLElement}  */
                         var element = document.createElement(tagName);
                         return '<' + tagName + '>' !== element.outerHTML;
                     case "object":
                         tagName = tagName.nodeName.toLowerCase();
-                        /** @type {container}  */
+                        /** @type {HTMLElement}  */
                         var element = document.createElement(tagName);
                         return '<' + tagName + '>' !== element.outerHTML;
                 }
@@ -420,18 +420,18 @@ const __THIS = {
             }
         },
         /**
-         * @param {container} srcEle 
+         * @param {HTMLElement} srcEle 
          * @param {container|string} wrapin 
-         * @returns {container} wrapped element
+         * @returns {HTMLElement} wrapped element
          */
         wrap(srcEle, wrapin) {
-            /** @type {container}  */
+            /** @type {HTMLElement}  */
             let e = srcEle;
-            /** @type {container}  */
+            /** @type {HTMLElement}  */
             let ne = undefined;
             switch (typeof wrapin) {
                 case "string":
-                    /** @type {container}  */
+                    /** @type {HTMLElement}  */
                     ne = document.createElement(wrapin.toLowerCase());
                     break;
                 case "object":
@@ -443,7 +443,7 @@ const __THIS = {
             return ne;
         },
         /** 
-         * @param {container} wrapper
+         * @param {HTMLElement} wrapper
          * @returns {container[]} array of unwrapped elements
          */
         unwrap(wrapper) {
@@ -456,15 +456,15 @@ const __THIS = {
             wrapper.remove();
             return rtrn;
         },
-        /** @param {container} elementHT @returns {string} */
+        /** @param {HTMLElement} elementHT @returns {string} */
         xPropToAttr: (elementHT) => {
             let ar = Array.from(elementHT.attributes).filter(s => s.nodeName.startsWith("x:"));
             return ar.length == 0 ? "" : " " + ar.map(s => s.nodeName + '="' + s.value + '"').join(" ") + " ";
         },
         /**
-         * @param {container} sourceTag 
+         * @param {HTMLElement} sourceTag 
          * @param {string} newName 
-         * @returns {container}
+         * @returns {HTMLElement}
          */
         renameTag: (sourceTag, newName) => {
             var d = document.createElement(newName);

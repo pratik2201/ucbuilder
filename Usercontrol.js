@@ -187,7 +187,7 @@ class Usercontrol {
         idList: [],
         /**
          * @param {boolean} applySubTree 
-         * @returns {container}
+         * @returns {HTMLElement}
          */
         passElement: (ele, applySubTree = true) => {
             let uExt = this.ucExtends;
@@ -199,9 +199,9 @@ class Usercontrol {
         /** @type {codeFileInfo} */
         fileInfo: undefined,
 
-        /** @type {container}  */
+        /** @type {HTMLElement}  */
         wrapperHT: undefined,
-        /** @type {container}  */
+        /** @type {HTMLElement}  */
         stageHT: undefined,
         /** @type {Usercontrol} */
         form: undefined,
@@ -334,7 +334,7 @@ class Usercontrol {
                     element.setAttribute('active', '0');
                     let eles = element.querySelectorAll(controlOpt.ATTR.editableControls);
                     eles.forEach(
-                        /** @param {container} e */
+                        /** @param {HTMLElement} e */
                         e => {
                             let disableAttr = e.getAttribute("disabled");
                             if (disableAttr != null) e.data(Usercontrol.ATTR.DISABLE.OLD_VALUE, disableAttr);
@@ -345,7 +345,7 @@ class Usercontrol {
                     element.setAttribute('active', '1');
                     let eles = element.querySelectorAll(`[${Usercontrol.ATTR.DISABLE.NEW_VALUE}]`);
                     eles.forEach(
-                        /** @param {container} e */
+                        /** @param {HTMLElement} e */
                         e => {
                             let disableAttr = e.data(Usercontrol.ATTR.DISABLE.OLD_VALUE);
                             if (disableAttr != undefined) e.setAttribute('disabled', disableAttr);
@@ -377,7 +377,7 @@ class Usercontrol {
                 }
                 /**
                  * @param {string} itmpath 
-                 * @param {container} htEle 
+                 * @param {HTMLElement} htEle 
                  */
                 function fillObj(itmpath, htEle) {
                     if (htEle != undefined)

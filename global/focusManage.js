@@ -2,7 +2,7 @@ class focusManage{
     constructor(){
 
     }    
-    /** @type {container}  */ 
+    /** @type {HTMLElement}  */ 
     currentElement = undefined;
     fatch(){
         this.currentElement = undefined;

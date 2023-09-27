@@ -43,7 +43,7 @@ class Template {
 
         /**
          * @param {{}} jsonRow 
-         * @returns {container}
+         * @returns {HTMLElement}
          */
         generateNode(jsonRow) {
 
@@ -69,7 +69,7 @@ class Template {
                 .forEach(s => ht.removeAttribute(s.nodeName));
             tptExt.stampRow.content = ht.outerHTML;
 
-            /** @type {container}  */
+            /** @type {HTMLElement}  */
             let eleHT = param0.elementHT;
             tptExt.parentUc = param0.parentUc;
 
@@ -114,7 +114,7 @@ class Template {
             */
             onGenerateContent: (content, jsonRow) => content,
             /**
-             * @param {container} mainNode 
+             * @param {HTMLElement} mainNode 
              * @param {{}} jsonRow 
              * @returns {string}
              */
@@ -142,7 +142,7 @@ class Template {
         },
         /**
             * @param {string} skey 
-            * @param {container} fromHT 
+            * @param {HTMLElement} fromHT 
             * @returns {container[]}
             */
         find: (skey, fromHT) => {
@@ -159,7 +159,7 @@ class Template {
             return Array.from(ext.wrapper.elementHT.querySelectorAll(ar.join(",")));
         },
         /**
-       * @param {container} fromHT 
+       * @param {HTMLElement} fromHT 
        * @returns {container{}}
        */
         getAllControls: (specific, fromHT) => {
@@ -183,7 +183,7 @@ class Template {
             }
             /**
              * @param {string} itmpath 
-             * @param {container} htEle 
+             * @param {HTMLElement} htEle 
              */
             function fillObj(itmpath, htEle) {
                 if (htEle != undefined)
@@ -195,7 +195,7 @@ class Template {
         },
 
         templeteList: {},
-        /** @param {container} mainNode */
+        /** @param {HTMLElement} mainNode */
         fillTemplates: (mainNode) => {
             let ext = this.extended;
             /** @type {{key:string,node:TempleteNode}[]}  */
@@ -204,7 +204,7 @@ class Template {
             if (nodes.length == 0) {
                 ext.templeteList[propOpt.ATTR.TEMPLETE_DEFAULT] = mainNode.outerHTML;
             } else {
-                /** @type {container}  */
+                /** @type {HTMLElement}  */
                 let mNode = mainNode.cloneNode(true);
                 mNode.innerHTML = "";
                 nodes.forEach(node => {
@@ -249,7 +249,7 @@ class TempleteNode {
         */
         onGenerateContent: (content, jsonRow) => content,
         /**
-         * @param {container} mainNode 
+         * @param {HTMLElement} mainNode 
          * @param {{}} jsonRow 
          * @returns {string}
          */

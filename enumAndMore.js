@@ -44,7 +44,7 @@ const ucOptions = {
     source: newObjectOpt.clone(sourceOptions),
     /** @type {Usercontrol}  uc parent `Usercontrol` object reference */
     parentUc: undefined,
-    /** @type {container}  */
+    /** @type {HTMLElement}  */
     loadAt: undefined,
 
     events: {
@@ -60,12 +60,12 @@ const ucOptions = {
         },
     },
 
-    /** @type {container}  */
+    /** @type {HTMLElement}  */
     wrapperHT: undefined,
 
 };
 const tptOptions = {
-    /** @type {container}  */
+    /** @type {HTMLElement}  */
     elementHT: undefined,
 
     source: newObjectOpt.clone(sourceOptions),

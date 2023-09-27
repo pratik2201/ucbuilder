@@ -68,21 +68,7 @@ class pagerLV extends listUiHandler {
     /** @type {number}  */
     get currentIndex() { return this.OPTIONS.SESSION.currentIndex; }
     set currentIndex(val) { this.setCurrentIndex(val); }
-    /*set currentIndex(val) {
-        let pgInfo = this.pageInfo;
-        let pgInfoExt = pgInfo.extended;
-        let bIndex = pgInfo.minBottomIndex;
-        if (val >= pgInfoExt._top && val <= bIndex) {
-            this.OPTIONS.SESSION.currentIndex = val;
-        } else {
-            if (val < pgInfoExt._top) {
-                pgInfo.top = val;
-            } else {
-                pgInfo.top = val - pgInfoExt.perPageRecord + 1;
-            }
-            this.OPTIONS.SESSION.currentIndex = val;
-        }
-    }*/
+
     /**
      * @param {number} val 
      * @param {MouseEvent|KeyboardEvent} evt 
@@ -169,13 +155,9 @@ class pagerLV extends listUiHandler {
             switch (e.keyCode) {
                 case keyBoard.keys.up: // up key
                     this.navigatePages.moveTo.prevSide.Go(e);
-                    //this.setCurrentIndex(this.currentIndex - 1, e, "Keyboard");
-                    //e.preventDefault();
                     break;
                 case keyBoard.keys.down: // down key
                     this.navigatePages.moveTo.nextSide.Go(e);
-                    //this.setCurrentIndex(this.currentIndex + 1, e, "Keyboard");
-                    //e.preventDefault();
                     break;
                 case keyBoard.keys.pageUp: // page up key
                     this.navigatePages.pageTo.upSide.Go(e);
@@ -184,12 +166,14 @@ class pagerLV extends listUiHandler {
                     this.navigatePages.pageTo.downSide.Go(e);
                     break;
                 case keyBoard.keys.end: // end key
-                    //this.setCurrentIndex(this.Records.length - 1, e);
-                    //e.preventDefault();
+                    this.currentIndex = this.length - 1;
+                    this.nodes.callToFill();
+                    this.nodes.onRendar();
                     break;
                 case keyBoard.keys.home: // home key
-                    //this.setCurrentIndex(0, e);
-                    //e.preventDefault();
+                    this.currentIndex = 0;
+                    this.nodes.callToFill();
+                    this.nodes.onRendar();
                     break;
             }
         };
@@ -254,6 +238,7 @@ class pagerLV extends listUiHandler {
                     }
                 }
                 this.nodes.fill();
+                this.currentIndex = this.currentIndex;
                 calledToFill = false;
             });
         }

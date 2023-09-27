@@ -18,12 +18,12 @@ class userControlStampRow {
     /** @type {string}  */
     content = "";
 
-    /** @type {container}  */
+    /** @type {HTMLElement}  */
     dataHT = undefined;
 
     fUniq = "";
     /**
-     * @param {container} ele
+     * @param {HTMLElement} ele
      * @returns {boolean} 
      */
     isOurElement(ele) {

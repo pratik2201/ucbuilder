@@ -49,8 +49,8 @@ const newObjectOpt = {
         return JSON.parse(JSON.stringify(obj));
     },
     /**
-     * @param {container} from 
-     * @param {container} to 
+     * @param {HTMLElement} from 
+     * @param {HTMLElement} to 
      */
     copyAttr(from, to) {
         Array.from(from.attributes).forEach(s =>

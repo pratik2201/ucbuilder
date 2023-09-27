@@ -8,7 +8,7 @@ const measurementRow = {
     data: {}
 };
 const gridResizerInitOptions = {
-    /** @type {container}  */
+    /** @type {HTMLElement}  */
     grid: undefined,
     nodeName: "",
 }

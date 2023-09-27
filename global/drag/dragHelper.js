@@ -328,7 +328,7 @@ class dragHelper {
 
 
     /** 
-     * @param {container} ele 
+     * @param {HTMLElement} ele 
      * @param {"dragenter"|"drop"|"dragleave"|"dragover"}  eventName
      * @returns {string}
      */

@@ -7,8 +7,8 @@ class scrollerLV extends listUiHandler {
     /** @type {container[]}  */
     allItemHT = undefined;
     /**
-    * @param {container} lstVw 
-    * @param {container} scrollContainer 
+    * @param {HTMLElement} lstVw 
+    * @param {HTMLElement} scrollContainer 
     */
     init(lstVw, scrollContainer) {
         super.init(lstVw, scrollContainer);
@@ -27,7 +27,7 @@ class scrollerLV extends listUiHandler {
         /**
         * @param {number} index 
         * @param {boolean} replaceNode 
-        * @returns {container}
+        * @returns {HTMLElement}
         */
         this.nodes.append = (index, replaceNode = false) => {
             let _records = this.Records;

@@ -12,7 +12,7 @@ class ResourcesUC {
     static resources = {};
 
 
-    /** @param {container} element @returns {Usercontrol} */
+    /** @param {HTMLElement} element @returns {Usercontrol} */
     static getBaseObject(element) {
 
         return element.data(propOpt.ATTR.BASE_OBJECT);

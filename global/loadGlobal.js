@@ -4,7 +4,7 @@ const { rootPathHandler } = require("@ucbuilder:/global/rootPathHandler");
 
 class row {
     finfo = new fileInfo();
-    /** @type {container} only for style sheets */
+    /** @type {HTMLElement} only for style sheets */
     elementHT = undefined;
     stamp = "";
     fUniq = "";
@@ -14,7 +14,7 @@ class loadGlobal {
     constructor() {
 
     }
-    /** @type {container}  */
+    /** @type {HTMLElement}  */
     static resourcesHT = `<programres></programres>`.$();
     static init() {
         this.resourcesHT.setAttribute("stamp", 'program.stamp');

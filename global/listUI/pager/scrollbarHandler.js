@@ -6,7 +6,7 @@ const { mouseForMove } = require("@ucbuilder:/global/mouseForMove");
 class scrollNode {
     get pagerLv() { return this.main.main; }
     /**
-     *  @param {"h"|"v"} dir 
+     * @param {"h"|"v"} dir 
      * @param {scrollbarHandler} main
      */
     constructor(dir, main) {
@@ -14,6 +14,26 @@ class scrollNode {
         this.dir = dir;
         this.scrollbar.setAttribute('dir', dir);
     }
+
+    refresh = {
+        scrollPosition: () => {            
+            if (this.hasMouseDown) return;
+            if (this.mainlength != this.pagerLv.length) { this.refresh.scrollSize(); return; }
+            let tpos = this.pagerLv.pageInfo.extended.bottomIndex;
+            let ts = this.trackSize - this.scrollSize;
+            let stop = numOpt.gtvc(this.mainlength, ts, tpos);
+            this.scrollTop = Math.min(stop, (this.trackSize - this.scrollSize));
+
+        },
+        scrollSize: () => {
+            this.mainlength = this.pagerLv.length;
+            this.trackSize = this.track.offsetHeight;
+            let avval = this.mainlength / this.pagerLv.pageInfo.extended.perPageRecord;
+            this.scrollSize = Math.min(Math.max((this.trackSize / avval), 15), this.trackSize);
+            this.refresh.scrollPosition();
+        }
+    }
+    mainlength = 0;
     _scrollSize = 0;
     get scrollSize() {
         return this._scrollSize;
@@ -30,10 +50,8 @@ class scrollNode {
     set scrollTop(value) {
         this._scrollTop = value;
         this.scroller.style.top = value + "px";
-        this.scrollbar.setAttribute("blink","1");
         this.beginText.innerText = this.pagerLv.pageInfo.extended.topHiddenRowCount;
         this.endText.innerText = this.pagerLv.pageInfo.extended.bottomHiddenRowCount;
-        this.scrollbar.setAttribute("blink","0");
     }
     /** @type {HTMLElement}  */
     scrollbar = `<scrollbar></scrollbar>`.$();
@@ -46,9 +64,9 @@ class scrollNode {
     /** @type {HTMLElement}  */
     endText = `<scroller-text role="end"></scroller-text>`.$();
     /** @type {HTMLElement}  */
-    beginBtn = `<begin-btn></begin-btn>`.$();
+    beginBtn = `<scroller-btn role="begin"></scroller-btn>`.$();
     /** @type {HTMLElement}  */
-    endBtn = `<end-btn></end-btn>`.$();
+    endBtn = `<scroller-btn role="end"></scroller-btn>`.$();
     hasMouseDown = false;
     getComplete() {
         this.scrollbar.appendChild(this.beginBtn);
@@ -57,13 +75,11 @@ class scrollNode {
         this.scroller.appendChild(this.beginText);
         this.scroller.appendChild(this.endText);
         this.scrollbar.appendChild(this.endBtn);
-        let sbox = this.main.scrollBox;
-        this.pagerLv.uc.ucExtends.passElement(sbox.hScrollbar.scrollbar);
-        this.pagerLv.uc.ucExtends.passElement(sbox.vScrollbar.scrollbar);
-        this.pagerLv.Records.scrollerElement.appendChild(sbox.hScrollbar.scrollbar);
-        this.pagerLv.Records.scrollerElement.appendChild(sbox.vScrollbar.scrollbar);
-
-
+        if(this.scrollbar.parentElement==null){
+            this.pagerLv.uc.ucExtends.passElement(this.scrollbar);
+            this.pagerLv.Records.scrollerElement.appendChild(this.scrollbar);
+        }
+        
         let mouseMv = new mouseForMove();
         let tstamp = this.track.stamp();
         this.track.addEventListener("mousedown", (e) => {
@@ -93,7 +109,7 @@ class scrollNode {
     doContentScrollAt(scrollval) {
         if (this.isfilling) return;
         let stop = Math.max(Math.min(scrollval, (this.trackSize - this.scrollSize)), 0);
-        let sch = (this.main.mainlength / (this.trackSize - this.scrollSize)) * stop;
+        let sch = (this.mainlength / (this.trackSize - this.scrollSize)) * stop;
         this.pagerLv.pageInfo.top = Math.floor(sch - this.pagerLv.pageInfo.extended.perPageRecord);
         this.isfilling = true;
         setTimeout(() => {
@@ -113,7 +129,7 @@ class scrollbarHandler {
 
         init: () => {
             let sbox = this.scrollBox;
-            sbox.hScrollbar.getComplete();
+            //sbox.hScrollbar.getComplete();
             sbox.vScrollbar.getComplete();
 
         },
@@ -121,36 +137,17 @@ class scrollbarHandler {
             //  this.main.Records.lstVWEle.append(this.scrollBox.scrollbar);
         }
     }
-    mainlength = 0;
+    //mainlength = 0;
     /** @type {MutationObserver}  */
     mutate = undefined;
-    refresh = {
-        scrollPosition: () => {
-            let _scrollbar = this.scrollBox.vScrollbar;
-            if (_scrollbar.hasMouseDown) return;
-            if (this.mainlength != this.main.length) { this.refresh.scrollSize(); return; }
-            let tpos = this.main.pageInfo.extended.bottomIndex;
-            let ts = _scrollbar.trackSize - _scrollbar.scrollSize;
-            let stop = numOpt.gtvc(this.mainlength, ts, tpos);
-            _scrollbar.scrollTop = Math.min(stop, (_scrollbar.trackSize - _scrollbar.scrollSize));
-
-        },
-        scrollSize: () => {
-            this.mainlength = this.main.length;
-            let _scrollbar = this.scrollBox.vScrollbar;
-            _scrollbar.trackSize = _scrollbar.track.offsetHeight;
-            let avval = this.mainlength / this.main.pageInfo.extended.perPageRecord;
-            _scrollbar.scrollSize = Math.min(Math.max((_scrollbar.trackSize / avval), 15), _scrollbar.trackSize);
-            this.refresh.scrollPosition();
-        }
-    }
+    get refresh(){ return this.scrollBox.vScrollbar.refresh; }
     viewSize = new Size();
     /** @param {pagerLV} main */
     init(main) {
         this.main = main;
         this.scrollBox.init();
         this.mutate = new MutationObserver((e) => {
-            this.refresh.scrollPosition();
+            this.refresh.scrollPosition();           
         });
         this.mutate.observe(this.main.Records.lstVWEle, { childList: true });
 
