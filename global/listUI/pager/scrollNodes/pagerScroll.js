@@ -2,26 +2,11 @@ const { Point, Size } = require("@ucbuilder:/global/drawing/shapes");
 const { numOpt } = require("@ucbuilder:/build/common");
 const { mouseForMove } = require("@ucbuilder:/global/mouseForMove");
 const { scrollbarHandler } = require("@ucbuilder:/global/listUI/pager/scrollbarHandler");
+const { namingConversion, scrollerUIElements } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
+const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 class pagerScroll {
-    nameList = {
-        offsetPoint: "offsetY",
-        offsetSize: "offsetHeight",
-        position: "top",
-        point: "y",
-        size: "height",
-        initByType(dir) {
-            switch (dir) {
-                case 'h':
-                    this.offsetPoint = "offsetX";
-                    this.offsetSize = "offsetWidth";
-                    this.point= "x";
-                    this.position = "left";
-                    this.size = "width";
-                    break;
-                case 'v': break;
-            }
-        }
-    };
+    
+    nameList = newObjectOpt.copyProps(namingConversion,{});
     get pagerLv() { return this.main.main; }
     /**
      * @param {"h"|"v"} dir 
@@ -31,6 +16,7 @@ class pagerScroll {
         this.main = main;
         this.nameList.initByType(dir);
         this.dir = dir;
+        this.nodes.initByType('pager');
         this.nodes.scrollbar.setAttribute('dir', dir);
     }
 
@@ -72,24 +58,8 @@ class pagerScroll {
         this.nodes.beginText.innerText = this.pagerLv.pageInfo.extended.topHiddenRowCount;
         this.nodes.endText.innerText = this.pagerLv.pageInfo.extended.bottomHiddenRowCount;
     }
-    nodes = {
-        /** @type {HTMLElement}  */
-        scrollbar: `<scrollbar></scrollbar>`.$(),
-        /** @type {HTMLElement}  */
-        track: `<track></track>`.$(),
 
-        /** @type {HTMLElement}  */
-        scroller: `<scroller></scroller>`.$(),
-
-        /** @type {HTMLElement}  */
-        beginText: `<scroller-text role="begin"></scroller-text>`.$(),
-        /** @type {HTMLElement}  */
-        endText: `<scroller-text role="end"></scroller-text>`.$(),
-        /** @type {HTMLElement}  */
-        beginBtn: `<scroller-btn role="begin"></scroller-btn>`.$(),
-        /** @type {HTMLElement}  */
-        endBtn: `<scroller-btn role="end"></scroller-btn>`.$(),
-    }
+    nodes = newObjectOpt.copyProps(scrollerUIElements,{});
 
 
 
@@ -97,13 +67,7 @@ class pagerScroll {
 
 
     hasMouseDown = false;
-    getComplete() {
-        this.nodes.scrollbar.appendChild(this.nodes.beginBtn);
-        this.nodes.scrollbar.appendChild(this.nodes.track);
-        this.nodes.track.appendChild(this.nodes.scroller);
-        this.nodes.scroller.appendChild(this.nodes.beginText);
-        this.nodes.scroller.appendChild(this.nodes.endText);
-        this.nodes.scrollbar.appendChild(this.nodes.endBtn);
+    getComplete() {        
         if (this.nodes.scrollbar.parentElement == null) {
             this.pagerLv.uc.ucExtends.passElement(this.nodes.scrollbar);
             this.pagerLv.Records.scrollerElement.appendChild(this.nodes.scrollbar);

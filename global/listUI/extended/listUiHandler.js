@@ -263,8 +263,10 @@ class listUiHandler {
         if (this.resizeObsrv != undefined)
             this.resizeObsrv.disconnect();
         this.resizeObsrv = new window.ResizeObserver((pera) => {
-            this.OPTIONS.listSize = pera[0].contentRect;
-            this.Events.onListUISizeChanged.fire(pera[0].contentRect);
+            setTimeout(() => {
+                this.OPTIONS.listSize = pera[0].contentRect;
+                this.Events.onListUISizeChanged.fire(pera[0].contentRect);
+            });
         });
         this.Records.scrollerElement = val;
         this.resizeObsrv.observe(val);

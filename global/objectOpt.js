@@ -9,7 +9,7 @@ const getC = (c) => {
 const newObjectOpt = {
     /**
      * @template {{}} T
-     * @param {{}} from 
+     * @param {T} from 
      * @param {T} to 
      * @returns {T}
      */

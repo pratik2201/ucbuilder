@@ -2,26 +2,10 @@ const { Point, Size } = require("@ucbuilder:/global/drawing/shapes");
 const { numOpt } = require("@ucbuilder:/build/common");
 const { mouseForMove } = require("@ucbuilder:/global/mouseForMove");
 const { scrollbarHandler } = require("@ucbuilder:/global/listUI/pager/scrollbarHandler");
+const { namingConversion, scrollerUIElements } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
+const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 class simpleScroll {
-    nameList = {
-        offsetPoint: "offsetY",
-        offsetSize: "offsetHeight",
-        position: "top",
-        point: "y",
-        size: "height",
-        initByType(dir) {
-            switch (dir) {
-                case 'h':
-                    this.offsetPoint = "offsetX";
-                    this.offsetSize = "offsetWidth";
-                    this.point= "x";
-                    this.position = "left";
-                    this.size = "width";
-                    break;
-                case 'v': break;
-            }
-        }
-    };
+    nameList = newObjectOpt.copyProps(namingConversion, {});
     get pagerLv() { return this.main.main; }
     /**
      * @param {"h"|"v"} dir 
@@ -29,9 +13,12 @@ class simpleScroll {
      */
     constructor(dir, main) {
         this.main = main;
+
         this.nameList.initByType(dir);
         this.dir = dir;
+        this.nodes.initByType('simple');
         this.nodes.scrollbar.setAttribute('dir', dir);
+
     }
 
     refresh = {
@@ -68,24 +55,12 @@ class simpleScroll {
     }
     set scrollTop(value) {
         this._scrollTop = value;
+
         this.nodes.scroller.style[this.nameList.position] = value + "px";
-       // this.nodes.beginText.innerText = this.pagerLv.pageInfo.extended.topHiddenRowCount;
-       // this.nodes.endText.innerText = this.pagerLv.pageInfo.extended.bottomHiddenRowCount;
+        // this.nodes.beginText.innerText = this.pagerLv.pageInfo.extended.topHiddenRowCount;
+        // this.nodes.endText.innerText = this.pagerLv.pageInfo.extended.bottomHiddenRowCount;
     }
-    nodes = {
-        /** @type {HTMLElement}  */
-        scrollbar: `<scrollbar></scrollbar>`.$(),
-        /** @type {HTMLElement}  */
-        track: `<track></track>`.$(),
-
-        /** @type {HTMLElement}  */
-        scroller: `<scroller></scroller>`.$(),
-
-        /** @type {HTMLElement}  */
-        beginBtn: `<scroller-btn role="begin"></scroller-btn>`.$(),
-        /** @type {HTMLElement}  */
-        endBtn: `<scroller-btn role="end"></scroller-btn>`.$(),
-    }
+    nodes = newObjectOpt.copyProps(scrollerUIElements, {});
 
 
 
@@ -94,20 +69,22 @@ class simpleScroll {
 
     hasMouseDown = false;
     getComplete() {
-        this.nodes.scrollbar.appendChild(this.nodes.beginBtn);
-        this.nodes.scrollbar.appendChild(this.nodes.track);
-        this.nodes.track.appendChild(this.nodes.scroller);
-      //  this.nodes.scroller.appendChild(this.nodes.beginText);
-      //  this.nodes.scroller.appendChild(this.nodes.endText);
-        this.nodes.scrollbar.appendChild(this.nodes.endBtn);
-
+        let records = this.pagerLv.Records;
         if (this.nodes.scrollbar.parentElement == null) {
             this.pagerLv.uc.ucExtends.passElement(this.nodes.scrollbar);
-            this.pagerLv.Records.scrollerElement.appendChild(this.nodes.scrollbar);
+            records.scrollerElement.appendChild(this.nodes.scrollbar);
         }
-
         let mouseMv = new mouseForMove();
         let tstamp = this.nodes.track.stamp();
+
+        this.pagerLv.Events.onListUISizeChanged.on((rect) => {
+
+            let itmw = this.pagerLv.nodes.itemSize.width;
+            let cw = records.scrollerElement.offsetWidth;
+            console.log(itmw + ' : ' + cw);
+
+        })
+
         /*this.nodes.track.addEventListener("mousedown", (e) => {
             if (e.target.stamp() === tstamp) {
                 let hs = e[this.nameList.offsetPoint] - Math.floor(this.scrollSize / 2);
@@ -118,12 +95,10 @@ class simpleScroll {
 
         mouseMv.bind(this.nodes.scroller, {
             onDown: (evt, pt) => {
-                //pt[this.nameList.point] -= this.scrollTop;
-                this.main.scrollBox.vScrollbar.nodes.scrollbar.setAttribute('active', '1');
+                this.nodes.scrollbar.setAttribute('active', '1');
                 this.hasMouseDown = true;
             },
             onMove: (evt, diff) => {
-                
                 this.doContentScrollAt(diff[this.nameList.point]);
             },
             onUp: (evt, diff) => {
@@ -134,7 +109,7 @@ class simpleScroll {
     }
     isfilling = false;
     doContentScrollAt(scrollval) {
-        
+
         this.pagerLv.Records.scrollerElement.scrollLeft = scrollval;
         this.scrollTop = scrollval;
         return;

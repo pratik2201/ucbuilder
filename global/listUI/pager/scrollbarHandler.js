@@ -37,13 +37,13 @@ class scrollbarHandler {
         this.mutate.observe(this.main.Records.lstVWEle, { childList: true });
 
         this.main.Events.onListUISizeChanged.on((rect) => {
-            setTimeout(() => {
+            //setTimeout(() => {
                 this.viewSize.setBy.HTMLEle(this.main.Records.scrollerElement)
                 let ppr = (this.viewSize.height / this.main.nodes.itemSize.height);
                 this.main.pageInfo.extended.perPageRecord = Math.floor(ppr);
                 this.main.nodes.fill();
                 this.vRefresh.scrollSize();       
-            });
+            //});
         });
         this.main.Records.scrollerElement.addEventListener('mouseenter', (e) => {
 
