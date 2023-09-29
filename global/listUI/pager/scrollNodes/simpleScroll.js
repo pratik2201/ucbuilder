@@ -20,7 +20,9 @@ class simpleScroll {
         this.nodes.scrollbar.setAttribute('dir', dir);
 
     }
-
+    get contentWidth (){ 
+        return this.pagerLv.Records.lstVWEle.offsetWidth;
+    }
     refresh = {
         scrollPosition: () => {
             if (this.hasMouseDown) return;
@@ -32,7 +34,7 @@ class simpleScroll {
 
         },
         scrollSize: () => {
-            this.contentSize = this.pagerLv.nodes.itemSize.width;
+            this.contentSize = this.contentWidth;
             this.trackSize = this.nodes.track.offsetWidth;
             this.scrollerSize = this.pagerLv.Records.scrollerElement[this.nameList.offsetSize];
             if (this.contentSize > this.scrollerSize){
@@ -95,7 +97,7 @@ class simpleScroll {
             onDown: (evt, pt) => {
                 this.trackSize = this.nodes.track.offsetWidth;
                 this.scrollerSize = this.pagerLv.Records.scrollerElement[this.nameList.offsetSize];
-                this.contentSize = this.pagerLv.nodes.itemSize.width;
+                this.contentSize = this.contentWidth;
                 this.nodes.scrollbar.setAttribute('active', '1');
                 this.hasMouseDown = true;
                 this.DOWN_SCROLL_POS = this.scrollAt;
