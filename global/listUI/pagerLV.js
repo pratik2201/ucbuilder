@@ -67,7 +67,9 @@ class pagerLV extends listUiHandler {
     }
     /** @type {number}  */
     get currentIndex() { return this.OPTIONS.SESSION.currentIndex; }
-    set currentIndex(val) { this.setCurrentIndex(val); }
+    set currentIndex(val) {
+        this.setCurrentIndex(val);
+    }
 
     /**
      * @param {number} val 
@@ -75,7 +77,7 @@ class pagerLV extends listUiHandler {
      * @param {"Other"|"Keyboard"|"Mouse"} eventType
      */
     setCurrentIndex = (val, evt, eventType = "Other") => {
-//        debugger;
+        //        debugger;
         let oldIndex = this.currentIndex;
         let changed = (val !== oldIndex);
         let currentItem = this.OPTIONS.currentItem;
@@ -100,7 +102,7 @@ class pagerLV extends listUiHandler {
         let eletof = session.currentIndex - pgInfo.top;
         this.OPTIONS.currentItem = this.Records.lstVWEle.children[eletof];
         currentItem = this.OPTIONS.currentItem;
-        if(currentItem!=undefined)
+        if (currentItem != undefined)
             currentItem.setAttribute('iscurrent', '1');
         if (changed)
             this.Events.currentItemIndexChange.fire(oldIndex, session.currentIndex, evt, eventType);
