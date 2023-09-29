@@ -96,6 +96,10 @@ class listUiHandler {
             this.Records.lstVWEle.innerHTML = '';
             this.Events.onClearContainer.fire();
         },
+        /** @param {HTMLElement} ele  @returns {number} */
+        indexOf:(ele)=>{
+           
+        },
         fill: () => {
             console.log('ds');
         },

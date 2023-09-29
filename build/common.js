@@ -134,12 +134,13 @@ const __THIS = {
             return arr; // for testing
         },
         /**
-        * @param {Array} arr 
-        * @param {Function} callback 
+        * @template T 
+        * @param {T[]} arr 
+        * @param {(ele:T)=>{ }} callback 
         * @returns 
         */
-        removeByCallback: (arr, callback = (ele) => { return false; }) => {
-            let i = 0;
+        removeByCallback: (arr, callback) => {
+            let i = 0;            
             while (i < arr.length) {
                 if (callback(arr[i])) {
                     arr.splice(i, 1);

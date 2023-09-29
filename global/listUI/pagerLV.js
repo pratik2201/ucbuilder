@@ -162,6 +162,7 @@ class pagerLV extends listUiHandler {
                     break;
                 case keyBoard.keys.down: // down key
                     this.navigatePages.moveTo.nextSide.Go(e);
+
                     break;
                 case keyBoard.keys.pageUp: // page up key
                     this.navigatePages.pageTo.upSide.Go(e);
@@ -245,6 +246,9 @@ class pagerLV extends listUiHandler {
                 this.currentIndex = this.currentIndex;
                 calledToFill = false;
             });
+        }
+        this.nodes.indexOf = (ele) => {
+            return ele.data(pagerATTR.itemIndex);
         }
         this.nodes.loopVisibleRows = (callback = (ele) => { return true; }) => {
             let _records = this.Records;

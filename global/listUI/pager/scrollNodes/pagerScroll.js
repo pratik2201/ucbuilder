@@ -33,7 +33,7 @@ class pagerScroll {
         scrollSize: () => {
             this.mainlength = this.pagerLv.length;
             this.trackSize = this.nodes.track[this.nameList.offsetSize];
-            
+
             let avval = this.mainlength / this.pagerLv.pageInfo.extended.perPageRecord;
             this.scrollSize = Math.min(Math.max((this.trackSize / avval), 15), this.trackSize);
             this.refresh.scrollPosition();
@@ -80,14 +80,14 @@ class pagerScroll {
             if (e.target.stamp() === tstamp) {
                 let hs = e[this.nameList.offsetPoint] - Math.floor(this.scrollSize / 2);
                 this.DOWN_SCROLL_POS = 0;
-                this.doContentScrollAt(hs,false);
+                this.doContentScrollAt(hs, false);
                 mouseMv.doMouseDown(e);
             }
         });
 
         mouseMv.bind(this.nodes.scroller, {
             onDown: (evt, pt) => {
-             
+                this.DOWN_PER_PAGE_ROW = this.pagerLv.pageInfo.extended.perPageRecord;
                 this.DOWN_SCROLL_POS = this.scrollTop;
                 this.main.scrollBox.vScrollbar.nodes.scrollbar.setAttribute('active', '1');
                 this.hasMouseDown = true;
@@ -101,21 +101,34 @@ class pagerScroll {
             }
         });
     }
+    DOWN_PER_PAGE_ROW = 0;
     DOWN_SCROLL_POS = 0;
     isfilling = false;
     doContentScrollAt(scrollval, useTimeOut = true) {
         if (this.isfilling) return;
         this.isfilling = true;
         let _this = this;
-        if (useTimeOut) setTimeout(doscroll);        
+        if (useTimeOut) setTimeout(doscroll);
         else doscroll();
         function doscroll() {
+            /*  
+            scrollval += this.DOWN_SCROLL_POS;
+             scrollval = Math.min(scrollval, (this.trackSize - this.scrollSize));
+             scrollval = Math.max(scrollval, 0);
+             let st = (scrollval * this.contentSize) / this.trackSize;
+             this.scrollAt = scrollval;
+             this.pagerLv.Records.scrollerElement[this.nameList.scrollPosition] = st;
+             
+             */
+
             scrollval += _this.DOWN_SCROLL_POS;
-            let stop = Math.max(Math.min(scrollval, (_this.trackSize - _this.scrollSize)), 0);
-            let sch = (_this.mainlength / (_this.trackSize - _this.scrollSize)) * stop;
-            _this.pagerLv.pageInfo.top = Math.floor(sch - _this.pagerLv.pageInfo.extended.perPageRecord);
+            scrollval = Math.min(scrollval, (_this.trackSize - _this.scrollSize));
+            scrollval = Math.max(scrollval, 0);
+            ///let stop = Math.max(Math.min(scrollval, (_this.trackSize - _this.scrollSize)), 0);
+            let sch = ((_this.mainlength-_this.DOWN_PER_PAGE_ROW) / (_this.trackSize - _this.scrollSize)) * scrollval;
+            _this.pagerLv.pageInfo.top = Math.floor(sch);
             _this.pagerLv.nodes.fill();
-            _this.scrollTop = stop;
+            _this.scrollTop = scrollval;
             _this.isfilling = false;
         }
     }
