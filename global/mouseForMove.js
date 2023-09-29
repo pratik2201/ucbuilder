@@ -39,10 +39,11 @@ class mouseForMove {
         targetElement.addEventListener("mousedown", this.doMouseDown);
     }
     /**  @param {MouseEvent} e  */
-    doMouseDown = (e) => {
+    doMouseDown = (e/*,fireDownEvent = true*/) => {
+
         this.downPoint.setBy.value(e.pageX, e.pageY);
         let _this = this;
-        
+        //if(fireDownEvent)
         if (_this._options.onDown(e, this.downPoint) === false) return;
         /**  @param {MouseEvent} mouseEvt  */
         function mousemoveEvent(mouseEvt) {

@@ -30,6 +30,7 @@ class scrollbarHandler {
     /** @param {pagerLV} main */
     init(main) {
         this.main = main;
+        
         this.scrollBox.init();
         this.mutate = new MutationObserver((e) => {
             this.vRefresh.scrollPosition();           
@@ -38,11 +39,15 @@ class scrollbarHandler {
 
         this.main.Events.onListUISizeChanged.on((rect) => {
             //setTimeout(() => {
+              
                 this.viewSize.setBy.HTMLEle(this.main.Records.scrollerElement)
                 let ppr = (this.viewSize.height / this.main.nodes.itemSize.height);
+                //console.log(this.main.uc);
+                //console.log(this.viewSize.height+":"+this.main.nodes.itemSize.height+" => "+ppr);
                 this.main.pageInfo.extended.perPageRecord = Math.floor(ppr);
                 this.main.nodes.fill();
-                this.vRefresh.scrollSize();       
+                this.vRefresh.scrollSize();  
+                this.scrollBox.hScrollbar.refresh.scrollSize();     
             //});
         });
         this.main.Records.scrollerElement.addEventListener('mouseenter', (e) => {

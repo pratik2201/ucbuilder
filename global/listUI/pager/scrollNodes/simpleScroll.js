@@ -32,11 +32,12 @@ class simpleScroll {
 
         },
         scrollSize: () => {
-            this.mainlength = this.pagerLv.length;
-            this.trackSize = this.nodes.track[this.nameList.offsetSize];
-            let avval = this.mainlength / this.pagerLv.pageInfo.extended.perPageRecord;
-            this.scrollSize = Math.min(Math.max((this.trackSize / avval), 15), this.trackSize);
-            this.refresh.scrollPosition();
+            this.contentSize = this.pagerLv.nodes.itemSize.width;
+            this.trackSize = this.nodes.track.offsetWidth;
+            this.scrollerSize = this.pagerLv.Records.scrollerElement[this.nameList.offsetSize];
+            if (this.contentSize > this.scrollerSize){
+                this.scrollSize = ((this.trackSize * this.trackSize) / this.contentSize);
+            }
         }
     }
     mainlength = 0;
@@ -49,12 +50,12 @@ class simpleScroll {
         this.nodes.scroller.style[this.nameList.size] = value + "px";
     }
     trackSize = 0;
-    _scrollTop = 0;
-    get scrollTop() {
-        return this._scrollTop;
+    _scrollAt = 0;
+    get scrollAt() {
+        return this._scrollAt;
     }
-    set scrollTop(value) {
-        this._scrollTop = value;
+    set scrollAt(value) {
+        this._scrollAt = value;
 
         this.nodes.scroller.style[this.nameList.position] = value + "px";
         // this.nodes.beginText.innerText = this.pagerLv.pageInfo.extended.topHiddenRowCount;
@@ -75,54 +76,51 @@ class simpleScroll {
             records.scrollerElement.appendChild(this.nodes.scrollbar);
         }
         let mouseMv = new mouseForMove();
+
+        /*this.pagerLv.Events.onListUISizeChanged.on((rect) => {
+            
+        })*/
+
         let tstamp = this.nodes.track.stamp();
-
-        this.pagerLv.Events.onListUISizeChanged.on((rect) => {
-
-            let itmw = this.pagerLv.nodes.itemSize.width;
-            let cw = records.scrollerElement.offsetWidth;
-            console.log(itmw + ' : ' + cw);
-
-        })
-
-        /*this.nodes.track.addEventListener("mousedown", (e) => {
+        this.nodes.track.addEventListener("mousedown", (e) => {
             if (e.target.stamp() === tstamp) {
                 let hs = e[this.nameList.offsetPoint] - Math.floor(this.scrollSize / 2);
+                this.DOWN_SCROLL_POS = 0;
                 this.doContentScrollAt(hs);
                 mouseMv.doMouseDown(e);
             }
-        });*/
+        });
 
         mouseMv.bind(this.nodes.scroller, {
             onDown: (evt, pt) => {
+                this.trackSize = this.nodes.track.offsetWidth;
+                this.scrollerSize = this.pagerLv.Records.scrollerElement[this.nameList.offsetSize];
+                this.contentSize = this.pagerLv.nodes.itemSize.width;
                 this.nodes.scrollbar.setAttribute('active', '1');
                 this.hasMouseDown = true;
+                this.DOWN_SCROLL_POS = this.scrollAt;
             },
             onMove: (evt, diff) => {
                 this.doContentScrollAt(diff[this.nameList.point]);
             },
             onUp: (evt, diff) => {
                 this.hasMouseDown = false;
-                this.main.scrollBox.vScrollbar.nodes.scrollbar.setAttribute('active', '0');
+                this.nodes.scrollbar.setAttribute('active', '0');
             }
         });
     }
-    isfilling = false;
+    DOWN_SCROLL_POS = 0;
+    contentSize = 0;
+    trackSize = 0
     doContentScrollAt(scrollval) {
-
-        this.pagerLv.Records.scrollerElement.scrollLeft = scrollval;
-        this.scrollTop = scrollval;
-        return;
-        if (this.isfilling) return;
-        let stop = Math.max(Math.min(scrollval, (this.trackSize - this.scrollSize)), 0);
-        let sch = (this.mainlength / (this.trackSize - this.scrollSize)) * stop;
-        this.pagerLv.pageInfo.top = Math.floor(sch - this.pagerLv.pageInfo.extended.perPageRecord);
-        this.isfilling = true;
-        setTimeout(() => {
-            this.pagerLv.nodes.fill();
-            this.scrollTop = stop;
-            this.isfilling = false;
-        });
+        if (this.contentSize > this.scrollerSize) {
+            scrollval += this.DOWN_SCROLL_POS;
+            scrollval = Math.min(scrollval, (this.trackSize - this.scrollSize));
+            scrollval = Math.max(scrollval, 0);
+            let st = (scrollval * this.contentSize) / this.trackSize;
+            this.scrollAt = scrollval;
+            this.pagerLv.Records.scrollerElement[this.nameList.scrollPosition] = st;
+        }
     }
 }
 module.exports = { simpleScroll }

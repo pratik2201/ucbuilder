@@ -60,6 +60,7 @@ module.exports = {
     namingConversion: {
         offsetPoint: "offsetY",
         offsetSize: "offsetHeight",
+        scrollPosition:"scrollTop",
         point: "y",
         position: "top",
         size: "height",
@@ -68,6 +69,7 @@ module.exports = {
                 case 'h':
                     this.offsetPoint = "offsetX";
                     this.offsetSize = "offsetWidth";
+                    this.scrollPosition="scrollLeft";
                     this.point = "x";
                     this.position = "left";
                     this.size = "width";
@@ -75,6 +77,7 @@ module.exports = {
                 case 'v':
                     this.offsetPoint = "offsetY";
                     this.offsetSize = "offsetHeight";
+                    this.scrollPosition="scrollTop";
                     this.point = "y";
                     this.position = "top";
                     this.size = "height";
