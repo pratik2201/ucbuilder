@@ -34,6 +34,9 @@ class scrollbarHandler {
             this.viewSize.setBy.HTMLEle(this.main.Records.scrollerElement)
             let ppr = (this.viewSize.height / this.main.nodes.itemSize.height);
             this.main.pageInfo.extended.perPageRecord = Math.floor(ppr);
+            /*console.log(this.main.uc);
+            //console.log(this.viewSize.height);
+            console.log(this.viewSize.height+"=>"+this.main.pageInfo.extended.perPageRecord);*/
             this.main.nodes.fill();
         });
         this.scrollBox.init();

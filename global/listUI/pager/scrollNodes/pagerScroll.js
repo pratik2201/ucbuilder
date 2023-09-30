@@ -32,7 +32,7 @@ class pagerScroll {
         scrollSize: () => {
             this.mainlength = this.pagerLv.length;
             this.trackSize = this.nodes.track[this.nameList.offsetSize];
-
+            
             let avval = this.mainlength / this.pagerLv.pageInfo.extended.perPageRecord;
             this.scrollSize = Math.min(Math.max((this.trackSize / avval), 15), this.trackSize);
             this.refresh.scrollPosition();
@@ -85,6 +85,7 @@ class pagerScroll {
             this.pagerLv.Records.scrollerElement.appendChild(this.nodes.scrollbar);
         }
         this.pagerLv.Events.onListUISizeChanged.on((r) => {
+           
             this.refresh.scrollSize();
         });
         let mouseMv = new mouseForMove();

@@ -233,11 +233,12 @@ class listUiHandler {
 
 
         /**
-            * @param {(evt:KeyboardEvent)=>{}} callback mandetory to call
+            * @param {(evt:KeyboardEvent,valToAddRemove:number)=>{}} callback mandetory to call
             * @param {KeyboardEvent} event 
+            * @param {number} valToAddRemove 
             */
-        onRowNavigationChanged: (callback = () => { }, event) => {
-            callback(event);
+        onRowNavigationChanged: (callback = () => { }, event,valToAddRemove) => {
+            callback(event,valToAddRemove);
         },
 
         /**
