@@ -14,6 +14,7 @@ class pagerLV extends listUiHandler {
         super();
         this.pageInfo.extended.pgrLv = this;
     }
+    
     scroller = new scrollbarHandler();
     get SESSION() { return this.OPTIONS.SESSION; }
     source = {
@@ -40,23 +41,23 @@ class pagerLV extends listUiHandler {
             perPageRecord: 20,
 
             get length() { return this.pgrLv.length; },
-            _top: 0,
+            _begin: 0,
             _currentIndex: 0,
 
-            get bottomIndex() { return (this._top + this.perPageRecord) - 1; },
+            get bottomIndex() { return (this._begin + this.perPageRecord) - 1; },
             get topHiddenRowCount() {
                 return ((this.bottomIndex - this.perPageRecord) + 1);
             },
             get bottomHiddenRowCount() {
-                return Math.max(0, (this.length - (this._top + this.perPageRecord)));
+                return Math.max(0, (this.length - (this._begin + this.perPageRecord)));
             },
             get lastSideTopIndex() { return Math.max(0, this.length - this.perPageRecord); },
-            get isLastSideTopIndex() { return this.lastSideTopIndex == this._top; },
+            get isLastSideTopIndex() { return this.lastSideTopIndex == this._begin; },
         },
         defaultIndex: 0,
         selectedRow: undefined,
-        set top(val) { this.extended._top = Math.max((this.extended.length <= this.extended.perPageRecord) ? 0 : val, 0); },
-        get top() { return this.extended._top; },
+        set top(val) { this.extended._begin = Math.max((this.extended.length <= this.extended.perPageRecord) ? 0 : val, 0); },
+        get top() { return this.extended._begin; },
 
         /** @type {pagerLV}  */
         pagelv: undefined,
@@ -89,10 +90,10 @@ class pagerLV extends listUiHandler {
         let pgInfo = this.pageInfo;
         let pgInfoExt = pgInfo.extended;
         let bIndex = pgInfo.minBottomIndex;
-        if (val >= pgInfoExt._top && val <= bIndex) {
+        if (val >= pgInfoExt._begin && val <= bIndex) {
             session.currentIndex = val;
         } else {
-            if (val < pgInfoExt._top) {
+            if (val < pgInfoExt._begin) {
                 pgInfo.top = val;
             } else {
                 pgInfo.top = val - pgInfoExt.perPageRecord + 1;
@@ -339,13 +340,13 @@ class pagerLV extends listUiHandler {
                 },
                 Advance: {
                     outside: () => {
-                        this.pageInfo.extended._top += this.pageInfo.extended.perPageRecord;
+                        this.pageInfo.extended._begin += this.pageInfo.extended.perPageRecord;
                     },
                     last: () => {
                         if (this.pageInfo.extended.bottomIndex > this.length) {
-                            this.pageInfo.extended._top = 0;
+                            this.pageInfo.extended._begin = 0;
                             this.currentIndex = this.pageInfo.defaultIndex;
-                        } else this.pageInfo.extended._top = this.length - this.pageInfo.extended.perPageRecord;
+                        } else this.pageInfo.extended._begin = this.length - this.pageInfo.extended.perPageRecord;
                     },
                 },
                 /**
@@ -385,15 +386,15 @@ class pagerLV extends listUiHandler {
                 },
                 Advance: {
                     outside: () => {
-                        this.pageInfo.extended._top -= this.pageInfo.extended.perPageRecord;
+                        this.pageInfo.extended._begin -= this.pageInfo.extended.perPageRecord;
                         this.nodes.callToFill();
-                        this.currentIndex = this.pageInfo.extended._top;
+                        this.currentIndex = this.pageInfo.extended._begin;
                     },
                     first: () => {
-                        this.pageInfo.extended._top = 0;
+                        this.pageInfo.extended._begin = 0;
                         this.SESSION.currentIndex = this.pageInfo.defaultIndex;
                         this.nodes.callToFill();
-                        this.currentIndex = this.pageInfo.extended._top;
+                        this.currentIndex = this.pageInfo.extended._begin;
                     },
                 },
                 /**
@@ -447,14 +448,14 @@ class pagerLV extends listUiHandler {
                         let eleToRem = this.Records.lstVWEle.lastElementChild;
                         this.Events.beforeOldItemRemoved.fire(eleToRem);
                         eleToRem.remove();
-                        this.pageInfo.extended._top--;
+                        this.pageInfo.extended._begin--;
                         let ele = this.nodes.prepend(this.pageInfo.top);
                         this.currentIndex--;
                         return ele;
                     },
                     first: () => {
                         if (this.Events.onReachFirstRecord()) {
-                            this.pageInfo.extended._top = this.pageInfo.extended.lastSideTopIndex;//Math.max(0, this.PageManage_extended.indexes.__recordCount - this.pageInfo.extended.perPageRecord);
+                            this.pageInfo.extended._begin = this.pageInfo.extended.lastSideTopIndex;//Math.max(0, this.PageManage_extended.indexes.__recordCount - this.pageInfo.extended.perPageRecord);
                             this.nodes.callToFill();
                             this.currentIndex = this.pageInfo.minBottomIndex;
                         }
@@ -514,15 +515,15 @@ class pagerLV extends listUiHandler {
                             let eleToRem = this.Records.lstVWEle.firstElementChild;
                             this.Events.beforeOldItemRemoved.fire(eleToRem);
                             eleToRem.remove();
-                            this.pageInfo.extended._top++;
-                        } else this.pageInfo.extended._top = lastTopIndex;
+                            this.pageInfo.extended._begin++;
+                        } else this.pageInfo.extended._begin = lastTopIndex;
                         let newItemEle = this.nodes.append(this.pageInfo.minBottomIndex); // this.PageManage_extended.indexes.bottomIndex
                         this.currentIndex++;
                         return newItemEle;
                     },
                     last: () => {
                         if (this.Events.onReachLastRecord()) {
-                            this.pageInfo.extended._top = 0;
+                            this.pageInfo.extended._begin = 0;
                             this.currentIndex = this.pageInfo.defaultIndex;
                             this.nodes.callToFill();
                         }

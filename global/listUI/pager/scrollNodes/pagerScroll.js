@@ -7,17 +7,16 @@ const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 class pagerScroll {
 
     nameList = newObjectOpt.copyProps(namingConversion, {});
-    get pagerLv() { return this.main.main; }
+
+    
     /**
      * @param {"h"|"v"} dir 
-     * @param {scrollbarHandler} main
      */
-    constructor(dir, main) {
-        this.main = main;
+    constructor(dir) {
+     
         this.nameList.initByType(dir);
         this.dir = dir;
-        this.nodes.initByType('pager');
-        this.nodes.scrollbar.setAttribute('dir', dir);
+      
     }
 
     refresh = {
@@ -56,24 +55,38 @@ class pagerScroll {
     set scrollTop(value) {
         this._scrollTop = value;
         this.nodes.scroller.style[this.nameList.position] = value + "px";
-        this.nodes.beginText.innerText = this.pagerLv.pageInfo.extended.topHiddenRowCount;
-        this.nodes.endText.innerText = this.pagerLv.pageInfo.extended.bottomHiddenRowCount;
+        this.Events.onChangeHiddenCount(this.pageLvExtend.topHiddenRowCount, this.pageLvExtend.bottomHiddenRowCount)
     }
-
+    Events = {
+        onChangeHiddenCount: (beginHiddenCount, endHiddenCount) => {
+            this.nodes.beginText.innerText = beginHiddenCount;
+            this.nodes.endText.innerText = endHiddenCount;
+        }
+    }
     nodes = newObjectOpt.copyProps(scrollerUIElements, {});
 
-
-
-
-
-
     hasMouseDown = false;
-    getComplete() {
+
+
+    get pagerLv() { return this.main.main; }
+    get pageLvExtend() { return this.pagerLv.pageInfo.extended; }
+
+
+    /**
+     * @param {scrollbarHandler} main
+     */
+    getComplete(main) {
+        this.main = main;
+
+        this.nodes.initByType('pager');
+        this.nodes.scrollbar.setAttribute('dir', this.dir);
         if (this.nodes.scrollbar.parentElement == null) {
             this.pagerLv.uc.ucExtends.passElement(this.nodes.scrollbar);
             this.pagerLv.Records.scrollerElement.appendChild(this.nodes.scrollbar);
         }
-
+        this.pagerLv.Events.onListUISizeChanged.on((r) => {
+            this.refresh.scrollSize();
+        });
         let mouseMv = new mouseForMove();
         let tstamp = this.nodes.track.stamp();
         this.nodes.track.addEventListener("mousedown", (e) => {
@@ -125,7 +138,7 @@ class pagerScroll {
             scrollval = Math.min(scrollval, (_this.trackSize - _this.scrollSize));
             scrollval = Math.max(scrollval, 0);
             ///let stop = Math.max(Math.min(scrollval, (_this.trackSize - _this.scrollSize)), 0);
-            let sch = ((_this.mainlength-_this.DOWN_PER_PAGE_ROW) / (_this.trackSize - _this.scrollSize)) * scrollval;
+            let sch = ((_this.mainlength - _this.DOWN_PER_PAGE_ROW) / (_this.trackSize - _this.scrollSize)) * scrollval;
             _this.pagerLv.pageInfo.top = Math.floor(sch);
             _this.pagerLv.nodes.fill();
             _this.scrollTop = scrollval;

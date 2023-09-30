@@ -6,21 +6,15 @@ const { namingConversion, scrollerUIElements } = require("@ucbuilder:/global/lis
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 class simpleScroll {
     nameList = newObjectOpt.copyProps(namingConversion, {});
-    get pagerLv() { return this.main.main; }
+    
     /**
      * @param {"h"|"v"} dir 
-     * @param {scrollbarHandler} main
      */
-    constructor(dir, main) {
-        this.main = main;
-
+    constructor(dir) {
         this.nameList.initByType(dir);
         this.dir = dir;
-        this.nodes.initByType('simple');
-        this.nodes.scrollbar.setAttribute('dir', dir);
-
     }
-    get contentWidth (){ 
+    get contentWidth() {
         return this.pagerLv.Records.lstVWEle.offsetWidth;
     }
     refresh = {
@@ -37,7 +31,7 @@ class simpleScroll {
             this.contentSize = this.contentWidth;
             this.trackSize = this.nodes.track.offsetWidth;
             this.scrollerSize = this.pagerLv.Records.scrollerElement[this.nameList.offsetSize];
-            if (this.contentSize > this.scrollerSize){
+            if (this.contentSize > this.scrollerSize) {
                 this.scrollSize = ((this.trackSize * this.trackSize) / this.contentSize);
             }
         }
@@ -60,28 +54,38 @@ class simpleScroll {
         this._scrollAt = value;
 
         this.nodes.scroller.style[this.nameList.position] = value + "px";
-        // this.nodes.beginText.innerText = this.pagerLv.pageInfo.extended.topHiddenRowCount;
-        // this.nodes.endText.innerText = this.pagerLv.pageInfo.extended.bottomHiddenRowCount;
+       
     }
+    
     nodes = newObjectOpt.copyProps(scrollerUIElements, {});
 
 
 
 
 
-
     hasMouseDown = false;
-    getComplete() {
+    
+    get pagerLv() { return this.main.main; }
+
+    /** @param {scrollbarHandler} main */
+    getComplete(main) {
+        this.main = main;
+        this.nodes.initByType('simple');
+        this.nodes.scrollbar.setAttribute('dir', this.dir);
+
         let records = this.pagerLv.Records;
+        this.pagerLv.Events.onListUISizeChanged.on((r) => {
+            this.refresh.scrollSize();
+        });
+
+
         if (this.nodes.scrollbar.parentElement == null) {
             this.pagerLv.uc.ucExtends.passElement(this.nodes.scrollbar);
             records.scrollerElement.appendChild(this.nodes.scrollbar);
         }
         let mouseMv = new mouseForMove();
 
-        /*this.pagerLv.Events.onListUISizeChanged.on((rect) => {
-            
-        })*/
+    
 
         let tstamp = this.nodes.track.stamp();
         this.nodes.track.addEventListener("mousedown", (e) => {
@@ -115,6 +119,7 @@ class simpleScroll {
     contentSize = 0;
     trackSize = 0
     doContentScrollAt(scrollval) {
+
         if (this.contentSize > this.scrollerSize) {
             scrollval += this.DOWN_SCROLL_POS;
             scrollval = Math.min(scrollval, (this.trackSize - this.scrollSize));
