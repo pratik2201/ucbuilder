@@ -4,27 +4,30 @@ const { mouseForMove } = require("@ucbuilder:/global/mouseForMove");
 const { scrollbarHandler } = require("@ucbuilder:/global/listUI/pager/scrollbarHandler");
 const { namingConversion, scrollerUIElements } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
+const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
 class pagerScroll {
 
     nameList = newObjectOpt.copyProps(namingConversion, {});
 
-    
+
     /**
      * @param {"h"|"v"} dir 
      */
     constructor(dir) {
-     
+
         this.nameList.initByType(dir);
         this.dir = dir;
-      
-    }
 
+    }
+    doDebug = false;
     refresh = {
         scrollPosition: () => {
             if (this.hasMouseDown) return;
             if (this.mainlength != this.pagerLv.length) { this.refresh.scrollSize(); return; }
-            let tpos = this.pagerLv.pageInfo.extended.bottomIndex;
-            let ts = this.trackSize - this.scrollSize;
+            if (this.doDebug)
+                debugger;
+            let tpos = this.pagerLv.pageInfo.extended._begin    ;
+            let ts = this.trackSize;
             let stop = numOpt.gtvc(this.mainlength, ts, tpos);
             this.scrollTop = Math.min(stop, (this.trackSize - this.scrollSize));
 
@@ -32,7 +35,7 @@ class pagerScroll {
         scrollSize: () => {
             this.mainlength = this.pagerLv.length;
             this.trackSize = this.nodes.track[this.nameList.offsetSize];
-            
+
             let avval = this.mainlength / this.pagerLv.pageInfo.extended.perPageRecord;
             this.scrollSize = Math.min(Math.max((this.trackSize / avval), 15), this.trackSize);
             this.refresh.scrollPosition();
@@ -77,7 +80,12 @@ class pagerScroll {
      */
     getComplete(main) {
         this.main = main;
-
+        this.pagerLv.Records.scrollerElement.addEventListener("keydown", (e) => {
+            if (e.keyCode === keyBoard.keys.single_quote) {
+                this.doDebug = !this.doDebug;
+                console.log('debug state : ' + this.doDebug);
+            }
+        });
         this.nodes.initByType('pager');
         this.nodes.scrollbar.setAttribute('dir', this.dir);
         if (this.nodes.scrollbar.parentElement == null) {
@@ -85,7 +93,7 @@ class pagerScroll {
             this.pagerLv.Records.scrollerElement.appendChild(this.nodes.scrollbar);
         }
         this.pagerLv.Events.onListUISizeChanged.on((r) => {
-           
+
             this.refresh.scrollSize();
         });
         let mouseMv = new mouseForMove();

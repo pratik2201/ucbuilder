@@ -67,7 +67,7 @@ class Template {
             Array.from(tptExt.stampRow.dataHT.attributes)
                 .filter(s => s.nodeName.toLowerCase().startsWith("x.temp-"))
                 .forEach(s => ht.removeAttribute(s.nodeName));
-            tptExt.stampRow.content = ht.outerHTML;
+            //tptExt.stampRow.content = ht.outerHTML;
 
             /** @type {HTMLElement}  */
             let eleHT = param0.elementHT;
