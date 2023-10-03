@@ -2,6 +2,7 @@ const { aliceManager } = require("@ucbuilder:/build/codefile/aliceManager");
 const { uniqOpt, propOpt } = require("@ucbuilder:/build/common");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
 const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
+const { openCloser } = require("@ucbuilder:/global/openCloser");
 const { rootPathHandler, rootPathRow } = require("@ucbuilder:/global/rootPathHandler");
 const { ATTR_OF } = require("@ucbuilder:/global/runtimeOpt");
 const patternList = {
@@ -168,7 +169,7 @@ class stylerRegs {
     }
     //styleSeperateSelector = /[\n\r ]*([\w\W.]*?)[\n\r ]*{([\n\r\w\W]*?)}/gi;
 
-
+    opnClsr = new openCloser();
     /**
      * @param {string} data 
      * @param {string} scopeSelectorText 
@@ -225,7 +226,7 @@ class stylerRegs {
 
         //console.log(externalStyles);
 
-        rtrn = stylerRegs.openClose("{", "}", rtrn,
+        rtrn = this.opnClsr.doTask("{", "}", rtrn,
             /**
              * @param {string} selectorText 
              * @param {string} styleContent 
@@ -457,49 +458,7 @@ class stylerRegs {
     }
 
 
-    /**
-  * @param {string} openTxt 
-  * @param {string} closeTxt 
-  * @param {string} contents 
-  * @param {Function} callback 
-  */
-    static openClose(openTxt, closeTxt, contents, callback =
-        /**
-         * @param {string} outText outer string 
-         * @param {string} inText inner string 
-         * @param {number} txtCount number of `openTxt` found in contents
-         */
-        (outText, inText, txtCount) => { }) {
-        let sIndex = 0;
-        let len = contents.length;
-        // console.log(contents);
-        let opened = 0, closed = 0;
-        let rtrn = "";
-        let lastoutIndex = 0, lastinIndex = 0;
-        for (let index = 0, len = contents.length; index < len; index++) {
-            let cnt = contents.charAt(index);
-            if (opened == closed && index > 0 && opened > 0) {
-                // 
-                let selector = contents.substring(lastoutIndex, lastinIndex);
-                let cssStyle = contents.substring(lastinIndex + 1, index - 1);
-                rtrn += callback(selector, cssStyle, opened);
-                lastoutIndex = index;
-                opened = closed = 0;
-            }
-            switch (cnt) {
-                case openTxt:
-                    if (opened == 0)
-                        lastinIndex = index;
-                    opened++;
-                    break;
-                case closeTxt:
-                    closed++;
-
-                    break;
-            }
-        }
-        return rtrn;
-    }
+    
 
 }
 module.exports = { stylerRegs };
