@@ -1,41 +1,88 @@
-class openCloser{    
-    ignoreList = {};
+const ocNode = {
+    openingChar: "",
+    closingChar: ""
+}
+class openCloser {
+
+    /** @type {ocNode[]}  */
+    ignoreList = [];
     /**
       * @param {string} openTxt 
       * @param {string} closeTxt 
       * @param {string} contents 
       * @param {Function} callback 
       */
-     doTask (openTxt, closeTxt, contents, callback =
+    doTask(openTxt, closeTxt, contents, callback =
         /**
          * @param {string} outText outer string 
          * @param {string} inText inner string 
          * @param {number} txtCount number of `openTxt` found in contents
          */
-        (outText, inText, txtCount) => { })  {
-        
+        (outText, inText, txtCount) => { }) {
+
         let opened = 0, closed = 0;
         let rtrn = "";
         let lastoutIndex = 0, lastinIndex = 0;
-        for (let index = 0, len = contents.length; index < len; index++) {
-            let cnt = contents.charAt(index);
-            if (opened == closed && index > 0 && opened > 0) {
-                let selector = contents.substring(lastoutIndex, lastinIndex);
-                let cssStyle = contents.substring(lastinIndex + 1, index - 1);
-                rtrn += callback(selector, cssStyle, opened);
-                lastoutIndex = index;
-                opened = closed = 0;
+        let iList = this.ignoreList;
+        if (iList.length == 0) {
+            for (let index = 0, len = contents.length; index < len; index++) {
+                let cnt = contents.charAt(index);
+                if (opened == closed && index > 0 && opened > 0) {
+                    let selector = contents.substring(lastoutIndex, lastinIndex);
+                    let cssStyle = contents.substring(lastinIndex + 1, index - 1);
+                    rtrn += callback(selector, cssStyle, opened);
+                    lastoutIndex = index;
+                    opened = closed = 0;
+                }
+                switch (cnt) {
+                    case openTxt:
+                        if (opened == 0)
+                            lastinIndex = index;
+                        opened++;
+                        break;
+                    case closeTxt:
+                        closed++;
+                        break;
+                }
             }
-            switch (cnt) {
-                case openTxt:
-                    if (opened == 0)
-                        lastinIndex = index;
-                    opened++;
-                    break;
-                case closeTxt:
-                    closed++;
+        } else {
+            /** @type {ocNode}  */
+            let charNode = undefined;
+            /** @type {"pause"|"resume"}  */
+            let state = 'resume';
+            for (let index = 0, len = contents.length; index < len; index++) {
+                let cnt = contents.charAt(index);
+                switch (state) {
+                    case 'resume':
+                        if (opened == closed && index > 0 && opened > 0) {
+                            let selector = contents.substring(lastoutIndex, lastinIndex);
+                            let cssStyle = contents.substring(lastinIndex + 1, index - 1);
+                            rtrn += callback(selector, cssStyle, opened);
+                            lastoutIndex = index;
+                            opened = closed = 0;
+                        }
+                        switch (cnt) {
+                            case openTxt:
+                                if (opened == 0)
+                                    lastinIndex = index;
+                                opened++;
+                                break;
+                            case closeTxt:
+                                closed++;
+                                break;
+                            default:
+                                charNode = iList.find(s => s.openingChar === cnt);
+                                if (charNode != undefined)
+                                    state = 'pause';
+                                break;
+                        }
+                        break;
+                    case 'pause':
+                        if (cnt === charNode.closingChar)
+                            state = 'resume';
+                        break;
 
-                    break;
+                }
             }
         }
         return rtrn;
