@@ -43,9 +43,9 @@ class commonParser {
         let _row = objectOpt.deepClone1(buildRow.commonRow);
 
         _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
-        
+
         _row.src.parseUrl(filePath);
-       
+
         let code = (htmlContents == undefined) ? fileDataBank.readFile(_row.src.html.rootPath, {
             replaceContentWithKeys: false
         }) : htmlContents;
@@ -59,112 +59,108 @@ class commonParser {
             console.log(div.firstChild);
            // console.log(this.formHT.outerHTML);
         }*/
-       
+
         //console.log(htmlContents);
         /** @type {HTMLElement}  */
         this.formHT = code.$();
-       
+
         this.aliceMng.fillAlices(this.formHT);
         //console.log(this.aliceMng.source.length);
-        let elem = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
+        _row.designer.className =
+        _row.codefile.baseClassName = "designer";
+        _row.codefile.className = _row.src.name;
         if (!isUserControl) {
             _row.designer.baseClassName = "Template";
-            // let templates = this.formHT.querySelectorAll(":scope > tpt[x-role]");
-            // if (templates.length == 0) {
-            //     /** @type {buildRow.templeteControls[]}  */
-            //     let controls = [];
-            //     let _htEleAr = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
-            //     _htEleAr.forEach(e => {
-            //         let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY);
-            //         if (scope == undefined)
-            //             scope = 'public';
-            //         controls.push({
-            //             name: e.getAttribute("x-name"),
-            //             nodeName: e.nodeName,
-            //             proto: objectOpt.getClassName(e),
-            //             scope: scope
-            //         })
-            //     });
-            //     //let controls = objectOpt.clone(buildRow.templeteControls);
-            //     _row.designer.templetes.push({
-            //         name: "primary",
-            //         scope: "public",
-            //         controls: controls
-            //     });
-            // } else {
-            //     let tpts = _row.designer.templetes;
-            //     templates.forEach(template => {
-            //         let role = template.getAttribute('x-role');
-            //         let rolelwr = role.toLowerCase();
-            //         if (tpts.findIndex(s => s.name.toLowerCase() == rolelwr) != -1) return;
+            let templates = this.formHT.querySelectorAll(`:scope > tpt[${propOpt.ATTR.TEMPLETE_ACCESS_KEY}]`);
+            if (templates.length == 0) {
+                /** @type {buildRow.templeteControls[]}  */
+                let controls = [];
+                let _htEleAr = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
+                _htEleAr.forEach(e => {
+                    let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY);
+                    if (scope == undefined)
+                        scope = 'public';
+                    controls.push({
+                        name: e.getAttribute("x-name"),
+                        nodeName: e.nodeName,
+                        proto: objectOpt.getClassName(e),
+                        scope: scope
+                    })
+                });
+                _row.designer.templetes.push({
+                    name: "primary",
+                    scope: "public",
+                    controls: controls
+                });
+            } else {
+                let tpts = _row.designer.templetes;
+                templates.forEach(template => {
+                    let role = template.getAttribute(propOpt.ATTR.TEMPLETE_ACCESS_KEY);
+                    let rolelwr = role.toLowerCase();
+                    if (tpts.findIndex(s => s.name.toLowerCase() == rolelwr) != -1) return;
+                    /** @type {buildRow.controls[]}  */
+                    let controls = [];
+                    let _htEleAr = Array.from(template.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
+                    _htEleAr.forEach(e => {
+                        let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY);
+                        if (scope == undefined)
+                            scope = 'public';
+                        controls.push({
+                            name: e.getAttribute("x-name"),
+                            nodeName: e.nodeName,
+                            proto: objectOpt.getClassName(e),
+                            scope: scope
+                        })
+                    });
+                    tpts.push({
+                        name: role,
+                        scope: "public",
+                        controls: controls
+                    });
+                });
 
-
-            //         /** @type {buildRow.templeteControls[]}  */
-            //         let controls = [];
-            //         let _htEleAr = Array.from(template.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
-            //         _htEleAr.forEach(e => {
-            //             let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY);
-            //             if (scope == undefined)
-            //                 scope = 'public';
-            //             controls.push({
-            //                 name: e.getAttribute("x-name"),
-            //                 nodeName: e.nodeName,
-            //                 proto: objectOpt.getClassName(e),
-            //                 scope: scope
-            //             })
-            //         });
-
-
-
-            //         tpts.push({
-            //             name: role,
-            //             scope: "public",
-            //             controls: controls
-            //         });
-            //     });
-
-            // }
+            }
         } else {
             _row.designer.baseClassName = "Usercontrol";
-        }
-        _row.designer.className =
-            _row.codefile.baseClassName = "designer";
-        _row.codefile.className = _row.src.name;
+            let elem = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
+            elem.forEach((ele) => {
+                let nameAttr = ele.getAttribute(propOpt.ATTR.ACCESS_KEY);
+                let nodeName = ele.nodeName;
+                let scope = ele.getAttribute(propOpt.ATTR.SCOPE_KEY);
+                if (scope == undefined)
+                    scope = 'public';
+                let proto = Object.getPrototypeOf(ele).constructor.name;
 
-        elem.forEach((ele) => {
-            let nameAttr = ele.getAttribute(propOpt.ATTR.ACCESS_KEY);
-            let nodeName = ele.nodeName;
-            let scope = ele.getAttribute(propOpt.ATTR.SCOPE_KEY);
-            if (scope == undefined)
-                scope = 'public';
-            let proto = Object.getPrototypeOf(ele).constructor.name;
+                if (isUserControl && ele.hasAttribute("x-from")) {
 
-            if (isUserControl && ele.hasAttribute("x-from")) {
+                    let _subpath = /*(pathToLoad != "" ? pathToLoad :*/ ele.getAttribute("x-from");
 
-                let _subpath = /*(pathToLoad != "" ? pathToLoad :*/ ele.getAttribute("x-from");
-
-                let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath)); //+ ".html"
-                uFInf.parseUrl(_subpath);
-                if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {
+                    let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath)); //+ ".html"
+                    uFInf.parseUrl(_subpath);
+                    if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {
+                        _row.designer.controls.push({
+                            name: nameAttr,
+                            proto: proto,
+                            scope: scope,
+                            type: uFInf.extCode,
+                            nodeName: uFInf.name,
+                            src: uFInf,
+                        });
+                    }
+                } else {
                     _row.designer.controls.push({
                         name: nameAttr,
                         proto: proto,
                         scope: scope,
-                        type: uFInf.extCode,
-                        nodeName: uFInf.name,
-                        src: uFInf,
+                        type: buildOptions.extType.none,
+                        nodeName: nodeName,
                     });
                 }
-            } else {
-                _row.designer.controls.push({
-                    name: nameAttr,
-                    proto: proto,
-                    scope: scope,
-                    type: buildOptions.extType.none,
-                    nodeName: nodeName,
-                });
-            }
-        });
+            });
+        }
+
+
+
 
         return _row;
     }

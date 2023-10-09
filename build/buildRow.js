@@ -16,39 +16,31 @@ class buildRow {
 
         /** @type {"private"|"protected"|"package"|"public"} */
         scope:"",
-        /** @type {buildRow.templeteControls[]}  */ 
+        /** @type {buildRow.control[]}  */ 
         controls:[]
     }
     static control = {
         name: "",
-        /** @type {buildOptions.controlType}  */
-        type: buildOptions.controlType.elementHT,
+        /** @type {buildOptions.extType}  */
+        type:  buildOptions.extType.none,
         /** @type {"private"|"protected"|"package"|"public"} */
         scope:"",
 
         proto:"",
         
-
         /** @type {codeFileInfo} */
         src: undefined,
 
         /** @type {string} */
         nodeName: "",
     }
-   /* static refer = {
-        name: [],
-        sepName: "",
-        filePath: "",
-        useBrackets: false,
-        relativePath: "",
-    }*/
+ 
     static commonRow = {
         /** @type {codeFileInfo}  */ 
         src : undefined,       
        
         htmlFile:{
             reGenerate:false, 
-            //stamp:"",
             content:"",        
         },
 
@@ -59,12 +51,11 @@ class buildRow {
             */
             baseClassName: "",
             className: "",
-            /** @type {buildRow.templete[]} 
-            templetes : [],*/
+            /** @type {buildRow.templete[]} */
+            templetes : [],
             /** @type {buildRow.control[]} */
             controls: [],
-            /**  @type {buildRow.refer[]} 
-             * refList: [],*/
+            
         },
         codefile : {           
             baseClassName: "",

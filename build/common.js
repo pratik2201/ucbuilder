@@ -308,6 +308,7 @@ const __THIS = {
             BASE_OBJECT: "base_object",
             ACCESS_KEY: "x-name",
             TEMPLETE_DEFAULT:"primary",
+            TEMPLETE_ACCESS_KEY:"x-tname",
             SCOPE_KEY: "x-scope",
             OPTION: "_option",
             //
@@ -641,10 +642,10 @@ const __THIS = {
         },
     },
     buildOptions: {
-        controlType: Object.freeze({
+        /*controlType: Object.freeze({
             elementHT: 'elementHT',
             Usercontrol: 'Usercontrol'
-        }),
+        }),*/
         extType: Object.freeze({
             none: "none",
             Usercontrol: ".uc",

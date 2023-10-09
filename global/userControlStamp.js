@@ -85,12 +85,11 @@ class userControlStamp {
      */
     static getStamp(param0) {
         this.stampCallTimes++;
-        //console.log(param0);
         /** @type {userControlStampRow}  */
         let rtrn = undefined;
-        let pathtofind = param0.fInfo.html.path.toLowerCase();
-
-        if (param0.reloadDesign) pathtofind += "_" + param0.reloadKey;
+        let pathtofind = param0.fInfo.html.path.toLowerCase()+"_" + param0.reloadKey;
+        
+        //if (param0.reloadDesign) pathtofind += "_" + param0.reloadKey;
         let sindex = this.source.findIndex(s => s.fUniq == pathtofind);
         if (sindex == -1) {
             this.stampNo++;
@@ -99,6 +98,7 @@ class userControlStamp {
             rtrn.styler = new stylerRegs(param0.fInfo.rootInfo, true);
             rtrn.fUniq = pathtofind;
             rtrn.cInfo = param0.fInfo;
+            //console.log(param0.htmlContents);
             if (param0.htmlContents != undefined) {
                 rtrn.content = param0.htmlContents;
                 this.reload(rtrn, param0.beforeContentAssign, param0);
@@ -133,7 +133,7 @@ class userControlStamp {
      */
     static reload(rtrn, callback, param0) {
 
-        rtrn.content = rtrn.content.replace(/^<([\w:-]*?)([\S\s]*?)<\/\1>$/gm,
+        rtrn.content = rtrn.content.replace(/^\s*<([\w\.:-]*?)([\S\s]*?)<\/\1>\s*$/g,
             (match, otag, contents, ctag) => {
                 switch (param0.nodeNameAs) {
                     case 'targetElement': rtrn.styler.nodeName = param0.targetElementNodeName; break;

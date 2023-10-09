@@ -162,6 +162,7 @@ class Usercontrol {
         */
         finalizeInit: (param0) => {
             let ext = this.ucExtends;
+           
             param0.source.cssContents = ext.stampRow.styler.parseStyleSeperator(
                 (param0.source.cssContents == undefined ?
                     fileDataBank.readFile(ext.fileInfo.style.rootPath)

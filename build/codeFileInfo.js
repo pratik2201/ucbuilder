@@ -123,7 +123,7 @@ class codeFileInfo {
         
     }
     ___HTML_EXT = ".html";
-    ___STYLE_EXT = ".styles.scss";
+    ___STYLE_EXT = ".scss";
     ___PERAMETERS_EXT = ".rowperameters.json";
     ___DESIGNER_EXT = ".designer.js";
     ___CODE_EXT = ".js";
