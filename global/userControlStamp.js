@@ -89,7 +89,7 @@ class userControlStamp {
         let rtrn = undefined;
         let pathtofind = param0.fInfo.html.path.toLowerCase()+"_" + param0.reloadKey;
         
-        //if (param0.reloadDesign) pathtofind += "_" + param0.reloadKey;
+        
         let sindex = this.source.findIndex(s => s.fUniq == pathtofind);
         if (sindex == -1) {
             this.stampNo++;

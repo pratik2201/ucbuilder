@@ -1,4 +1,4 @@
-const { propOpt } = require("@ucbuilder:/build/common");
+const { propOpt, strOpt } = require("@ucbuilder:/build/common");
 const { regsManage } = require("@ucbuilder:/build/regs/regsManage");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
 const { filterContent } = require("@ucbuilder:/global/filterContent");
@@ -7,11 +7,48 @@ const { ATTR_OF } = require("@ucbuilder:/global/runtimeOpt");
 const { stylerRegs } = require("@ucbuilder:/global/stylerRegs");
 const { userControlStampRow, userControlStamp } = require("@ucbuilder:/global/userControlStamp");
 const { Usercontrol } = require("@ucbuilder:/Usercontrol");
-const { tptOptions } = require("@ucbuilder:/enumAndMore");
+const { tptOptions, templatePathOptions } = require("@ucbuilder:/enumAndMore");
 const { transferDataNode } = require("@ucbuilder:/global/drag/transferation");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
+const { fileInfo } = require("@ucbuilder:/build/codeFileInfo");
 
 class Template {
+    /**
+     * @param {string} htmlFilePath 
+     * @returns {templatePathOptions[]}
+     */
+    static getSplittedTemplates(htmlFilePath) {
+        let mainFilePath = strOpt.trim_(htmlFilePath,".html");              
+        let htmlContents = fileDataBank.readFile(mainFilePath+'.html'); 
+        /** @type {templatePathOptions[]}  */
+        let rtrn = [];
+        /** @type {HTMLElement}  */
+        let mainTag = "<pre><pre>".$();
+        mainTag.innerHTML = htmlContents;
+        let tList = mainTag.querySelectorAll(":scope > [x-from]");
+        if (tList.length == 0) {
+            rtrn.push({
+                name: propOpt.ATTR.TEMPLETE_DEFAULT,
+                mainFilePath: mainFilePath,
+                htmlContents:htmlContents,
+                cssContents:fileDataBank.readFile(mainFilePath+'.scss')
+            });
+        } else {
+            tList.forEach(element => {
+                let fInfo = new fileInfo();
+                fInfo.parse(element.getAttribute("x-from"));
+                mainFilePath = fInfo.fullPath;
+                htmlContents = fileDataBank.readFile(mainFilePath+'.html'); 
+                rtrn.push({
+                    name: propOpt.ATTR.TEMPLETE_DEFAULT,
+                    mainFilePath: mainFilePath,
+                    htmlContents:htmlContents,
+                    cssContents:fileDataBank.readFile(mainFilePath+'.scss')
+                });
+            });
+        }
+        return rtrn;
+    }
     constructor() {
 
     }
@@ -59,10 +96,8 @@ class Template {
             let tptExt = this.extended;
 
             tptExt.stampRow = userControlStamp.getStamp(param0.source);
-            /** @type {HTMLElement}  */
-            let mainTag = "<pre><pre>".$();
-            mainTag.innerHTML = fileDataBank.readFile(param0.source.fInfo.html.fullPath);
-            console.log(mainTag.querySelectorAll(":scope > *"));
+            //mainTag.innerHTML = fileDataBank.readFile(param0.source.fInfo.html.fullPath);
+            Template.getSplittedTemplates(param0.source.fInfo.html.fullPath);
             let ht = tptExt.stampRow.dataHT;
             let attrs = Array.from(tptExt.stampRow.dataHT.attributes);
 
@@ -80,7 +115,7 @@ class Template {
                     .stampRow.styler.pushChild(param0.source.fInfo.mainFilePath,
                         tptExt.stampRow.styler, eleHT.nodeName);
 
-            console.log(tptExt.stampRow.cInfo.style.rootPath);
+            // console.log(tptExt.stampRow.cInfo.style.rootPath);
             param0.source.cssContents = tptExt.stampRow.styler.parseStyleSeperator(
                 (param0.source.cssContents == undefined ?
                     fileDataBank.readFile(param0.source.fInfo.style.rootPath)

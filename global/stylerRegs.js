@@ -92,6 +92,8 @@ class stylerRegs {
             node.parent = this;
             this.children.push(node);
         }
+
+        
         //console.log(nodeName);
         /*if (!(key in this.children)) {
             node.parent = this;

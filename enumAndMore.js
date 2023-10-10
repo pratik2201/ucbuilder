@@ -1,5 +1,7 @@
 const { newObjectOpt } = require('@ucbuilder:/global/objectOpt');
 
+
+
 /**
  * @typedef {import ('@ucbuilder:/Usercontrol').Usercontrol} Usercontrol
  * @typedef {import ('@ucbuilder:/build/codeFileInfo').codeFileInfo} codeFileInfo 
@@ -14,12 +16,14 @@ const sourceOptions = {
     /** @type {codeFileInfo}  */
     fInfo: undefined,
 
-    /** @type {"wrapper"|"targetElement"|"random"}  */ 
+    /** @type {"wrapper"|"targetElement"|"random"}  */
     nodeNameAs: 'wrapper',
 
-    targetElementNodeName:"as",
-    
-    
+    targetElementNodeName: "as",
+
+
+    templateName: "",
+
     reloadKey: "",
     reloadDesign: false,
 
@@ -49,9 +53,7 @@ const ucOptions = {
     loadAt: undefined,
 
     events: {
-        /** 
-         * @param {Usercontrol} uc uc which is being Initlize  
-         **/
+        /** @param {Usercontrol} uc uc which is being Initlize  */
         beforeInitlize: (uc) => {
 
         },
@@ -78,21 +80,27 @@ const tptOptions = {
 
 
 const rootPathParam = {
-    level : 4,
-    addIntoFileDataBankAlso : true,
-    addModule : true,
+    level: 4,
+    addIntoFileDataBankAlso: true,
+    addModule: true,
     buildOption: {
-        addPathInProjectBuild : true,
-        removeSomeSpecialPathFromProjectBuild : true
+        addPathInProjectBuild: true,
+        removeSomeSpecialPathFromProjectBuild: true
     },
 }
-
+const templatePathOptions = {
+    name:"",
+    mainFilePath:"",
+    htmlContents:"",
+    cssContents:""
+}
 module.exports = {
+    templatePathOptions,
     rootPathParam,
     ucOptions,
     tptOptions,
     sessionOptions,
     sourceOptions,
-    /** @type {"normal"|"dock"|"minimize"|"maximize"}  */ 
-    ucStates : "normal",
+    /** @type {"normal"|"dock"|"minimize"|"maximize"}  */
+    ucStates: "normal",
 }
