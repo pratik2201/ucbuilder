@@ -1,9 +1,8 @@
 const { newObjectOpt } = require('@ucbuilder:/global/objectOpt');
 
-
-
 /**
  * @typedef {import ('@ucbuilder:/Usercontrol').Usercontrol} Usercontrol
+ * @typedef {import ('@ucbuilder:/Template').Template} Template
  * @typedef {import ('@ucbuilder:/build/codeFileInfo').codeFileInfo} codeFileInfo 
  */
 
@@ -67,6 +66,16 @@ const ucOptions = {
     wrapperHT: undefined,
 
 };
+
+const templatePathOptions = {
+    name: "",
+    mainFilePath: "",
+    htmlContents: "",
+    cssContents: "",
+    /** @type {Template}  */
+    mainTpt: undefined,
+
+}
 const tptOptions = {
     /** @type {HTMLElement}  */
     elementHT: undefined,
@@ -75,6 +84,7 @@ const tptOptions = {
 
     /** @type {Usercontrol}  */
     parentUc: undefined,
+
 
 };
 
@@ -88,12 +98,7 @@ const rootPathParam = {
         removeSomeSpecialPathFromProjectBuild: true
     },
 }
-const templatePathOptions = {
-    name:"",
-    mainFilePath:"",
-    htmlContents:"",
-    cssContents:""
-}
+
 module.exports = {
     templatePathOptions,
     rootPathParam,

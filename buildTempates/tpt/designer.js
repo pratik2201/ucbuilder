@@ -1,13 +1,17 @@
 const { Template, TemplateNode } = require('\@ucbuilder:/Template.js');
-/**  @typedef {import ("@ucbuilder:/enumAndMore").tptOptions} tptOptions */
+/**  
+ * @typedef {import ("@ucbuilder:/enumAndMore").tptOptions} tptOptions 
+ * @typedef {import ("@ucbuilder:/enumAndMore").templatePathOptions} templatePathOptions
+ * */
 
 `{loopcls=designer.templetes}` 
 class {=name}_TEMPLATE extends TemplateNode{
     /**
      * @param {Template} tpt 
-     * @param {string} content 
+     * @param {tptOptions} fargs 
+     * @param {templatePathOptions} tptPathOpt 
      */
-    constructor(tpt,content) { super(tpt,content); }
+    constructor(tpt) { super();  }
     /**
      * @{=scope}  
      * @param {HTMLElement} elementHT
@@ -24,13 +28,17 @@ class designer extends Template {
         super();    
         /** @type {tptOptions}  */ 
         let fargs = arguments[0];
+        fargs = fargs[fargs.length-1];
         this.extended.fileStamp = "{=htmlFile.stamp}"; 
-        this.extended.initializecomponent(fargs[fargs.length-1]); 
-        let tpts = this.extended.templeteList;      
-       
+        this.extended.initializecomponent(fargs); 
+        let tpts = Template.getTemplates.byHTMLFilePath(fargs.source.fInfo.html.fullPath,false);
         `{looptpt=designer.templetes} 
-        `this.{=name} = new {=name}_TEMPLATE(this,tpts.{=name});
-        `{/looptpt}`
+        `
+        this.{=name} = new {=name}_TEMPLATE();
+        this.{=name}.extended.initializecomponent(fargs,tpts.{=name}); 
+       `{/looptpt}`
+
+        fargs.elementHT.remove();
     }
     
 }

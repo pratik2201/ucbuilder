@@ -6,6 +6,7 @@ const { filterContent } = require('@ucbuilder:/global/filterContent');
 const { fileDataBank } = require('@ucbuilder:/global/fileDataBank');
 const { aliceManager } = require('@ucbuilder:/build/codefile/aliceManager');
 const { jqFeatures } = require('@ucbuilder:/global/jqFeatures');
+const { Template } = require('@ucbuilder:/Template');
 
 class commonParser {
 
@@ -67,15 +68,21 @@ class commonParser {
         this.aliceMng.fillAlices(this.formHT);
         //console.log(this.aliceMng.source.length);
         _row.designer.className =
-        _row.codefile.baseClassName = "designer";
+            _row.codefile.baseClassName = "designer";
         _row.codefile.className = _row.src.name;
         if (!isUserControl) {
             _row.designer.baseClassName = "Template";
-            let templates = this.formHT.querySelectorAll(`:scope > tpt[${propOpt.ATTR.TEMPLETE_ACCESS_KEY}]`);
-            if (templates.length == 0) {
-                /** @type {buildRow.templeteControls[]}  */
+            let tptbyCntnt = Template.getTemplates.byContents(code, _row.src.mainFilePath);
+
+            let tpts = _row.designer.templetes;
+            tptbyCntnt.forEach(template => {
+                let rolelwr = template.name.toLowerCase();
+                if (tpts.findIndex(s => s.name.toLowerCase() == rolelwr) != -1) return;
+                /** @type {buildRow.controls[]}  */
                 let controls = [];
-                let _htEleAr = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
+                /** @type {HTMLElement}  */
+                let cntHT = template.htmlContents.$();
+                let _htEleAr = Array.from(cntHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
                 _htEleAr.forEach(e => {
                     let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY);
                     if (scope == undefined)
@@ -87,39 +94,12 @@ class commonParser {
                         scope: scope
                     })
                 });
-                _row.designer.templetes.push({
-                    name: "primary",
+                tpts.push({
+                    name: template.name,
                     scope: "public",
                     controls: controls
                 });
-            } else {
-                let tpts = _row.designer.templetes;
-                templates.forEach(template => {
-                    let role = template.getAttribute(propOpt.ATTR.TEMPLETE_ACCESS_KEY);
-                    let rolelwr = role.toLowerCase();
-                    if (tpts.findIndex(s => s.name.toLowerCase() == rolelwr) != -1) return;
-                    /** @type {buildRow.controls[]}  */
-                    let controls = [];
-                    let _htEleAr = Array.from(template.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
-                    _htEleAr.forEach(e => {
-                        let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY);
-                        if (scope == undefined)
-                            scope = 'public';
-                        controls.push({
-                            name: e.getAttribute("x-name"),
-                            nodeName: e.nodeName,
-                            proto: objectOpt.getClassName(e),
-                            scope: scope
-                        })
-                    });
-                    tpts.push({
-                        name: role,
-                        scope: "public",
-                        controls: controls
-                    });
-                });
-
-            }
+            });
         } else {
             _row.designer.baseClassName = "Usercontrol";
             let elem = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));

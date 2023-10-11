@@ -156,6 +156,7 @@ class listUiHandler {
          * @returns {HTMLElement}
          */
         getNode: (index) => {
+            //console.log(this.itemTemplate);
             return this.itemTemplate.extended.generateNode(this.source.rows[index]);
         },
 

@@ -87,10 +87,13 @@ class userControlStamp {
         this.stampCallTimes++;
         /** @type {userControlStampRow}  */
         let rtrn = undefined;
-        let pathtofind = param0.fInfo.html.path.toLowerCase()+"_" + param0.reloadKey;
-        
-        
+        let lwrName = param0.fInfo.html.path.toLowerCase();
+        if (param0.templateName != "") lwrName += "@" + param0.templateName;
+        let pathtofind = lwrName + "_" + param0.reloadKey;
+
         let sindex = this.source.findIndex(s => s.fUniq == pathtofind);
+        
+        
         if (sindex == -1) {
             this.stampNo++;
             rtrn = new userControlStampRow();
