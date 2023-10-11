@@ -47,6 +47,7 @@ class Template {
                 });
             });
         }
+        console.log(rtrn);
         return rtrn;
     }
     constructor() {
@@ -59,35 +60,7 @@ class Template {
         /** @type {Usercontrol}  */
         parentUc: undefined,
         regsMng: new regsManage(),
-        /**
-       * @param {{}} jsonRow 
-       * @returns {string}
-       */
-        generateContent(jsonRow) {
-            let dta = this.stampRow.content;//this.content;
-            // console.log(dta);
-            dta = this.Events.beforeGenerateContent(dta, jsonRow);
-            ///dta = this.mainEvents.beforeGenerateContent(dta, jsonRow);
-            dta = this.regsMng.parse(jsonRow, dta);
-            dta = this.Events.onGenerateContent(dta, jsonRow);
-            // dta = this.mainEvents.onGenerateContent(dta, jsonRow);
-            return dta;
-        },
-
-
-        /**
-         * @param {{}} jsonRow 
-         * @returns {HTMLElement}
-         */
-        generateNode(jsonRow) {
-
-            let dta = this.generateContent(jsonRow);
-            let element = dta.$();
-            this.stampRow.passElement(element);
-            this.Events.onGenerateNode(element, jsonRow);
-            // this.Events.onGenerateNode(element, jsonRow);
-            return element;
-        },
+       
 
 
 
@@ -95,8 +68,9 @@ class Template {
         initializecomponent: (param0) => {
             let tptExt = this.extended;
 
+            
             tptExt.stampRow = userControlStamp.getStamp(param0.source);
-            //mainTag.innerHTML = fileDataBank.readFile(param0.source.fInfo.html.fullPath);
+            // mainTag.innerHTML = fileDataBank.readFile(param0.source.fInfo.html.fullPath);
             Template.getSplittedTemplates(param0.source.fInfo.html.fullPath);
             let ht = tptExt.stampRow.dataHT;
             let attrs = Array.from(tptExt.stampRow.dataHT.attributes);
@@ -237,7 +211,7 @@ class Template {
         /** @param {HTMLElement} mainNode */
         fillTemplates: (mainNode) => {
             let ext = this.extended;
-            /** @type {{key:string,node:TempleteNode}[]}  */
+            /** @type {{key:string,node:TemplateNode}[]}  */
             ext.templeteList = {};
             let nodes = mainNode.querySelectorAll(`:scope > [${propOpt.ATTR.TEMPLETE_ACCESS_KEY}]`);
             if (nodes.length == 0) {
@@ -259,7 +233,7 @@ class Template {
         }
     }
 }
-class TempleteNode {
+class TemplateNode {
 
     constructor(main, content) {
 
@@ -444,7 +418,7 @@ class TempleteNode {
         /** @param {HTMLElement} mainNode */
         fillTemplates: (mainNode) => {
             let ext = this.extended;
-            /** @type {{key:string,node:TempleteNode}[]}  */
+            /** @type {{key:string,node:TemplateNode}[]}  */
             ext.templeteList = {};
             let nodes = mainNode.querySelectorAll(`:scope > [${propOpt.ATTR.TEMPLETE_ACCESS_KEY}]`);
             if (nodes.length == 0) {
@@ -467,4 +441,4 @@ class TempleteNode {
     }
 
 }
-module.exports = { Template, TempleteNode }
+module.exports = { Template, TemplateNode }

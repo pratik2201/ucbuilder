@@ -1,8 +1,8 @@
-const { Template, TempleteNode } = require('\@ucbuilder:/Template.js');
+const { Template, TemplateNode } = require('\@ucbuilder:/Template.js');
 /**  @typedef {import ("@ucbuilder:/enumAndMore").tptOptions} tptOptions */
 
 `{loopcls=designer.templetes}` 
-class {=name}_TEMPLATE extends TempleteNode{
+class {=name}_TEMPLATE extends TemplateNode{
     /**
      * @param {Template} tpt 
      * @param {string} content 

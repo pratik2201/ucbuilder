@@ -1,7 +1,7 @@
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
 const { listUiSearch } = require("@ucbuilder:/global/listUiSearch");
 /**
- * @typedef {import ("@ucbuilder:/Template").Template} Template
+ * @typedef {import ("@ucbuilder:/Template").TemplateNode} TemplateNode
  */
 class listUiHandler {
     constructor() {
@@ -35,7 +35,7 @@ class listUiHandler {
         }
     }
 
-    /** @type {Template}  */
+    /** @type {TemplateNode}  */
     itemTemplate = undefined;
 
 
