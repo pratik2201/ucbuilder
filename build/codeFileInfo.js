@@ -91,6 +91,26 @@ class fileInfo {
         return pathInfo.getFileNameWithoutExtFromPath(this.rootPath);
     }
 }
+class htmlFileNode{
+    static ___HTML_EXT = ".html";
+    static ___STYLE_EXT = ".scss";
+    /** @type {rootPathRow}  */ 
+    rootInfo = undefined;
+    html = new fileInfo();
+    style = new fileInfo();
+    get existHtmlFile() { return pathInfo.existFile(this.html.fullPath); }
+    get existStyleFile() { return pathInfo.existFile(this.style.fullPath); }
+
+    get htmlFileName() { return this.name + this.extCode + htmlFileNode.___HTML_EXT; }
+    get styleFileName() { return this.name + this.extCode + htmlFileNode.___STYLE_EXT; }
+    get htmlExtLen() { return this.htmlExt.length; }
+    get styleExtLen() { return this.styleExt.length; }
+    
+    parseURL(){
+        this.html.parse(sortPath + this.htmlExt, false);
+        this.style.parse(sortPath + this.styleExt, false);
+    }
+}
 class codeFileInfo {
 
     html = new fileInfo();
@@ -100,10 +120,10 @@ class codeFileInfo {
     code = new fileInfo();
 
     get existHtmlFile() { return pathInfo.existFile(this.html.fullPath); }
+    get existStyleFile() { return pathInfo.existFile(this.style.fullPath); }
     get existDeignerFile() { return pathInfo.existFile(this.designer.fullPath); }
     get existPerametersFile() { return pathInfo.existFile(this.perameters.fullPath); }
     get existCodeFile() { return pathInfo.existFile(this.code.fullPath); }
-    get existStyleFile() { return pathInfo.existFile(this.style.fullPath); }
 
     name = "";
     /** @param {string} filepath */
@@ -122,27 +142,26 @@ class codeFileInfo {
         this.extCode = extCode;
         
     }
-    ___HTML_EXT = ".html";
-    ___STYLE_EXT = ".scss";
-    ___PERAMETERS_EXT = ".rowperameters.json";
-    ___DESIGNER_EXT = ".designer.js";
-    ___CODE_EXT = ".js";
-    get htmlExt() { return this.extCode + this.___HTML_EXT; }
-    get deignerExt() { return this.extCode + this.___DESIGNER_EXT; }
-    get styleExt() { return this.extCode + this.___STYLE_EXT; }
-    get perametersExt() { return this.extCode + this.___PERAMETERS_EXT; }
-    get codeExt() { return this.extCode + this.___CODE_EXT; }
+    
+    static ___PERAMETERS_EXT = ".rowperameters.json";
+    static ___DESIGNER_EXT = ".designer.js";
+    static ___CODE_EXT = ".js";
+    get htmlExt() { return this.extCode + htmlFileNode.___HTML_EXT; }
+    get styleExt() { return this.extCode + htmlFileNode.___STYLE_EXT; }
+    get deignerExt() { return this.extCode + codeFileInfo.___DESIGNER_EXT; }
+    get perametersExt() { return this.extCode + codeFileInfo.___PERAMETERS_EXT; }
+    get codeExt() { return this.extCode + codeFileInfo.___CODE_EXT; }
 
-    get htmlFileName() { return this.name + this.extCode + this.___HTML_EXT; }
-    get deignerFileName() { return this.name + this.extCode + this.___DESIGNER_EXT; }
-    get styleFileName() { return this.name + this.extCode + this.___STYLE_EXT; }
-    get perametersFileName() { return this.name + this.extCode + this.___PERAMETERS_EXT; }
-    get codeFileName() { return this.name + this.extCode + this.___CODE_EXT; }
+    get htmlFileName() { return this.name + this.extCode + htmlFileNode.___HTML_EXT; }
+    get styleFileName() { return this.name + this.extCode + htmlFileNode.___STYLE_EXT; }
+    get deignerFileName() { return this.name + this.extCode + codeFileInfo.___DESIGNER_EXT; }
+    get perametersFileName() { return this.name + this.extCode + codeFileInfo.___PERAMETERS_EXT; }
+    get codeFileName() { return this.name + this.extCode + codeFileInfo.___CODE_EXT; }
 
 
     get htmlExtLen() { return this.htmlExt.length; }
-    get deignerExtLen() { return this.deignerExt.length; }
     get styleExtLen() { return this.styleExt.length; }
+    get deignerExtLen() { return this.deignerExt.length; }
     get perametersExtLen() { return this.perametersExt.length; }
     get codeExtLen() { return this.codeExt.length; }
 
@@ -159,11 +178,11 @@ class codeFileInfo {
     /** @type {rootPathRow}  */ 
     rootInfo = undefined;
     /**
-     * @param {string} url 
+     * @param {string} _url 
      */
-    parseUrl(url) {
+    parseUrl(_url) {
 
-        url = pathInfo.cleanPath(url);//.toLowerCase();
+        let url = pathInfo.cleanPath(_url);//.toLowerCase();
        
         this.rootInfo = rootPathHandler.getInfo(url);
         
@@ -173,8 +192,9 @@ class codeFileInfo {
             url = strOpt._trim(url, '@ucbuilder:/');
         } else isFullPath = true;*/
         if (this.rootInfo == undefined) {
+            debugger;
             //this.rootInfo.alices;
-            console.log(`"${url}" at codeFileInfo`);
+            console.log(`"${_url}" at codeFileInfo`);
             return;
         }
         if (!this.rootInfo.isAlreadyFullPath)
@@ -195,14 +215,13 @@ class codeFileInfo {
         this.partInfo = pathInfo.getFileInfoPartly(fullPath);
         let s = this.partInfo.dirPath + "" + this.partInfo.fileName;        
         this.fullPathWithoutExt = s;
-        let sortPath = strOpt._trim(s,this.rootInfo.path+"/");
+        let sortPath = strOpt._trim(s, this.rootInfo.path + "/");
         this.partInfo.sortDirPath = strOpt._trim(s, this.html.rootInfo.path + "/");
         
         
         //let tp = this.partInfo.sortDirPath
         //console.log(this.partInfo.sortDirPath);
 
-        
         this.rootInfo.isAlreadyFullPath = false;
         this.html.parse(sortPath + this.htmlExt, false);
         this.style.parse(sortPath + this.styleExt, false);

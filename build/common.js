@@ -177,7 +177,6 @@ const __THIS = {
              return _path.replace(this.cleanPath(rootPathHandler.path) + "/", '')
          },*/
         cleanPath: (_pth = "") => {
-
             return _pth.replace(/[\\/]{1,}/g, "/").trim_("\/ ");
         },
         existFile: (_path) => {

@@ -13,7 +13,9 @@ const sessionOptions = {
 };
 const sourceOptions = {
     /** @type {codeFileInfo}  */
-    fInfo: undefined,
+    cfInfo: undefined,
+
+    
 
     /** @type {"wrapper"|"targetElement"|"random"}  */
     nodeNameAs: 'wrapper',

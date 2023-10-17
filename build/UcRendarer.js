@@ -30,7 +30,7 @@ class UcRendarer {
         //this._programRef = parentUc.ucExtends.program;
         ResourcesUC.rendrarCounter++;
         let tname = this.fInfo.name;
-        this.ucParams.source.fInfo = this.fInfo;
+        this.ucParams.source.cfInfo = this.fInfo;
         this.ucParams.parentUc = parentUc;
         this.ucParams.wrapperHT = `<${tname}></${tname}>`.$();
         //this.ucParams.programRef = this._programRef;
@@ -38,7 +38,7 @@ class UcRendarer {
         this.ucParams.source.reloadKey = "" + ResourcesUC.rendrarCounter;
         
         this.tptParams = newObjectOpt.clone(tptOptions);
-        this.tptParams.source.fInfo = this.fInfo;
+        this.tptParams.source.cfInfo = this.fInfo;
         this.tptParams.parentUc = parentUc;
         this.tptParams.elementHT = `<${tname}></${tname}>`.$();
         //this.tptParams.programRef = this._programRef;

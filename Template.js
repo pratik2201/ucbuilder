@@ -11,6 +11,7 @@ const { tptOptions, templatePathOptions } = require("@ucbuilder:/enumAndMore");
 const { transferDataNode } = require("@ucbuilder:/global/drag/transferation");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
 const { fileInfo } = require("@ucbuilder:/build/codeFileInfo");
+const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 
 class Template {
     static getTemplates = {
@@ -188,13 +189,18 @@ class TemplateNode {
 
 
         /** 
-         * @param {tptOptions} param0
+         * @param {tptOptions} _args
          * @param {templatePathOptions} tptPathOpt
          * 
          */
-        initializecomponent: (param0, tptPathOpt) => {
+        initializecomponent: (_args, tptPathOpt) => {
             let tptExt = this.extended;
+            
+            /** @type {tptOptions}  */ 
+            let param0 = newObjectOpt.copyProps(_args,tptOptions);
+            param0.source.cfInfo.parseUrl(param0.source.cfInfo.html)
             param0.source.templateName = tptPathOpt.name;
+            console.log(param0.source.cfInfo.html.path);
             tptExt.stampRow = userControlStamp.getStamp(param0.source);
             let ht = tptExt.stampRow.dataHT;
             Array.from(tptExt.stampRow.dataHT.attributes)
@@ -205,19 +211,20 @@ class TemplateNode {
             /** @type {HTMLElement}  */
             let eleHT = param0.elementHT;
             tptExt.parentUc = param0.parentUc;
+            
             if (tptExt.parentUc != undefined)
                 tptExt.parentUc.ucExtends.stampRow.styler
-                    .pushChild(param0.source.fInfo.mainFilePath + "" + (param0.source.templateName == "" ? "" : "@" + param0.source.templateName),
+                    .pushChild(param0.source.cfInfo.mainFilePath + "" + (param0.source.templateName == "" ? "" : "@" + param0.source.templateName),
                         tptExt.stampRow.styler, eleHT.nodeName);
 
             tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator(
                 (tptPathOpt.cssContents == undefined ?
-                    fileDataBank.readFile(param0.source.fInfo.style.rootPath)
+                    fileDataBank.readFile(param0.source.cfInfo.style.rootPath)
                     :
                     tptPathOpt.cssContents));
 
             loadGlobal.pushRow({
-                url: param0.source.fInfo.style.rootPath,
+                url: param0.source.cfInfo.style.rootPath,
                 stamp: tptExt.stampRow.stamp,
                 reloadDesign: param0.source.reloadDesign,
                 reloadKey: param0.source.reloadKey,

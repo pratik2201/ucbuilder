@@ -38,7 +38,8 @@ class userControlStampRow {
         let stamplist = [];
         let stmpTxt = this.stamp;
         let stmpUnq = this.uniqStamp;
-
+        if(this.cInfo.rootInfo==undefined)
+            console.log(this.cInfo);
         let stmpRt = this.cInfo.rootInfo.id;
         let ar = controlOpt.getArray(ele);
         for (let index = 0; index < ar.length; index++) {
@@ -87,26 +88,25 @@ class userControlStamp {
         this.stampCallTimes++;
         /** @type {userControlStampRow}  */
         let rtrn = undefined;
-        let lwrName = param0.fInfo.html.path.toLowerCase();
+        let lwrName = param0.cfInfo.html.path.toLowerCase();
         if (param0.templateName != "") lwrName += "@" + param0.templateName;
         let pathtofind = lwrName + "_" + param0.reloadKey;
-
         let sindex = this.source.findIndex(s => s.fUniq == pathtofind);
-        
+            
         
         if (sindex == -1) {
             this.stampNo++;
             rtrn = new userControlStampRow();
             let { stylerRegs } = require("@ucbuilder:/global/stylerRegs");
-            rtrn.styler = new stylerRegs(param0.fInfo.rootInfo, true);
+            rtrn.styler = new stylerRegs(param0.cfInfo.rootInfo, true);
             rtrn.fUniq = pathtofind;
-            rtrn.cInfo = param0.fInfo;
+            rtrn.cInfo = param0.cfInfo;
             //console.log(param0.htmlContents);
             if (param0.htmlContents != undefined) {
                 rtrn.content = param0.htmlContents;
                 this.reload(rtrn, param0.beforeContentAssign, param0);
             } else {
-                rtrn.content = fileDataBank.readFile(param0.fInfo.html.rootPath);
+                rtrn.content = fileDataBank.readFile(param0.cfInfo.html.rootPath);
                 this.reload(rtrn, param0.beforeContentAssign, param0);
             }
             this.source.push(rtrn);

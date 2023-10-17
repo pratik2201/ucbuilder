@@ -100,7 +100,7 @@ class Usercontrol {
             let ucExt = this.ucExtends;
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
-            ucExt.fileInfo = param0.source.fInfo;
+            ucExt.fileInfo = param0.source.cfInfo;
             
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             ucExt.stampRow = userControlStamp.getStamp(param0.source);

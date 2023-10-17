@@ -30,8 +30,8 @@ class designer extends Template {
         let fargs = arguments[0];
         fargs = fargs[fargs.length-1];
         this.extended.fileStamp = "{=htmlFile.stamp}"; 
-        this.extended.initializecomponent(fargs); 
-        let tpts = Template.getTemplates.byHTMLFilePath(fargs.source.fInfo.html.fullPath,false);
+        //this.extended.initializecomponent(fargs); 
+        let tpts = Template.getTemplates.byHTMLFilePath(fargs.source.cfInfo.html.fullPath,false);
         `{looptpt=designer.templetes} 
         `
         this.{=name} = new {=name}_TEMPLATE();

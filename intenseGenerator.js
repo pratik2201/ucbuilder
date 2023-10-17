@@ -21,7 +21,7 @@ class intenseGenerator {
         let param0 = newObjectOpt.copyProps(pera, ucOptions);
 
         let row = ResourcesUC.codefilelist.getObj(path);
-        param0.source.fInfo = row.codefileObj;
+        param0.source.cfInfo = row.codefileObj;
         if (param0.wrapperHT == undefined) {
             let tname = row.codefileObj.name;
             param0.wrapperHT = (param0.parentUc == undefined) ? ResourcesUC.contentHT : param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$());
@@ -58,7 +58,7 @@ class intenseGenerator {
         let param0 = newObjectOpt.copyProps(pera, tptOptions);
 
         let row = ResourcesUC.codefilelist.getObj(path);
-        param0.source.fInfo = row.codefileObj;
+        param0.source.cfInfo = row.codefileObj;
         if (param0.elementHT == undefined) {
             let tname = row.codefileObj.name;
             param0.elementHT = (param0.parentUc == undefined) ? ResourcesUC.contentHT : param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$());
