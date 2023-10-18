@@ -11,7 +11,7 @@ class {=name}_TEMPLATE extends TemplateNode{
      * @param {tptOptions} fargs 
      * @param {templatePathOptions} tptPathOpt 
      */
-    constructor(tpt) { super();  }
+    constructor(tpt) { super();  this.extended.main = tpt; }
     /**
      * @{=scope}  
      * @param {HTMLElement} elementHT
@@ -34,8 +34,9 @@ class designer extends Template {
         let tpts = Template.getTemplates.byHTMLFilePath(fargs.source.cfInfo.html.fullPath,false);
         `{looptpt=designer.templetes} 
         `
-        this.{=name} = new {=name}_TEMPLATE();
-        this.{=name}.extended.initializecomponent(fargs,tpts.{=name}); 
+        
+        this.{=name} = new {=name}_TEMPLATE(this);
+        this.{=name}.extended.initializecomponent(fargs,tpts.{=name},"{=name}"); 
        `{/looptpt}`
 
         fargs.elementHT.remove();

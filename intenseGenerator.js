@@ -74,12 +74,24 @@ class intenseGenerator {
      * @return {TemplateNode}
      */
     static parseTPT(val, parentUc) {
-        if (objectOpt.parse(val, 'Template')) {            
+        //console.log(val);
+        // debugger;
+        if (objectOpt.parse(val, 'Template')) {
             return val[propOpt.ATTR.TEMPLETE_DEFAULT];
         } else if (objectOpt.parse(val, 'TemplateNode')) {
             return val;
         } else if (objectOpt.parse(val, 'String')) {
-            return intenseGenerator.generateTPT(val, { parentUc: parentUc });
+            /** @type {string[]}  */
+            let splval = val.split(";");
+            let tpt = intenseGenerator.generateTPT(val, { parentUc: parentUc });
+            /*console.log(val);
+            console.log(tpt);*/
+            let res = (splval.length === 1) ?
+                tpt[propOpt.ATTR.TEMPLETE_DEFAULT]
+                :
+                tpt[splval[1].trim()];
+            return res;
+
         }
     }
     /**

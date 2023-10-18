@@ -118,7 +118,9 @@ class codeFileInfo {
     perameters = new fileInfo();
     designer = new fileInfo();
     code = new fileInfo();
-
+    /*get html(){ return this.uiNode.html; }
+    get style(){ return this.uiNode.style; }
+    uiNode = new htmlFileNode();*/
     get existHtmlFile() { return pathInfo.existFile(this.html.fullPath); }
     get existStyleFile() { return pathInfo.existFile(this.style.fullPath); }
     get existDeignerFile() { return pathInfo.existFile(this.designer.fullPath); }
@@ -177,30 +179,23 @@ class codeFileInfo {
 
     /** @type {rootPathRow}  */ 
     rootInfo = undefined;
+    /*parseHTMLSrc(url){  
+        this.html.parse(url,false);
+        this.style.parse(url,false);
+    }*/
     /**
      * @param {string} _url 
      */
     parseUrl(_url) {
-
         let url = pathInfo.cleanPath(_url);//.toLowerCase();
-       
         this.rootInfo = rootPathHandler.getInfo(url);
-        
-        //console.log(this.rootInfo);
-        /*if (url.startsWith('@ucbuilder:/')) {
-            isFullPath = false;
-            url = strOpt._trim(url, '@ucbuilder:/');
-        } else isFullPath = true;*/
         if (this.rootInfo == undefined) {
             debugger;
-            //this.rootInfo.alices;
             console.log(`"${_url}" at codeFileInfo`);
             return;
         }
         if (!this.rootInfo.isAlreadyFullPath)
             url = strOpt._trim(url, this.rootInfo.alices);
-
-           
         this.html.rootInfo =
             this.style.rootInfo =
             this.designer.rootInfo =
@@ -218,9 +213,6 @@ class codeFileInfo {
         let sortPath = strOpt._trim(s, this.rootInfo.path + "/");
         this.partInfo.sortDirPath = strOpt._trim(s, this.html.rootInfo.path + "/");
         
-        
-        //let tp = this.partInfo.sortDirPath
-        //console.log(this.partInfo.sortDirPath);
 
         this.rootInfo.isAlreadyFullPath = false;
         this.html.parse(sortPath + this.htmlExt, false);

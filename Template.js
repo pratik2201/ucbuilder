@@ -10,7 +10,7 @@ const { Usercontrol } = require("@ucbuilder:/Usercontrol");
 const { tptOptions, templatePathOptions } = require("@ucbuilder:/enumAndMore");
 const { transferDataNode } = require("@ucbuilder:/global/drag/transferation");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
-const { fileInfo } = require("@ucbuilder:/build/codeFileInfo");
+const { fileInfo, codeFileInfo } = require("@ucbuilder:/build/codeFileInfo");
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 
 class Template {
@@ -144,7 +144,6 @@ class TemplateNode {
      */
     constructor(main) {
         this.extended.main = main;
-
     }
 
     extended = {
@@ -191,16 +190,22 @@ class TemplateNode {
         /** 
          * @param {tptOptions} _args
          * @param {templatePathOptions} tptPathOpt
-         * 
+         * @param {string} tptname
          */
-        initializecomponent: (_args, tptPathOpt) => {
+        initializecomponent: (_args, tptPathOpt,tptname) => {
             let tptExt = this.extended;
-            
-            /** @type {tptOptions}  */ 
-            let param0 = newObjectOpt.copyProps(_args,tptOptions);
-            param0.source.cfInfo.parseUrl(param0.source.cfInfo.html)
+            _args.source.cfInfo = new codeFileInfo(".tpt");
+            /** @type {tptOptions}  */
+            let param0 = newObjectOpt.copyProps(_args, tptOptions); 
+            _args.source.cfInfo.parseUrl(tptPathOpt.mainFilePath);
+            if (tptname !== propOpt.ATTR.TEMPLETE_DEFAULT) {
+                let fpath = param0.source.cfInfo.html.rootPath;
+                fpath = strOpt.trim_(fpath, ".html", ".scss");
+                fpath += "."+tptname;
+                param0.source.cfInfo.html.parse(fpath+".html",false);
+                param0.source.cfInfo.style.parse(fpath+".scss",false);
+            }
             param0.source.templateName = tptPathOpt.name;
-            console.log(param0.source.cfInfo.html.path);
             tptExt.stampRow = userControlStamp.getStamp(param0.source);
             let ht = tptExt.stampRow.dataHT;
             Array.from(tptExt.stampRow.dataHT.attributes)
@@ -211,7 +216,7 @@ class TemplateNode {
             /** @type {HTMLElement}  */
             let eleHT = param0.elementHT;
             tptExt.parentUc = param0.parentUc;
-            
+
             if (tptExt.parentUc != undefined)
                 tptExt.parentUc.ucExtends.stampRow.styler
                     .pushChild(param0.source.cfInfo.mainFilePath + "" + (param0.source.templateName == "" ? "" : "@" + param0.source.templateName),
@@ -316,7 +321,7 @@ class TemplateNode {
                 });
             } else {
                 let uniqStamp = uExt.extended.stampRow.uniqStamp;
-                console.log(fromElement.isConnected);
+                //console.log(fromElement.isConnected);
                 let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`));
                 eleAr.forEach((ele) => {
                     fillObj(ele.getAttribute(propOpt.ATTR.ACCESS_KEY), ele);

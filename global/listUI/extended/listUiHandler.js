@@ -58,7 +58,7 @@ class listUiHandler {
                 setTimeout(() => {
                     this.width = htEle.offsetWidth;
                     this.height = htEle.offsetHeight;
-                    console.log(this);
+                  //  console.log(this);
                 });
             }
         },
