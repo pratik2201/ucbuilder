@@ -31,6 +31,8 @@ class scrollbarHandler {
     init(main) {
         this.main = main;
         this.main.Events.onListUISizeChanged.on((rect) => {
+            console.log('here');
+            console.log(this.main.uc);
             this.viewSize.setBy.HTMLEle(this.main.Records.scrollerElement)
             let ppr = (this.viewSize.height / this.main.nodes.itemSize.height);
             this.main.pageInfo.extended.perPageRecord = Math.floor(ppr);
