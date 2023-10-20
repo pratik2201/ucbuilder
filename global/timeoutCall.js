@@ -18,16 +18,18 @@ class timeoutCall {
     static doProcess(callback){
 
     }
-    oldnode = new tmoNode();
-    newnode = new tmoNode();
+    static oldnode = new tmoNode();
+    static newnode = new tmoNode();
     /** @type {'add'|''}  */ 
     static mode = '';
     static isOn = true;
     static start(callback){
         if(this.isOn){
-
+            this.newnode.push(callback);
         }else{            
+            this.isOn = true;
             setTimeout(()=>{
+                this.newnode.fire();
                 this.isOn = false;
             },0);
         }
