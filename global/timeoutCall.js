@@ -24,9 +24,8 @@ class timeoutCall {
     static mode = '';
     static isOn = true;
     static start(callback){
-        if(this.isOn){
-            this.newnode.push(callback);
-        }else{            
+        this.newnode.push(callback);
+        if(!this.isOn){          
             this.isOn = true;
             setTimeout(()=>{
                 this.newnode.fire();
