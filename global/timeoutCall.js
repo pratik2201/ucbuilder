@@ -18,8 +18,11 @@ class timeoutCall {
     static doProcess(callback){
 
     }
+    oldnode = new tmoNode();
+    newnode = new tmoNode();
     /** @type {'add'|''}  */ 
     static mode = '';
+    static isOn = true;
     static start(callback){
         if(this.isOn){
 
