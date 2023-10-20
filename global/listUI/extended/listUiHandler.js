@@ -1,5 +1,6 @@
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
 const { listUiSearch } = require("@ucbuilder:/global/listUiSearch");
+const { timeoutCall } = require("@ucbuilder:/global/timeoutCall");
 /**
  * @typedef {import ("@ucbuilder:/Template").TemplateNode} TemplateNode
  */
@@ -55,11 +56,17 @@ class listUiHandler {
             /** @param {HTMLElement} htEle */
             update(htEle) {
                 this.hasSet = true;
-                setTimeout(() => {
+                if (!htEle.isConnected) {
+                    document.body.appendChild(htEle);
+                    timeoutCall.start(() => {
+                        this.width = htEle.offsetWidth;
+                        this.height = htEle.offsetHeight;
+                    });
+                    document.body.removeChild(htEle);
+                } else {
                     this.width = htEle.offsetWidth;
                     this.height = htEle.offsetHeight;
-                  //  console.log(this);
-                });
+                }
             }
         },
         /**
@@ -97,8 +104,8 @@ class listUiHandler {
             this.Events.onClearContainer.fire();
         },
         /** @param {HTMLElement} ele  @returns {number} */
-        indexOf:(ele)=>{
-           
+        indexOf: (ele) => {
+
         },
         fill: () => {
             console.log('ds');
@@ -238,8 +245,8 @@ class listUiHandler {
             * @param {KeyboardEvent} event 
             * @param {number} valToAddRemove 
             */
-        onRowNavigationChanged: (callback = () => { }, event,valToAddRemove) => {
-            callback(event,valToAddRemove);
+        onRowNavigationChanged: (callback = () => { }, event, valToAddRemove) => {
+            callback(event, valToAddRemove);
         },
 
         /**
@@ -270,7 +277,7 @@ class listUiHandler {
         if (this.resizeObsrv != undefined)
             this.resizeObsrv.disconnect();
         this.resizeObsrv = new window.ResizeObserver((pera) => {
-            setTimeout(() => {
+            timeoutCall.start(() => {
                 this.OPTIONS.listSize = pera[0].contentRect;
                 this.Events.onListUISizeChanged.fire(pera[0].contentRect);
             });

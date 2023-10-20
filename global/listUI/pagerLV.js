@@ -5,6 +5,7 @@ const { listUiHandler } = require("@ucbuilder:/global/listUI/extended/listUiHand
 const { pagerATTR, PageNavigationResult } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
 const { Usercontrol } = require("@ucbuilder:/Usercontrol");
 const { scrollbarHandler } = require("@ucbuilder:/global/listUI/pager/scrollbarHandler");
+const { timeoutCall } = require("@ucbuilder:/global/timeoutCall");
 
 
 
@@ -233,7 +234,7 @@ class pagerLV extends listUiHandler {
         this.nodes.callToFill = () => {
             if (calledToFill) return;
             calledToFill = true;
-            setTimeout(() => {
+            timeoutCall.start(() => {
                 if (this.Events.beforeOldItemRemoved.length != 0) {
                     let cntnr = this.Records.lstVWEle.children;
                     for (let index = 0; index < cntnr.length; index++) {

@@ -5,6 +5,7 @@ const { scrollbarHandler } = require("@ucbuilder:/global/listUI/pager/scrollbarH
 const { namingConversion, scrollerUIElements } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
+const { timeoutCall } = require("@ucbuilder:/global/timeoutCall");
 class pagerScroll {
 
     nameList = newObjectOpt.copyProps(namingConversion, {});

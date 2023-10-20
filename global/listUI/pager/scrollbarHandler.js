@@ -31,15 +31,24 @@ class scrollbarHandler {
     init(main) {
         this.main = main;
         this.main.Events.onListUISizeChanged.on((rect) => {
-            console.log('here');
-            console.log(this.main.uc);
-            this.viewSize.setBy.HTMLEle(this.main.Records.scrollerElement)
+            //console.log(this.main.uc);
+            //let h = this.main.nodes.itemSize.height;
+            //if(h==0)this.main.nodes.itemSize.
+            this.viewSize.setBy.HTMLEle(this.main.Records.scrollerElement);
             let ppr = (this.viewSize.height / this.main.nodes.itemSize.height);
+            if(ppr==Infinity)return;
+            //console.log(this.main.uc);
+            //console.log(this.viewSize.height);
+            //console.log(ppr);
             this.main.pageInfo.extended.perPageRecord = Math.floor(ppr);
             /*console.log(this.main.uc);
             //console.log(this.viewSize.height);
             console.log(this.viewSize.height+"=>"+this.main.pageInfo.extended.perPageRecord);*/
+            //console.log('here : '+ppr);
+            //console.log(this.main.uc);
             this.main.nodes.fill();
+            
+            
         });
         this.scrollBox.init();
         this.mutate = new MutationObserver((e) => {
