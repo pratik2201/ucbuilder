@@ -12,6 +12,7 @@ const { transferDataNode } = require("@ucbuilder:/global/drag/transferation");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
 const { fileInfo, codeFileInfo } = require("@ucbuilder:/build/codeFileInfo");
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
+const { Size } = require("@ucbuilder:/global/drawing/shapes");
 
 class Template {
     static getTemplates = {
@@ -154,19 +155,18 @@ class TemplateNode {
         stampRow: undefined,
         /** @type {Usercontrol}  */
         parentUc: undefined,
+        size: new Size(),
         regsMng: new regsManage(),
         /**
-       * @param {{}} jsonRow 
-       * @returns {string}
-       */
+        * @param {{}} jsonRow 
+        * @returns {string}
+        */
         generateContent(jsonRow) {
             let dta = this.stampRow.content;//this.content;
             // console.log(dta);
             dta = this.Events.beforeGenerateContent(dta, jsonRow);
-            ///dta = this.mainEvents.beforeGenerateContent(dta, jsonRow);
             dta = this.regsMng.parse(jsonRow, dta);
             dta = this.Events.onGenerateContent(dta, jsonRow);
-            // dta = this.mainEvents.onGenerateContent(dta, jsonRow);
             return dta;
         },
 
@@ -192,25 +192,27 @@ class TemplateNode {
          * @param {templatePathOptions} tptPathOpt
          * @param {string} tptname
          */
-        initializecomponent: (_args, tptPathOpt,tptname) => {
+        initializecomponent: (_args, tptPathOpt, tptname) => {
             let tptExt = this.extended;
             _args.source.cfInfo = new codeFileInfo(".tpt");
             /** @type {tptOptions}  */
-            let param0 = newObjectOpt.copyProps(_args, tptOptions); 
+            let param0 = newObjectOpt.copyProps(_args, tptOptions);
             _args.source.cfInfo.parseUrl(tptPathOpt.mainFilePath);
+
             if (tptname !== propOpt.ATTR.TEMPLETE_DEFAULT) {
                 let fpath = param0.source.cfInfo.html.rootPath;
                 fpath = strOpt.trim_(fpath, ".html", ".scss");
-                fpath += "."+tptname;
-                param0.source.cfInfo.html.parse(fpath+".html",false);
-                param0.source.cfInfo.style.parse(fpath+".scss",false);
+                fpath += "." + tptname;
+                param0.source.cfInfo.html.parse(fpath + ".html", false);
+                param0.source.cfInfo.style.parse(fpath + ".scss", false);
             }
             param0.source.templateName = tptPathOpt.name;
             tptExt.stampRow = userControlStamp.getStamp(param0.source);
-            let ht = tptExt.stampRow.dataHT;
+            let htEle = tptExt.stampRow.dataHT;
+
             Array.from(tptExt.stampRow.dataHT.attributes)
                 .filter(s => s.nodeName.toLowerCase().startsWith("x.temp-"))
-                .forEach(s => ht.removeAttribute(s.nodeName));
+                .forEach(s => htEle.removeAttribute(s.nodeName));
             //tptExt.stampRow.content = ht.outerHTML;
 
             /** @type {HTMLElement}  */
@@ -241,8 +243,9 @@ class TemplateNode {
             tptExt.Events.onDataExport = (data) =>
                 param0.parentUc.ucExtends.Events.onDataExport(data);
 
-
-
+            document.body.appendChild(htEle);
+            this.extended.size.setBy.HTMLEle(htEle);
+            htEle.remove();
         },
         Events: {
 
@@ -362,7 +365,6 @@ class TemplateNode {
                     }
                 });
             }
-            // console.log(ext.templeteList);
         }
     }
 

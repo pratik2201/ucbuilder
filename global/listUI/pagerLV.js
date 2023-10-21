@@ -144,9 +144,14 @@ class pagerLV extends listUiHandler {
         this.initNodes();
 
         let _itemSize = this.nodes.itemSize;
-        this.Events.newItemGenerate.on((itmnode) => {
+        let s = this.itemTemplate.extended.size;
+        _itemSize.height = s.height;
+        _itemSize.width  = s.width;
+        console.log(this.uc);
+        console.log(_itemSize);
+        /*this.Events.newItemGenerate.on((itmnode) => {
             if (!_itemSize.hasSet) _itemSize.update(itmnode);
-        });
+        });*/
     }
     initkeyEvents() {
         this.Records.lstVWEle.addEventListener("wheel", (e) => {
