@@ -146,7 +146,7 @@ class pagerLV extends listUiHandler {
         let _itemSize = this.nodes.itemSize;
         let s = this.itemTemplate.extended.size;
         _itemSize.height = s.height;
-        _itemSize.width  = s.width;
+        _itemSize.width = s.width;
         console.log(this.uc);
         console.log(_itemSize);
         /*this.Events.newItemGenerate.on((itmnode) => {
@@ -249,7 +249,7 @@ class pagerLV extends listUiHandler {
                     }
                 }
                 this.nodes.fill();
-                this.currentIndex = this.currentIndex;
+                //this.currentIndex = this.currentIndex;
                 calledToFill = false;
             });
         }
@@ -324,8 +324,8 @@ class pagerLV extends listUiHandler {
          * @param {KeyboardEvent} event 
          * @param {number} valToAddRemove 
          */
-        callNavigate: (callback = (evt) => { }, event,valToAddRemove) => {
-            this.Events.onRowNavigationChanged(callback, event,valToAddRemove);
+        callNavigate: (callback = (evt) => { }, event, valToAddRemove) => {
+            this.Events.onRowNavigationChanged(callback, event, valToAddRemove);
         },
         pageTo: {
             downSide: {
@@ -360,6 +360,7 @@ class pagerLV extends listUiHandler {
                  * @param {valToAdd}
                  */
                 Go: (event) => {
+
                     let dwnSide = this.navigatePages.pageTo.downSide;
                     let cmd = dwnSide.check();
                     switch (cmd) {
@@ -394,7 +395,9 @@ class pagerLV extends listUiHandler {
                 Advance: {
                     outside: () => {
                         this.pageInfo.extended._begin -= this.pageInfo.extended.perPageRecord;
+                        //console.log(this.pageInfo.extended._begin);
                         this.nodes.callToFill();
+                        //console.log(this.pageInfo.extended._begin);
                         this.currentIndex = this.pageInfo.extended._begin;
                     },
                     first: () => {
@@ -444,14 +447,14 @@ class pagerLV extends listUiHandler {
                             "FIRST";
                 },
                 Advance: {
-                    dispayed: (evt,valToCount=1) => {
-                       this.currentIndex-=valToCount;
+                    dispayed: (evt, valToCount = 1) => {
+                        this.currentIndex -= valToCount;
                     },
                     /**
                      * 
                      * @returns {HTMLElement} first item of displayed list
                      */
-                    outside: (evt,valToCount=1) => {
+                    outside: (evt, valToCount = 1) => {
                         let eleToRem = this.Records.lstVWEle.lastElementChild;
                         this.Events.beforeOldItemRemoved.fire(eleToRem);
                         eleToRem.remove();
@@ -460,7 +463,7 @@ class pagerLV extends listUiHandler {
                         this.currentIndex--;
                         return ele;
                     },
-                    first: (evt,valToCount=1) => {
+                    first: (evt, valToCount = 1) => {
                         if (this.Events.onReachFirstRecord()) {
                             this.pageInfo.extended._begin = this.pageInfo.extended.lastSideTopIndex;//Math.max(0, this.PageManage_extended.indexes.__recordCount - this.pageInfo.extended.perPageRecord);
                             this.nodes.callToFill();
@@ -472,18 +475,18 @@ class pagerLV extends listUiHandler {
                  * @param {KeyboardEvent} event 
                  * @param {number} valToCount
                  */
-                Go: (event,valToCount = 1) => {
+                Go: (event, valToCount = 1) => {
                     let prvSide = this.navigatePages.moveTo.prevSide;
                     let cmd = prvSide.check();
                     switch (cmd) {
                         case "DISPLAYED":
-                            this.navigatePages.callNavigate(prvSide.Advance.dispayed, event,valToCount);
+                            this.navigatePages.callNavigate(prvSide.Advance.dispayed, event, valToCount);
                             break;
                         case "OUTSIDE":
-                            this.navigatePages.callNavigate(prvSide.Advance.outside, event,valToCount);
+                            this.navigatePages.callNavigate(prvSide.Advance.outside, event, valToCount);
                             break;
                         case "FIRST":
-                            this.navigatePages.callNavigate(prvSide.Advance.first, event,valToCount);
+                            this.navigatePages.callNavigate(prvSide.Advance.first, event, valToCount);
                             break;
                     }
                 }
@@ -498,7 +501,7 @@ class pagerLV extends listUiHandler {
                  * 
                  *      `LAST` indicate currentIndex is the last item of list
                  */
-                check: (valToCount=1) => {
+                check: (valToCount = 1) => {
                     return (this.currentIndex < this.pageInfo.minBottomIndex) ?
                         "DISPLAYED"
                         :
@@ -508,14 +511,14 @@ class pagerLV extends listUiHandler {
                             "LAST";
                 },
                 Advance: {
-                    dispayed: (evt,valToCount=1) => {
-                        this.currentIndex+=valToCount;
+                    dispayed: (evt, valToCount = 1) => {
+                        this.currentIndex += valToCount;
                     },
                     /**
                     * 
                     * @returns {HTMLElement} last item of displayed list
                     */
-                    outside: (evt,valToCount=1) => {
+                    outside: (evt, valToCount = 1) => {
                         let lastTopIndex = this.pageInfo.extended.lastSideTopIndex;
                         if (this.pageInfo.top < lastTopIndex) {
                             let eleToRem = this.Records.lstVWEle.firstElementChild;
@@ -527,7 +530,7 @@ class pagerLV extends listUiHandler {
                         this.currentIndex++;
                         return newItemEle;
                     },
-                    last: (evt,valToCount=1) => {
+                    last: (evt, valToCount = 1) => {
                         if (this.Events.onReachLastRecord()) {
                             this.pageInfo.extended._begin = 0;
                             this.currentIndex = this.pageInfo.defaultIndex;
@@ -539,19 +542,19 @@ class pagerLV extends listUiHandler {
                  * @param {KeyboardEvent} event 
                  * @param {number} valToCount
                  */
-                Go: (event,valToCount=1) => {
+                Go: (event, valToCount = 1) => {
                     let nxtSide = this.navigatePages.moveTo.nextSide;
                     let cmd = nxtSide.check(valToCount);
 
                     switch (cmd) {
                         case "DISPLAYED":
-                            this.navigatePages.callNavigate(nxtSide.Advance.dispayed, event,valToCount);
+                            this.navigatePages.callNavigate(nxtSide.Advance.dispayed, event, valToCount);
                             break;
                         case "OUTSIDE":
-                            this.navigatePages.callNavigate(nxtSide.Advance.outside, event,valToCount);
+                            this.navigatePages.callNavigate(nxtSide.Advance.outside, event, valToCount);
                             break;
                         case "LAST":
-                            this.navigatePages.callNavigate(nxtSide.Advance.last, event,valToCount);
+                            this.navigatePages.callNavigate(nxtSide.Advance.last, event, valToCount);
                             break;
                     }
                 }
