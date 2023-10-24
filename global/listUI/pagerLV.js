@@ -147,8 +147,8 @@ class pagerLV extends listUiHandler {
         let s = this.itemTemplate.extended.size;
         _itemSize.height = s.height;
         _itemSize.width = s.width;
-        console.log(this.uc);
-        console.log(_itemSize);
+        /*console.log(this.uc);
+        console.log(_itemSize);*/
         /*this.Events.newItemGenerate.on((itmnode) => {
             if (!_itemSize.hasSet) _itemSize.update(itmnode);
         });*/
