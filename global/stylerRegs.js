@@ -13,7 +13,9 @@ const patternList = {
     //subUcAndExcludeSelector: /\[(uc|root|exclude)(\w*)=(["'`])*([\s\S]*?)\3\]([\s\S]*?)[\n ]([\s\S]*?)\[\1\2\]/gim,
     subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gmi,
     themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
-    stylesFilterPattern: /(animation-name): (.*?);/gmi,
+    
+    //stylesFilterPattern: /(animation-name|\$\w+)\s*:\s*(.*?)\s*;/gmi,
+    stylesFilterPattern: /(animation-name|[\$,-]-\w+)\s*:\s*(.*?)\s*;/gmi,
     scopeSelector: /\[SELF_]/gm,
     rootExcludePattern: /(.*?)(:root|:exclude)/gi,
 };
@@ -345,10 +347,24 @@ class stylerRegs {
              * @param {string} value 
              */
             (match, key, value) => {
-                switch (key.toLowerCase()) {
+                let ky = key.toLowerCase();
+                switch (ky) {
                     case "animation-name":
-                        return `${key}: ${value.trimEnd()}_${this.uniqStamp}; `
-                    default: return match;
+                        return `${key}: ${value.trimEnd()}_${this.uniqStamp}; `;
+                    default:                        
+                        switch(ky.charAt(0)){
+                            case '$':
+                                let ktadd = ky.substring(2);
+                                console.log(ktadd);
+                                let findex = this.rootInfo.cssVars.findIndex(s=>s.key==ktadd)
+                                console.log(findex);
+                                console.log('global variable found');
+                            break;
+                            case '-':
+                                console.log('local variable found');
+                            break;
+                        }
+                    return match;
                 }
             });
 
@@ -458,9 +474,5 @@ class stylerRegs {
         rtrn = rtrn.slice(0, -1);
         return rtrn;
     }
-
-
-    
-
 }
 module.exports = { stylerRegs };

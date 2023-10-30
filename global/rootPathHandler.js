@@ -8,6 +8,8 @@ const rootPathRow = {
     alices: '',
     index: -1,
     isAlreadyFullPath: false,
+    /** @type {{key:string,value:string}[]}  */ 
+    cssVars : [],
 }
 
 class rootPathHandler {
