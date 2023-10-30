@@ -172,6 +172,8 @@ class rootPathHandler {
             path: node.replaceWith,
             alices: node.originalFinderText,
             isAlreadyFullPath: isAlreadyFullPath,
+            cssVars: [],
+            index:-1,
         }
     }
 }

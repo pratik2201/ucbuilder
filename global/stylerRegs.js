@@ -13,7 +13,7 @@ const patternList = {
     //subUcAndExcludeSelector: /\[(uc|root|exclude)(\w*)=(["'`])*([\s\S]*?)\3\]([\s\S]*?)[\n ]([\s\S]*?)\[\1\2\]/gim,
     subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gmi,
     themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
-    
+
     //stylesFilterPattern: /(animation-name|\$\w+)\s*:\s*(.*?)\s*;/gmi,
     stylesFilterPattern: /(animation-name|[\$,-]-\w+)\s*:\s*(.*?)\s*;/gmi,
     scopeSelector: /\[SELF_]/gm,
@@ -95,7 +95,7 @@ class stylerRegs {
             this.children.push(node);
         }
 
-        
+
         //console.log(nodeName);
         /*if (!(key in this.children)) {
             node.parent = this;
@@ -246,7 +246,7 @@ class stylerRegs {
                         parent_stamp_value: pstamp_val
                     })}{${styleContent}} `;
                 } else {
-                   
+
                     let changed = false;
                     (selectorText.split(",")).forEach(pselctor => {
                         (pselctor.trim()).replace(patternList.rootExcludePattern,
@@ -307,18 +307,18 @@ class stylerRegs {
                                                 parent_stamp_value: pstamp_val
                                             })
                                          */
-                                        
+
                                         let nscope = callCounter == 1 ? _this.parseScopeSeperator({
                                             selectorText: UCselector,
                                             parent_stamp: pstamp_key,
                                             parent_stamp_value: pstamp_val
                                         }) : scopeSelectorText;
                                         //console.log(nscope);
-                                        
-                                        
+
+
                                         //nscope = nscope.trim();    //  <---- REMOVE THIS COMMENT IF ANY MAJOR BUG FORM THIS AREA
 
-                                        
+
                                         let css = tree.parseStyleSeperator(
                                             styleContent,
                                             nscope,
@@ -351,20 +351,26 @@ class stylerRegs {
                 switch (ky) {
                     case "animation-name":
                         return `${key}: ${value.trimEnd()}_${this.uniqStamp}; `;
-                    default:                        
-                        switch(ky.charAt(0)){
+                    default:
+                        switch (ky.charAt(0)) {
                             case '$':
-                                let ktadd = ky.substring(2);
-                                console.log(ktadd);
-                                let findex = this.rootInfo.cssVars.findIndex(s=>s.key==ktadd)
+                                let ktadd = ky.substring(2).trim();
+                                console.log(ktadd+"    :    "+this.rootInfo.alices);
+                                let findex = this.rootInfo.cssVars.findIndex(s => s.key === ktadd);
                                 console.log(findex);
+                                if (findex == -1)
+                                    this.rootInfo.cssVars.push({
+                                        key: ktadd,
+                                        value: value,
+                                    });
+                                    console.log(this.rootInfo.cssVars);
                                 console.log('global variable found');
-                            break;
+                                break;
                             case '-':
                                 console.log('local variable found');
-                            break;
+                                break;
                         }
-                    return match;
+                        return match;
                 }
             });
 
