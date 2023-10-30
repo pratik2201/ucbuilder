@@ -208,7 +208,7 @@ class codeFileInfo {
             : url;
             
         this.partInfo = pathInfo.getFileInfoPartly(fullPath);
-        let s = this.partInfo.dirPath + "" + this.partInfo.fileName;        
+        let s = (this.partInfo.dirPath + "" + this.partInfo.fileName).toLowerCase();
         this.fullPathWithoutExt = s;
         let sortPath = strOpt._trim(s, this.rootInfo.path + "/");
         this.partInfo.sortDirPath = strOpt._trim(s, this.html.rootInfo.path + "/");
