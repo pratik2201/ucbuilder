@@ -15,7 +15,8 @@ const patternList = {
     themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
 
     //stylesFilterPattern: /(animation-name|\$\w+)\s*:\s*(.*?)\s*;/gmi,
-    stylesFilterPattern: /(animation-name|[\$,-]-\w+)\s*:\s*(.*?)\s*;/gmi,
+    stylesFilterPattern: /(animation-name|\$[lg]-\w+)\s*:\s*(.*?)\s*;/gmi,
+    varValuePrinterPattern: /var\s*\(\s*(\$[lg]-\w+)\s*\)/gmi,
     scopeSelector: /\[SELF_]/gm,
     rootExcludePattern: /(.*?)(:root|:exclude)/gi,
 };
@@ -68,6 +69,10 @@ class stylerRegs {
 
 
     }
+
+    /** @type {{key:string,value:string}[]}  */
+    cssVars = [];
+
     /** @type {rootPathRow}  */
     rootInfo = undefined;
     /** @private 
@@ -352,29 +357,61 @@ class stylerRegs {
                     case "animation-name":
                         return `${key}: ${value.trimEnd()}_${this.uniqStamp}; `;
                     default:
-                        switch (ky.charAt(0)) {
-                            case '$':
-                                let ktadd = ky.substring(2).trim();
-                                console.log(ktadd+"    :    "+this.rootInfo.alices);
-                                let findex = this.rootInfo.cssVars.findIndex(s => s.key === ktadd);
-                                console.log(findex);
-                                if (findex == -1)
+                        let ktadd, findex;
+                        switch (ky.charAt(1)) {
+                            case 'g':
+                                ktadd = ky.substring(3).trim() + this.rootInfo.id;
+                                findex = this.rootInfo.cssVars.findIndex(s => s.key == ktadd);
+                                if (findex == -1) {
                                     this.rootInfo.cssVars.push({
                                         key: ktadd,
                                         value: value,
                                     });
-                                    console.log(this.rootInfo.cssVars);
-                                console.log('global variable found');
+                                } else (this.rootInfo.cssVars[findex]).value = value;
+                                //console.log('global');
+                                //console.log(this.rootInfo.cssVars);
                                 break;
-                            case '-':
-                                console.log('local variable found');
+                            case 'l':
+                                ktadd = ky.substring(3).trim() + this.uniqStamp;
+                                findex = this.cssVars.findIndex(s => s.key == ktadd);
+                                if (findex == -1) {
+                                    this.cssVars.push({
+                                        key: ktadd,
+                                        value: value,
+                                    });
+                                } else (this.cssVars[findex]).value = value;
+                                //console.log('local');
+                                //console.log(this.cssVars);
                                 break;
                         }
                         return match;
                 }
             });
 
-        //if(isChffd)console.log(rtrn +" "+ externalStyles.join(" "));
+        rtrn = rtrn.replace(patternList.varValuePrinterPattern,
+            /**
+             * @param {string} match 
+             * @param {string} varName
+             */
+            (match, varName) => {
+                let ky = varName.toLowerCase();
+                let ktadd, fval;
+                switch (ky.charAt(0)) {
+                    case 'g':
+                        ktadd = ky.substring(2).trim() + this.rootInfo.id;
+                        fval = this.rootInfo.cssVars.find(s => s.key == ktadd);
+                        if (fval != undefined) return fval.value;
+                        else return fval;
+                    case 'l':
+                        ktadd = ky.substring(2).trim() + this.uniqStamp;
+                        fval = this.cssVars.find(s => s.key == ktadd);
+                        if (fval != undefined) return fval.value;
+                        else return fval;
+                        break;
+                    default:
+                        return " var(" + varName + ");";
+                }
+            });
         return rtrn + " " + externalStyles.join(" ");
     }
 

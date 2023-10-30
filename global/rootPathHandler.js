@@ -48,16 +48,9 @@ class rootPathHandler {
      * @param {rootPathParam} pera
      */
     static addRoot = (projectName, replaceAlicesWith, pera) => {
-        
-        // /** @type {rootPathParam}  */
-        // let param2 = newObjectOpt.clone(rootPathParam);
-        // newObjectOpt.copyProps(pera, param2);
         let param2 = newObjectOpt.copyProps(pera,rootPathParam);
-        
-        //console.log(param2);
         let pathAlicesLower = projectName.toLowerCase();
         let result = this.checkStatus(pathAlicesLower, replaceAlicesWith);
-        //console.log(projectName + '\n' + replaceAlicesWith + '\n' + result);
         switch (result) {
             case "newRegister":
                 replaceAlicesWith = replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase().trim_('/');
@@ -89,6 +82,7 @@ class rootPathHandler {
                     textToFind: strOpt.cleanTextForRegs(projectName),
                     replaceWith: replaceAlicesWith,
                     replaceLowerCaseText: replaceAlicesWith.toLowerCase(),
+                    cssVars: [],
                 });
                 return true;
             case "sameAlicesAlreadyExist":
@@ -122,9 +116,7 @@ class rootPathHandler {
     static getInfo(_pth = "") {
         let src = _pth.toLowerCase().trim();
         let isAlreadyFullPath = false;
-
         let findex = this.source.findIndex(s => {
-            // console.log(_pth+"\n"+s.replaceLowerCaseText);
             if (src.startsWith(s.originalLowerCaseText)) return true;
             else {
                 isAlreadyFullPath = src.startsWith(s.replaceLowerCaseText);
@@ -132,19 +124,10 @@ class rootPathHandler {
             }
         });
         if (findex == -1) return undefined;
-
         let node = this.source[findex];
         let rtrn = rootPathHandler.convertToRow(node, isAlreadyFullPath);
         rtrn.index = findex;
         return rtrn;
-        /*    return {
-                id: node.id,
-                index:findex,
-                path: node.replaceWith,
-                alices: node.originalFinderText,
-                isAlreadyFullPath: isAlreadyFullPath,
-            }  */
-
     }
 
     /**
@@ -172,7 +155,7 @@ class rootPathHandler {
             path: node.replaceWith,
             alices: node.originalFinderText,
             isAlreadyFullPath: isAlreadyFullPath,
-            cssVars: [],
+            cssVars: node.cssVars,
             index:-1,
         }
     }
