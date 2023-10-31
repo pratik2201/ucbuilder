@@ -361,7 +361,6 @@ class stylerRegs {
                         switch (ky.charAt(1)) {
                             case 'g':
                                 ktadd = ky.substring(3).trim() + this.rootInfo.id+"g";
-                                //console.log(ktadd);
                                 findex = this.rootInfo.cssVars.findIndex(s => s.key == ktadd);
                                 if (findex == -1) {
                                     this.rootInfo.cssVars.push({
@@ -369,11 +368,9 @@ class stylerRegs {
                                         value: value,
                                     });
                                 } else (this.rootInfo.cssVars[findex]).value = value;
-                                document.body.style.setProperty("--"+ktadd,value);return;
-                                //return " --"+ktadd + " : " + value + " ; ";
+                                document.body.style.setProperty("--"+ktadd,value);return;                                
                             case 'l':
                                 ktadd = ky.substring(3).trim() + this.uniqStamp+"l";
-                                //console.log(ktadd);
                                 findex = this.cssVars.findIndex(s => s.key == ktadd);
                                 if (findex == -1) {
                                     this.cssVars.push({
@@ -382,7 +379,6 @@ class stylerRegs {
                                     });
                                 } else (this.cssVars[findex]).value = value;
                                 document.body.style.setProperty("--"+ktadd,value);return;
-                                //return " --"+ktadd + " : " + value + " ; ";
                         }
                         return match;
                 }
@@ -396,21 +392,14 @@ class stylerRegs {
             (match, varName) => {
                 let ky = varName.toLowerCase();
                 let ktadd, fval;
-                switch (ky.charAt(0)) {
+                switch (ky.charAt(1)) {
                     case 'g':
                         ktadd = ky.substring(3).trim() + this.rootInfo.id+"g";
-                        return " var(" + ktadd + ")";
-                        //fval = this.rootInfo.cssVars.find(s => s.key == ktadd);
-                        //if (fval != undefined) return " var(" + ktadd + ")";
-                        //return " var(" + varName + ");";
+                        return " var(--" + ktadd + ")";
                     case 'l':
                         ktadd = ky.substring(3).trim() + this.uniqStamp+"l";
-                        return " var(" + ktadd + ")";
-                        //fval = this.cssVars.find(s => s.key == ktadd);
-                        //if (fval != undefined) return " var(" + ktadd + ")";
-                        //return " var(" + varName + ");";
-                    default:
-                        return " var(" + varName + ");";
+                        return " var(--" + ktadd + ")";
+                    default: return " var(" + varName + ");";
                 }
             });
         return rtrn + " " + externalStyles.join(" ");
@@ -420,7 +409,6 @@ class stylerRegs {
         return {
             ucStampAttr: ATTR_OF.UC.UC_STAMP,
             parentStampAttr: ATTR_OF.UC.PARENT_STAMP,
-
             ucStampVal: _this.globalStampRow.stamp,
             parentStampVal: _this.globalStampRow.stamp,
         }
@@ -503,7 +491,6 @@ class stylerRegs {
                     sngl[0] += `[${parent_stamp}="${parent_stamp_value}"]`;
                     dbl[0] = sngl.join(":");
                     rVal = dbl.join("::");
-
                 } else {
                     //console.log('--------------------- else part');
                     rVal = trimedVal;
