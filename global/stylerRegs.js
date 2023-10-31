@@ -360,7 +360,8 @@ class stylerRegs {
                         let ktadd, findex;
                         switch (ky.charAt(1)) {
                             case 'g':
-                                ktadd = ky.substring(3).trim() + this.rootInfo.id;
+                                ktadd = ky.substring(3).trim() + this.rootInfo.id+"g";
+                                //console.log(ktadd);
                                 findex = this.rootInfo.cssVars.findIndex(s => s.key == ktadd);
                                 if (findex == -1) {
                                     this.rootInfo.cssVars.push({
@@ -368,11 +369,11 @@ class stylerRegs {
                                         value: value,
                                     });
                                 } else (this.rootInfo.cssVars[findex]).value = value;
-                                //console.log('global');
-                                //console.log(this.rootInfo.cssVars);
-                                break;
+                                document.body.style.setProperty("--"+ktadd,value);return;
+                                //return " --"+ktadd + " : " + value + " ; ";
                             case 'l':
-                                ktadd = ky.substring(3).trim() + this.uniqStamp;
+                                ktadd = ky.substring(3).trim() + this.uniqStamp+"l";
+                                //console.log(ktadd);
                                 findex = this.cssVars.findIndex(s => s.key == ktadd);
                                 if (findex == -1) {
                                     this.cssVars.push({
@@ -380,9 +381,8 @@ class stylerRegs {
                                         value: value,
                                     });
                                 } else (this.cssVars[findex]).value = value;
-                                //console.log('local');
-                                //console.log(this.cssVars);
-                                break;
+                                document.body.style.setProperty("--"+ktadd,value);return;
+                                //return " --"+ktadd + " : " + value + " ; ";
                         }
                         return match;
                 }
@@ -398,16 +398,17 @@ class stylerRegs {
                 let ktadd, fval;
                 switch (ky.charAt(0)) {
                     case 'g':
-                        ktadd = ky.substring(2).trim() + this.rootInfo.id;
-                        fval = this.rootInfo.cssVars.find(s => s.key == ktadd);
-                        if (fval != undefined) return fval.value;
-                        else return fval;
+                        ktadd = ky.substring(3).trim() + this.rootInfo.id+"g";
+                        return " var(" + ktadd + ")";
+                        //fval = this.rootInfo.cssVars.find(s => s.key == ktadd);
+                        //if (fval != undefined) return " var(" + ktadd + ")";
+                        //return " var(" + varName + ");";
                     case 'l':
-                        ktadd = ky.substring(2).trim() + this.uniqStamp;
-                        fval = this.cssVars.find(s => s.key == ktadd);
-                        if (fval != undefined) return fval.value;
-                        else return fval;
-                        break;
+                        ktadd = ky.substring(3).trim() + this.uniqStamp+"l";
+                        return " var(" + ktadd + ")";
+                        //fval = this.cssVars.find(s => s.key == ktadd);
+                        //if (fval != undefined) return " var(" + ktadd + ")";
+                        //return " var(" + varName + ");";
                     default:
                         return " var(" + varName + ");";
                 }
