@@ -352,15 +352,27 @@ class stylerRegs {
              * @param {string} value 
              */
             (match, key, value) => {
-                let ky = key.toLowerCase();
+                let ky = key.toLowerCase().trim();
                 switch (ky) {
                     case "animation-name":
                         return `${key}: ${value.trimEnd()}_${this.uniqStamp}; `;
                     default:
-                        let ktadd, findex;
-                        switch (ky.charAt(1)) {
+                        let scope = ky.charAt(1);
+                        switch (scope) {
+                            case 'g': 
+                                stylerRegs.__VAR.SETVALUE(
+                                    ky.substring(3).trim(),
+                                    this.rootInfo.id,
+                                    scope,value); return '';
+                            case 'l': 
+                                stylerRegs.__VAR.SETVALUE(
+                                    ky.substring(3).trim(),
+                                    this.uniqStamp,
+                                    scope,value);  return '';
+                        }
+                       /* switch (ky.charAt(1)) {
                             case 'g':
-                                ktadd = ky.substring(3).trim() + this.rootInfo.id+"g";
+                                ktadd = ky.substring(3).trim() + this.rootInfo.id + "g";
                                 findex = this.rootInfo.cssVars.findIndex(s => s.key == ktadd);
                                 if (findex == -1) {
                                     this.rootInfo.cssVars.push({
@@ -368,9 +380,9 @@ class stylerRegs {
                                         value: value,
                                     });
                                 } else (this.rootInfo.cssVars[findex]).value = value;
-                                document.body.style.setProperty("--"+ktadd,value);return;                                
+                                document.body.style.setProperty("--" + ktadd, value); return;
                             case 'l':
-                                ktadd = ky.substring(3).trim() + this.uniqStamp+"l";
+                                ktadd = ky.substring(3).trim() + this.uniqStamp + "l";
                                 findex = this.cssVars.findIndex(s => s.key == ktadd);
                                 if (findex == -1) {
                                     this.cssVars.push({
@@ -378,8 +390,8 @@ class stylerRegs {
                                         value: value,
                                     });
                                 } else (this.cssVars[findex]).value = value;
-                                document.body.style.setProperty("--"+ktadd,value);return;
-                        }
+                                document.body.style.setProperty("--" + ktadd, value); return;
+                        }*/
                         return match;
                 }
             });
@@ -391,16 +403,20 @@ class stylerRegs {
              */
             (match, varName) => {
                 let ky = varName.toLowerCase();
-                let ktadd, fval;
-                switch (ky.charAt(1)) {
+                let scope = ky.charAt(1);
+                return stylerRegs.__VAR.GETVALUE(
+                    ky.substring(3).trim(),
+                    scope == 'g' ? this.rootInfo.id : this.uniqStamp,
+                    scope);
+                /*switch (ky.charAt(1)) {
                     case 'g':
-                        ktadd = ky.substring(3).trim() + this.rootInfo.id+"g";
+                        ktadd = stylerRegs.__VAR.SETVALUE(ky.substring(3).trim(),this.rootInfo.id,ky.charAt(1));
                         return " var(--" + ktadd + ")";
                     case 'l':
-                        ktadd = ky.substring(3).trim() + this.uniqStamp+"l";
+                        ktadd = stylerRegs.__VAR.GET_LOCAL(ky.substring(3).trim() + this.uniqStamp);
                         return " var(--" + ktadd + ")";
                     default: return " var(" + varName + ");";
-                }
+                }*/
             });
         return rtrn + " " + externalStyles.join(" ");
     }
@@ -413,7 +429,18 @@ class stylerRegs {
             parentStampVal: _this.globalStampRow.stamp,
         }
     }
-
+    static __VAR = {
+        /** @private */
+        getKeyName(key, uniqId, code){
+            return `--${key}${uniqId}${code}`;
+        },
+        SETVALUE(key, uniqId, code,value) {
+            document.body.style.setProperty(this.getKeyName(key,uniqId,code), value); return;
+        },
+        GETVALUE(key, uniqId, code) {
+            return ` var(${this.getKeyName(key,uniqId,code)}) `;
+        },
+    };
     /**
      * @param {{selectorText :string,
      *         scopeSelectorText:string,
