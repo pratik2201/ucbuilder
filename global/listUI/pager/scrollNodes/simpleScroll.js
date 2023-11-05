@@ -24,7 +24,7 @@ class simpleScroll {
             let tpos = this.pagerLv.pageInfo.extended.bottomIndex;
             let ts = this.trackSize - this.scrollSize;
             let stop = numOpt.gtvc(this.mainlength, ts, tpos);
-            this.scrollTop = Math.min(stop, (this.trackSize - this.scrollSize));
+            this.scrollAt = Math.min(stop, (this.trackSize - this.scrollSize));
 
         },
         scrollSize: () => {
@@ -85,7 +85,12 @@ class simpleScroll {
         }
         let mouseMv = new mouseForMove();
 
-    
+        this.rszObs_lvitemCnt = new ResizeObserver((entries,obs)=>{
+            console.log('s<<<<<<=');
+            this.refresh.scrollPosition();
+            this.refresh.scrollSize();
+        });
+        this.rszObs_lvitemCnt.observe(this.pagerLv.Records.lstVWEle,{ box:"border-box" });
 
         let tstamp = this.nodes.track.stamp();
         this.nodes.track.addEventListener("mousedown", (e) => {

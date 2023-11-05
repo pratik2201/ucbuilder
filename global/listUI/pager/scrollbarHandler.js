@@ -25,11 +25,12 @@ class scrollbarHandler {
     /** @type {MutationObserver}  */
     mutate = undefined;
     get vRefresh() { return this.scrollBox.vScrollbar.refresh; }
-
+   
     viewSize = new Size();
     /** @param {pagerLV} main */
     init(main) {
         this.main = main;
+        
         this.main.Events.onListUISizeChanged.on((rect) => {
             //console.log(this.main.uc);
             //let h = this.main.nodes.itemSize.height;
@@ -56,6 +57,7 @@ class scrollbarHandler {
         });
         this.mutate.observe(this.main.Records.lstVWEle, { childList: true });
 
+       
        
     }
 }
