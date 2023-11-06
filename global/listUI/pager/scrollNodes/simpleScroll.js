@@ -86,9 +86,9 @@ class simpleScroll {
         let mouseMv = new mouseForMove();
 
         this.rszObs_lvitemCnt = new ResizeObserver((entries,obs)=>{
-            console.log('s<<<<<<=');
-            this.refresh.scrollPosition();
+            //console.log('s<<<<<<=');
             this.refresh.scrollSize();
+            //this.refresh.scrollPosition();
         });
         this.rszObs_lvitemCnt.observe(this.pagerLv.Records.lstVWEle,{ box:"border-box" });
 
