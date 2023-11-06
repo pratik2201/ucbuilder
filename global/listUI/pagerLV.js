@@ -161,33 +161,46 @@ class pagerLV extends listUiHandler {
                 this.navigatePages.pageTo.upSide.Go(e);
             }
         });
+        let hasCompleteKeyDownEvent = true;
         this.Events.onkeydown = (e) => {
-            switch (e.keyCode) {
-                case keyBoard.keys.up: // up key
-                    this.navigatePages.moveTo.prevSide.Go(e);
-                    break;
-                case keyBoard.keys.down: // down key
-                    this.navigatePages.moveTo.nextSide.Go(e);
-
-                    break;
-                case keyBoard.keys.pageUp: // page up key
-                    this.navigatePages.pageTo.upSide.Go(e);
-                    break;
-                case keyBoard.keys.pageDown: // page down key
-                    this.navigatePages.pageTo.downSide.Go(e);
-                    break;
-                case keyBoard.keys.end: // end key
-                    this.currentIndex = this.length - 1;
-                    this.nodes.callToFill();
-                    this.nodes.onRendar();
-                    break;
-                case keyBoard.keys.home: // home key
-                    this.currentIndex = 0;
-                    this.nodes.callToFill();
-                    this.nodes.onRendar();
-                    break;
-            }
+            if(!hasCompleteKeyDownEvent)return;
+            setTimeout(()=>{
+                hasCompleteKeyDownEvent = false;
+                this.doKeyEvent(e);
+                hasCompleteKeyDownEvent = true;
+            },1);
+            
         };
+    }
+    /**
+     * @param {KeyboardEvent} e 
+     */
+    doKeyEvent(e){
+        switch (e.keyCode) {
+            case keyBoard.keys.up: // up key
+                this.navigatePages.moveTo.prevSide.Go(e);
+                break;
+            case keyBoard.keys.down: // down key
+                this.navigatePages.moveTo.nextSide.Go(e);
+
+                break;
+            case keyBoard.keys.pageUp: // page up key
+                this.navigatePages.pageTo.upSide.Go(e);
+                break;
+            case keyBoard.keys.pageDown: // page down key
+                this.navigatePages.pageTo.downSide.Go(e);
+                break;
+            case keyBoard.keys.end: // end key
+                this.currentIndex = this.length - 1;
+                this.nodes.callToFill();
+                this.nodes.onRendar();
+                break;
+            case keyBoard.keys.home: // home key
+                this.currentIndex = 0;
+                this.nodes.callToFill();
+                this.nodes.onRendar();
+                break;
+        }
     }
     initNodes() {
         this.nodes.prepend = (index, replaceNode = false) => {

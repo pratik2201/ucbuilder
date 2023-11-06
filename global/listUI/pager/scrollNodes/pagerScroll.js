@@ -87,6 +87,7 @@ class pagerScroll {
                 console.log('debug state : ' + this.doDebug);
             }
         });
+        
         this.nodes.initByType('pager');
         this.nodes.scrollbar.setAttribute('dir', this.dir);
         if (this.nodes.scrollbar.parentElement == null) {
@@ -130,6 +131,7 @@ class pagerScroll {
     doContentScrollAt(scrollval, useTimeOut = true) {
         if (this.isfilling) return;
         this.isfilling = true;
+        //this.pagerLv.Records.scrollerElement.scrollHeight
         let _this = this;
         if (useTimeOut) setTimeout(doscroll);
         else doscroll();
@@ -147,7 +149,6 @@ class pagerScroll {
             scrollval += _this.DOWN_SCROLL_POS;
             scrollval = Math.min(scrollval, (_this.trackSize - _this.scrollSize));
             scrollval = Math.max(scrollval, 0);
-            ///let stop = Math.max(Math.min(scrollval, (_this.trackSize - _this.scrollSize)), 0);
             let sch = ((_this.mainlength - _this.DOWN_PER_PAGE_ROW) / (_this.trackSize - _this.scrollSize)) * scrollval;
             _this.pagerLv.pageInfo.top = Math.floor(sch);
             _this.pagerLv.nodes.fill();
