@@ -29,7 +29,7 @@ class pagerLV extends listUiHandler {
             this.update();
         },
         update() {
-
+            this._this().Events.onSourceUpdate.fire(this._rows.length);
         }
     }
     /** @type {HTMLElement[]}  */

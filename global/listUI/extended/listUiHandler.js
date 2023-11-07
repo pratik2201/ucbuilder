@@ -32,6 +32,7 @@ class listUiHandler {
             this.update();
         },
         update() {
+            this._this().Events.onSourceUpdate.fire(this._rows.length);
             //this._this().length = this._rows.length;
         }
     }
@@ -170,7 +171,12 @@ class listUiHandler {
 
     }
     Events = {
-
+        /**
+         * @type {{on:(callback = (
+         *          count:number,
+         * ) =>{})} & commonEvent}
+         */
+        onSourceUpdate: new commonEvent(),
         /**
          * @type {{on:(callback = (
          *          index:number,

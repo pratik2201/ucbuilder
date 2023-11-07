@@ -1,8 +1,4 @@
-const { Point, Size } = require("@ucbuilder:/global/drawing/shapes");
-const { numOpt } = require("@ucbuilder:/build/common");
-const { mouseForMove } = require("@ucbuilder:/global/mouseForMove");
-const { scrollbarHandler } = require("@ucbuilder:/global/listUI/pager/scrollbarHandler");
-const { namingConversion, scrollerUIElements } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
+const { namingConversion } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 const { pagerLV } = require("@ucbuilder:/global/listUI/pagerLV");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
@@ -19,33 +15,31 @@ class simpleScroll {
         this.nameList.initByType(dir);
         this.dir = dir;
     }
-    get contentWidth() {
-        return this.pagerLv.Records.lstVWEle.offsetWidth;
-    }
+    
 
     get pagerLv() { return this.main; }
 
     /**
      * @param {pagerLV} main
-     * @param {HTMLElement} hscrollbar1
+     * @param {HTMLElement} scrollbarElement
      */
-    init(main, hscrollbar1) {
+    init(main, scrollbarElement) {
         this.main = main;
-        this.hscrollbar1 = hscrollbar1;
+        this.scrollbarElement = scrollbarElement;
         this.elementNode.sizer = this.elementNode.sizer.$();
-        this.hscrollbar1.appendChild(this.elementNode.sizer);
+        this.scrollbarElement.appendChild(this.elementNode.sizer);
         let _szr = this.elementNode.sizer;
         let _size_text = this.nameList.size;
         let _offsetsize_text = this.nameList.offsetSize;
         switch (this.dir) {
             case 'h':
-                Object.assign(this.hscrollbar1.style, {
+                Object.assign(this.scrollbarElement.style, {
                     "width": "100%",
                     "overflow-x": "auto",
                 });
                 break;
             case 'v':
-                Object.assign(this.hscrollbar1.style, {
+                Object.assign(this.scrollbarElement.style, {
                     "height": "100%",
                     "overflow-y": "auto",
                 });
@@ -56,9 +50,9 @@ class simpleScroll {
         }).observe(this.pagerLv.Records.lstVWEle, { box: "border-box" });
 
         let _scrollposition_text = this.nameList.scrollPosition;
-        this.hscrollbar1.addEventListener("scroll", (e) => {
+        this.scrollbarElement.addEventListener("scroll", (e) => {
             this.Event.onScroll.fire(e);
-            this.pagerLv.Records.scrollerElement[_scrollposition_text] = this.hscrollbar1[_scrollposition_text];
+            this.pagerLv.Records.scrollerElement[_scrollposition_text] = this.scrollbarElement[_scrollposition_text];
         });
     }
 
