@@ -37,7 +37,7 @@ class pagerScroll {
             this.mainlength = this.pagerLv.length;
             this.trackSize = this.nodes.track[this.nameList.offsetSize];
 
-            let avval = this.mainlength / this.pagerLv.pageInfo.extended.perPageRecord;
+            let avval = this.mainlength / this.perPageRecord;
             this.scrollSize = Math.min(Math.max((this.trackSize / avval), 15), this.trackSize);
             this.refresh.scrollPosition();
         }
@@ -94,8 +94,9 @@ class pagerScroll {
             this.pagerLv.uc.ucExtends.passElement(this.nodes.scrollbar);
             this.pagerLv.Records.scrollerElement.appendChild(this.nodes.scrollbar);
         }
+        
         this.pagerLv.Events.onListUISizeChanged.on((r) => {
-
+            console.log(this.perPageRecord);
             this.refresh.scrollSize();
         });
         let mouseMv = new mouseForMove();
@@ -111,7 +112,7 @@ class pagerScroll {
 
         mouseMv.bind(this.nodes.scroller, {
             onDown: (evt, pt) => {
-                this.DOWN_PER_PAGE_ROW = this.pagerLv.pageInfo.extended.perPageRecord;
+                this.DOWN_PER_PAGE_ROW = this.perPageRecord;
                 this.DOWN_SCROLL_POS = this.scrollTop;
                 this.main.scrollBox.vScrollbar.nodes.scrollbar.setAttribute('active', '1');
                 this.hasMouseDown = true;
@@ -124,6 +125,9 @@ class pagerScroll {
                 this.main.scrollBox.vScrollbar.nodes.scrollbar.setAttribute('active', '0');
             }
         });
+    }
+    get perPageRecord(){
+        return  this.pagerLv.pageInfo.extended.perPageRecord;
     }
     DOWN_PER_PAGE_ROW = 0;
     DOWN_SCROLL_POS = 0;

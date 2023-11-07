@@ -7,15 +7,13 @@ const { simpleScroll } = require("@ucbuilder:/global/listUI/pager/scrollNodes/si
 class scrollbarHandler {
     constructor() { }
     scrollBox = {
-        /** @type {simpleScroll}  */
-        hScrollbar: new simpleScroll('h'),
+        
         /** @type {pagerScroll}  */
         vScrollbar: new pagerScroll('v'),
 
         init: () => {
             let sbox = this.scrollBox;
             sbox.vScrollbar.getComplete(this);
-            sbox.hScrollbar.getComplete(this);
         },
         onClearList: () => {
             //  this.main.Records.lstVWEle.append(this.scrollBox.scrollbar);

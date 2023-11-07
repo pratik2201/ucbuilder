@@ -8,6 +8,8 @@ module.exports = {
     }),
     scrollerUIElements: {
         /** @type {HTMLElement}  */
+        sizer : `<sizer style="position: absolute; width: 100%; height: 100%; "></sizer>`,
+        /** @type {HTMLElement}  */
         scrollbar: `<scrollbar></scrollbar>`,
         /** @type {HTMLElement}  */
         track: `<track></track>`,
