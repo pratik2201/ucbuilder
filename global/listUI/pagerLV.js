@@ -163,19 +163,22 @@ class pagerLV extends listUiHandler {
         });
         let hasCompleteKeyDownEvent = true;
         this.Events.onkeydown = (e) => {
-            if(!hasCompleteKeyDownEvent)return;
-            setTimeout(()=>{
+            if (!hasCompleteKeyDownEvent) return;
+            setTimeout(() => {
                 hasCompleteKeyDownEvent = false;
                 this.doKeyEvent(e);
                 hasCompleteKeyDownEvent = true;
-            },1);
-            
+            }, 1);
+
         };
     }
+    get perPageRecord() { return this.pageInfo.extended.perPageRecord; }
+    get beginIndex() { return this.pageInfo.top; }
     /**
      * @param {KeyboardEvent} e 
      */
-    doKeyEvent(e){
+    doKeyEvent(e) {
+
         switch (e.keyCode) {
             case keyBoard.keys.up: // up key
                 this.navigatePages.moveTo.prevSide.Go(e);
