@@ -2,6 +2,7 @@ const { namingConversion } = require("@ucbuilder:/global/listUI/pager/enumAndMor
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 const { pagerLV } = require("@ucbuilder:/global/listUI/pagerLV");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
+const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
 class newPagerScroll {
     nameList = newObjectOpt.copyProps(namingConversion, {});
     elementNode = {
@@ -47,12 +48,74 @@ class newPagerScroll {
             this.sourceLength = srcLen;
             let th = (this.itemHeight * srcLen);
             if (th == Infinity || th == null || th == undefined) return;
+            console.log( th + 'px');
             _szr.style[_size_text] = th + 'px';
         });
+        this.fireScrollEvent = true;
         this.scrollbarElement.addEventListener("scroll", (e) => {
+            if (!this.fireScrollEvent) { this.fireScrollEvent = true; return; }
             this.scrollTop = Math.floor(this.scrollbarElement.scrollTop / this.itemHeight);
             this.doContentScrollAt(this.scrollTop, false);
         });
+
+
+        this.pagerLv.Records.lstVWEle.addEventListener("wheel", (e) => {
+            if (e.deltaY > 0) {
+                this.navigatePages.pageTo.downSide.Go(e);
+            } else {
+                this.navigatePages.pageTo.upSide.Go(e);
+            }
+            this.refreshScrollbarSilantly();
+        });
+        let hasCompleteKeyDownEvent = true;
+        this.pagerLv.Events.onkeydown = (e) => {
+            if (!hasCompleteKeyDownEvent) return;
+            hasCompleteKeyDownEvent = false;
+            setTimeout(() => {
+                this.doKeyEvent(e);
+                hasCompleteKeyDownEvent = true;
+            }, 1);
+        };
+    }
+    get navigatePages() { return this.pagerLv.navigatePages; }
+    get nodes() { return this.pagerLv.nodes; }
+    /**
+     * @param {KeyboardEvent} e 
+     */
+    doKeyEvent(e) {
+
+        switch (e.keyCode) {
+            case keyBoard.keys.up: // up key
+                this.navigatePages.moveTo.prevSide.Go(e);
+                break;
+            case keyBoard.keys.down: // down key
+                this.navigatePages.moveTo.nextSide.Go(e);
+
+                break;
+            case keyBoard.keys.pageUp: // page up key
+                this.navigatePages.pageTo.upSide.Go(e);
+                break;
+            case keyBoard.keys.pageDown: // page down key
+                this.navigatePages.pageTo.downSide.Go(e);
+                break;
+            case keyBoard.keys.end: // end key
+                this.currentIndex = this.length - 1;
+                this.nodes.callToFill();
+                this.nodes.onRendar();
+                break;
+            case keyBoard.keys.home: // home key
+                this.currentIndex = 0;
+                this.nodes.callToFill();
+                this.nodes.onRendar();
+                break;
+            default: return;
+        }
+        this.refreshScrollbarSilantly();
+    }
+    refreshScrollbarSilantly(){
+        this.fireScrollEvent = false;
+        this.scrollbarElement.scrollTop = (this.pagerLv.pageInfo.top * this.itemHeight);
+        this.Events.onChangeHiddenCount.fire(this.pageLvExtend.topHiddenRowCount, this.pageLvExtend.bottomHiddenRowCount);
     }
     doContentScrollAt(scrollval, useTimeOut = true) {
         if (this.isfilling) return;
@@ -80,7 +143,7 @@ class newPagerScroll {
          *          afterHiddenCount:number
          * ) =>{})} & commonEvent}
          */
-         onChangeHiddenCount: new commonEvent()
+        onChangeHiddenCount: new commonEvent()
     }
 
 }

@@ -96,7 +96,7 @@ class pagerScroll {
         }
         
         this.pagerLv.Events.onListUISizeChanged.on((r) => {
-            console.log(this.perPageRecord);
+           // console.log(this.perPageRecord);
             this.refresh.scrollSize();
         });
         let mouseMv = new mouseForMove();

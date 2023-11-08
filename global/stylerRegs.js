@@ -179,6 +179,14 @@ class stylerRegs {
     //styleSeperateSelector = /[\n\r ]*([\w\W.]*?)[\n\r ]*{([\n\r\w\W]*?)}/gi;
 
     opnClsr = new openCloser();
+    static styleSeperatorOptions = {
+        data:"",
+        scopeSelectorText:"",
+        callCounter:0,
+        isForRoot :false,
+        /** @type {rootPathRow}  */ 
+        _rootinfo:undefined,
+    }
     /**
      * @param {string} data 
      * @param {string} scopeSelectorText 
