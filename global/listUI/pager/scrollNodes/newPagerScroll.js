@@ -48,7 +48,7 @@ class newPagerScroll {
             this.sourceLength = srcLen;
             let th = (this.itemHeight * srcLen);
             if (th == Infinity || th == null || th == undefined) return;
-            console.log( th + 'px');
+           // console.log( th + 'px');
             _szr.style[_size_text] = th + 'px';
         });
         this.fireScrollEvent = true;

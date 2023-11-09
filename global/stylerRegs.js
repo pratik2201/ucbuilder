@@ -2,6 +2,7 @@ const { aliceManager } = require("@ucbuilder:/build/codefile/aliceManager");
 const { uniqOpt, propOpt } = require("@ucbuilder:/build/common");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
 const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
+const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 const { openCloser } = require("@ucbuilder:/global/openCloser");
 const { rootPathHandler, rootPathRow } = require("@ucbuilder:/global/rootPathHandler");
 const { ATTR_OF } = require("@ucbuilder:/global/runtimeOpt");
@@ -36,7 +37,7 @@ class stylerRegs {
             if (_data != undefined) {
                 loadGlobal.pushRow({
                     url: _stylepath,
-                    cssContents: styler.parseStyleSeperator(_data),
+                    cssContents: styler.parseStyleSeperator_sub({data:_data}),
                     stamp: styler.stamp,
                 });
             }
@@ -171,7 +172,7 @@ class stylerRegs {
                 offset, input_string) {
 
                 //console.log(`<style ${styleAttrs}> ${_this.parseStyleSeperator(styleContent, rData)} </style>`);
-                return `<style ${styleAttrs}> ${_this.parseStyleSeperator(styleContent)} </style>`;
+                return `<style ${styleAttrs}> ${_this.parseStyleSeperator_sub({data:styleContent})} </style>`;
             });
 
         return rtrn;
@@ -180,34 +181,36 @@ class stylerRegs {
 
     opnClsr = new openCloser();
     static styleSeperatorOptions = {
-        data:"",
-        scopeSelectorText:"",
-        callCounter:0,
-        isForRoot :false,
-        /** @type {rootPathRow}  */ 
-        _rootinfo:undefined,
+        data: "",
+        scopeSelectorText: "",
+        callCounter: 0,
+        isForRoot: false,
+        /** @type {rootPathRow}  */
+        _rootinfo: undefined,
+        /** @type {HTMLElement}  */ 
+        localNodeElement:undefined,
     }
+    
     /**
-     * @param {string} data 
-     * @param {string} scopeSelectorText 
-     * @param {number} callCounter 
-     * @param {boolean} isForRoot 
-     * @param {rootPathRow} _rootinfo
+     * @param {stylerRegs.styleSeperatorOptions} _args
      * @returns 
      */
-    parseStyleSeperator(data, scopeSelectorText = "", callCounter = 0, isForRoot = false, _rootinfo) {
+    parseStyleSeperator_sub(_args) {
         let _this = this;
-        callCounter++;
+        let _params = newObjectOpt.copyProps(_args, stylerRegs.styleSeperatorOptions);
+
+        _params.callCounter++;
         let externalStyles = [];
         let isChffd = false;
         let pstamp_key = ATTR_OF.UC.PARENT_STAMP;
         let pstamp_val = _this.stamp;
-        if (isForRoot) {
+        if (_params.isForRoot) {
             pstamp_key = ATTR_OF.UC.ROOT_STAMP;
-            pstamp_val = (_rootinfo == undefined) ? _this.rootInfo.id : _rootinfo.id;
+
+            pstamp_val = (_params._rootinfo == undefined) ? _this.rootInfo.id : _params._rootinfo.id;
             //console.log(pstamp_key+' < === > '+pstamp_val);
         }
-        let rtrn = data.replace(patternList.styleCommentRegs, "");
+        let rtrn = _params.data.replace(patternList.styleCommentRegs, "");
         rtrn = rtrn.replace(patternList.themeCSSLoader,
             /**
             * @param {string} match 
@@ -227,7 +230,9 @@ class stylerRegs {
                     case "css":
                         let isGoodToAdd = loadGlobal.isGoodToPush(path);
                         if (isGoodToAdd) {
-                            let cssContents = _this.parseStyleSeperator(fileDataBank.readFile(path));
+                            let cssContents = _this.parseStyleSeperator_sub({
+                                data: fileDataBank.readFile(path)
+                            });
                             loadGlobal.pushRow({
                                 url: path,
                                 stamp: this.stamp,
@@ -254,7 +259,7 @@ class stylerRegs {
                 if (count == 1) {
                     return `${_this.parseScopeSeperator({
                         selectorText: selectorText,
-                        scopeSelectorText: scopeSelectorText,
+                        scopeSelectorText: _params.scopeSelectorText,
                         parent_stamp: pstamp_key,
                         parent_stamp_value: pstamp_val
                     })}{${styleContent}} `;
@@ -274,16 +279,27 @@ class stylerRegs {
                                     case ":root": changed = true;
                                         if (rootAlices == undefined) {
                                             externalStyles.push(
-                                                _this.parseStyleSeperator(
-                                                    scopeSelectorText + styleContent, "",
-                                                    callCounter, true)
+                                                _this.parseStyleSeperator_sub({
+                                                    data: _params.scopeSelectorText + styleContent,
+                                                    callCounter: _params.callCounter,
+                                                    isForRoot: true,
+                                                })
+                                                /*_this.parseStylexSeperator(
+                                                    _params.scopeSelectorText + styleContent, "",
+                                                    _params.callCounter, true)*/
                                             );
                                         } else {
                                             externalStyles.push(
-                                                _this.parseStyleSeperator(
-                                                    scopeSelectorText + styleContent, "",
-                                                    callCounter, true,
-                                                    rootPathHandler.getInfoByAlices(`@${rootAlices}:`))
+                                                _this.parseStyleSeperator_sub({
+                                                    data: _params.scopeSelectorText + styleContent,
+                                                    callCounter: _params.callCounter,
+                                                    isForRoot: true,
+                                                    _rootinfo: rootPathHandler.getInfoByAlices(`@${rootAlices}:`)
+                                                })
+                                                /*_this.parseStylexSeperator(
+                                                    _params.scopeSelectorText + styleContent, "",
+                                                    _params.callCounter, true,
+                                                    rootPathHandler.getInfoByAlices(`@${rootAlices}:`))*/
                                             );
                                         }
                                         break;
@@ -321,21 +337,22 @@ class stylerRegs {
                                             })
                                          */
 
-                                        let nscope = callCounter == 1 ? _this.parseScopeSeperator({
+                                        let nscope = _params.callCounter == 1 ? _this.parseScopeSeperator({
                                             selectorText: UCselector,
                                             parent_stamp: pstamp_key,
                                             parent_stamp_value: pstamp_val
-                                        }) : scopeSelectorText;
+                                        }) : _params.scopeSelectorText;
                                         //console.log(nscope);
 
 
                                         //nscope = nscope.trim();    //  <---- REMOVE THIS COMMENT IF ANY MAJOR BUG FORM THIS AREA
 
 
-                                        let css = tree.parseStyleSeperator(
-                                            styleContent,
-                                            nscope,
-                                            callCounter);
+                                        let css = tree.parseStyleSeperator_sub({
+                                            data: styleContent,
+                                            scopeSelectorText: nscope,
+                                            callCounter: _params.callCounter
+                                        });
                                         /*if(filePath.includes("attributetemplate")){
                                             console.log(scopeSelectorText);
                                             console.log(callCounter+"=>"+css);
@@ -367,39 +384,39 @@ class stylerRegs {
                     default:
                         let scope = ky.charAt(1);
                         switch (scope) {
-                            case 'g': 
+                            case 'g':
                                 stylerRegs.__VAR.SETVALUE(
                                     ky.substring(3).trim(),
                                     this.rootInfo.id,
-                                    scope,value); return '';
-                            case 'l': 
+                                    scope, value); return '';
+                            case 'l':
                                 stylerRegs.__VAR.SETVALUE(
                                     ky.substring(3).trim(),
                                     this.uniqStamp,
-                                    scope,value);  return '';
+                                    scope, value,_params.localNodeElement); return '';
                         }
-                       /* switch (ky.charAt(1)) {
-                            case 'g':
-                                ktadd = ky.substring(3).trim() + this.rootInfo.id + "g";
-                                findex = this.rootInfo.cssVars.findIndex(s => s.key == ktadd);
-                                if (findex == -1) {
-                                    this.rootInfo.cssVars.push({
-                                        key: ktadd,
-                                        value: value,
-                                    });
-                                } else (this.rootInfo.cssVars[findex]).value = value;
-                                document.body.style.setProperty("--" + ktadd, value); return;
-                            case 'l':
-                                ktadd = ky.substring(3).trim() + this.uniqStamp + "l";
-                                findex = this.cssVars.findIndex(s => s.key == ktadd);
-                                if (findex == -1) {
-                                    this.cssVars.push({
-                                        key: ktadd,
-                                        value: value,
-                                    });
-                                } else (this.cssVars[findex]).value = value;
-                                document.body.style.setProperty("--" + ktadd, value); return;
-                        }*/
+                        /* switch (ky.charAt(1)) {
+                             case 'g':
+                                 ktadd = ky.substring(3).trim() + this.rootInfo.id + "g";
+                                 findex = this.rootInfo.cssVars.findIndex(s => s.key == ktadd);
+                                 if (findex == -1) {
+                                     this.rootInfo.cssVars.push({
+                                         key: ktadd,
+                                         value: value,
+                                     });
+                                 } else (this.rootInfo.cssVars[findex]).value = value;
+                                 document.body.style.setProperty("--" + ktadd, value); return;
+                             case 'l':
+                                 ktadd = ky.substring(3).trim() + this.uniqStamp + "l";
+                                 findex = this.cssVars.findIndex(s => s.key == ktadd);
+                                 if (findex == -1) {
+                                     this.cssVars.push({
+                                         key: ktadd,
+                                         value: value,
+                                     });
+                                 } else (this.cssVars[findex]).value = value;
+                                 document.body.style.setProperty("--" + ktadd, value); return;
+                         }*/
                         return match;
                 }
             });
@@ -439,14 +456,23 @@ class stylerRegs {
     }
     static __VAR = {
         /** @private */
-        getKeyName(key, uniqId, code){
+        getKeyName(key, uniqId, code) {
             return `--${key}${uniqId}${code}`;
         },
-        SETVALUE(key, uniqId, code,value) {
-            document.body.style.setProperty(this.getKeyName(key,uniqId,code), value); return;
+        /**
+         * 
+         * @param {string} key 
+         * @param {string} uniqId 
+         * @param {string} code 
+         * @param {string} value 
+         * @param {HTMLElement} tarEle 
+         * @returns 
+         */
+        SETVALUE(key, uniqId, code, value,tarEle = document.body) {
+            tarEle.style.setProperty(this.getKeyName(key, uniqId, code), value); return;
         },
         GETVALUE(key, uniqId, code) {
-            return ` var(${this.getKeyName(key,uniqId,code)}) `;
+            return ` var(${this.getKeyName(key, uniqId, code)}) `;
         },
     };
     /**

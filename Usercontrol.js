@@ -2,7 +2,7 @@
 const { propOpt, controlOpt, uniqOpt, objectOpt } = require("@ucbuilder:/build/common");
 const { filterContent } = require("@ucbuilder:/global/filterContent");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
-const { ucOptions,ucStates } = require('@ucbuilder:/enumAndMore');
+const { ucOptions, ucStates } = require('@ucbuilder:/enumAndMore');
 const { focusManage } = require("@ucbuilder:/global/focusManage");
 const { userControlStamp } = require("@ucbuilder:/global/userControlStamp");
 const { SessionManager } = require("@ucbuilder:/global/SessionManager");
@@ -20,7 +20,7 @@ const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
  */
 class Usercontrol {
 
-    
+
 
     /** @type {ucOptions}  */
     static get ucOptionsStc() { return undefined; }
@@ -58,7 +58,7 @@ class Usercontrol {
     }
     static NEW_VALUE = "ANKITA LOVE PRATIK";
     constructor() {
-        
+
     }
     /** @private */
     static ATTR = {
@@ -101,7 +101,7 @@ class Usercontrol {
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
             ucExt.fileInfo = param0.source.cfInfo;
-            
+
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             ucExt.stampRow = userControlStamp.getStamp(param0.source);
             ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true);
@@ -117,7 +117,7 @@ class Usercontrol {
                 ucExt.form = param0.parentUc.ucExtends.form;
                 ucExt.PARENT = param0.parentUc;
                 newObjectOpt.copyAttr(param0.wrapperHT, ucExt.wrapperHT);
-                
+
                 ucExt.PARENT.ucExtends.stampRow.styler
                     .pushChild(
                         ucExt.fileInfo.mainFilePath,
@@ -162,12 +162,15 @@ class Usercontrol {
         */
         finalizeInit: (param0) => {
             let ext = this.ucExtends;
-           
-            param0.source.cssContents = ext.stampRow.styler.parseStyleSeperator(
-                (param0.source.cssContents == undefined ?
-                    fileDataBank.readFile(ext.fileInfo.style.rootPath)
-                    :
-                    param0.source.cssContents));
+
+            param0.source.cssContents = ext.stampRow.styler.parseStyleSeperator_sub(
+                {
+                    data: (param0.source.cssContents == undefined ?
+                        fileDataBank.readFile(ext.fileInfo.style.rootPath)
+                        :
+                        param0.source.cssContents),
+                    localNodeElement:ext.self,
+                });
             loadGlobal.pushRow({
                 url: ext.fileInfo.style.rootPath,
                 stamp: ext.stampRow.stamp,

@@ -224,11 +224,14 @@ class TemplateNode {
                     .pushChild(param0.source.cfInfo.mainFilePath + "" + (param0.source.templateName == "" ? "" : "@" + param0.source.templateName),
                         tptExt.stampRow.styler, eleHT.nodeName);
 
-            tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator(
-                (tptPathOpt.cssContents == undefined ?
-                    fileDataBank.readFile(param0.source.cfInfo.style.rootPath)
-                    :
-                    tptPathOpt.cssContents));
+            tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator_sub(
+                {
+                    data: (tptPathOpt.cssContents == undefined ?
+                        fileDataBank.readFile(param0.source.cfInfo.style.rootPath)
+                        :
+                        tptPathOpt.cssContents),
+                    localNodeElement: tptExt.parentUc.ucExtends.self,
+                });
 
             loadGlobal.pushRow({
                 url: param0.source.cfInfo.style.rootPath,

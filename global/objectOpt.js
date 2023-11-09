@@ -27,7 +27,9 @@ const newObjectOpt = {
                 if (Object.hasOwnProperty.call(from, key)) {
                     const element = from[key];
                     if (getC(element) == "Object") {
-                        this.recursiveProp(element, to[key]);
+                        let sobj = to[key];
+                        if(sobj!=undefined) this.recursiveProp(element, sobj);
+                        else to[key] = element;
                     } else {
                         to[key] = element;
                     }
