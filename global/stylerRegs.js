@@ -390,6 +390,8 @@ class stylerRegs {
                                     this.rootInfo.id,
                                     scope, value); return '';
                             case 'l':
+                                //console.log(ky.substring(3).trim());
+                                //console.log(_params.localNodeElement.nodeName);
                                 stylerRegs.__VAR.SETVALUE(
                                     ky.substring(3).trim(),
                                     this.uniqStamp,

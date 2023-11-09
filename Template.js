@@ -207,6 +207,7 @@ class TemplateNode {
                 param0.source.cfInfo.style.parse(fpath + ".scss", false);
             }
             param0.source.templateName = tptPathOpt.name;
+            
             tptExt.stampRow = userControlStamp.getStamp(param0.source);
             let htEle = tptExt.stampRow.dataHT;
 
@@ -223,6 +224,8 @@ class TemplateNode {
                 tptExt.parentUc.ucExtends.stampRow.styler
                     .pushChild(param0.source.cfInfo.mainFilePath + "" + (param0.source.templateName == "" ? "" : "@" + param0.source.templateName),
                         tptExt.stampRow.styler, eleHT.nodeName);
+            console.log(param0.source.cfInfo.html.fullPath);
+            console.log(tptExt.parentUc);
 
             tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator_sub(
                 {
