@@ -1,9 +1,8 @@
 const { codefileHandler } = require("@ucbuilder:/build/codeFileInfo");
 const { propOpt } = require("@ucbuilder:/build/common");
 const { stylerRegs } = require("@ucbuilder:/global/stylerRegs");
-const { cssVarStamp } = require("@ucbuilder:/global/loadGlobal");
 const { tabIndexManager } = require("@ucbuilder:/global/tabIndexManager");
-
+const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
 class ResourcesUC {
     static tabMng = new tabIndexManager();
     static styler = new stylerRegs();
@@ -25,9 +24,11 @@ class ResourcesUC {
     static init() {
         if (!this.isInitBefore) {
             this.contentHT = document.body;
+            
+            
             ResourcesUC.tabMng.init(this.contentHT);
             stylerRegs.pushPublicStyles();
-            cssVarStamp.init();
+            loadGlobal.init();
             this.isInitBefore = true;
         }
     }

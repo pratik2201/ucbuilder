@@ -1,6 +1,5 @@
 const { fileInfo } = require("@ucbuilder:/build/codeFileInfo");
-const { pathInfo, strOpt } = require("@ucbuilder:/build/common");
-const { rootPathHandler } = require("@ucbuilder:/global/rootPathHandler");
+const { pathInfo } = require("@ucbuilder:/build/common");
 
 class row {
     finfo = new fileInfo();
@@ -9,7 +8,7 @@ class row {
     stamp = "";
     fUniq = "";
 }
-class cssVarStamp {
+class loadGlobal {
 
     constructor() {
 
@@ -103,4 +102,4 @@ class cssVarStamp {
         }
     }
 }
-module.exports = { cssVarStamp, row };
+module.exports = { loadGlobal, row };

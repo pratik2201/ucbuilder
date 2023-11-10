@@ -1,5 +1,6 @@
 const { aliceManager } = require("@ucbuilder:/build/codefile/aliceManager");
 const { uniqOpt, propOpt } = require("@ucbuilder:/build/common");
+const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 const { openCloser } = require("@ucbuilder:/global/openCloser");
@@ -32,7 +33,7 @@ class stylerRegs {
                 isFullPath: true,
                 replaceContentWithKeys: true
             });
-            let { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
+           
             //console.log(styler.stamp);
             if (_data != undefined) {
                 loadGlobal.pushRow({
@@ -394,7 +395,7 @@ class stylerRegs {
                                 
                                 stylerRegs.__VAR.SETVALUE(
                                     ky.substring(3).trim(),
-                                    this.uniqStamp+""+_params.cssVarStampKey,
+                                    /*this.uniqStamp+""+*/_params.cssVarStampKey,
                                     scope, value,_params.localNodeElement); return '';
                         }
                         /* switch (ky.charAt(1)) {
@@ -433,7 +434,7 @@ class stylerRegs {
                 let scope = ky.charAt(1);
                 return stylerRegs.__VAR.GETVALUE(
                     ky.substring(3).trim(),
-                    scope == 'g' ? this.rootInfo.id : this.uniqStamp,
+                    scope == 'g' ? this.rootInfo.id : /*this.uniqStamp*/_params.cssVarStampKey,
                     scope);
                 /*switch (ky.charAt(1)) {
                     case 'g':
@@ -476,6 +477,11 @@ class stylerRegs {
         GETVALUE(key, uniqId, code) {
             return ` var(${this.getKeyName(key, uniqId, code)}) `;
         },
+
+
+        
+        
+
     };
     /**
      * @param {{selectorText :string,

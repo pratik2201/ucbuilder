@@ -82,6 +82,8 @@ class Template {
     }
     extended = {
         fileStamp: "",
+        /** @type {TemplateNode} it is for only use of cssvar */
+        _templeteNode: undefined,
         /** @type {userControlStampRow}  */
         stampRow: undefined,
         /** @type {Usercontrol}  */
@@ -138,6 +140,12 @@ class Template {
              */
         },
 
+        setCSS_globalVar(key, value) {
+            this._templeteNode.extended.setCSS_globalVar(key, value);
+        },
+        setCSS_localVar(key, value) {
+            this._templeteNode.extended.setCSS_localVar(key, value);
+        },
     }
 }
 class TemplateNode {
@@ -158,6 +166,34 @@ class TemplateNode {
         parentUc: undefined,
         size: new Size(),
         regsMng: new regsManage(),
+        setCSS_globalVar(key, value) {
+            stylerRegs.__VAR.SETVALUE(key, this.stampRow.styler.rootInfo.id, 'g', value);
+        },
+        setCSS_localVar(key, value) {
+            let _ext = this.main.extended;
+            stylerRegs.__VAR.SETVALUE(key, _ext.cssVarStampKey, 'l', value, this.parentUc.ucExtends.self);
+        },
+
+
+        getCSS_globalVar(key) {
+            return document.body.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.stampRow.styler.rootInfo.id, 'g'));
+        },
+        /**
+         * 
+         * @param {string} key 
+         * @returns 
+         */
+        getCSS_localVar(key) {
+            return this.parentUc.ucExtends.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.main.extended.cssVarStampKey, 'l'));
+        },
+
+        /*getCSS_globalVar(key) {
+            return stylerRegs.__VAR.GETVALUE(key, this.stampRow.styler.rootInfo.id, 'g', value);
+        },
+        getCSS_localVar(key) {
+            let _ext = this.main.extended;
+            return stylerRegs.__VAR.GETVALUE(key, _ext.cssVarStampKey, 'l', value, this.parentUc.ucExtends.self);
+        },*/
         /**
         * @param {{}} jsonRow 
         * @returns {string}
@@ -221,12 +257,12 @@ class TemplateNode {
             /** @type {HTMLElement}  */
             let eleHT = param0.elementHT;
             tptExt.parentUc = param0.parentUc;
-            
+
             if (tptExt.parentUc != undefined)
                 tptExt.parentUc.ucExtends.stampRow.styler
                     .pushChild(param0.source.cfInfo.mainFilePath + "" + (param0.source.templateName == "" ? "" : "@" + param0.source.templateName),
                         tptExt.stampRow.styler, eleHT.nodeName);
-            console.log(param0.source.cfInfo.html.fullPath);
+            //console.log(param0.source.cfInfo.html.fullPath);
             //console.log(tptExt.parentUc);
             //console.log(tptExt.main.extended.cssStamp);
             tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator_sub(
@@ -236,7 +272,7 @@ class TemplateNode {
                         :
                         tptPathOpt.cssContents),
                     localNodeElement: tptExt.parentUc.ucExtends.self,
-                    cssVarStampKey:tptExt.main.extended.cssVarStampKey
+                    cssVarStampKey: tptExt.main.extended.cssVarStampKey
                 });
 
             loadGlobal.pushRow({

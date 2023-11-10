@@ -11,6 +11,7 @@ const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
 const { ATTR_OF } = require("@ucbuilder:/global/runtimeOpt");
 const { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
+const { stylerRegs } = require("@ucbuilder:/global/stylerRegs");
 
 /** 
  * @typedef {import ('@ucbuilder:/global/stylerRegs').stylerRegs} stylerRegs
@@ -95,6 +96,26 @@ class Usercontrol {
         //fileStamp: "",
         /** @type {HTMLCollection}  */
         garbageElementsHT: undefined,
+
+        setCSS_globalVar(key, value) {
+            stylerRegs.__VAR.SETVALUE(key, this.stampRow.styler.rootInfo.id, 'g', value);
+        },
+        setCSS_localVar(key, value) {
+            stylerRegs.__VAR.SETVALUE(key, this.cssVarStampKey, 'l', value, this.self);
+        },
+        getCSS_globalVar(key) {
+            return document.body.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.stampRow.styler.rootInfo.id, 'g'));
+        },
+        /**
+         * 
+         * @param {string} key 
+         * @param {HTMLElement} localEle 
+         * @returns 
+         */
+        getCSS_localVar(key, localEle) {
+            return this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.cssVarStampKey, 'l'));
+        },
+
         cssVarStampKey: '0',
         /**
          * @param {ucOptions} param0 
