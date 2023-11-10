@@ -28,7 +28,6 @@ const sourceOptions = {
     reloadKey: "",
     reloadDesign: false,
 
-    parentRefName:"",
 
     /** @type {string}  */
     htmlContents: undefined,

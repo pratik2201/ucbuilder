@@ -9,7 +9,7 @@ class row {
     stamp = "";
     fUniq = "";
 }
-class loadGlobal {
+class cssVarStamp {
 
     constructor() {
 
@@ -103,4 +103,4 @@ class loadGlobal {
         }
     }
 }
-module.exports = { loadGlobal, row };
+module.exports = { cssVarStamp, row };

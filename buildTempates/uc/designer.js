@@ -32,7 +32,6 @@ class designer extends Usercontrol {
          **/
         this.{=name} = intenseGenerator.generateTPT('{=src.code.rootPath}',{ 
                             parentUc : this, 
-                            source : { parentRefName : "{=name}" },
                             elementHT : CONTROLS.{=name} 
                        });       
         ` 

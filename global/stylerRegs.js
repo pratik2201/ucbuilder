@@ -1,7 +1,6 @@
 const { aliceManager } = require("@ucbuilder:/build/codefile/aliceManager");
 const { uniqOpt, propOpt } = require("@ucbuilder:/build/common");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
-const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 const { openCloser } = require("@ucbuilder:/global/openCloser");
 const { rootPathHandler, rootPathRow } = require("@ucbuilder:/global/rootPathHandler");
@@ -33,6 +32,7 @@ class stylerRegs {
                 isFullPath: true,
                 replaceContentWithKeys: true
             });
+            let { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
             //console.log(styler.stamp);
             if (_data != undefined) {
                 loadGlobal.pushRow({
@@ -189,6 +189,7 @@ class stylerRegs {
         _rootinfo: undefined,
         /** @type {HTMLElement}  */ 
         localNodeElement:undefined,
+        cssVarStampKey:"",
     }
     
     /**
@@ -390,11 +391,10 @@ class stylerRegs {
                                     this.rootInfo.id,
                                     scope, value); return '';
                             case 'l':
-                                //console.log(ky.substring(3).trim());
-                                //console.log(_params.localNodeElement.nodeName);
+                                
                                 stylerRegs.__VAR.SETVALUE(
                                     ky.substring(3).trim(),
-                                    this.uniqStamp,
+                                    this.uniqStamp+""+_params.cssVarStampKey,
                                     scope, value,_params.localNodeElement); return '';
                         }
                         /* switch (ky.charAt(1)) {

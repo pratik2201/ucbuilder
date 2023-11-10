@@ -1,7 +1,7 @@
 const { codefileHandler } = require("@ucbuilder:/build/codeFileInfo");
 const { propOpt } = require("@ucbuilder:/build/common");
 const { stylerRegs } = require("@ucbuilder:/global/stylerRegs");
-const { loadGlobal } = require("@ucbuilder:/global/loadGlobal");
+const { cssVarStamp } = require("@ucbuilder:/global/loadGlobal");
 const { tabIndexManager } = require("@ucbuilder:/global/tabIndexManager");
 
 class ResourcesUC {
@@ -27,7 +27,7 @@ class ResourcesUC {
             this.contentHT = document.body;
             ResourcesUC.tabMng.init(this.contentHT);
             stylerRegs.pushPublicStyles();
-            loadGlobal.init();
+            cssVarStamp.init();
             this.isInitBefore = true;
         }
     }

@@ -75,9 +75,10 @@ class Template {
             return this.byContents(htmlContents, mainFilePath, returnArray);
         }
     }
-
+    static _CSS_VAR_STAMP = 0;
     constructor() {
-
+        Template._CSS_VAR_STAMP++;
+        this.extended.cssVarStampKey = 't' + Usercontrol._CSS_VAR_STAMP;
     }
     extended = {
         fileStamp: "",
@@ -87,7 +88,7 @@ class Template {
         parentUc: undefined,
         regsMng: new regsManage(),
 
-
+        cssVarStampKey: '0',
 
 
         /** @param {tptOptions} param0 */
@@ -146,7 +147,7 @@ class TemplateNode {
     constructor(main) {
         this.extended.main = main;
     }
-
+    static _CSS_VAR_STAMP = 0;
     extended = {
         fileStamp: "",
         /** @type {Template}  */
@@ -195,7 +196,7 @@ class TemplateNode {
         initializecomponent: (_args, tptPathOpt, tptname) => {
             let tptExt = this.extended;
             _args.source.cfInfo = new codeFileInfo(".tpt");
-            console.log(_args.source.parentRefName);
+            //console.log(_args.source.parentRefName);
             /** @type {tptOptions}  */
             let param0 = newObjectOpt.copyProps(_args, tptOptions);
             _args.source.cfInfo.parseUrl(tptPathOpt.mainFilePath);
@@ -208,7 +209,7 @@ class TemplateNode {
                 param0.source.cfInfo.style.parse(fpath + ".scss", false);
             }
             param0.source.templateName = tptPathOpt.name;
-            
+
             tptExt.stampRow = userControlStamp.getStamp(param0.source);
             let htEle = tptExt.stampRow.dataHT;
 
@@ -220,14 +221,14 @@ class TemplateNode {
             /** @type {HTMLElement}  */
             let eleHT = param0.elementHT;
             tptExt.parentUc = param0.parentUc;
-
+            
             if (tptExt.parentUc != undefined)
                 tptExt.parentUc.ucExtends.stampRow.styler
                     .pushChild(param0.source.cfInfo.mainFilePath + "" + (param0.source.templateName == "" ? "" : "@" + param0.source.templateName),
                         tptExt.stampRow.styler, eleHT.nodeName);
-            //console.log(param0.source.cfInfo.html.fullPath);
+            console.log(param0.source.cfInfo.html.fullPath);
             //console.log(tptExt.parentUc);
-
+            //console.log(tptExt.main.extended.cssStamp);
             tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator_sub(
                 {
                     data: (tptPathOpt.cssContents == undefined ?
@@ -235,6 +236,7 @@ class TemplateNode {
                         :
                         tptPathOpt.cssContents),
                     localNodeElement: tptExt.parentUc.ucExtends.self,
+                    cssVarStampKey:tptExt.main.extended.cssVarStampKey
                 });
 
             loadGlobal.pushRow({
