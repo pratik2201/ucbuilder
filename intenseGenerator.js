@@ -55,9 +55,9 @@ class intenseGenerator {
     static generateTPT(path, pera, ...args) {
         //let param0 = newObjectOpt.clone(tptOptions);
         //newObjectOpt.copyProps(pera, param0);
-        let param0 = newObjectOpt.copyProps(pera, tptOptions);
-
+        let param0 = newObjectOpt.copyProps(pera, tptOptions);        
         let row = ResourcesUC.codefilelist.getObj(path);
+        
         param0.source.cfInfo = row.codefileObj;
         if (param0.elementHT == undefined) {
             let tname = row.codefileObj.name;

@@ -195,6 +195,7 @@ class TemplateNode {
         initializecomponent: (_args, tptPathOpt, tptname) => {
             let tptExt = this.extended;
             _args.source.cfInfo = new codeFileInfo(".tpt");
+            console.log(_args.source.parentRefName);
             /** @type {tptOptions}  */
             let param0 = newObjectOpt.copyProps(_args, tptOptions);
             _args.source.cfInfo.parseUrl(tptPathOpt.mainFilePath);
@@ -224,8 +225,8 @@ class TemplateNode {
                 tptExt.parentUc.ucExtends.stampRow.styler
                     .pushChild(param0.source.cfInfo.mainFilePath + "" + (param0.source.templateName == "" ? "" : "@" + param0.source.templateName),
                         tptExt.stampRow.styler, eleHT.nodeName);
-            console.log(param0.source.cfInfo.html.fullPath);
-            console.log(tptExt.parentUc);
+            //console.log(param0.source.cfInfo.html.fullPath);
+            //console.log(tptExt.parentUc);
 
             tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator_sub(
                 {

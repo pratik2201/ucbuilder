@@ -56,6 +56,7 @@ class Usercontrol {
             `;
 
     }
+    static _CSS_VAR_STAMP = 0;
     static NEW_VALUE = "ANKITA LOVE PRATIK";
     constructor() {
 
@@ -93,11 +94,14 @@ class Usercontrol {
         //fileStamp: "",
         /** @type {HTMLCollection}  */
         garbageElementsHT: undefined,
+        cssStamp: '0',
         /**
          * @param {ucOptions} param0 
          */
         initializecomponent: (param0) => {
             let ucExt = this.ucExtends;
+            Usercontrol._CSS_VAR_STAMP++;
+            ucExt.cssStamp = '' + Usercontrol._CSS_VAR_STAMP;
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
             ucExt.fileInfo = param0.source.cfInfo;
@@ -169,7 +173,7 @@ class Usercontrol {
                         fileDataBank.readFile(ext.fileInfo.style.rootPath)
                         :
                         param0.source.cssContents),
-                    localNodeElement:ext.self,
+                    localNodeElement: ext.self,
                 });
             loadGlobal.pushRow({
                 url: ext.fileInfo.style.rootPath,

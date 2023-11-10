@@ -28,6 +28,8 @@ const sourceOptions = {
     reloadKey: "",
     reloadDesign: false,
 
+    parentRefName:"",
+
     /** @type {string}  */
     htmlContents: undefined,
 
@@ -37,7 +39,7 @@ const sourceOptions = {
     /**
     * @param {string} uc content which is being Initlize for html tag  
     */
-    beforeContentAssign: () => {
+    beforeContentAssign: (uc) => {
 
     },
 }
@@ -59,7 +61,7 @@ const ucOptions = {
 
         },
         /**  @param {Usercontrol} uc uc which is being Initlize  */
-        afterInitlize: () => {
+        afterInitlize: (uc) => {
 
         },
     },
