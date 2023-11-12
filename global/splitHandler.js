@@ -174,6 +174,7 @@ class splitHandler {
                 _this.refreshView();
 
                 splitHandler.rectHT.style.visibility = "collapse";
+                
                 _this.uc.ucExtends.session.onModify();
                 document.body.off("mousemove", mousemoveEvent);
                 document.body.off("mouseup mouseleave", mouseupEvent);

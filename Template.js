@@ -1,4 +1,4 @@
-const { propOpt, strOpt } = require("@ucbuilder:/build/common");
+const { propOpt, strOpt, pathInfo } = require("@ucbuilder:/build/common");
 const { regsManage } = require("@ucbuilder:/build/regs/regsManage");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
 const { filterContent } = require("@ucbuilder:/global/filterContent");
@@ -9,13 +9,13 @@ const { userControlStampRow, userControlStamp } = require("@ucbuilder:/global/us
 const { Usercontrol } = require("@ucbuilder:/Usercontrol");
 const { tptOptions, templatePathOptions } = require("@ucbuilder:/enumAndMore");
 const { transferDataNode } = require("@ucbuilder:/global/drag/transferation");
-const { commonEvent } = require("@ucbuilder:/global/commonEvent");
 const { fileInfo, codeFileInfo } = require("@ucbuilder:/build/codeFileInfo");
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 const { Size } = require("@ucbuilder:/global/drawing/shapes");
 
 class Template {
     static getTemplates = {
+
         /**
          * @param {string} htmlContents content 
          * @param {string} mainFilePath main html file path 
@@ -73,6 +73,47 @@ class Template {
             let mainFilePath = strOpt.trim_(htmlFilePath, ".html");
             let htmlContents = fileDataBank.readFile(mainFilePath + '.html');
             return this.byContents(htmlContents, mainFilePath, returnArray);
+        },
+        /**
+         * @param {string} filepath 
+         * @returns {templatePathOptions[] & {}}
+         */
+        byDirectory(filepath) {
+            let fs = require('fs');
+            let fpart = pathInfo.getFileInfoPartly(filepath);
+            let DirectoryContents = fs.readdirSync(fpart.dirPath + '/');
+            console.log(filepath);
+            DirectoryContents.forEach(file => {
+                if (file.startsWith(fpart.fileName)) {
+                    console.log("=>" + file);
+                }
+            });
+
+            var groupBy = function (arr, key) {
+                
+                return arr.reduce(
+                    /**
+                     * @param {[]} runningAr 
+                     * @param {string} filename 
+                     * @returns {[]}
+                     */
+                    function (runningAr, filename) {
+                    if(filename.startsWith(fpart.fileName) && filename.endsWith('.html')){
+                        
+                    } 
+                    (runningAr[filename[key]] = runningAr[filename[key]] || []).push(filename);
+                    return runningAr;
+                }, {});
+            };
+
+            console.log(DirectoryContents);
+            return DirectoryContents;
+            /*DirectoryContents.forEach(file => {
+                let _path = pathInfo.cleanPath(parentDir + '/' + file);
+                if (!fs.statSync(_path).isDirectory()) {
+                    this.checkFileState(_path, undefined);
+                }
+            });*/
         }
     }
     static _CSS_VAR_STAMP = 0;

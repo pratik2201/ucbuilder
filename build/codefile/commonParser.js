@@ -51,29 +51,19 @@ class commonParser {
             replaceContentWithKeys: false
         }) : htmlContents;
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
-        /*if (_row.src.html.fullPath.includes("attributeTemplate")) {
-            console.log(code);
-            var div = document.createElement('pre');
-            div.innerHTML = code;
-            console.log(div.innerHTML);
-            //jqFeatures.data.initElement(div.firstChild);
-            console.log(div.firstChild);
-           // console.log(this.formHT.outerHTML);
-        }*/
-
-        //console.log(htmlContents);
+       
         /** @type {HTMLElement}  */
         this.formHT = code.$();
 
         this.aliceMng.fillAlices(this.formHT);
-        //console.log(this.aliceMng.source.length);
         _row.designer.className =
             _row.codefile.baseClassName = "designer";
         _row.codefile.className = _row.src.name;
         if (!isUserControl) {
+            let cntnt = Template.getTemplates.byDirectory(filePath);
             _row.designer.baseClassName = "Template";
             let tptbyCntnt = Template.getTemplates.byContents(code, _row.src.mainFilePath);
-
+            
             let tpts = _row.designer.templetes;
             tptbyCntnt.forEach(template => {
                 let rolelwr = template.name.toLowerCase();
