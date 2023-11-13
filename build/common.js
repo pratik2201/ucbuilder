@@ -225,7 +225,7 @@ const __THIS = {
            */
         getFileInfoPartly: (fullPath) => {
             let rtrn = { dirPath: "", fileName: "", extension: "", type: "", fullPath: "" }
-            const array = Array.from(fullPath.matchAll(/(^.*[\\\/])(.*)/gm))[0];
+            let array = Array.from(fullPath.matchAll(/(^.*[\\\/])(.*)/gm))[0];
             if (array != undefined) {
                 /** @type {string}  */
                 let dirPath = array[1];
@@ -233,11 +233,13 @@ const __THIS = {
                 let filename = array[2];
                 let index = filename.indexOf(".");
                 rtrn.dirPath = dirPath;
+                rtrn.fullPath = fullPath;
                 if (index != -1) {
                     rtrn.fileName = filename.substring(0, index);
                     let flen = filename.length;
                     rtrn.extension = filename.substring(index, flen);
                     let lindex = filename.lastIndexOf(".");
+                    
                     rtrn.type = (lindex == index) ? rtrn.extension : filename.substring(lindex, flen);
                 }
             }

@@ -82,31 +82,27 @@ class Template {
             let fs = require('fs');
             let fpart = pathInfo.getFileInfoPartly(filepath);
             let DirectoryContents = fs.readdirSync(fpart.dirPath + '/');
-            console.log(filepath);
-            DirectoryContents.forEach(file => {
-                if (file.startsWith(fpart.fileName)) {
-                    console.log("=>" + file);
+            DirectoryContents.forEach(filename => {
+                if (filename.startsWith(fpart.fileName) && filename.endsWith('.html')) {
+                    //console.log( filename.indexOf("."));
+                    console.log(">"+filepath);
+                   
+                    let fnm = fpart.fileName + '.tpt';
+                    console.log(filename+':'+fnm+" => "+strOpt._trim(filename, fnm));
+                    let tp = strOpt.trim_(strOpt._trim(filename, fnm), '.html');
+                    console.log(filename+" => " + tp);
+                    tp = tp.trim();
+                    let tpt_name = propOpt.ATTR.TEMPLETE_DEFAULT;
+                    if (tp != '') tpt_name = tp._trim(".");
+                    /** @type {templatePathOptions}  */
+                    let row = { name: tpt_name, };
+                   // console.log(filename + '=>' + row.name);
+                    // runningAr.push(row);
                 }
+                //}
             });
-
-            var groupBy = function (arr, key) {
-                
-                return arr.reduce(
-                    /**
-                     * @param {[]} runningAr 
-                     * @param {string} filename 
-                     * @returns {[]}
-                     */
-                    function (runningAr, filename) {
-                    if(filename.startsWith(fpart.fileName) && filename.endsWith('.html')){
-                        
-                    } 
-                    (runningAr[filename[key]] = runningAr[filename[key]] || []).push(filename);
-                    return runningAr;
-                }, {});
-            };
-
-            console.log(DirectoryContents);
+            
+            //console.log();
             return DirectoryContents;
             /*DirectoryContents.forEach(file => {
                 let _path = pathInfo.cleanPath(parentDir + '/' + file);
@@ -137,34 +133,34 @@ class Template {
         /** @param {tptOptions} param0 */
         initializecomponent: (param0) => {
             /* let tptExt = this.extended;
- 
+     
              tptExt.stampRow = userControlStamp.getStamp(param0.source);
              // mainTag.innerHTML = fileDataBank.readFile(param0.source.fInfo.html.fullPath);
              Template.getTemplatesByHTMLFilePath(param0.source.fInfo.html.fullPath);
              let ht = tptExt.stampRow.dataHT;
              let attrs = Array.from(tptExt.stampRow.dataHT.attributes);
- 
+     
              attrs
                  .filter(s => s.nodeName.toLowerCase().startsWith("x.temp-"))
                  .forEach(s => ht.removeAttribute(s.nodeName));
              //tptExt.stampRow.content = ht.outerHTML;
- 
+     
               type {HTMLElement}  
              let eleHT = param0.elementHT;
              tptExt.parentUc = param0.parentUc;
- 
+     
              if (tptExt.parentUc != undefined)
                  tptExt.parentUc.ucExtends
                      .stampRow.styler.pushChild(param0.source.fInfo.mainFilePath,
                          tptExt.stampRow.styler, eleHT.nodeName);
- 
+     
              // console.log(tptExt.stampRow.cInfo.style.rootPath);
              param0.source.cssContents = tptExt.stampRow.styler.parseStyleSeperator(
                  (param0.source.cssContents == undefined ?
                      fileDataBank.readFile(param0.source.fInfo.style.rootPath)
                      :
                      param0.source.cssContents));
- 
+     
              loadGlobal.pushRow({
                  url: param0.source.fInfo.style.rootPath,
                  stamp: tptExt.stampRow.stamp,
@@ -172,11 +168,11 @@ class Template {
                  reloadKey: param0.source.reloadKey,
                  cssContents: param0.source.cssContents
              });
- 
- 
+     
+     
              //this.extended.fillTemplates(tptExt.stampRow.dataHT);
- 
- 
+     
+     
              param0.elementHT.remove();
              */
         },
