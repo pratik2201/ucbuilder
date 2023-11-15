@@ -29,19 +29,17 @@ class designer extends Template {
         /** @type {tptOptions}  */ 
         let fargs = arguments[0];
         fargs = fargs[fargs.length-1];
-        //this.extended.fileStamp = "{=htmlFile.stamp}"; 
         let ext = this.extended;
-        //this.extended.initializecomponent(fargs); 
-        let tpts = Template.getTemplates.byHTMLFilePath(fargs.source.cfInfo.html.fullPath,false);
+        let tpts = Template.getTemplates.byDirectory(fargs.source.cfInfo.code.fullPath,false);
         `{looptpt=designer.templetes} 
         `
         
         ext._templeteNode = new {=name}_TEMPLATE(this);
+        /** @type {{=name}_TEMPLATE}  */ 
         this.{=name} = ext._templeteNode;
         this.{=name}.extended.initializecomponent(fargs,tpts.{=name},"{=name}"); 
        `{/looptpt}`
 
-      
         fargs.elementHT.remove();
     }
     

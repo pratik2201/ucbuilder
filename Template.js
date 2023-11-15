@@ -75,34 +75,48 @@ class Template {
             return this.byContents(htmlContents, mainFilePath, returnArray);
         },
         /**
+         * @param {string} htmlFilePath 
+         * @returns {templatePathOptions[] & {}}
+         */
+        byDirectory(jsFilepath, returnArray = true) {
+            if (returnArray) {
+                /** @type {templatePathOptions}  */
+                let rtrnAr = [];
+                this.loopDirectory(jsFilepath, (row) => { rtrnAr.push(row); });
+                return rtrnAr;
+            }else{
+                let rtrnObj = {};
+                this.loopDirectory(jsFilepath, (node) => {
+                    rtrnObj[node.name] = node;
+                });
+                return rtrnObj;
+            }
+        },
+        /**
          * @param {string} filepath 
          * @returns {templatePathOptions[] & {}}
          */
-        byDirectory(filepath) {
+        loopDirectory(filepath, callback =  /**  @param {templatePathOptions} row  */ (row) => { }) {
             let fs = require('fs');
+            filepath = filepath.toLowerCase();
             let fpart = pathInfo.getFileInfoPartly(filepath);
             let DirectoryContents = fs.readdirSync(fpart.dirPath + '/');
             DirectoryContents.forEach(filename => {
-                if (filename.endsWith('.html') && filename.startsWith(fpart.fileName+'.tpt')) {
+                filename = filename.toLowerCase();
+                if (filename.endsWith('.html') && filename.startsWith(fpart.fileName + '.tpt')) {
                     let fnm = fpart.fileName + '.tpt';
-                    let tp = strOpt.trim_(strOpt._trim(filename, fnm), '.html');
+                    let extLessFileName = strOpt.trim_(filename, '.html');
+                    let tp = strOpt._trim(extLessFileName, fnm);
                     tp = tp.trim();
-                    let tpt_name = propOpt.ATTR.TEMPLETE_DEFAULT;
-                    if (tp != '') tpt_name = tp._trim(".");
                     /** @type {templatePathOptions}  */
-                    let row = { name: tpt_name, };
-                    console.log(filename + '=>' + row.name);
+                    let row = {};
+                    row.name = (tp != '') ? tp._trim(".") : propOpt.ATTR.TEMPLETE_DEFAULT;
+                    row.mainFilePath = pathInfo.cleanPath(fpart.dirPath + extLessFileName);
+                    row.htmlContents = fileDataBank.readFile(row.mainFilePath + '.html');
+                    row.cssContents = fileDataBank.readFile(row.mainFilePath + '.scss');
+                    callback(row);
                 }
             });
-            
-            //console.log();
-            return DirectoryContents;
-            /*DirectoryContents.forEach(file => {
-                let _path = pathInfo.cleanPath(parentDir + '/' + file);
-                if (!fs.statSync(_path).isDirectory()) {
-                    this.checkFileState(_path, undefined);
-                }
-            });*/
         }
     }
     static _CSS_VAR_STAMP = 0;
@@ -263,8 +277,10 @@ class TemplateNode {
             let tptExt = this.extended;
             _args.source.cfInfo = new codeFileInfo(".tpt");
             //console.log(_args.source.parentRefName);
+            ///console.log(tptPathOpt);
             /** @type {tptOptions}  */
             let param0 = newObjectOpt.copyProps(_args, tptOptions);
+
             _args.source.cfInfo.parseUrl(tptPathOpt.mainFilePath);
 
             if (tptname !== propOpt.ATTR.TEMPLETE_DEFAULT) {

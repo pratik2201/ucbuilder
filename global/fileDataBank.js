@@ -1,4 +1,4 @@
-const { strOpt } = require("@ucbuilder:/build/common");
+const { strOpt, pathInfo } = require("@ucbuilder:/build/common");
 const { replaceTextRow } = require("@ucbuilder:/global/findAndReplace");
 const { readFileSync, writeFileSync, existsSync } = require("fs");
 const { fileInfo } = require("@ucbuilder:/build/codeFileInfo");
@@ -79,7 +79,6 @@ class fileDataBank {
         isFullPath = false,
     } = {}) {
         let fullPath = path.toLowerCase().trim();
-
         if (!isFullPath) {
             let fing = new fileInfo();
             fing.parse(path, true);

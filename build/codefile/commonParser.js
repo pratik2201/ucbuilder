@@ -60,10 +60,13 @@ class commonParser {
             _row.codefile.baseClassName = "designer";
         _row.codefile.className = _row.src.name;
         if (!isUserControl) {
-            let cntnt = Template.getTemplates.byDirectory(filePath);
+           // let cntnt = Template.getTemplates.byDirectory(filePath);
             _row.designer.baseClassName = "Template";
-            let tptbyCntnt = Template.getTemplates.byContents(code, _row.src.mainFilePath);
-            
+            let tptbyCntnt = Template.getTemplates.byDirectory(filePath);//Template.getTemplates.byContents(code, _row.src.mainFilePath);
+            //console.log(tptbyCntnt);
+            //console.log(cntnt);
+            //console.log('----');
+            //_row.src.code
             let tpts = _row.designer.templetes;
             tptbyCntnt.forEach(template => {
                 let rolelwr = template.name.toLowerCase();
