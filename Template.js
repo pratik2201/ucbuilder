@@ -83,23 +83,16 @@ class Template {
             let fpart = pathInfo.getFileInfoPartly(filepath);
             let DirectoryContents = fs.readdirSync(fpart.dirPath + '/');
             DirectoryContents.forEach(filename => {
-                if (filename.startsWith(fpart.fileName) && filename.endsWith('.html')) {
-                    //console.log( filename.indexOf("."));
-                    console.log(">"+filepath);
-                   
+                if (filename.endsWith('.html') && filename.startsWith(fpart.fileName+'.tpt')) {
                     let fnm = fpart.fileName + '.tpt';
-                    console.log(filename+':'+fnm+" => "+strOpt._trim(filename, fnm));
                     let tp = strOpt.trim_(strOpt._trim(filename, fnm), '.html');
-                    console.log(filename+" => " + tp);
                     tp = tp.trim();
                     let tpt_name = propOpt.ATTR.TEMPLETE_DEFAULT;
                     if (tp != '') tpt_name = tp._trim(".");
                     /** @type {templatePathOptions}  */
                     let row = { name: tpt_name, };
-                   // console.log(filename + '=>' + row.name);
-                    // runningAr.push(row);
+                    console.log(filename + '=>' + row.name);
                 }
-                //}
             });
             
             //console.log();
