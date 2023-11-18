@@ -145,8 +145,12 @@ class pagerLV extends listUiHandler {
 
         let _itemSize = this.nodes.itemSize;
         let s = this.itemTemplate.extended.size;
-        _itemSize.height = s.height;
-        _itemSize.width = s.width;
+        
+        //setInterval(() => {
+            
+            _itemSize.height = s.height;
+            _itemSize.width = s.width;
+        //}, 1);
         /*console.log(this.uc);
         console.log(_itemSize);*/
         /*this.Events.newItemGenerate.on((itmnode) => {
@@ -154,11 +158,11 @@ class pagerLV extends listUiHandler {
         });*/
     }
     initkeyEvents() {
-        
+
     }
     get perPageRecord() { return this.pageInfo.extended.perPageRecord; }
     get beginIndex() { return this.pageInfo.top; }
-    
+
     initNodes() {
         this.nodes.prepend = (index, replaceNode = false) => {
             let _records = this.Records;
