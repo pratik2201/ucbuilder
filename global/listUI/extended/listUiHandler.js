@@ -57,10 +57,12 @@ class listUiHandler {
             /** @param {HTMLElement} htEle */
             update(htEle) {
                 this.hasSet = true;
+                   
                 if (!htEle.isConnected) {
                     document.body.appendChild(htEle);
                     timeoutCall.start(() => {
                         this.width = htEle.offsetWidth;
+                        
                         this.height = htEle.offsetHeight;
                     });
                     document.body.removeChild(htEle);

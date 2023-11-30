@@ -30,12 +30,14 @@ class scrollbarHandler {
         this.main = main;
         
         this.main.Events.onListUISizeChanged.on((rect) => {
-            //console.log(this.main.uc);
             //let h = this.main.nodes.itemSize.height;
             //if(h==0)this.main.nodes.itemSize.
             this.viewSize.setBy.HTMLEle(this.main.Records.scrollerElement);
             let ppr = (this.viewSize.height / this.main.nodes.itemSize.height);
+            console.log(this.viewSize.height+" / "+this.main.nodes.itemSize.height);
+            console.log(ppr);
             if(ppr==Infinity)return;
+            
             //console.log(this.main.uc);
             //console.log(this.viewSize.height);
             //console.log(ppr);

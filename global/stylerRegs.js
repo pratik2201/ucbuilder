@@ -208,7 +208,7 @@ class stylerRegs {
         let pstamp_val = _this.stamp;
         if (_params.isForRoot) {
             pstamp_key = ATTR_OF.UC.ROOT_STAMP;
-
+            
             pstamp_val = (_params._rootinfo == undefined) ? _this.rootInfo.id : _params._rootinfo.id;
             //console.log(pstamp_key+' < === > '+pstamp_val);
         }
@@ -327,6 +327,7 @@ class stylerRegs {
                                     filePath = filePath.toLowerCase();
                                     UCselector = UCselector.trim();
                                     //console.log(this.children);
+                                    //debugger;
                                     /** @type {stylerRegs}  */
                                     let tree = this.children.find(s => s.path == filePath ||
                                         s.alices == filePath);
@@ -341,7 +342,8 @@ class stylerRegs {
 
                                         let nscope = _params.callCounter == 1 ? _this.parseScopeSeperator({
                                             selectorText: UCselector,
-                                            parent_stamp: pstamp_key,
+                                            //parent_stamp: pstamp_key,
+                                            parent_stamp:ATTR_OF.UC.UC_STAMP,
                                             parent_stamp_value: pstamp_val
                                         }) : _params.scopeSelectorText;
                                         //console.log(nscope);

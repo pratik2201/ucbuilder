@@ -84,7 +84,7 @@ class Template {
                 let rtrnAr = [];
                 this.loopDirectory(jsFilepath, (row) => { rtrnAr.push(row); });
                 return rtrnAr;
-            }else{
+            } else {
                 let rtrnObj = {};
                 this.loopDirectory(jsFilepath, (node) => {
                     rtrnObj[node.name] = node;
@@ -334,7 +334,11 @@ class TemplateNode {
             tptExt.Events.onDataExport = (data) =>
                 param0.parentUc.ucExtends.Events.onDataExport(data);
 
+           
+            
             document.body.appendChild(htEle);
+            /*console.log(htEle.outerHTML);
+            console.log(htEle.offsetHeight);*/
             this.extended.size.setBy.HTMLEle(htEle);
             htEle.remove();
         },

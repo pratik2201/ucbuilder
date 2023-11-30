@@ -1,9 +1,8 @@
 
-const { propOpt, controlOpt, uniqOpt, objectOpt } = require("@ucbuilder:/build/common");
+const { propOpt, objectOpt } = require("@ucbuilder:/build/common");
 const { filterContent } = require("@ucbuilder:/global/filterContent");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
 const { ucOptions, ucStates } = require('@ucbuilder:/enumAndMore');
-const { focusManage } = require("@ucbuilder:/global/focusManage");
 const { userControlStamp } = require("@ucbuilder:/global/userControlStamp");
 const { SessionManager } = require("@ucbuilder:/global/SessionManager");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
@@ -58,18 +57,12 @@ class Usercontrol {
 
     }
     static _CSS_VAR_STAMP = 0;
-    static NEW_VALUE = "ANKITA LOVE PRATIK";
+    //static NEW_VALUE = "ANKITA LOVE PRATIK";
     constructor() {
         Usercontrol._CSS_VAR_STAMP++;
         this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
     }
-    /** @private */
-    static ATTR = {
-        DISABLE: {
-            NEW_VALUE: "disnval" + uniqOpt.randomNo(),
-            OLD_VALUE: "disoval" + uniqOpt.randomNo(),
-        }
-    }
+    
     ucExtends = {
         get formExtends() { return this.form.ucExtends; },
         get self() { return this.wrapperHT; },
@@ -165,7 +158,7 @@ class Usercontrol {
                 } else {
                     if (sizeChangeEvt.length == 0) {
                         ucExt.resizerObserver.disconnect();
-                        ucExt.resizerObserver = uniqOpt;
+                        ucExt.resizerObserver = undefined;
                     }
                 }
             }
@@ -328,8 +321,7 @@ class Usercontrol {
                   this.ucExt().Events.activate.fire();
               }*/
         },
-        /** @private */
-        focusMng: new focusManage(),
+        
         /** @type {userControlStampRow} css selector to self user control */
         stampRow: undefined,
 
@@ -356,36 +348,7 @@ class Usercontrol {
                 this.ucExtends.Events.captionChanged.fire(text);
             },
 
-            setfreez: (freez) => {
-                let ucExt = this.ucExtends;
-                let element = ucExt.wrapperHT;
-                if (freez) {
-                    ucExt.focusMng.fatch();
-                    element.setAttribute('active', '0');
-                    let eles = element.querySelectorAll(controlOpt.ATTR.editableControls);
-                    eles.forEach(
-                        /** @param {HTMLElement} e */
-                        e => {
-                            let disableAttr = e.getAttribute("disabled");
-                            if (disableAttr != null) e.data(Usercontrol.ATTR.DISABLE.OLD_VALUE, disableAttr);
-                            e.setAttribute('disabled', true);
-                            e.setAttribute(Usercontrol.ATTR.DISABLE.NEW_VALUE, true);
-                        });
-                } else {
-                    element.setAttribute('active', '1');
-                    let eles = element.querySelectorAll(`[${Usercontrol.ATTR.DISABLE.NEW_VALUE}]`);
-                    eles.forEach(
-                        /** @param {HTMLElement} e */
-                        e => {
-                            let disableAttr = e.data(Usercontrol.ATTR.DISABLE.OLD_VALUE);
-                            if (disableAttr != undefined) e.setAttribute('disabled', disableAttr);
-                            else e.setAttribute('disabled', false);
-                            e.removeAttribute('disabled', Usercontrol.ATTR.DISABLE.NEW_VALUE);
-                        });
-                    //ucExt.Events.activate.fire();
-                    ucExt.focusMng.focus();
-                }
-            },
+           
 
             getAllControls: (specific) => {
                 let childs = {};
