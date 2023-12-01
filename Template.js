@@ -118,13 +118,14 @@ class Template {
                 }
             });
         }
-    }
+    }    
     static _CSS_VAR_STAMP = 0;
     constructor() {
         Template._CSS_VAR_STAMP++;
         this.extended.cssVarStampKey = 't' + Usercontrol._CSS_VAR_STAMP;
     }
     extended = {
+        wholeCSS:"",
         fileStamp: "",
         /** @type {TemplateNode} it is for only use of cssvar */
         _templeteNode: undefined,
@@ -329,7 +330,7 @@ class TemplateNode {
                 cssContents: tptPathOpt.cssContents
             });
 
-
+            tptExt.main.extended.wholeCSS += tptPathOpt.cssContents;
             //this.extended.fillTemplates(tptExt.stampRow.dataHT);
             tptExt.Events.onDataExport = (data) =>
                 param0.parentUc.ucExtends.Events.onDataExport(data);
