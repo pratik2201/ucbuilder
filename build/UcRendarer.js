@@ -53,7 +53,7 @@ class UcRendarer {
     generateUC(htmlContents, cssContent) {
         this.ucParams.source.htmlContents = htmlContents;
         this.ucParams.source.cssContents = cssContent;
-
+        this.ucParams.mode = 'designer';
         let desCode = undefined;
         this.output = this.build.getOutputCode(this.fInfo, htmlContents);
 

@@ -21,7 +21,7 @@ const { stylerRegs } = require("@ucbuilder:/global/stylerRegs");
 class Usercontrol {
 
 
-
+    
     /** @type {ucOptions}  */
     static get ucOptionsStc() { return undefined; }
     /**
@@ -34,7 +34,7 @@ class Usercontrol {
     }
     static get giveMeHug() {
         let evalExp = /\(@([\w.]*?)\)/gim;
-        let thisExp = /(^|\s)(this)(\W|$)/gim;
+        let thisExp = /(^|\s)(this)(\W|$)/gim;        
         return `
             arguments[arguments.length-1].source.beforeContentAssign = (content) => {
                 let rtrn = content.replace(${evalExp},
@@ -53,6 +53,9 @@ class Usercontrol {
                     console.log("'"+ atr +"' property not set from designer");                
                 else this.ucExtends.self.removeAttribute(p.nodeName)
             });
+          
+            if(arguments[arguments.length-1].mode=='designer'){ }
+           
             `;
 
     }
@@ -62,9 +65,10 @@ class Usercontrol {
         Usercontrol._CSS_VAR_STAMP++;
         this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
     }
-    
+
     ucExtends = {
         get formExtends() { return this.form.ucExtends; },
+        
         get self() { return this.wrapperHT; },
         /** @type {string}  */
         set caption(text) {
@@ -115,7 +119,7 @@ class Usercontrol {
          */
         initializecomponent: (param0) => {
             let ucExt = this.ucExtends;
-           
+
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
             ucExt.fileInfo = param0.source.cfInfo;
@@ -188,7 +192,7 @@ class Usercontrol {
                         :
                         param0.source.cssContents),
                     localNodeElement: ext.self,
-                    cssVarStampKey:ext.cssVarStampKey
+                    cssVarStampKey: ext.cssVarStampKey
                 });
             loadGlobal.pushRow({
                 url: ext.fileInfo.style.rootPath,
@@ -197,7 +201,7 @@ class Usercontrol {
                 reloadKey: param0.source.reloadKey,
                 cssContents: param0.source.cssContents
             });
-            if (param0.events.afterInitlize != undefined) param0.events.afterInitlize(this);
+            ext.Events.afterInitlize.fire();
         },
 
 
@@ -232,6 +236,7 @@ class Usercontrol {
         session: new SessionManager(),
 
         Events: {
+            afterInitlize: new commonEvent(),
             /**
              * @type {{on:(callback = (
              *          _callback:(prevent:boolean = false)=>{  },
@@ -321,7 +326,7 @@ class Usercontrol {
                   this.ucExt().Events.activate.fire();
               }*/
         },
-        
+
         /** @type {userControlStampRow} css selector to self user control */
         stampRow: undefined,
 
@@ -348,7 +353,7 @@ class Usercontrol {
                 this.ucExtends.Events.captionChanged.fire(text);
             },
 
-           
+
 
             getAllControls: (specific) => {
                 let childs = {};

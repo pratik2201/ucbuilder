@@ -44,6 +44,7 @@ class designer extends Usercontrol {
          **/
         this.{=name} = intenseGenerator.generateUC('{=src.code.rootPath}',{ 
                             parentUc : this, 
+                            mode:args.mode,
                             session:{
                                 loadBySession:args.session.loadBySession,
                                 uniqueIdentity:"{=name}" , 

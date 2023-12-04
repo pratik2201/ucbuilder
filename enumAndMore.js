@@ -47,6 +47,8 @@ const sourceOptions = {
 
 
 const ucOptions = {
+    /** @type {'client'|'designer'}  */
+    mode: 'client',
     session: newObjectOpt.clone(sessionOptions),
     source: newObjectOpt.clone(sourceOptions),
     /** @type {Usercontrol}  uc parent `Usercontrol` object reference */
@@ -59,10 +61,7 @@ const ucOptions = {
         beforeInitlize: (uc) => {
 
         },
-        /**  @param {Usercontrol} uc uc which is being Initlize  */
-        afterInitlize: (uc) => {
-
-        },
+      
     },
 
     /** @type {HTMLElement}  */
