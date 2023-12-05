@@ -16,17 +16,19 @@ class UcRendarer {
     tptParams = {};
     build = new builder();
     constructor() {
-
+        
     }
-    
+
+
+
     /** 
      * @param {filepath} fInfo
      * @param {Usercontrol} parentUc
      */
     init(fInfo, parentUc) {
-        this.fInfo = fInfo;        
+        this.fInfo = fInfo;
         this.ucParams = newObjectOpt.clone(ucOptions);
-       // this.tptParams = newObjectOpt.clone(tptOptions);
+        // this.tptParams = newObjectOpt.clone(tptOptions);
         //this._programRef = parentUc.ucExtends.program;
         ResourcesUC.rendrarCounter++;
         let tname = this.fInfo.name;
@@ -36,7 +38,7 @@ class UcRendarer {
         //this.ucParams.programRef = this._programRef;
         this.ucParams.source.reloadDesign = true;
         this.ucParams.source.reloadKey = "" + ResourcesUC.rendrarCounter;
-        
+
         this.tptParams = newObjectOpt.clone(tptOptions);
         this.tptParams.source.cfInfo = this.fInfo;
         this.tptParams.parentUc = parentUc;
@@ -56,7 +58,7 @@ class UcRendarer {
         this.ucParams.mode = 'designer';
         let desCode = undefined;
         this.output = this.build.getOutputCode(this.fInfo, htmlContents);
-
+        console.log(this.output);
         eval(`
         ${this.output.designerCode} 
         desCode = new designer([this.ucParams]); 
@@ -76,7 +78,7 @@ class UcRendarer {
         let desCode = undefined;
         this.output = this.build.getOutputCode(this.fInfo, htmlContents);
 
-       // console.log(this.output);
+        // console.log(this.output);
         eval(`
         ${this.output.designerCode} 
         desCode = new designer([this.tptParams]); 

@@ -2,7 +2,7 @@
 const { propOpt, objectOpt } = require("@ucbuilder:/build/common");
 const { filterContent } = require("@ucbuilder:/global/filterContent");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
-const { ucOptions, ucStates } = require('@ucbuilder:/enumAndMore');
+const { UCGenerateMode,ucOptions, ucStates } = require('@ucbuilder:/enumAndMore');
 const { userControlStamp } = require("@ucbuilder:/global/userControlStamp");
 const { SessionManager } = require("@ucbuilder:/global/SessionManager");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
@@ -53,8 +53,8 @@ class Usercontrol {
                     console.log("'"+ atr +"' property not set from designer");                
                 else this.ucExtends.self.removeAttribute(p.nodeName)
             });
-          
-            if(arguments[arguments.length-1].mode=='designer'){ }
+            
+            if(arguments[arguments.length-1].mode=='designer'){  }
            
             `;
 
@@ -63,12 +63,14 @@ class Usercontrol {
     //static NEW_VALUE = "ANKITA LOVE PRATIK";
     constructor() {
         Usercontrol._CSS_VAR_STAMP++;
+        
         this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
     }
 
     ucExtends = {
         get formExtends() { return this.form.ucExtends; },
-        
+        /** @type {UCGenerateMode}  */ 
+        mode: 'client',
         get self() { return this.wrapperHT; },
         /** @type {string}  */
         set caption(text) {
@@ -119,11 +121,11 @@ class Usercontrol {
          */
         initializecomponent: (param0) => {
             let ucExt = this.ucExtends;
-
-            if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
+            ucExt.mode = param0.mode;
+            if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);            
             ucExt.isForm = (param0.parentUc == undefined);
             ucExt.fileInfo = param0.source.cfInfo;
-
+            
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             ucExt.stampRow = userControlStamp.getStamp(param0.source);
             ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true);

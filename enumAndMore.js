@@ -44,10 +44,8 @@ const sourceOptions = {
 }
 
 
-
-
 const ucOptions = {
-    /** @type {'client'|'designer'}  */
+    /** @type {UCGenMode}  */ 
     mode: 'client',
     session: newObjectOpt.clone(sessionOptions),
     source: newObjectOpt.clone(sourceOptions),
@@ -102,6 +100,8 @@ const rootPathParam = {
 }
 
 module.exports = {
+    /** @type {'client'|'designer'}  */ 
+    UCGenerateMode : 'client',
     templatePathOptions,
     rootPathParam,
     ucOptions,

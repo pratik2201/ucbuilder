@@ -1,11 +1,13 @@
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
-const { ucOptions, tptOptions } = require('@ucbuilder:/enumAndMore');
+const { UCGenerateMode, ucOptions, tptOptions } = require('@ucbuilder:/enumAndMore');
 const { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
 const { objectOpt, propOpt } = require("@ucbuilder:/build/common");
+const { UcRendarer } = require("@ucbuilder:/build/UcRendarer");
 
 /**
  * @typedef {import ('@ucbuilder:/Usercontrol').Usercontrol} Usercontrol
  * @typedef {import ('@ucbuilder:/Template').Template} Template
+ 
  * @typedef {import ('@ucbuilder:/Template').TemplateNode} TemplateNode
  */
 
@@ -19,7 +21,6 @@ class intenseGenerator {
         //let param0 = newObjectOpt.clone(ucOptions);
         //newObjectOpt.copyProps(pera, param0);
         let param0 = newObjectOpt.copyProps(pera, ucOptions);
-
         let row = ResourcesUC.codefilelist.getObj(path);
         param0.source.cfInfo = row.codefileObj;
         if (param0.wrapperHT == undefined) {
@@ -43,8 +44,35 @@ class intenseGenerator {
         ext.Events.loaded.fire();
         if (pera.loadAt != undefined) pera.loadAt.appendChild(node);
         return uc;
-    }
 
+       /* switch (param0.mode) {
+            case 'client':
+                
+            case 'designer':
+                debugger;
+                console.log(param0.mode);
+                let renderer = new UcRendarer();
+                renderer.init(row.codefileObj,param0.parentUc);
+                return renderer.generateUC();
+
+                let obj = require(row.codefileObj.designer.fullPath);
+                let cobj = undefined;
+                let bldr = new builder();
+                bldr.commonMng.gen.getJsFileCode({
+
+                })
+                console.log(obj);
+                return;
+        }*/
+
+    }
+    /**
+     * 
+     * @param {UcRendarer} cInfo 
+     */
+    static getCnt(cInfo){
+        
+    }
 
     /**
     * @param {string} path 
@@ -55,9 +83,9 @@ class intenseGenerator {
     static generateTPT(path, pera, ...args) {
         //let param0 = newObjectOpt.clone(tptOptions);
         //newObjectOpt.copyProps(pera, param0);
-        let param0 = newObjectOpt.copyProps(pera, tptOptions);        
+        let param0 = newObjectOpt.copyProps(pera, tptOptions);
         let row = ResourcesUC.codefilelist.getObj(path);
-        
+
         param0.source.cfInfo = row.codefileObj;
         if (param0.elementHT == undefined) {
             let tname = row.codefileObj.name;
