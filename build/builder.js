@@ -69,7 +69,7 @@ class builder {
     checkFileState(filePath, htmlContents = undefined) {
         if (filePath.endsWith(buildOptions.extType.Usercontrol + '.html')) { //  IF USER CONTROL
             this.commonMng.init(filePath, htmlContents);
-        } else if (filePath.endsWith(buildOptions.extType.template + '.js')) { //  IF TEMPLATE
+        } else if (filePath.endsWith(buildOptions.extType.template + '.html')) { //  IF TEMPLATE
             this.commonMng.init(filePath, htmlContents);
         }
     }

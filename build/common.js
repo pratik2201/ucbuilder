@@ -190,7 +190,7 @@ const __THIS = {
             return readFileSync(_path, "binary");
         },
         writeFile: (_path, _data) => {
-            writeFileSync(_path, _data);
+            writeFileSync(_path, _data,{ encoding:"binary" });
         },
         /**
         * @param {string} fullPath 

@@ -84,6 +84,7 @@ class fileDataBank {
             fing.parse(path, true);
             fullPath = fing.fullPath;
         }
+        
         if (!existsSync(fullPath)) return undefined;
 
         let data = this.source.find(s => s.path == fullPath);

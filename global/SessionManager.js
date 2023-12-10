@@ -15,8 +15,8 @@ class SessionManager {
      * @param {string} uniqIdentity 
      * @param {sessionOptions} options
      */
-    init(main, options,uniqIdentity = "") {
-        
+    init(main, options, uniqIdentity = "") {
+
         this.options = options;
         this.main = main;
         this.ucExt = main.ucExtends;
@@ -30,7 +30,7 @@ class SessionManager {
         let ext = this.main.ucExtends;
         this.set("", this.main[this.varName]);
         if (this.autoLoadSession) {
-            if (this.options.addNodeToParentSession){
+            if (this.options.addNodeToParentSession) {
                 let parent = ext.PARENT;
                 if (!parent.ucExtends.session.has(this.options.uniqueIdentity) && !ext.isForm) {
 
@@ -122,6 +122,7 @@ class SessionManager {
         let parent = this.main.ucExtends.PARENT;
         if (!parent.ucExtends.self.is(this.main.ucExtends.self))
             parent.ucExtends.session.onModify();
+        else { this.writeFile(); }
     }
 
     dataPath = "";
@@ -134,7 +135,7 @@ class SessionManager {
         if (pathInfo.existFile(this.dataPath)) {
             let data = fileDataBank.readFile(this.dataPath, {
                 reloadData: true,
-                replaceContentWithKeys:false,
+                replaceContentWithKeys: false,
             });
             let ssn = this.setSession(JSON.parse(data));
             this.main.ucExtends.formExtends.Events.completeSessionLoad.fire();

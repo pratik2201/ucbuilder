@@ -13,7 +13,7 @@ const { fileInfo, codeFileInfo } = require("@ucbuilder:/build/codeFileInfo");
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 const { Size } = require("@ucbuilder:/global/drawing/shapes");
 
-class Template {
+class Paperbox {
     static getTemplates = {
 
         /**
@@ -137,6 +137,12 @@ class Template {
 
         cssVarStampKey: '0',
 
+
+        /** @param {tptOptions} param0 */
+        initializecomponent: (param0) => {
+            
+        },
+
         setCSS_globalVar(key, value) {
             this._templeteNode.extended.setCSS_globalVar(key, value);
         },
@@ -145,7 +151,7 @@ class Template {
         },
     }
 }
-class TemplateNode {
+class PaperNode {
     /**
      * @param {Template} main
      */
@@ -184,12 +190,20 @@ class TemplateNode {
             return this.parentUc.ucExtends.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.main.extended.cssVarStampKey, 'l'));
         },
 
+        /*getCSS_globalVar(key) {
+            return stylerRegs.__VAR.GETVALUE(key, this.stampRow.styler.rootInfo.id, 'g', value);
+        },
+        getCSS_localVar(key) {
+            let _ext = this.main.extended;
+            return stylerRegs.__VAR.GETVALUE(key, _ext.cssVarStampKey, 'l', value, this.parentUc.ucExtends.self);
+        },*/
         /**
         * @param {{}} jsonRow 
         * @returns {string}
         */
         generateContent(jsonRow) {
             let dta = this.stampRow.content;//this.content;
+            // console.log(dta);
             dta = this.Events.beforeGenerateContent(dta, jsonRow);
             dta = this.regsMng.parse(jsonRow, dta);
             dta = this.Events.onGenerateContent(dta, jsonRow);
@@ -207,6 +221,7 @@ class TemplateNode {
             let element = dta.$();
             this.stampRow.passElement(element);
             this.Events.onGenerateNode(element, jsonRow);
+            // this.Events.onGenerateNode(element, jsonRow);
             return element;
         },
 
@@ -220,6 +235,8 @@ class TemplateNode {
         initializecomponent: (_args, tptPathOpt, tptname) => {
             let tptExt = this.extended;
             _args.source.cfInfo = new codeFileInfo(".tpt");
+            //console.log(_args.source.parentRefName);
+            ///console.log(tptPathOpt);
             /** @type {tptOptions}  */
             let param0 = newObjectOpt.copyProps(_args, tptOptions);
 
@@ -240,7 +257,8 @@ class TemplateNode {
             Array.from(tptExt.stampRow.dataHT.attributes)
                 .filter(s => s.nodeName.toLowerCase().startsWith("x.temp-"))
                 .forEach(s => htEle.removeAttribute(s.nodeName));
-           
+            //tptExt.stampRow.content = ht.outerHTML;
+
             /** @type {HTMLElement}  */
             let eleHT = param0.elementHT;
             tptExt.parentUc = param0.parentUc;
@@ -249,7 +267,9 @@ class TemplateNode {
                 tptExt.parentUc.ucExtends.stampRow.styler
                     .pushChild(param0.source.cfInfo.mainFilePath + "" + (param0.source.templateName == "" ? "" : "@" + param0.source.templateName),
                         tptExt.stampRow.styler, eleHT.nodeName);
-            
+            //console.log(param0.source.cfInfo.html.fullPath);
+            //console.log(tptExt.parentUc);
+            //console.log(tptExt.main.extended.cssStamp);
             tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator_sub(
                 {
                     data: (tptPathOpt.cssContents == undefined ?
@@ -269,12 +289,15 @@ class TemplateNode {
             });
 
             tptExt.main.extended.wholeCSS += tptPathOpt.cssContents;
+            //this.extended.fillTemplates(tptExt.stampRow.dataHT);
             tptExt.Events.onDataExport = (data) =>
                 param0.parentUc.ucExtends.Events.onDataExport(data);
 
            
             
             document.body.appendChild(htEle);
+            /*console.log(htEle.outerHTML);
+            console.log(htEle.offsetHeight);*/
             this.extended.size.setBy.HTMLEle(htEle);
             htEle.remove();
         },
@@ -300,6 +323,14 @@ class TemplateNode {
             onGenerateNode: (mainNode, jsonRow) => {
 
             },
+            /*
+            **
+             * @type {{on:(callback = (
+             *          itemnode:HTMLElement,
+             *          index:number
+             * ) =>{})} & commonEvent}
+             *
+            newItemGenerate: new commonEvent(),*/
 
             /** @param {transferDataNode} data @returns {boolean} whether successful or not */
             onDataExport: (data) => {
@@ -392,4 +423,4 @@ class TemplateNode {
     }
 
 }
-module.exports = { Template, TemplateNode }
+module.exports = { Paperbox, PaperNode }
