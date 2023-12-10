@@ -199,8 +199,9 @@ class stylerRegs {
      */
     parseStyleSeperator_sub(_args) {
         let _this = this;
+        if(_args.data==undefined)return "";
         let _params = newObjectOpt.copyProps(_args, stylerRegs.styleSeperatorOptions);
-
+        
         _params.callCounter++;
         let externalStyles = [];
         let isChffd = false;
