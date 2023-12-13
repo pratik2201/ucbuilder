@@ -47,14 +47,14 @@ class userControlStampRow {
             element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpTxt);
             element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
             element.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
-            stamplist.push(element.stamp());
+            //stamplist.push(element.stamp());
             if (applySubTree) {
                 element.querySelectorAll("*")
                     .forEach((s) => {
                         s.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpTxt);
                         s.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
                         s.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
-                        stamplist.push(s.stamp());
+                       // stamplist.push(s.stamp());
                     });
             }
         }
