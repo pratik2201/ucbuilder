@@ -37,7 +37,7 @@ class codefileHandler {
      * @returns {number} index of array element -1 if not exist
      */
     exist(codefileObj) {
-        return this.nodes.findIndex(s => s.codefileObj.code.path == codefileObj.code.path);
+        return this.nodes.findIndex(s => s.codefileObj.code.rootPath == codefileObj.code.rootPath);
     }
 }
 class fileInfo {

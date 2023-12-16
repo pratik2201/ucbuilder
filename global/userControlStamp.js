@@ -80,6 +80,7 @@ class userControlStamp {
         /** @type {Function}  */
         callmeBeforeContentAssign: undefined,
     }
+    
     /**
      * @param {sourceOptions} param0 
      * @returns {userControlStampRow}
@@ -88,9 +89,11 @@ class userControlStamp {
         this.stampCallTimes++;
         /** @type {userControlStampRow}  */
         let rtrn = undefined;
-        let lwrName = param0.cfInfo.html.path.toLowerCase();
+        //let lwrName = param0.cfInfo.html.path.toLowerCase();
+        let lwrName = param0.cfInfo.html.rootPath.toLowerCase();
         if (param0.templateName != "") lwrName += "@" + param0.templateName;
         let pathtofind = lwrName + "_" + param0.reloadKey;
+       
         let sindex = this.source.findIndex(s => s.fUniq == pathtofind);
             
         

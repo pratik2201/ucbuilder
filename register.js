@@ -62,6 +62,7 @@ class register {
         if (pname != undefined || pname != "")
             pname = `@${pname}:`;
         let pathAlices = pname;
+        
         //console.log(' ===>  '+pathAlices);
         if (ACTIVE_USER_CONTROL == undefined) {
             //let { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
