@@ -1,5 +1,5 @@
 const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
-const { UCGenerateMode, ucOptions, tptOptions } = require('@ucbuilder:/enumAndMore');
+const { ucOptions, tptOptions } = require('@ucbuilder:/enumAndMore');
 const { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
 const { objectOpt, propOpt } = require("@ucbuilder:/build/common");
 const { UcRendarer } = require("@ucbuilder:/build/UcRendarer");
@@ -7,7 +7,6 @@ const { UcRendarer } = require("@ucbuilder:/build/UcRendarer");
 /**
  * @typedef {import ('@ucbuilder:/Usercontrol').Usercontrol} Usercontrol
  * @typedef {import ('@ucbuilder:/Template').Template} Template
- 
  * @typedef {import ('@ucbuilder:/Template').TemplateNode} TemplateNode
  */
 
@@ -42,7 +41,7 @@ class intenseGenerator {
         let ext = uc.ucExtends;
         ext.session.prepareForAutoLoadIfExist();
         ext.Events.loaded.fire();
-        if (pera.loadAt != undefined) pera.loadAt.appendChild(node);
+        if (pera.loadAt != undefined) pera.loadAt.appendChild(uc.ucExtends.wrapperHT);
         return uc;
 
        /* switch (param0.mode) {

@@ -140,7 +140,10 @@ class SessionManager {
             let ssn = this.setSession(JSON.parse(data));
             this.main.ucExtends.formExtends.Events.completeSessionLoad.fire();
             return ssn;
-        } else return false;
+        } else { 
+            this.main.ucExtends.Events.newSessionGenerate.fire();
+            return false;
+        }
     }
     writeFile() {
         pathInfo.writeFile(this.dataPath, JSON.stringify(this.source));

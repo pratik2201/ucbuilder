@@ -23,7 +23,6 @@ const newObjectOpt = {
         try {
 
             for (const key in from) {
-                //   console.log(key);
                 if (Object.hasOwnProperty.call(from, key)) {
                     const element = from[key];
                     if (getC(element) == "Object") {
@@ -47,7 +46,6 @@ const newObjectOpt = {
     * @returns {T}
     */
     clone(obj) {
-        //console.log('here');
         return JSON.parse(JSON.stringify(obj));
     },
     /**

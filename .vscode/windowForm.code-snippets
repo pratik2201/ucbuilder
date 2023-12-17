@@ -20,11 +20,14 @@
 	},
 	"show file as dialog": {
 		"prefix": [
-			"showdialog"
+			"genUC"
 		],
 		"body": [
-			"/**  @type {import ('@testnpm:/${1:codeFilePath}')} */",
-			"${2:declare Var} = Program.ref.generateUC('@ucbuilder:/${3:codeFilePath}', { parentUc:${4:undefined} }${5:perameters});",
+			"/**  @type {import ('@${1:rootName}:/${2:codeFilePath}')} */",
+			"${3:declare Var} = intenseGenerator.generateUC('@${1:rootName}:/${2:codeFilePath}', { ",
+			"    parentUc:${4:this}",
+			"    wrapperHT:this.ucExtends.stageHT",
+			"}${5:perameters});",
 			"${0}",
 			
 		],

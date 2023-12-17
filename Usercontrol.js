@@ -2,7 +2,7 @@
 const { propOpt, objectOpt } = require("@ucbuilder:/build/common");
 const { filterContent } = require("@ucbuilder:/global/filterContent");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
-const { UCGenerateMode,ucOptions, ucStates } = require('@ucbuilder:/enumAndMore');
+const { UCGenerateMode, ucOptions, ucStates } = require('@ucbuilder:/enumAndMore');
 const { userControlStamp } = require("@ucbuilder:/global/userControlStamp");
 const { SessionManager } = require("@ucbuilder:/global/SessionManager");
 const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
@@ -21,7 +21,7 @@ const { stylerRegs } = require("@ucbuilder:/global/stylerRegs");
 class Usercontrol {
 
 
-    
+
     /** @type {ucOptions}  */
     static get ucOptionsStc() { return undefined; }
     /**
@@ -34,7 +34,7 @@ class Usercontrol {
     }
     static get giveMeHug() {
         let evalExp = /\(@([\w.]*?)\)/gim;
-        let thisExp = /(^|\s)(this)(\W|$)/gim;        
+        let thisExp = /(^|\s)(this)(\W|$)/gim;
         return `
             arguments[arguments.length-1].source.beforeContentAssign = (content) => {
                 let rtrn = content.replace(${evalExp},
@@ -63,13 +63,13 @@ class Usercontrol {
     //static NEW_VALUE = "ANKITA LOVE PRATIK";
     constructor() {
         Usercontrol._CSS_VAR_STAMP++;
-        
+
         this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
     }
 
     ucExtends = {
         get formExtends() { return this.form.ucExtends; },
-        /** @type {UCGenerateMode}  */ 
+        /** @type {UCGenerateMode}  */
         mode: 'client',
         get self() { return this.wrapperHT; },
         /** @type {string}  */
@@ -122,10 +122,10 @@ class Usercontrol {
         initializecomponent: (param0) => {
             let ucExt = this.ucExtends;
             ucExt.mode = param0.mode;
-            if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);            
+            if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
             ucExt.fileInfo = param0.source.cfInfo;
-            
+
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             ucExt.stampRow = userControlStamp.getStamp(param0.source);
             ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true);
@@ -266,10 +266,7 @@ class Usercontrol {
              */
             winStateChanged: new commonEvent(),
 
-            /**
-             * @type {{on:(callback = () =>{})} & commonEvent}
-             */
-            loadLastSession: new commonEvent(),
+
 
             /**
              * @type {{on:(callback = () =>{})} & commonEvent}
@@ -281,11 +278,25 @@ class Usercontrol {
              **/
             loaded: new commonEvent(),
 
+            /**
+            * @type {{on:(callback = () =>{})} & commonEvent}
+            */
+            loadLastSession: new commonEvent(),
+
+             /** @private @type {{on:(callback = () =>{})} & commonEvent} */
+             _newSessionGenerate: new commonEvent(),
+             get newSessionGenerate() {
+                return this.winExt().Events._newSessionGenerate;
+            },
+
+
             /** @private @type {{on:(callback = () =>{})} & commonEvent} */
             _completeSessionLoad: new commonEvent(),
             get completeSessionLoad() {
                 return this.winExt().Events._completeSessionLoad;
             },
+
+            
 
             /** 
              * @private

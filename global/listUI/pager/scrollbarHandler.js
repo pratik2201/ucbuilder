@@ -34,8 +34,8 @@ class scrollbarHandler {
             //if(h==0)this.main.nodes.itemSize.
             this.viewSize.setBy.HTMLEle(this.main.Records.scrollerElement);
             let ppr = (this.viewSize.height / this.main.nodes.itemSize.height);
-            console.log(this.viewSize.height+" / "+this.main.nodes.itemSize.height);
-            console.log(ppr);
+            //console.log(this.viewSize.height+" / "+this.main.nodes.itemSize.height);
+            //console.log(ppr);
             if(ppr==Infinity)return;
             
             //console.log(this.main.uc);
