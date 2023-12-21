@@ -4,6 +4,9 @@ const {
 } = require("@ucbuilder:/global/resizer/namingConversion");
 const { Point } = require("@ucbuilder:/global/drawing/shapes");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
+const {
+  measureManage,
+} = require("@ucbuilder:/global/measurement/measureManage");
 class measurementNode {
   /** @type {number}  */
   size = 0;
@@ -43,6 +46,7 @@ class resizeManage {
         });*/
   }
   hasCollission(val) {
+   
     let rtrn = { hasCollied: false, index: -1 };
     for (let i = 0; i < this.measurement.length; i++) {
       if (this.measurement[i].hasCollission(val)) {
@@ -53,12 +57,18 @@ class resizeManage {
     }
     return rtrn;
   }
+
   /**
    * @param {string} txt
    * @returns {measurementNode[]}
    */
   fillArrFromText(txt) {
+   
+    txt = txt.replace(/(\d+)([a-z]+)/gim, (m, val, unit) => {
+      return measureManage.pxFrom(val, unit);
+    });
     let ar = txt.split(/ +/);
+    
     let nlen = ar.length;
     if (this.measurement.length != nlen) {
       let rtrn = undefined;
@@ -67,7 +77,6 @@ class resizeManage {
       ar.forEach((s, index) => {
         if (s === "auto") {
           if (index == nlen - 1) {
-            // if last element auto
             s = Number.MAX_VALUE;
           }
         }
@@ -80,17 +89,14 @@ class resizeManage {
     } else {
       let sz = 0;
       for (let i = 0; i < ar.length; i++) {
-        let v = ar[i];
+        sz = parseFloat(ar[1]);
+        if (!isNaN(sz)) this.measurement[i].size = parseFloat(ar[i]);
+        /*let v = ar[i];
         let res = v.match(/(\d+)([a-z]+)/i);
-        if (res != undefined) {
-          sz = parseFloat(res[1]);
-          let unt = res[2];
-          console.log(unt);
-          if (!isNaN(sz)) this.measurement[i].size = sz;
-        }
+        if (res != undefined) {}*/
       }
     }
-    console.log(this.measurement.map((s) => s.size).join("px ") + "px");
+    //console.log(this.measurement.map((s) => s.size).join("px ") + "px");
   }
   nameList = getConvertedNames();
 
@@ -173,6 +179,7 @@ class resizeManage {
     });
 
     this.options.grid.addEventListener("mouseenter", (e) => {
+      this.fillArrFromText(this.options.getVarValue(this.varName));
       this.updateOffset();
       this.options.container.addEventListener(
         "mousemove",
@@ -211,13 +218,15 @@ class resizeManage {
   mousemovelistner = (__e) => {
     if (this.isResizing || this.isCheckingHoverCollission) return;
     let ete = __e;
+    
     this.isCheckingHoverCollission = true;
     setTimeout(() => {
       if (!this.hasMouseEntered) return;
       this.isCheckingHoverCollission = false;
       let cursorPos =
         ete[this.nameList.client] - this.parentOffset[this.nameList.point];
-      this.collissionResult = this.hasCollission(cursorPos);
+        
+        this.collissionResult = this.hasCollission(cursorPos);
       this.options.container.style.cursor = this.collissionResult.hasCollied
         ? this.nameList.resize
         : "";
