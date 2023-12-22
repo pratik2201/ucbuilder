@@ -10,6 +10,7 @@ const namingConversion = {
   resize: "e-resize",
   pagePoint: "pageX",
   client: "clientX",
+  offsetPoint:"offsetX",
   OPPOSITE: {
     scrollPoint: "scrollTop",
     scrollSize: "scrollBarHeight",
@@ -33,6 +34,7 @@ module.exports = {
       _rtrn.dir = "top";
       _rtrn.pagePoint = "pageY";
       _rtrn.client = "clientY";
+      _rtrn.offsetPoint = "offsetY";
       _rtrn.OPPOSITE = {
         scrollPoint: "scrollLeft",
         scrollSize: "scrollBarWidth",

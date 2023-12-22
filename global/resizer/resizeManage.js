@@ -46,9 +46,10 @@ class resizeManage {
         });*/
   }
   hasCollission(val) {
-   
+    val /= this.options.scale;
     let rtrn = { hasCollied: false, index: -1 };
     for (let i = 0; i < this.measurement.length; i++) {
+      //  console.log(val+"  :  "+this.measurement[i].runningSize);
       if (this.measurement[i].hasCollission(val)) {
         rtrn.hasCollied = true;
         rtrn.index = i;
@@ -63,17 +64,15 @@ class resizeManage {
    * @returns {measurementNode[]}
    */
   fillArrFromText(txt) {
-   
     txt = txt.replace(/(\d+)([a-z]+)/gim, (m, val, unit) => {
       return measureManage.pxFrom(val, unit);
     });
+
     let ar = txt.split(/ +/);
-    
     let nlen = ar.length;
     if (this.measurement.length != nlen) {
       let rtrn = undefined;
       this.measurement.length = 0;
-
       ar.forEach((s, index) => {
         if (s === "auto") {
           if (index == nlen - 1) {
@@ -105,15 +104,32 @@ class resizeManage {
 
   fillSize = false;
   options = {
+    /** @private @type {HTMLElement}  */
+    _container: undefined,
+    /** @private */
+    _this: () => this,
+    set container(val) {
+      this._container = val;
+      let sp = this._this().scrollPos;
+      val.addEventListener("scroll", (e) => {
+        sp.x = this._container.scrollLeft; //*this.scale;
+        sp.y = this._container.scrollTop; //*this.scale;
+        //console.log('=============>'+sp.y);
+      });
+    },
+    get container() {
+      return this._container;
+    },
+
     /** @type {HTMLElement}  */
     grid: undefined,
-    /** @type {HTMLElement}  */
-    container: undefined,
     getVarValue: (varName) => {
       return "";
     },
     setVarValue: (varName, val) => {},
+    scale: 1,
   };
+  scrollPos = new Point();
   init() {
     let mouseMv = new mouseForMove();
     let leftIndex = 0,
@@ -144,6 +160,7 @@ class resizeManage {
       },
       onMove: (e, diff) => {
         let dval = diff[this.nameList.point];
+        dval /= this.options.scale;
         if (e.shiftKey || this.fillSize) {
           //  FILL MODE
           if (rightNode == undefined) {
@@ -170,16 +187,18 @@ class resizeManage {
         }, 1);
       },
       onUp: (e, diff) => {
+        //console.log('onUp');
         if (this.isResizing) this.updateAr();
         isSettingSize = false;
         this.collissionResult.hasCollied = false;
         this.collissionResult.index = -1;
+        this.fillArrFromText(this.options.getVarValue(this.varName));
+        this.updateOffset();
         this.isResizing = false;
       },
     });
 
     this.options.grid.addEventListener("mouseenter", (e) => {
-      this.fillArrFromText(this.options.getVarValue(this.varName));
       this.updateOffset();
       this.options.container.addEventListener(
         "mousemove",
@@ -194,6 +213,7 @@ class resizeManage {
         this.mousemovelistner
       );
     });
+    this.fillArrFromText(this.options.getVarValue(this.varName));
   }
   Events = {
     /**
@@ -207,32 +227,32 @@ class resizeManage {
 
   parentOffset = new DOMRect();
   updateOffset() {
-    this.parentOffset = this.options.grid.getClientRects()[0];
-    this.parentOffset.x -= this.options.grid.scrollLeft;
-    this.parentOffset.y -= this.options.grid.scrollTop;
+    this.parentOffset = this.options.container.getClientRects()[0];
   }
   hasMouseEntered = false;
   isCheckingHoverCollission = false;
   collissionResult = { hasCollied: false, index: -1 };
   /** @param {MouseEvent} __e  */
   mousemovelistner = (__e) => {
-    if (this.isResizing || this.isCheckingHoverCollission) return;
-    let ete = __e;
+    //console.log();
+    if (this.isResizing || this.isCheckingHoverCollission)return;
     
+    let ete = __e;
+
     this.isCheckingHoverCollission = true;
     setTimeout(() => {
-      if (!this.hasMouseEntered) return;
       this.isCheckingHoverCollission = false;
-      let cursorPos =
-        ete[this.nameList.client] - this.parentOffset[this.nameList.point];
-        
-        this.collissionResult = this.hasCollission(cursorPos);
+      let clientPos = ete[this.nameList.client];
+      let parentOffst = this.parentOffset[this.nameList.point];
+      let cursorPos = clientPos - parentOffst;
+      cursorPos += this.scrollPos[this.nameList.point];
+      this.collissionResult = this.hasCollission(cursorPos);
       this.options.container.style.cursor = this.collissionResult.hasCollied
         ? this.nameList.resize
         : "";
     }, 1);
   };
-  _varName = "gridsize";
+  _varName = "gridtemplate";
   get varName() {
     return this._varName;
   }

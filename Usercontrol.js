@@ -102,6 +102,9 @@ class Usercontrol {
         setCSS_localVar(key, value) {
             stylerRegs.__VAR.SETVALUE(key, this.cssVarStampKey, 'l', value, this.self);
         },
+        setCSS_internalVar(key, value) {
+            stylerRegs.__VAR.SETVALUE(key, stylerRegs.internalKey, 'i', value, this.self);
+        },
         getCSS_globalVar(key) {
             return document.body.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.stampRow.styler.rootInfo.id, 'g'));
         },
@@ -114,7 +117,15 @@ class Usercontrol {
         getCSS_localVar(key, localEle) {
             return this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.cssVarStampKey, 'l'));
         },
-
+        /**
+         * 
+         * @param {string} key 
+         * @param {HTMLElement} localEle 
+         * @returns 
+         */
+        getCSS_internalVar(key, value) {
+            return this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, stylerRegs.internalKey, 'i'));
+        },
         cssVarStampKey: '0',
         /**
          * @param {ucOptions} param0 
