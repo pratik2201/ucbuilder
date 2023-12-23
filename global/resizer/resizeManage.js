@@ -267,14 +267,16 @@ class resizeManage {
     return index;
   }
   get measureText() {
+    let scale = this.options.scale;
+    
     return this.measurement.length <= 1
       ? "auto"
       : this.fillSize
       ? this.measurement
-          .map((s) => s.size)
+          .map((s) => (s.size*scale))
           .slice(0, -1)
           .join("px ") + "px auto"
-      : this.measurement.map((s) => s.size).join("px ") + "px";
+      : this.measurement.map((s) =>(s.size*scale)).join("px ") + "px";
   }
 }
 module.exports = { resizeManage };
