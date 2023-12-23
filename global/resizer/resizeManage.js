@@ -1,12 +1,8 @@
 const { mouseForMove } = require("@ucbuilder:/global/mouseForMove");
-const {
-  getConvertedNames,
-} = require("@ucbuilder:/global/resizer/namingConversion");
+const { getConvertedNames } = require("@ucbuilder:/global/resizer/namingConversion");
 const { Point } = require("@ucbuilder:/global/drawing/shapes");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
-const {
-  measureManage,
-} = require("@ucbuilder:/global/measurement/measureManage");
+const { measureManage } = require("@ucbuilder:/global/measurement/measureManage");
 class measurementNode {
   /** @type {number}  */
   size = 0;
@@ -46,7 +42,7 @@ class resizeManage {
         });*/
   }
   hasCollission(val) {
-    val /= this.options.scale;
+    //val /= this.options.scale;
     let rtrn = { hasCollied: false, index: -1 };
     for (let i = 0; i < this.measurement.length; i++) {
       //  console.log(val+"  :  "+this.measurement[i].runningSize);
@@ -58,7 +54,9 @@ class resizeManage {
     }
     return rtrn;
   }
-
+  redraw(){
+    this.options.setVarValue(this.varName,this.measureText);
+  }
   /**
    * @param {string} txt
    * @returns {measurementNode[]}
@@ -238,7 +236,7 @@ class resizeManage {
     if (this.isResizing || this.isCheckingHoverCollission)return;
     
     let ete = __e;
-
+    let scale = this.options.scale;
     this.isCheckingHoverCollission = true;
     setTimeout(() => {
       this.isCheckingHoverCollission = false;
@@ -246,6 +244,7 @@ class resizeManage {
       let parentOffst = this.parentOffset[this.nameList.point];
       let cursorPos = clientPos - parentOffst;
       cursorPos += this.scrollPos[this.nameList.point];
+      
       this.collissionResult = this.hasCollission(cursorPos);
       this.options.container.style.cursor = this.collissionResult.hasCollied
         ? this.nameList.resize
@@ -267,16 +266,18 @@ class resizeManage {
     return index;
   }
   get measureText() {
-    let scale = this.options.scale;
+    //let scale = this.options.scale;
     
-    return this.measurement.length <= 1
+    //console.log();
+    let rval = this.measurement.length <= 1
       ? "auto"
       : this.fillSize
       ? this.measurement
-          .map((s) => (s.size*scale))
+          .map((s) => (s.size))
           .slice(0, -1)
           .join("px ") + "px auto"
-      : this.measurement.map((s) =>(s.size*scale)).join("px ") + "px";
+      : this.measurement.map((s) =>(s.size)).join("px ") + "px";
+      return rval;
   }
 }
 module.exports = { resizeManage };

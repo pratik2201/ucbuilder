@@ -399,7 +399,42 @@ class stylerRegs {
         }
       }
     );
-
+    rtrn = rtrn.replace(
+      patternList.varValuePrinterPattern,
+      /**
+       * @param {string} match
+       * @param {string} varName
+       */
+      (match, varName) => {
+        let ky = varName.toLowerCase();
+        let scope = ky.charAt(1);
+        let uniqId = stylerRegs.internalKey;
+        switch (scope) {
+          case "g":
+            uniqId = this.rootInfo.id;
+            break;
+          case "l":
+            //console.log(_params.cssVarStampKey);
+            //uniqId = _params.cssVarStampKey;
+            uniqId = this.uniqStamp;
+            break;
+        }
+        return stylerRegs.__VAR.GETVALUE(
+          ky.substring(3).trim(),
+          uniqId,
+          scope
+        );
+        /*switch (ky.charAt(1)) {
+                    case 'g':
+                        ktadd = stylerRegs.__VAR.SETVALUE(ky.substring(3).trim(),this.rootInfo.id,ky.charAt(1));
+                        return " var(--" + ktadd + ")";
+                    case 'l':
+                        ktadd = stylerRegs.__VAR.GET_LOCAL(ky.substring(3).trim() + this.uniqStamp);
+                        return " var(--" + ktadd + ")";
+                    default: return " var(" + varName + ");";
+                }*/
+      }
+    );
     rtrn = rtrn.replace(
       patternList.stylesFilterPattern,
       /**
@@ -426,7 +461,7 @@ class stylerRegs {
               case "l":
                 stylerRegs.__VAR.SETVALUE(
                   ky.substring(3).trim(),
-                  /*this.uniqStamp+""+*/ _params.cssVarStampKey,
+                  this.uniqStamp, // _params.cssVarStampKey 
                   scope,
                   value,
                   _params.localNodeElement
@@ -469,41 +504,7 @@ class stylerRegs {
       }
     );
 
-    rtrn = rtrn.replace(
-      patternList.varValuePrinterPattern,
-      /**
-       * @param {string} match
-       * @param {string} varName
-       */
-      (match, varName) => {
-        let ky = varName.toLowerCase();
-        let scope = ky.charAt(1);
-        let uniqId = stylerRegs.internalKey;
-        switch (scope) {
-          case "g":
-            uniqId = this.rootInfo.id;
-            break;
-          case "l":
-            //console.log(_params.cssVarStampKey);
-            uniqId = _params.cssVarStampKey;
-            break;
-        }
-        return stylerRegs.__VAR.GETVALUE(
-          ky.substring(3).trim(),
-          uniqId,
-          scope
-        );
-        /*switch (ky.charAt(1)) {
-                    case 'g':
-                        ktadd = stylerRegs.__VAR.SETVALUE(ky.substring(3).trim(),this.rootInfo.id,ky.charAt(1));
-                        return " var(--" + ktadd + ")";
-                    case 'l':
-                        ktadd = stylerRegs.__VAR.GET_LOCAL(ky.substring(3).trim() + this.uniqStamp);
-                        return " var(--" + ktadd + ")";
-                    default: return " var(" + varName + ");";
-                }*/
-      }
-    );
+    
     return rtrn + " " + externalStyles.join(" ");
   }
 
