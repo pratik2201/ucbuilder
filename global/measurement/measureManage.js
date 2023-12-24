@@ -4,6 +4,12 @@ class measureManage {
   /** @type {number}  */
   static DPI = undefined;
   constructor() {}
+  /** @type {string}  */ 
+  static pxFromParse(val){
+    return val.replace(/(\d+)([a-z]+)/gim, (m, val, unit) => {
+      return measureManage.pxFrom(val, unit);
+    });
+  }
   /**
    * @param {number} val
    * @param {unitType} from    // |'em'|'ex'|'pt'|'rem'

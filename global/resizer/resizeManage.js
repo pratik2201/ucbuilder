@@ -62,9 +62,10 @@ class resizeManage {
    * @returns {measurementNode[]}
    */
   fillArrFromText(txt) {
-    txt = txt.replace(/(\d+)([a-z]+)/gim, (m, val, unit) => {
+    txt = measureManage.pxFromParse(txt);
+    /*.replace(/(\d+)([a-z]+)/gim, (m, val, unit) => {
       return measureManage.pxFrom(val, unit);
-    });
+    });*/
 
     let ar = txt.split(/ +/);
     let nlen = ar.length;

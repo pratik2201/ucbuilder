@@ -1,7 +1,5 @@
 [SELF_]{
-    width: 550px;
-    height: 320px;
-    display:block;
+    width: 550px;left: 0px; top: 0px; height: 320px; position: absolute; display:block;
     background-color: white;
     border:solid 1px black;
 }
