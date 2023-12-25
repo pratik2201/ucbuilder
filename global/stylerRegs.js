@@ -614,6 +614,7 @@ class stylerRegs {
       if (!changed) {
         if (parent_stamp_value != undefined) {
           let dbl = trimedVal.split(/ *:: */);
+         // console.log(dbl);
           let sngl = dbl[0].split(/ *: */);
           sngl[0] += `[${parent_stamp}="${parent_stamp_value}"]`;
           dbl[0] = sngl.join(":");
@@ -627,7 +628,9 @@ class stylerRegs {
         //rVal = scopeSelectorText + ' ' + rVal;
       }
       ///console.log(scopeSelectorText + " " + rVal + ",");
+       
       rtrn += preText + "" + rVal + "" + postText + ",";
+      //console.log(rtrn);
     });
     rtrn = rtrn.slice(0, -1);
     return rtrn;
