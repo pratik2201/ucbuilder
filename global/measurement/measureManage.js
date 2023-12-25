@@ -17,6 +17,7 @@ class measureManage {
    */
   static pxFrom(val, from = "cm") {
     let cm = undefined;
+    val = val || 1;
     switch (from) {
       case "cm":
         return this.cmToPixel(val);
@@ -33,6 +34,7 @@ class measureManage {
                 return this.cmToPixel(cm);*/
     }
   }
+  
   /**
    * @param {number} val
    * @param {unitType} from    // |'em'|'ex'|'pt'|'rem'
@@ -51,9 +53,7 @@ class measureManage {
         return this.pixelToCm(val / 2.54);
       default:
         return val;
-      /*case 'em':
-                cm = val * 0.42175176;
-                return this.cmToPixel(cm);*/
+     
     }
   }
   /**
