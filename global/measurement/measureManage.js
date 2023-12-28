@@ -6,7 +6,7 @@ class measureManage {
   constructor() {}
   /** @type {string}  */ 
   static pxFromParse(val){
-    return val.replace(/(\d+)([a-z]+)/gim, (m, val, unit) => {
+    return val.replace(/([\d\.]+) *([a-z]+)/gim, (m, val, unit) => {
       return measureManage.pxFrom(val, unit);
     });
   }
