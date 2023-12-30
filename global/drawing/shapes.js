@@ -2,6 +2,10 @@
 class Point {
     x = 0;
     y = 0;
+    /**
+     * @param {Point} pt 
+     */
+    equal(pt) { return pt.x === this.y && pt.y === this.y; }
     get left() { return this.x; }
     set left(val) { this.x = val; }
 
