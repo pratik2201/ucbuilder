@@ -42,7 +42,7 @@ class measureManage {
    * @param {unitType} from    // |'em'|'ex'|'pt'|'rem'
    * @return {number} return `pixel` from any measurement
    */
-  static pxTo(val, to = "mm") {
+  static ptTo(val, to = "mm") {
     let cm = undefined;
     switch (to) {
       case "cm":
@@ -74,8 +74,10 @@ class measureManage {
    * @return {Size} return `Size` from
    */
   static getSizeTo(w, h, toUnit = "mm") {
-    return new Size(this.pxTo(w, toUnit), this.pxTo(h, toUnit));
+    return new Size(this.ptTo(w, toUnit), this.ptTo(h, toUnit));
   }
+
+  
   /** @private */
   static mmToPoint(val) {
     return val * measureManage.DPI;
@@ -84,9 +86,13 @@ class measureManage {
   static pointToMm(val) {
     return val / measureManage.DPI;
   }
+
+  static pixeltoPt(val) {
+    return val / measureManage.PIXELS_IN_POINT;
+  }
 }
 (() => {
-  /* let div = document.createElement("div");
+   let div = document.createElement("div");
   document.body.append(div);
   Object.assign(div.style, {
     height: "1pt",
@@ -94,8 +100,9 @@ class measureManage {
     position: "absolute",
     top: "-100%",
     width: "1pt",
-  });*/
-  //measureManage.DPI = 2.83465; //div.getClientRects()[0].height;
+  });
+  measureManage.PIXELS_IN_POINT = div.getClientRects()[0].height;
+ 
   //console.log('df:::'+me);
   //div.remove();
 })();
