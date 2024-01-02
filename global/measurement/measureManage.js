@@ -5,10 +5,26 @@ class measureManage {
   static DPI = 2.83465;  
   constructor() {}
   /** @type {string}  */
-  static pxFromParse(val) {
-    return val.replace(/([\d\.]+) *([a-z]+)/gim, (m, val, unit) => {
-      return measureManage.pxFrom(val, unit);
+  static ptFromParse(val) {
+    /**
+     @typedef {{ 
+      value: number,
+      originalValue: number,
+      unit:unitType,
+    }} rinfo
+     @type {rinfo}  */ 
+    let rtrn = undefined;
+    val.replace(/([\d\.]+) *([a-z]+)/gim,
+      /** @returns {rinfo} */
+      (m, oriz_val, unit) => {
+        rtrn = {};
+        let ovl = parseFloat(oriz_val);
+        rtrn.value = measureManage.pxFrom(ovl, unit);
+        rtrn.originalValue = ovl;
+        rtrn.unit = unit;
+        return '';
     });
+    return rtrn;
   }
   /**
    * @param {number} val
