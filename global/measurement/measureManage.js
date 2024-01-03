@@ -2,19 +2,30 @@ const { Point, Size } = require("@ucbuilder:/global/drawing/shapes");
 const { unitType } = require("@ucreport:/enumAndMore");
 class measureManage {
   /** @type {number} ITS `pt` value of 1 `millimeter` */
-  static DPI = 2.83465;  
-  constructor() {}
+  static DPI = 2.83465;
+  constructor() { }
+  /** @param {SVGAnimatedLength} linfo */
+  static ptFromSVGal(linfo) {
+    return this.ptFromSVGl(linfo.baseVal);
+  }
+  /** @param {SVGLength} linfo */
+  static ptFromSVGl(linfo) {
+    linfo.convertToSpecifiedUnits(linfo.SVG_LENGTHTYPE_PT);
+    return linfo.valueInSpecifiedUnits;
+  }
   /** @type {string}  */
   static ptFromParse(val) {
+    if (val == undefined) return undefined;
     /**
      @typedef {{ 
       value: number,
       originalValue: number,
       unit:unitType,
     }} rinfo
-     @type {rinfo}  */ 
+     @type {rinfo}  */
     let rtrn = undefined;
-    val.replace(/([\d\.]+) *([a-z]+)/gim,
+    val.replace(
+      /([\d\.]+) *([a-z]+)/gim,
       /** @returns {rinfo} */
       (m, oriz_val, unit) => {
         rtrn = {};
@@ -22,8 +33,9 @@ class measureManage {
         rtrn.value = measureManage.pxFrom(ovl, unit);
         rtrn.originalValue = ovl;
         rtrn.unit = unit;
-        return '';
-    });
+        return "";
+      }
+    );
     return rtrn;
   }
   /**
@@ -35,7 +47,8 @@ class measureManage {
     let cm = undefined;
     val = val || 1;
     switch (from) {
-      case 'pt': return val;
+      case "pt":
+        return val;
       case "cm": //   10mm  =  1cm
         return this.mmToPoint(val * 10);
       case "in": //   25.4mm  =  1in
@@ -69,7 +82,8 @@ class measureManage {
         return this.pointToMm(val / 3.0856775814914e19);
       case "in":
         return this.pointToMm(val / 25.4);
-      case 'pt': return val;
+      case "pt":
+        return val;
       default:
         return val;
     }
@@ -93,7 +107,6 @@ class measureManage {
     return new Size(this.ptTo(w, toUnit), this.ptTo(h, toUnit));
   }
 
-  
   /** @private */
   static mmToPoint(val) {
     return val * measureManage.DPI;
@@ -108,7 +121,7 @@ class measureManage {
   }
 }
 (() => {
-   let div = document.createElement("div");
+  let div = document.createElement("div");
   document.body.append(div);
   Object.assign(div.style, {
     height: "1pt",
@@ -118,7 +131,7 @@ class measureManage {
     width: "1pt",
   });
   measureManage.PIXELS_IN_POINT = div.getClientRects()[0].height;
- 
+
   //console.log('df:::'+me);
   //div.remove();
 })();

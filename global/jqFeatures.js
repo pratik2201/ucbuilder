@@ -353,7 +353,24 @@ class jqFeatures {
                     break;
             }
         }
+        SVGElement.prototype.data = function (key, value) {
+            switch (arguments.length) {
+                case 0:
 
+                    return jqFeatures.data.getData(this);
+                    break;
+                case 1:
+                    switch (typeof key) {
+                        case "string": return jqFeatures.data.getData(this, key);
+                        case "object": jqFeatures.data.getData(this, key);
+                    }
+
+                    break;
+                case 2:
+                    jqFeatures.data.setData(this, key, value);
+                    break;
+            }
+        }
 
 
         HTMLElement.prototype.is = function (target) {
