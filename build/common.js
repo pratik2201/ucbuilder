@@ -3,6 +3,19 @@ const { readFileSync, writeFileSync, existsSync, unlinkSync, unwatchFile } = req
 const crypto = require("crypto");
 const __THIS = {   
     numOpt: {
+        addFloat(actualNum) {
+            let floatNumber = '' + actualNum;
+            let position = floatNumber.indexOf(".");
+              if(position == -1){
+                return +floatNumber+1;
+              } else {
+                let len = floatNumber.length;
+                let a = "0".repeat(len-2)+'1';
+                let dec = len-position-1;
+                  let add = [a.slice(0, position), ".", a.slice(position)].join('');
+                  return (parseFloat(floatNumber) + parseFloat(add)).toFixed(dec);
+              }
+        },
         gtv(ifBeingThis, equalToThis, thanHowMuchAboutThis) { return this.getThirdValue(ifBeingThis, equalToThis, thanHowMuchAboutThis); },
         getThirdValue(ifBeingThis, equalToThis, thanHowMuchAboutThis) {
             return this.SafeDivision((equalToThis * thanHowMuchAboutThis), ifBeingThis);
