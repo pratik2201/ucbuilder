@@ -119,6 +119,9 @@ class measureManage {
   static pixeltoPt(val) {
     return val / measureManage.PIXELS_IN_POINT;
   }
+  static pixelfromPt(val) {
+    return val * measureManage.PIXELS_IN_POINT;
+  }
 }
 (() => {
   let div = document.createElement("div");

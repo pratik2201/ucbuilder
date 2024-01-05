@@ -389,6 +389,7 @@ const __THIS = {
         getArray: (obj) => {
             if(obj==undefined)return [];
             switch (Object.getPrototypeOf(obj.constructor)) {
+                case SVGElement: return [obj];
                 case HTMLElement: return [obj];
                 case Element: return [obj];
                 default:
