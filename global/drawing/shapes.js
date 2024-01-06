@@ -67,6 +67,14 @@ class Point {
         this.x -= pt.x;
         this.y -= pt.y;
     }
+    DevideByValue(value) {
+        this.x /= value;
+        this.y /= value;
+    }
+    MultiplyByValue(value) {
+        this.x *= value;
+        this.y *= value;
+    }
 
     setBy = {
         /** @param {Point} target  */
@@ -77,6 +85,10 @@ class Point {
         value: (x, y) => {
             this.x = x;
             this.y = y;
+        },
+        /** @param {SVGElement} ele */
+        SVGEle: (ele)=>{
+            
         },
         /** @param {CSSStyleDeclaration} elestyle */
         style: (elestyle) => {
@@ -111,6 +123,27 @@ class Point {
 }
 class Size {
     constructor(width = 0, height = 0) { this.width = width; this.height = height; }
+
+
+
+    /** @param {Size} sz */
+    Add(sz) {
+
+        this.width+= sz.width;
+        this.height += sz.height;
+    }/** @param {Size} pt */
+    Subtract(sz) {
+        this.width-= sz.width;
+        this.height -= sz.height;
+    }
+    DevideByValue(value) {
+        this.width/= value;
+        this.height /= value;
+    }
+    MultiplyByValue(value) {
+        this.width*= value;
+        this.height *= value;
+    }
     applyHT = {
         /** @param {HTMLElement} elementHT */
         both: (elementHT) => {
@@ -189,6 +222,10 @@ class Size {
         value: (w, h) => {
             this.height = h;
             this.width = w;
+        },
+        /** @type {SVGElement}  */ 
+        SVGEle: (ele)=>{
+            
         },
         /** @param {CSSStyleDeclaration} elestyle */
         style: (elestyle) => {
@@ -359,7 +396,11 @@ class Rect {
             this.location.setBy.point(target.location);
             this.size.setBy.size(target.size);
         },
-        
+        /** @param {SVGElement} ele */
+        SVGEle:(ele) => {
+            this.location.setBy.SVGEle(ele);
+            this.size.setBy.SVGEle(ele);
+        },
         /** @param {DOMRect} rct */
         domRect:(rct) => {
             this.location.setBy.value(rct.x, rct.y);
