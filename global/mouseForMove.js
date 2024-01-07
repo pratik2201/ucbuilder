@@ -31,12 +31,12 @@ class mouseForMove {
 
     }
     /**
-     * @param {HTMLElement} targetElement 
      * @param {options} pera 
+     * @param {HTMLElement[]} targetElement 
      */
-    bind(targetElement, pera) {
+    bind(pera,...targetElement) {
         this._options = newObjectOpt.copyProps(pera, options);
-        targetElement.addEventListener("mousedown", this.doMouseDown);
+        targetElement.forEach(ele => ele.addEventListener("mousedown", this.doMouseDown));
     }
     /**  @param {MouseEvent} e  */
     doMouseDown = (e/*,fireDownEvent = true*/) => {
@@ -44,11 +44,12 @@ class mouseForMove {
         this.downPoint.setBy.value(e.pageX, e.pageY);
         let _this = this;
         //if(fireDownEvent)
-        if (_this._options.onDown(e, this.downPoint) === false) return;
+        if (_this._options.onDown!=undefined && _this._options.onDown(e, this.downPoint) === false) return;
         /**  @param {MouseEvent} mouseEvt  */
         function mousemoveEvent(mouseEvt) {
             _this.diffPoint.setBy.value(mouseEvt.pageX, mouseEvt.pageY);
             _this.diffPoint.Subtract(_this.downPoint);
+            if(_this._options.onMove!=undefined)
             _this._options.onMove(mouseEvt, _this.diffPoint);
         }
         /**  @param {MouseEvent} mouseEvt  */

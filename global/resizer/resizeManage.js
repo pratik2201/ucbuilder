@@ -141,7 +141,7 @@ class resizeManage {
 
     this.isResizing = false;
     let isSettingSize = false;
-    mouseMv.bind(this.options.container, {
+    mouseMv.bind({
       onDown: (evt, dpoint) => {
         this.fillArrFromText(this.options.getVarValue(this.varName));
         if (this.collissionResult.hasCollied) {
@@ -195,7 +195,7 @@ class resizeManage {
         this.updateOffset();
         this.isResizing = false;
       },
-    });
+    },this.options.container);
 
     this.options.grid.addEventListener("mouseenter", (e) => {
       this.updateOffset();

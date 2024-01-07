@@ -110,7 +110,7 @@ class pagerScroll {
             }
         });
 
-        mouseMv.bind(this.nodes.scroller, {
+        mouseMv.bind({
             onDown: (evt, pt) => {
                 this.DOWN_PER_PAGE_ROW = this.perPageRecord;
                 this.DOWN_SCROLL_POS = this.scrollTop;
@@ -124,7 +124,7 @@ class pagerScroll {
                 this.hasMouseDown = false;
                 this.main.scrollBox.vScrollbar.nodes.scrollbar.setAttribute('active', '0');
             }
-        });
+        },this.nodes.scroller);
     }
     get perPageRecord(){
         return  this.pagerLv.pageInfo.extended.perPageRecord;

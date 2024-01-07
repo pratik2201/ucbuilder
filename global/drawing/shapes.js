@@ -75,7 +75,14 @@ class Point {
         this.x *= value;
         this.y *= value;
     }
-
+    MinusByValue(value) {
+        this.x -= value;
+        this.y -= value;
+    }
+    AddByValue(value) {
+        this.x += value;
+        this.y += value;
+    }
     setBy = {
         /** @param {Point} target  */
         point: (target) => {
@@ -88,7 +95,8 @@ class Point {
         },
         /** @param {SVGElement} ele */
         SVGEle: (ele)=>{
-            
+            this.y = ele.y.baseVal.value;
+            this.x = ele.x.baseVal.value;
         },
         /** @param {CSSStyleDeclaration} elestyle */
         style: (elestyle) => {
@@ -143,6 +151,14 @@ class Size {
     MultiplyByValue(value) {
         this.width*= value;
         this.height *= value;
+    }
+    MinusByValue(value) {
+        this.width -= value;
+        this.height -= value;
+    }
+    AddByValue(value) {
+        this.width += value;
+        this.height += value;
     }
     applyHT = {
         /** @param {HTMLElement} elementHT */
@@ -225,7 +241,8 @@ class Size {
         },
         /** @type {SVGElement}  */ 
         SVGEle: (ele)=>{
-            
+            this.width = ele.width.baseVal.value;
+            this.height = ele.height.baseVal.value;
         },
         /** @param {CSSStyleDeclaration} elestyle */
         style: (elestyle) => {
@@ -376,6 +393,8 @@ class Rect {
     pointIn(x, y) {
         return (x >= this.left && x <= this.right && y >= this.top && y <= this.bottom);
     }
+   
+    
     /**
      * 
      * @param {Rect} rct 
@@ -401,6 +420,7 @@ class Rect {
             this.location.setBy.SVGEle(ele);
             this.size.setBy.SVGEle(ele);
         },
+        
         /** @param {DOMRect} rct */
         domRect:(rct) => {
             this.location.setBy.value(rct.x, rct.y);
@@ -430,12 +450,25 @@ class Rect {
         this.location.y = y;
     }
 
+    get topleft() { return { x : this.left, y: this.top};  }
+    get topright() { return { x : this.right, y: this.top};  }
+    get bottomleft() { return { x : this.left, y: this.bottom};  }
+    get bottomright() { return { x : this.right, y: this.bottom};  }
+    
+    get middleTop() { return { x : this.left+this.size.midWidth, y: this.top};  }
+    get middleLeft() { return { x : this.left, y: this.top+this.size.midHeight};  }
+    get middleRight() { return { x : this.right, y: this.top+this.size.midHeight};  }
+    get middleBottom() { return { x : this.left+this.size.midWidth, y: this.bottom};  }
 
-
-    get topleft() { return new Point(this.left, this.top); }
+   /* get topleft() { return new Point(this.left, this.top); }
     get topright() { return new Point(this.right, this.top); }
     get bottomleft() { return new Point(this.left, this.bottom); }
     get bottomright() { return new Point(this.right, this.bottom); }
+    
+    get middleTop() { return new Point(this.left+this.size.midWidth, this.top); }
+    get middleLeft() { return new Point(this.left, this.top+this.size.midHeight); }
+    get middleRight() { return new Point(this.right, this.top+this.size.midHeight); }
+    get middleBottom() { return new Point(this.left+this.size.midWidth, this.bottom); }*/
 
     get left() { return this.location.x; }
     set left(val) { this.location.x = val; }
