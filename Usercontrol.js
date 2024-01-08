@@ -15,7 +15,7 @@ const { stylerRegs } = require("@ucbuilder:/global/stylerRegs");
 /** 
  * @typedef {import ('@ucbuilder:/global/stylerRegs').stylerRegs} stylerRegs
  * @typedef {import ('@ucbuilder:/global/userControlStamp').userControlStampRow} userControlStampRow
- * @typedef {import ('@ucbuilder:/global/drag/transferation').transferDataNode} transferDataNode
+ * @typedef {import('@ucbuilder:/global/drag/transferation.js')} transferDataNode
  * @typedef {import ('@ucbuilder:/build/codeFileInfo').codeFileInfo} codeFileInfo
  */
 class Usercontrol {

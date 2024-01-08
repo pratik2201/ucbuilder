@@ -1,6 +1,7 @@
 const { uniqOpt, controlOpt, objectOpt, arrayOpt } = require("@ucbuilder:/build/common");
 const { commonEvent } = require("@ucbuilder:/global/commonEvent");
-const { transferDataNode } = require("@ucbuilder:/global/drag/transferation");
+const transferDataNode = require("@ucbuilder:/global/drag/transferation.js");
+const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
 
 const dragElementEventRow = {
     "dragenter": "",
@@ -223,6 +224,7 @@ class dragHelper {
     };*/
     static dragResult = false;
     start() {
+        
         this.node.addEvent();
     }
     stop() {
