@@ -3,18 +3,20 @@
   "version": "1.0.0-beta.1",
   "description": "For Developing Applications with multiple form/usercontrols etc.. In Single BrowserWindow...",
   "main": "register.js",
-  "scripts": {     
-  },
+  "scripts": {},
   "author": "ap",
   "license": "ISC",
   "devDependencies": {
-   
+    "@types/node": "^20.10.8",
+    "typescript": "^5.3.3"
   },
   "dependencies": {
     "module-alias": "^2.2.2"
   },
   "keywords": [
-    "form-design","user-control","software developement"
+    "form-design",
+    "user-control",
+    "software developement"
   ],
   "repository": {
     "type": "git",
