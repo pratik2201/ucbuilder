@@ -30,6 +30,7 @@ class Usercontrol {
     * @param {string} valToAssign value to assign last property
     */
     static setChildValueByNameSpace(obj, namespace, valToAssign) {
+        
         return objectOpt.setChildValueByNameSpace(obj, namespace, valToAssign)
     }
     static get giveMeHug() {

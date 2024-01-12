@@ -1,7 +1,7 @@
-namespace ucdesigner.main.frm_login {
-    export class designer {
+namespace ucbuilder.main {
+    export class frm_login_designer extends usercontrol {
         constructor() {
-        
+            super();
         }
     }
 }
