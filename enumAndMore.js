@@ -16,7 +16,6 @@ const sourceOptions = {
     cfInfo: undefined,
 
     
-
     /** @type {"wrapper"|"targetElement"|"random"}  */
     nodeNameAs: 'wrapper',
 
@@ -89,15 +88,6 @@ const tptOptions = {
 };
 
 
-const rootPathParam = {
-    level: 4,
-    addIntoFileDataBankAlso: true,
-    addModule: true,
-    buildOption: {
-        addPathInProjectBuild: true,
-        removeSomeSpecialPathFromProjectBuild: true
-    },
-}
 
 module.exports = {
     /** @type {'client'|'designer'}  */ 

@@ -16,7 +16,7 @@ class aliceManager {
     constructor() { }
     /** @param {HTMLElement} htEle */
     fillAlices(htEle) {
-        this.source = [];
+        this.source = [];        
         let alsPtn = this.patterns.alice;
         Array.from(htEle.attributes)
             .forEach(attr => {

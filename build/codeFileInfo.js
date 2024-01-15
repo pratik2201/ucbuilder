@@ -100,10 +100,11 @@ class htmlFileNode{
 
     get htmlFileName() { return this.name + this.extCode + htmlFileNode.___HTML_EXT; }
     get styleFileName() { return this.name + this.extCode + htmlFileNode.___STYLE_EXT; }
-    get htmlExtLen() { return this.htmlExt.length; }
-    get styleExtLen() { return this.styleExt.length; }
+    get htmlExtLen() { return htmlFileNode.___HTML_EXT.length; }
+    get styleExtLen() { return htmlFileNode.___STYLE_EXT.length; }
     
-    parseURL(){
+    parseURL() {
+        let sortPath = this.html.sortPath;
         this.html.parse(sortPath + this.htmlExt, false);
         this.style.parse(sortPath + this.styleExt, false);
     }
