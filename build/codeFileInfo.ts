@@ -1,6 +1,6 @@
-import { pathInfo, strOpt, buildOptions, filePartlyInfo } from "@ucbuilder:/build/common";
+import { pathInfo, strOpt, buildOptions, FilePartlyInfo, ExtensionType } from "@ucbuilder:/build/common";
 import { rootPathHandler } from "@ucbuilder:/global/rootPathHandler";
-import {  rootPathRow } from "@ucbuilder:/enumAndMore";
+import {  RootPathRow } from "@ucbuilder:/enumAndMore";
 
 class row {
     codefileObj: codeFileInfo | undefined;
@@ -35,7 +35,7 @@ class codefileHandler {
 class fileInfo {
     private _path = "";
     rootPath = "";
-    rootInfo: typeof rootPathRow;
+    rootInfo: RootPathRow;
     constructor() {}
 
     parse(val: string, parseRoot = true) {
@@ -72,7 +72,7 @@ class fileInfo {
         return pathInfo.getFileNameFromPath(this.path);
     }
 
-    get partlyInfo(): filePartlyInfo {
+    get partlyInfo(): FilePartlyInfo {
         return pathInfo.getFileInfoPartly(this.path);
     }
 
@@ -88,7 +88,7 @@ class fileInfo {
 class htmlFileNode {
     static ___HTML_EXT = ".html";
     static ___STYLE_EXT = ".scss";
-    rootInfo: typeof rootPathRow | undefined;
+    rootInfo:  RootPathRow | undefined;
     html = new fileInfo();
     style = new fileInfo();
     name: string = '';
@@ -131,86 +131,52 @@ class codeFileInfo {
     designer = new fileInfo();
     code = new fileInfo();
     name = "";
-    extCode = ".uc";
+    extCode : ExtensionType;
     fullPathWithoutExt = "";
     mainFilePath = "";
-    constructor(extCode = '.uc') {
+    constructor(extCode:ExtensionType) {
         this.extCode = extCode;
     }
+    get existHtmlFile() { return pathInfo.existFile(this.html.fullPath); }
+    get existStyleFile() { return pathInfo.existFile(this.style.fullPath); }
+    get existDeignerFile() { return pathInfo.existFile(this.designer.fullPath); }
+    get existPerametersFile() { return pathInfo.existFile(this.perameters.fullPath); }
+    get existCodeFile() { return pathInfo.existFile(this.code.fullPath); }
 
     static ___PERAMETERS_EXT = ".rowperameters.json";
     static ___DESIGNER_EXT = ".designer.js";
     static ___CODE_EXT = ".js";
 
-    get htmlExt(): string {
-        return this.extCode + htmlFileNode.___HTML_EXT;
-    }
+    get htmlExt(): string { return this.extCode + htmlFileNode.___HTML_EXT; }
+    get styleExt(): string {  return this.extCode + htmlFileNode.___STYLE_EXT; }
+    get deignerExt(): string {  return this.extCode + codeFileInfo.___DESIGNER_EXT; }
+    get perametersExt(): string { return this.extCode + codeFileInfo.___PERAMETERS_EXT; }
+    get codeExt(): string { return this.extCode + codeFileInfo.___CODE_EXT; }
+    get htmlFileName(): string { return this.name + this.extCode + htmlFileNode.___HTML_EXT; }
+    get styleFileName(): string { return this.name + this.extCode + htmlFileNode.___STYLE_EXT; }
+    get deignerFileName(): string {  return this.name + this.extCode + codeFileInfo.___DESIGNER_EXT; }
+    get perametersFileName(): string { return this.name + this.extCode + codeFileInfo.___PERAMETERS_EXT; }
+    get codeFileName(): string {  return this.name + this.extCode + codeFileInfo.___CODE_EXT; }
+    get htmlExtLen(): number { return this.htmlExt.length; }
+    get styleExtLen(): number { return this.styleExt.length; }
+    get deignerExtLen(): number { return this.deignerExt.length; }
+    get perametersExtLen(): number { return this.perametersExt.length; }
+    get codeExtLen(): number { return this.codeExt.length; }
 
-    get styleExt(): string {
-        return this.extCode + htmlFileNode.___STYLE_EXT;
-    }
-
-    get deignerExt(): string {
-        return this.extCode + codeFileInfo.___DESIGNER_EXT;
-    }
-
-    get perametersExt(): string {
-        return this.extCode + codeFileInfo.___PERAMETERS_EXT;
-    }
-
-    get codeExt(): string {
-        return this.extCode + codeFileInfo.___CODE_EXT;
-    }
-
-    get htmlFileName(): string {
-        return this.name + this.extCode + htmlFileNode.___HTML_EXT;
-    }
-
-    get styleFileName(): string {
-        return this.name + this.extCode + htmlFileNode.___STYLE_EXT;
-    }
-
-    get deignerFileName(): string {
-        return this.name + this.extCode + codeFileInfo.___DESIGNER_EXT;
-    }
-
-    get perametersFileName(): string {
-        return this.name + this.extCode + codeFileInfo.___PERAMETERS_EXT;
-    }
-
-    get codeFileName(): string {
-        return this.name + this.extCode + codeFileInfo.___CODE_EXT;
-    }
-
-    get htmlExtLen(): number {
-        return this.htmlExt.length;
-    }
-
-    get styleExtLen(): number {
-        return this.styleExt.length;
-    }
-
-    get deignerExtLen(): number {
-        return this.deignerExt.length;
-    }
-
-    get perametersExtLen(): number {
-        return this.perametersExt.length;
-    }
-
-    get codeExtLen(): number {
-        return this.codeExt.length;
-    }
-
-    static getExtType(path: string): string | undefined {
+    static getExtType(path: string): ExtensionType {
         let partly = pathInfo.getFileInfoPartly(path);
-        if (partly.extension.includes(buildOptions.extType.Usercontrol)) return buildOptions.extType.Usercontrol;
+        switch (partly.extension) {
+            case '.tpt': return '.tpt';
+            case '.uc': return '.uc';
+            default: return 'none';
+        }
+        /*if (partly.extension.includes(buildOptions.extType.Usercontrol)) return buildOptions.extType.Usercontrol;
         if (partly.extension.includes(buildOptions.extType.template)) return buildOptions.extType.template;
-        return undefined;
+        return undefined;*/
     }
 
-    partInfo: filePartlyInfo = { dirPath: "", sortDirPath: "", fileName: "", extension: "", type: "" };
-    rootInfo: typeof rootPathRow | undefined;
+    partInfo: FilePartlyInfo = { dirPath: "", sortDirPath: "", fileName: "", extension: 'none', type: "" };
+    rootInfo: RootPathRow | undefined;
 
     parseUrl(_url: string) {
         let url = pathInfo.cleanPath(_url);

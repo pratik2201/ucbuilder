@@ -6,10 +6,11 @@ function randNumbers(min = 0, max = 1000000) {
     return rand;
 }
 const GLOBAL_OPTIONS = {
-    tabindexes:{
-        allowTabInAllForms:true,
+    tabindexes: {
+        allowTabInAllForms: true,
     }
 }
+
 module.exports = {
     ATTR_OF: {
         UC: Object.freeze({
@@ -18,6 +19,6 @@ module.exports = {
             UNIQUE_STAMP: "uniq" + randNumbers(),
             ROOT_STAMP: "root" + randNumbers(),
         }),
-    },      
+    },
     GLOBAL_OPTIONS
 }

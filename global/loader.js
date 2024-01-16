@@ -1,8 +1,4 @@
-//var getCaller, path;
-
-
 const path = require('path');
-
 let getCaller = function (level = 1) {
   var stack, traceFn;
   traceFn = Error.prepareStackTrace;

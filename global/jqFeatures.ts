@@ -1,33 +1,24 @@
-const { looping, uniqOpt } = require("@ucbuilder:/build/common");
-const { regsManage } = require("@ucbuilder:/build/regs/regsManage");
-const { fileDataBank } = require("@ucbuilder:/global/fileDataBank");
+import { looping, uniqOpt } from "@ucbuilder:/build/common";
+import { regsManage } from "@ucbuilder:/build/regs/regsManage";
+import { FileDataBank } from "@ucbuilder:/global/fileDataBank";
 
 class rowInfo {
-    id = "";
-    data = {};
-    /** @type {{{}}}}  */
-    event = {};
+    id: string = "";
+    data: {} = {};
+    event: { [key: string]: {} } = {};
 }
-class dataManager {
-    constructor() {
 
-    }
-    source = {};
-    map = {};
+class dataManager {
+    source: {} = {};
+    map: {} = {};
     static ATTR = {
         DM_DATA: "dm" + uniqOpt.randomNo(),
     }
-    /** @private */
-    eventIncrementId = 0;
-    /** @private */
-    elementIncrementId = 0;
-    /**
-     * @param {HTMLElement} element 
-     * @returns {rowInfo}
-     */
-    getId = (element) => {
-        /** @type {rowInfo}  */
-        let row = element[dataManager.ATTR.DM_DATA];
+    eventIncrementId: number = 0;
+    elementIncrementId: number = 0;
+
+    getId = (element: HTMLElement): rowInfo => {
+        let row: rowInfo = element[dataManager.ATTR.DM_DATA];
         if (row == undefined) {
             let _id = "id_" + this.elementIncrementId++;
             row = new rowInfo();
@@ -38,26 +29,23 @@ class dataManager {
         return row;
     }
 
-    getElement(id) {
+    getElement(id: string): HTMLElement {
         return this.source[id];
     }
 
-    /**
-     * @param {HTMLElement} targetObject 
-     * @param {[]} arr 
-     */
-    fillObjectRef(targetObject, arr) {
+    fillObjectRef(targetObject: HTMLElement, arr: string[]): void {
         arr.push(this.getId(targetObject).id);
         looping.htmlChildren(targetObject, s => this.fillObjectRef(s, arr));
     }
-    deleteObjectRef(targetObject) {
-        let keylist = [];
+
+    deleteObjectRef(targetObject: HTMLElement): void {
+        let keylist: string[] = [];
         this.fillObjectRef(targetObject, keylist);
         keylist.forEach(e => delete this.source[e]);
     }
-    getData(targetObject, key) {
-        /** @type {rowInfo}  */
-        let row = this.getId(targetObject);
+
+    getData(targetObject: HTMLElement, key?: string): any {
+        let row: rowInfo = this.getId(targetObject);
         switch (arguments.length) {
             case 2:
                 return row.data[key];
@@ -67,9 +55,9 @@ class dataManager {
                 return row;
         }
     }
-    setData(targetObject, key, value) {
-        /** @type {rowInfo}  */
-        let row = this.getId(targetObject);
+
+    setData(targetObject: HTMLElement, key: string, value?: any): void {
+        let row: rowInfo = this.getId(targetObject);
         switch (arguments.length) {
             case 3:
                 row.data[key] = value;
@@ -80,25 +68,19 @@ class dataManager {
         }
     }
 
-    compareElements(ele1, ele2) {
+    compareElements(ele1: HTMLElement, ele2: HTMLElement): boolean {
         return this.getId(ele1).id === this.getId(ele2).id;
     }
-    /** @param {HTMLElement} target */
-    initElement(target) {
-        target = target.querySelectorAll('*').forEach((ele) => {
-            this.getId(ele);
+
+    initElement(target: HTMLElement): void {
+        target.querySelectorAll('*').forEach((ele) => {
+            this.getId(ele as HTMLElement);
         });
     }
-    /**
-     * 
-     * @param {HTMLElement} element 
-     * @param {string} eventName 
-     * @param {string} key 
-     * @param {Function} handler 
-     */
-    setEvent(element, eventName, key, handler) {
-        let evt = {};
-        let row = this.getId(element);
+
+    setEvent<K extends keyof HTMLElementEventMap>(element: HTMLElement, eventName: K, key: string, handler: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+        let evt: {} = {};
+        let row: rowInfo = this.getId(element);
         if (eventName in row.event) {
             evt = row.event[eventName];
             evt[key] = handler;
@@ -108,17 +90,11 @@ class dataManager {
         }
         element.addEventListener(eventName, handler, false);
     }
-    /**
-         * 
-         * @param {HTMLElement} element 
-         * @param {string} eventName 
-         * @param {string} key 
-         * @param {Function} handler 
-         */
-    unSetEvent(element, eventName, key, handler) {
-        let evt = {};
+
+    unSetEvent<K extends keyof HTMLElementEventMap>(element: HTMLElement, eventName: K, key?: string, handler?: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+        let evt: {} = {};
         if (handler == undefined) {
-            let row = this.getId(element);
+            let row: rowInfo = this.getId(element);
             if (eventName in row.event) {
                 evt = row.event[eventName];
                 if (key == undefined) {
@@ -126,45 +102,35 @@ class dataManager {
                 }
                 else {
                     handler = evt[key];
-                    element.removeEventListener(eventName, handler, false);
+                    element.removeEventListener(eventName as keyof HTMLElementEventMap, handler, false);
                 }
             }
-        } else element.removeEventListener(eventName, handler, false);
+        } else element.removeEventListener(eventName as keyof HTMLElementEventMap, handler, false);
+    }
 
-    }
-    /**
-     * @param {HTMLElement} element 
-     * @param {string} eventName 
-     * @param {Function} handler 
-     */
-    onHandler(element, eventName, handler) {
-        let eType = eventName.split(".");
-        if (eType == 0) {
-            this.setEvent(element, eType[0], uniqOpt.guidAs_, handler);
+    onHandler<K extends keyof HTMLElementEventMap>(element: HTMLElement, eventName: K, handler: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+        let eType: string[] = eventName.split(".");
+        if (eType.length == 0) {
+            this.setEvent(element, eType[0] as keyof HTMLElementEventMap, uniqOpt.guidAs_, handler);
         } else {
-            this.setEvent(element, eType[0], eType[1], handler);
+            this.setEvent(element, eType[0] as keyof HTMLElementEventMap, eType[1], handler);
         }
     }
-    offHandler(element, eventName, handler) {
-        let eType = eventName.split(".");
-        if (eType == 0) {
-            this.unSetEvent(element, eType[0], undefined, handler);
+
+    offHandler<K extends keyof HTMLElementEventMap>(element: HTMLElement, eventName: K, handler: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+        let eType: string[] = eventName.split(".");
+        if (eType.length == 0) {
+            this.unSetEvent(element, eType[0] as keyof HTMLElementEventMap, undefined, handler);
         } else {
-            this.unSetEvent(element, eType[0], eType[1], handler);
-        }
-        return;
-        if (eType == 0) {
-            this.unSetEvent(element, eType[0]);
-        } else {
-            this.unSetEvent(element, eType[0], eType[1]);
+            this.unSetEvent(element, eType[0] as keyof HTMLElementEventMap, eType[1], handler);
         }
     }
 }
+
 class jqFeatures {
-    /** @private */
-    static isInited = false;
-    static data = new dataManager();
-    static eventMap = {
+    static isInited: boolean = false;
+    static data: dataManager = new dataManager();
+    static eventMap: { [key: string]: string } = {
         "abort": "UIEvent",
         "animationcancel": "AnimationEvent",
         "animationend": "AnimationEvent",
@@ -261,14 +227,17 @@ class jqFeatures {
         "webkittransitionend": "Event",
         "wheel": "WheelEvent",
     };
-    static getEventType(evtName) {
+
+    static getEventType(evtName: string): string {
         return (evtName in jqFeatures.eventMap) ? jqFeatures.eventMap[evtName] : "Event";
     }
-    static getElementById(id) {
+
+    static getElementById(id: string): HTMLElement {
         return this.data.getElement(id);
     }
-    static onReady(callback = () => { }) {
-        if (document.readyState === 'ready' || document.readyState === 'complete') {
+
+    static onReady(callback: Function = () => { }): void {
+        if (/*document.readyState === 'ready' || */document.readyState === 'complete') {
             callback();
         } else {
             document.onreadystatechange = function () {
@@ -278,67 +247,63 @@ class jqFeatures {
             }
         }
     }
-    static regsMng = new regsManage();
-    static init() {
+
+    static regsMng: regsManage = new regsManage();
+
+    static init(): void {
         if (jqFeatures.isInited) return;
 
-        HTMLElement.prototype.index = function () {
-            var i = 0;
-            let child = this;
+        HTMLElement.prototype.index = function (): number {
+            var i: number = 0;
+            let child = this as Element;
             while ((child = child.previousElementSibling) != null)
                 i++;
             return i;
         }
-        /** @returns {string} */
-        HTMLElement.prototype.selector = function () {
-            let elm = this;
+
+        HTMLElement.prototype.selector = function (): string {
+            let elm: HTMLElement = this;
             if (elm.tagName === "BODY") return "BODY";
-            const names = [];
+            const names: string[] = [];
             while (elm.parentElement && elm.tagName !== "BODY") {
-                /*if (elm.id) {
-                    names.unshift("#" + elm.getAttribute("id")); // getAttribute, because `elm.id` could also return a child element with name "id"
-                    break; // Because ID should be unique, no more is needed. Remove the break, if you always want a full path.
-                } else {
-    
-                //let c = 1, e = elm;
-                //for (; e.previousElementSibling; e = e.previousElementSibling, c++);*/
                 names.unshift(elm.tagName + ":nth-child(" + elm.index() + ")");
-                //}
                 elm = elm.parentElement;
             }
             return names.join(">");
         }
-        HTMLElement.prototype.find = function (selector, exclude) {
-            /** @type {container[]}  */
-            let res = [];
-            /** @type {container[]}  */
-            let trec = this.querySelectorAll(selector);
+
+        HTMLElement.prototype.find = function (selector: string, exclude?: string): HTMLElement[] {
+            let res: HTMLElement[] = [];
+            let trec: NodeListOf<HTMLElement> = (this as HTMLElement).querySelectorAll(selector);
             if (exclude != undefined) {
-                /** @type {string}  */
-                let selectorStr = this.selector() + ' ' + exclude;
+                let selectorStr: string = (this as HTMLElement).selector() + ' ' + exclude;
                 trec.forEach(s => {
-                    if (!s.matches(selectorStr))
-                        res.push(s);
+                    let n = s as HTMLElement;
+                    if (!n.matches(selectorStr))
+                        res.push(n);
                 });
             } else res = Array.from(trec);
             return res;
         }
-        HTMLElement.prototype.fireEvent = function (eventName, bubble = true, cancable = true) {
-            let evt = document.createEvent(jqFeatures.getEventType(eventName));
+
+        HTMLElement.prototype.fireEvent = function (eventName: string, bubble: boolean = true, cancable: boolean = true): void {
+            let evt: Event = document.createEvent(jqFeatures.getEventType(eventName));
             evt.initEvent(eventName, bubble, bubble);
             this.dispatchEvent(evt);
         }
-        HTMLElement.prototype.delete = function () {
+
+        HTMLElement.prototype.delete = function (): void {
             jqFeatures.data.deleteObjectRef(this);
             this.remove();
         }
-        HTMLElement.prototype.stamp = function () {
+
+        HTMLElement.prototype.stamp = function (): string {
             return jqFeatures.data.getId(this).id;
         }
-        HTMLElement.prototype.data = function (key, value) {
+
+        HTMLElement.prototype.data = function (key?: string, value?: any): any {
             switch (arguments.length) {
                 case 0:
-
                     return jqFeatures.data.getData(this);
                     break;
                 case 1:
@@ -346,117 +311,100 @@ class jqFeatures {
                         case "string": return jqFeatures.data.getData(this, key);
                         case "object": jqFeatures.data.getData(this, key);
                     }
-
                     break;
                 case 2:
                     jqFeatures.data.setData(this, key, value);
                     break;
             }
         }
-        SVGElement.prototype.data = function (key, value) {
-            switch (arguments.length) {
-                case 0:
-
-                    return jqFeatures.data.getData(this);
-                    break;
-                case 1:
-                    switch (typeof key) {
-                        case "string": return jqFeatures.data.getData(this, key);
-                        case "object": jqFeatures.data.getData(this, key);
-                    }
-
-                    break;
-                case 2:
-                    jqFeatures.data.setData(this, key, value);
-                    break;
-            }
-        }
-
-
-        HTMLElement.prototype.is = function (target) {
+        HTMLElement.prototype.is = function (target: HTMLElement): boolean {
             if (target == undefined || target == null) return false;
             return jqFeatures.data.compareElements(this, target);
         }
-        HTMLElement.prototype.$ = function () {
+
+        HTMLElement.prototype.$ = function (): HTMLElement {
             jqFeatures.data.initElement(this);
             return this;
         }
-        
-        String.prototype.$ = function () {
-            var div = document.createElement('pre');
-            div.innerHTML = this.trim();
-            jqFeatures.data.initElement(div.firstChild);
-
-            return div.firstChild;
+        HTMLElement.prototype.on = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+            let _tar: HTMLElement = this;
+            eventList.split(" ").forEach(function (e) {
+                jqFeatures.data.onHandler(_tar, e as keyof HTMLElementEventMap, handlerCallback);
+            });
         }
 
-        NodeList.prototype.on =
-            /**
-            * @param {string} eventList 
-            * @param {Function} handlerCallback 
-            */
-            function (eventList, handlerCallback) {
-                Array.from(this).on(eventList, handlerCallback);
-            }
-        Array.prototype.on =
-            /**
-            * @param {string} eventList 
-            * @param {Function} handlerCallback 
-            */
-            function (eventList, handlerCallback) {
-                let splEvt = eventList.split(" ");
-                this.forEach(
-                    /** @type {HTMLElement}  */
-                    (tar) => {
-                        splEvt.forEach(function (e) {
-                            jqFeatures.data.onHandler(tar, e, handlerCallback);
-                        });
-                    });
-            }
-        HTMLElement.prototype.on =
-            /**
-             * @param {string} eventList 
-             * @param {Function} handlerCallback 
-             */
-            function (eventList, handlerCallback) {
-                let _tar = this;
-                eventList.split(" ").forEach(function (e) {
-                    jqFeatures.data.onHandler(_tar, e, handlerCallback);
+        HTMLElement.prototype.off = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+            let _tar: HTMLElement = this;
+            eventList.split(" ").forEach(function (e) {
+                jqFeatures.data.offHandler(_tar, e as keyof HTMLElementEventMap, handlerCallback);
+            });
+        }
+
+        NodeList.prototype.on = function  <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+            Array.from(this).on(eventList, handlerCallback);
+        }
+
+        Array.prototype.on = function  <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+            let splEvt: string[] = eventList.split(" ");
+            this.forEach((tar: HTMLElement) => {
+                splEvt.forEach(function (e) {
+                    jqFeatures.data.onHandler(tar, e as keyof HTMLElementEventMap, handlerCallback);
                 });
+            });
+        }
+
+        SVGElement.prototype.data = function (key?: string, value?: any): any {
+            switch (arguments.length) {
+                case 0:
+                    return jqFeatures.data.getData(this);
+                    break;
+                case 1:
+                    switch (typeof key) {
+                        case "string": return jqFeatures.data.getData(this, key);
+                        case "object": jqFeatures.data.getData(this, key);
+                    }
+                    break;
+                case 2:
+                    jqFeatures.data.setData(this, key, value);
+                    break;
             }
-        HTMLElement.prototype.off =
-            /**
-             * @param {string} eventList 
-             * @param {Function} handlerCallback 
-             */
-            function (eventList, handlerCallback) {
-                let _tar = this;
-                eventList.split(" ").forEach(function (e) {
-                    jqFeatures.data.offHandler(_tar, e, handlerCallback);
-                });
-            }
-        String.prototype._trim = function (charlist) {
+        }
+
+
+
+        String.prototype.$ = function (): HTMLElement {
+            var div = document.createElement('pre');
+            div.innerHTML = this.trim();
+            jqFeatures.data.initElement(div.firstChild as HTMLElement);
+            return div.firstChild as HTMLElement;
+        }
+        String.prototype._trim = function (charlist?: string): string {
             if (charlist === undefined)
                 charlist = "\s";
             return this.replace(new RegExp("^[" + charlist + "]+"), "");
-        };
-        String.prototype.trim_ = function (charlist) {
+        }
+
+        String.prototype.trim_ = function (charlist?: string): string {
             if (charlist === undefined)
                 charlist = "\s";
             return this.replace(new RegExp("[" + charlist + "]+$"), "");
-        };
-        /**
-         * @param {{}} jsonRow 
-         * @returns 
-         */
-        String.prototype.__ = function (jsonRow = undefined) {
-            let rtrn = this;
+        }
+
+        String.prototype.__ = function (jsonRow: {} = undefined): string {
+            let rtrn: string = this;
             if (jsonRow != undefined)
                 rtrn = jqFeatures.regsMng.parse(jsonRow, rtrn);
-            return fileDataBank.getReplacedContent(rtrn);
+            return FileDataBank.getReplacedContent(rtrn);
         };
+
+
+        
+
+
+
 
         jqFeatures.isInited = true;
     }
 }
-module.exports = { dataManager, jqFeatures };
+
+export { dataManager, jqFeatures };

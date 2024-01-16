@@ -1,11 +1,23 @@
-//namespace ucbuilder.global.rootRelated {
-
-import { strOpt } from "@ucbuilder:/build/common";
-import { rootPathParam,rootPathRow } from "@ucbuilder:/enumAndMore";
+import { pathInfo, strOpt } from "@ucbuilder:/build/common";
+import { replaceTextRow,ReplaceTextRow } from "@ucbuilder:/global/findAndReplace";
+import { rootPathParam, RootPathParam } from '@ucbuilder:/enumAndMore';
 import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
-import { ReplaceTextRow } from "./findAndReplace";
-
-
+interface RootPathRow{
+    id:number ,
+    path:string ,
+    alices:string,
+    index:number ,
+    isAlreadyFullPath:boolean ,
+    cssVars : {key:string,value:string}[],
+}
+const rootPathRow:RootPathRow = {
+    id:  -1,
+    path: '',
+    alices: '',
+    index: -1,
+    isAlreadyFullPath: false,    
+    cssVars : [],
+}
 export class rootPathHandler {
     private static _source: ReplaceTextRow[] = [];
     static get source(): ReplaceTextRow[] { return this._source; }
@@ -28,8 +40,7 @@ export class rootPathHandler {
         }
     }
 
-    static addRoot = (projectName: string, replaceAlicesWith: string, pera:typeof rootPathParam): boolean => {
-        
+    static addRoot = (projectName: string, replaceAlicesWith: string, pera: RootPathParam): boolean => {
         let param2 = newObjectOpt.copyProps(pera, rootPathParam);
         let pathAlicesLower = projectName.toLowerCase();
         let result = this.checkStatus(pathAlicesLower, replaceAlicesWith);
@@ -61,7 +72,7 @@ export class rootPathHandler {
                     id: this.source.length,
                     originalFinderText: projectName,
                     originalLowerCaseText: pathAlicesLower,
-                    textToFind: common.strOpt.cleanTextForRegs(projectName),
+                    textToFind: strOpt.cleanTextForRegs(projectName),
                     replaceWith: replaceAlicesWith,
                     replaceLowerCaseText: replaceAlicesWith.toLowerCase(),
                     cssVars: [],
@@ -85,10 +96,10 @@ export class rootPathHandler {
         let src = _pth.toLowerCase().trim();
         let node = this.source.find(s => src.startsWith(s.originalLowerCaseText));
         if (node == undefined) return _pth;
-        else return common.pathInfo.cleanPath(`${node.replaceWith}${common.strOpt._trim(_pth, node.textToFind)}`);
+        else return pathInfo.cleanPath(`${node.replaceWith}${strOpt._trim(_pth, node.textToFind)}`);
     }
 
-    static getInfo(_pth = ""): typeof rootPathRow | undefined {
+    static getInfo(_pth = ""): RootPathRow | undefined {
         let src = _pth.toLowerCase().trim();
         let isAlreadyFullPath = false;
         let findex = this.source.findIndex(s => {
@@ -105,7 +116,7 @@ export class rootPathHandler {
         return rtrn;
     }
 
-    static getInfoByAlices(alices: string): typeof rootPathRow | undefined {
+    static getInfoByAlices(alices: string): RootPathRow | undefined {
         alices = alices.toLowerCase();
         let findex = this.source.findIndex(s => alices == s.originalLowerCaseText);
         if (findex == -1) return undefined;
@@ -115,7 +126,7 @@ export class rootPathHandler {
         return rtrn;
     }
 
-    static convertToRow(node: ReplaceTextRow, isAlreadyFullPath: boolean): typeof rootPathRow {
+    static convertToRow(node: ReplaceTextRow, isAlreadyFullPath: boolean): RootPathRow {
         return {
             id: node.id,
             path: node.replaceWith,
@@ -126,4 +137,3 @@ export class rootPathHandler {
         }
     }
 }
-//}
