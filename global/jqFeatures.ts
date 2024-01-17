@@ -356,16 +356,16 @@ class jqFeatures {
         SVGElement.prototype.data = function (key?: string, value?: any): any {
             switch (arguments.length) {
                 case 0:
-                    return jqFeatures.data.getData(this);
+                    return jqFeatures.data.getData(this as unknown as HTMLElement);
                     break;
                 case 1:
                     switch (typeof key) {
-                        case "string": return jqFeatures.data.getData(this, key);
-                        case "object": jqFeatures.data.getData(this, key);
+                        case "string": return jqFeatures.data.getData(this as unknown as HTMLElement, key);
+                        case "object": jqFeatures.data.getData(this as unknown as HTMLElement, key);
                     }
                     break;
                 case 2:
-                    jqFeatures.data.setData(this, key, value);
+                    jqFeatures.data.setData(this as unknown as HTMLElement, key, value);
                     break;
             }
         }
@@ -391,17 +391,11 @@ class jqFeatures {
         }
 
         String.prototype.__ = function (jsonRow: {} = undefined): string {
-            let rtrn: string = this;
+            let rtrn: string = this as string;
             if (jsonRow != undefined)
                 rtrn = jqFeatures.regsMng.parse(jsonRow, rtrn);
             return FileDataBank.getReplacedContent(rtrn);
         };
-
-
-        
-
-
-
 
         jqFeatures.isInited = true;
     }

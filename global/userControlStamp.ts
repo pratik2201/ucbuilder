@@ -18,14 +18,16 @@ export class userControlStampRow {
         return ele.getAttribute(ATTR_OF.UC.UNIQUE_STAMP) == this.uniqStamp;
     }
 
-    passElement = (ele: HTMLElement, applySubTree: boolean = true): string[] => {
+    passElement = (ele: HTMLElement|HTMLElement[], applySubTree: boolean = true): string[] => {
         let stamplist: string[] = [];
         let stmpTxt: string = this.stamp;
         let stmpUnq: string = this.uniqStamp;
         if (this.cInfo.rootInfo == undefined)
             console.log(this.cInfo);
-        let stmpRt = ''+this.cInfo.rootInfo.id;
-        let ar: NodeListOf<HTMLElement> = ele.querySelectorAll("*");
+        let stmpRt = '' + this.cInfo.rootInfo.id;
+       
+        //let ar: NodeListOf<HTMLElement> = ele.querySelectorAll("*");
+        let ar = controlOpt.getArray(ele);
         for (let index = 0; index < ar.length; index++) {
             let element: HTMLElement = ar[index];
             element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpTxt);

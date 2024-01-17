@@ -9,25 +9,33 @@ const eventRecord: EventRecord = {
     stamp: ''
 }
 type ResultCallback = (returnedValue: any) => boolean;
-const resultCallback:ResultCallback = (returnedValue: any) => false;
-class CommonEvent {
+const resultCallback: ResultCallback = (returnedValue: any) => false;
+
+class CommonEvent<F,T=F extends (a: infer F) => any ? F : never> {
     isSingleEvent: boolean = false;
+   
     Events = {
         onChangeEventList: () => { }
     };
     private _eventList: EventRecord[] = [];
-    private onCounter: number = 0;
+    private _onCounter: number = 0;
+    public get onCounter(): number {
+        return this._onCounter;
+    }
+    private set onCounter(value: number) {
+        this._onCounter = value;
+    }
 
     constructor(isSingleEvent: boolean = false) {
         this.isSingleEvent = isSingleEvent;
     }
 
-    on(callback: Function = () => { }, stamp: string = uniqOpt.guid): string {
+    on(callback: F, stamp: string = uniqOpt.guid): string {
         if (this.isSingleEvent) this._eventList = [];
         this.onCounter++;
         //let row: EventRecord = objectOpt.clone(eventRecord);
         this._eventList.push({
-            callback: callback,
+            callback: callback as Function,
             stamp: stamp
         });
         this.Events.onChangeEventList();
@@ -54,7 +62,7 @@ class CommonEvent {
         return this._eventList.length;
     }
 
-    fire(...args: any[]): void {
+    fire(args: T=undefined): void {
         this._eventList.forEach(s => {
             s.callback.apply(this, args);
         });

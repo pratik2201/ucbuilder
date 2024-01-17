@@ -1,10 +1,10 @@
-import { fileInfo } from "@ucbuilder:/build/codeFileInfo";
+import { FileInfo } from "@ucbuilder:/build/codeFileInfo";
 import { pathInfo } from "@ucbuilder:/build/common";
 import { Interface } from "readline";
 import { newObjectOpt } from "./objectOpt";
 
 export interface LoadGlobalRow {
-    finfo: fileInfo;
+    finfo: FileInfo;
     elementHT?: HTMLStyleElement; // only for style sheets
     stamp: string;
     fUniq: string;
@@ -36,7 +36,7 @@ export class LoadGlobal {
     }
 
     static isGoodToPush(url: string): boolean {
-        let finfo: fileInfo = new fileInfo();
+        let finfo: FileInfo = new FileInfo();
         finfo.parse(url);
         if (finfo.rootInfo == undefined) return false;
         if (!pathInfo.existFile(finfo.fullPath)) return false;
@@ -53,7 +53,7 @@ export class LoadGlobal {
         cssContents = undefined
     }: LoadGlobal.params = {}) {
         let rw: Row = {
-            finfo: new fileInfo(),
+            finfo: new FileInfo(),
             elementHT: undefined,
             stamp: "",
             fUniq: ""
@@ -63,7 +63,7 @@ export class LoadGlobal {
     static pushRow(ppr: LoadGlobalParameters) {
         ppr = newObjectOpt.copyProps(ppr, newObjectOpt.clone(loadGlobalParameters));
         let rw: LoadGlobalRow = {
-            finfo: new fileInfo(),
+            finfo: new FileInfo(),
             elementHT: undefined,
             stamp: "",
             fUniq: ""

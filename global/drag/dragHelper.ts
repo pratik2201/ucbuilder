@@ -1,6 +1,6 @@
 import { uniqOpt, controlOpt, objectOpt, arrayOpt } from "@ucbuilder:/build/common";
 import { CommonEvent } from "@ucbuilder:/global/commonEvent";
-import transferDataNode from "@ucbuilder:/global/drag/transferation.js";
+//import transferDataNode from "@ucbuilder:/global/drag/transferation.js";
 import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
 
 interface DragElementEventRow {
@@ -11,7 +11,7 @@ interface DragElementEventRow {
     dragNumber: number;
 }
 type DragDataType = "unknown" | "uc" | "uc-link" | "tpt" | "tpt-link" | "text" | "json" | "link";
-interface DragDataNode {
+export interface DragDataNode {
     type: DragDataType,
     unqKey: string,
     data: any,

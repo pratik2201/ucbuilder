@@ -1,29 +1,26 @@
 import { propOpt, strOpt, pathInfo } from "@ucbuilder:/build/common";
 import { regsManage } from "@ucbuilder:/build/regs/regsManage";
-import { fileDataBank } from "@ucbuilder:/global/fileDataBank";
-import { filterContent } from "@ucbuilder:/global/filterContent";
-import { loadGlobal } from "@ucbuilder:/global/loadGlobal";
+import { FileDataBank } from "@ucbuilder:/global/fileDataBank";
+import { FilterContent } from "@ucbuilder:/global/filterContent";
+import { LoadGlobal } from "@ucbuilder:/global/loadGlobal";
 import { ATTR_OF } from "@ucbuilder:/global/runtimeOpt";
 import { stylerRegs } from "@ucbuilder:/global/stylerRegs";
-import {
-  userControlStampRow,
-  userControlStamp,
-} from "@ucbuilder:/global/userControlStamp";
+import { userControlStampRow, userControlStamp, } from "@ucbuilder:/global/userControlStamp";
 import { Usercontrol } from "@ucbuilder:/Usercontrol";
-import { tptOptions, templatePathOptions } from "@ucbuilder:/enumAndMore";
+import { tptOptions, TemplatePathOptions, templatePathOptions, TptOptions } from "@ucbuilder:/enumAndMore";
 import { transferDataNode } from "@ucbuilder:/global/drag/transferation";
-import { fileInfo, codeFileInfo } from "@ucbuilder:/build/codeFileInfo";
+import { FileInfo, codeFileInfo } from "@ucbuilder:/build/codeFileInfo";
 import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
 import { Size } from "@ucbuilder:/global/drawing/shapes";
 
 export class Template {
   static getTemplates = {
     /**
-     * @param {string} htmlContents content
-     * @param {string} mainFilePath main html file path
-     * @param {(node:templatePathOptions)=>{}} callback call each templateNode
+     * @param  htmlContents content
+     * @param   mainFilePath main html file path
+     * @param {(node:TemplatePathOptions)=>{}} callback call each templateNode
      */
-    loopThrough(htmlContents: string, mainFilePath: string, callback: (node: templatePathOptions) => void) {
+    loopThrough(htmlContents: string, mainFilePath: string, callback: (node: TemplatePathOptions) => void) {
       let mainTag: HTMLElement = document.createElement("pre");
       mainTag.innerHTML = htmlContents;
       let tList = mainTag.querySelectorAll(":scope > [x-from]");
@@ -32,18 +29,18 @@ export class Template {
           name: propOpt.ATTR.TEMPLETE_DEFAULT,
           mainFilePath: mainFilePath,
           htmlContents: htmlContents,
-          cssContents: fileDataBank.readFile(mainFilePath + ".scss"),
+          cssContents: FileDataBank.readFile(mainFilePath + ".scss"),
         });
       } else {
         tList.forEach((element) => {
-          let fInfo = new fileInfo();
+          let fInfo = new FileInfo();
           fInfo.parse(element.getAttribute("x-from"));
           mainFilePath = fInfo.fullPath;
           callback({
             name: element.getAttribute(propOpt.ATTR.ACCESS_KEY),
             mainFilePath: mainFilePath,
-            htmlContents: fileDataBank.readFile(mainFilePath + ".html"),
-            cssContents: fileDataBank.readFile(mainFilePath + ".scss"),
+            htmlContents: FileDataBank.readFile(mainFilePath + ".html"),
+            cssContents: FileDataBank.readFile(mainFilePath + ".scss"),
           });
         });
       }
@@ -51,17 +48,17 @@ export class Template {
     /**
      * @param {string} htmlContents content
      * @param {string} mainFilePath main html file path
-     * @returns {templatePathOptions[] & {}}
+     * @returns {TemplatePathOptions[] & {}}
      */
     byContents(htmlContents: string, mainFilePath: string, returnArray = true) {
       if (returnArray === true) {
-        let rtrnAr: templatePathOptions[] = [];
+        let rtrnAr: TemplatePathOptions[] = [];
         this.loopThrough(htmlContents, mainFilePath, (node) => {
           rtrnAr.push(node);
         });
         return rtrnAr;
       } else {
-        let rtrnObj: { [key: string]: templatePathOptions } = {};
+        let rtrnObj: { [key: string]: TemplatePathOptions } = {};
         this.loopThrough(htmlContents, mainFilePath, (node) => {
           rtrnObj[node.name] = node;
         });
@@ -70,26 +67,26 @@ export class Template {
     },
     /**
      * @param {string} htmlFilePath
-     * @returns {templatePathOptions[] & {}}
+     * @returns {TemplatePathOptions[] & {}}
      */
     byHTMLFilePath(htmlFilePath: string, returnArray = true) {
       let mainFilePath = strOpt.trim_(htmlFilePath, ".html");
-      let htmlContents = fileDataBank.readFile(mainFilePath + ".html");
+      let htmlContents = FileDataBank.readFile(mainFilePath + ".html");
       return this.byContents(htmlContents, mainFilePath, returnArray);
     },
     /**
      * @param {string} htmlFilePath
-     * @returns {templatePathOptions[] & {}}
+     * @returns {TemplatePathOptions[] & {}}
      */
     byDirectory(jsFilepath: string, returnArray = true) {
       if (returnArray) {
-        let rtrnAr: templatePathOptions[] = [];
+        let rtrnAr: TemplatePathOptions[] = [];
         this.loopDirectory(jsFilepath, (row) => {
           rtrnAr.push(row);
         });
         return rtrnAr;
       } else {
-        let rtrnObj: { [key: string]: templatePathOptions } = {};
+        let rtrnObj: { [key: string]: TemplatePathOptions } = {};
         this.loopDirectory(jsFilepath, (node) => {
           rtrnObj[node.name] = node;
         });
@@ -98,11 +95,11 @@ export class Template {
     },
     /**
      * @param {string} filepath
-     * @returns {templatePathOptions[] & {}}
+     * @returns {TemplatePathOptions[] & {}}
      */
     loopDirectory(
       filepath: string,
-      callback: (row: templatePathOptions) => void = (row) => {}
+      callback: (row: TemplatePathOptions) => void = (row) => {}
     ) {
       let fs = require("fs");
       filepath = filepath.toLowerCase();
@@ -118,13 +115,13 @@ export class Template {
           let extLessFileName = strOpt.trim_(filename, ".html");
           let tp = strOpt._trim(extLessFileName, fnm);
           tp = tp.trim();
-          let row: templatePathOptions = {};
+          let row = Object.assign({},templatePathOptions);
           row.name = tp != "" ? tp._trim(".") : propOpt.ATTR.TEMPLETE_DEFAULT;
           row.mainFilePath = pathInfo.cleanPath(
             fpart.dirPath + extLessFileName
           );
-          row.htmlContents = fileDataBank.readFile(row.mainFilePath + ".html");
-          row.cssContents = fileDataBank.readFile(row.mainFilePath + ".scss");
+          row.htmlContents = FileDataBank.readFile(row.mainFilePath + ".html");
+          row.cssContents = FileDataBank.readFile(row.mainFilePath + ".scss");
           callback(row);
         }
       });
@@ -139,8 +136,8 @@ export class Template {
     wholeCSS: "",
     fileStamp: "",
     _templeteNode: undefined,
-    stampRow: undefined,
-    parentUc: undefined,
+    stampRow: undefined as userControlStampRow,
+    parentUc: undefined as Usercontrol,
     regsMng: new regsManage(),
 
     cssVarStampKey: "0",
@@ -163,15 +160,16 @@ export class TemplateNode {
   static _CSS_VAR_STAMP = 0;
   extended = {
     fileStamp: "",
-    main: undefined,
-    stampRow: undefined,
-    parentUc: undefined,
+    main: undefined as Template,
+    stampRow: undefined as userControlStampRow,
+    parentUc: undefined as Usercontrol,
+    wrapper:undefined as HTMLElement,
     size: new Size(),
     regsMng: new regsManage(),
     setCSS_globalVar(key: string, value: string) {
       stylerRegs.__VAR.SETVALUE(
         key,
-        this.stampRow.styler.rootInfo.id,
+        ''+this.stampRow.styler.rootInfo.id,
         "g",
         value
       );
@@ -199,7 +197,7 @@ export class TemplateNode {
 
     getCSS_globalVar(key: string) {
       return document.body.style.getPropertyValue(
-        stylerRegs.__VAR.getKeyName(key, this.stampRow.styler.rootInfo.id, "g")
+        stylerRegs.__VAR.getKeyName(key, ''+this.stampRow.styler.rootInfo.id, "g")
       );
     },
     getCSS_localVar(key: string) {
@@ -229,13 +227,15 @@ export class TemplateNode {
     },
 
     initializecomponent: (
-      _args: tptOptions,
-      tptPathOpt: templatePathOptions,
+      _args: TptOptions,
+      tptPathOpt: TemplatePathOptions,
       tptname: string
     ) => {
       let tptExt = this.extended;
       _args.source.cfInfo = new codeFileInfo(".tpt");
-      let param0 = newObjectOpt.copyProps(_args, tptOptions);
+      let toj = Object.assign({}, tptOptions);
+      let param0 = Object.assign(toj, _args);
+      // let param0 = newObjectOpt.copyProps(_args, tptOptions);
 
       _args.source.cfInfo.parseUrl(tptPathOpt.mainFilePath);
 
@@ -272,13 +272,13 @@ export class TemplateNode {
       tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator_sub({
         data:
           tptPathOpt.cssContents == undefined
-            ? fileDataBank.readFile(param0.source.cfInfo.style.rootPath)
+            ? FileDataBank.readFile(param0.source.cfInfo.style.rootPath)
             : tptPathOpt.cssContents,
         localNodeElement: tptExt.parentUc.ucExtends.self,
         cssVarStampKey: tptExt.main.extended.cssVarStampKey,
       });
 
-      loadGlobal.pushRow({
+      LoadGlobal.pushRow({
         url: param0.source.cfInfo.style.rootPath,
         stamp: tptExt.stampRow.stamp,
         reloadDesign: param0.source.reloadDesign,
@@ -310,14 +310,14 @@ export class TemplateNode {
     find: (skey: string, fromHT: HTMLElement) => {
       let exp = /(["=> \w\[\]-^|#~$*.+]*)(::|:)([-\w\(\)]+)/g;
       let ar = skey.split(",");
-      let ext = this;
+      let ext = this.extended;
       let q = "";
-      let uniqStamp = ext.extended.stampRow.uniqStamp;
+      let uniqStamp = ext.stampRow.uniqStamp;
       ar = ar.map((s) => {
-        s = filterContent.select_inline_filter(s, uniqStamp);
+        s = FilterContent.select_inline_filter(s, uniqStamp);
         return s;
       });
-      return Array.from(ext.wrapper.elementHT.querySelectorAll(ar.join(",")));
+      return Array.from(ext.wrapper.querySelectorAll(ar.join(",")));
     },
     getAllControls: (specific: string[], fromHT: HTMLElement) => {
       let childs: { [key: string]: HTMLElement } = {};
@@ -329,7 +329,7 @@ export class TemplateNode {
           if (!(itmpath in childs)) {
             let ele = fromElement.querySelector(
               `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
-            );
+            ) as HTMLElement;
             fillObj(itmpath, ele);
           }
         });
@@ -339,7 +339,7 @@ export class TemplateNode {
           fromElement.querySelectorAll(
             `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
           )
-        );
+        ) as HTMLElement[];
         eleAr.forEach((ele) => {
           fillObj(ele.getAttribute(propOpt.ATTR.ACCESS_KEY), ele);
         });
@@ -361,7 +361,7 @@ export class TemplateNode {
       if (nodes.length == 0) {
         ext.templeteList[propOpt.ATTR.TEMPLETE_DEFAULT] = mainNode.outerHTML;
       } else {
-        let mNode = mainNode.cloneNode(true);
+        let mNode = mainNode.cloneNode(true) as HTMLElement;
         mNode.innerHTML = "";
         nodes.forEach((node) => {
           let role = node.getAttribute(propOpt.ATTR.TEMPLETE_ACCESS_KEY);

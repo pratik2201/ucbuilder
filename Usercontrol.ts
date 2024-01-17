@@ -1,5 +1,5 @@
 
-import { propOpt, objectOpt } from "@ucbuilder:/build/common";
+import { propOpt, objectOpt, controlOpt } from "@ucbuilder:/build/common";
 import { FilterContent } from "@ucbuilder:/global/filterContent";
 import { CommonEvent } from "@ucbuilder:/global/commonEvent";
 import { UCGenerateMode, UcOptions, UcStates } from '@ucbuilder:/enumAndMore';
@@ -11,13 +11,9 @@ import { ATTR_OF } from "@ucbuilder:/global/runtimeOpt";
 import { ResourcesUC } from "@ucbuilder:/ResourcesUC";
 import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
 import { stylerRegs } from "@ucbuilder:/global/stylerRegs";
-//import { codeFileInfo } from "./build/codeFileInfo";
-/** 
- * @typedef {import ('@ucbuilder:/global/stylerRegs').stylerRegs} stylerRegs
- * @typedef {import ('@ucbuilder:/global/userControlStamp').userControlStampRow} userControlStampRow
- * @typedef {import('@ucbuilder:/global/drag/transferation.js')} transferDataNode
- * @typedef {import ('@ucbuilder:/build/codeFileInfo').codeFileInfo} codeFileInfo
- */
+import { codeFileInfo } from "@ucbuilder:/build/codeFileInfo";
+import { DragDataNode } from "./global/drag/dragHelper";
+
 export class Usercontrol {
     static UcOptionsStc: UcOptions;
     static setChildValueByNameSpace(obj: {}, namespace: string, valToAssign: string): boolean {
@@ -56,15 +52,15 @@ export class Usercontrol {
     }
 
     ucExtends = {
-       
+
         mode: 'client' as UCGenerateMode,
         fileInfo: undefined as codeFileInfo,
         form: undefined as Usercontrol,
-        PARENT : undefined as Usercontrol,
+        PARENT: undefined as Usercontrol,
         session: undefined as SessionManager,
         stampRow: undefined as userControlStampRow,
-        wrapperHT:undefined as HTMLElement,
-        isForm:false,
+        wrapperHT: undefined as HTMLElement,
+        isForm: false,
         get formExtends() { return this.form.ucExtends; },
         get self() { return this.wrapperHT; },
         set caption(text: string) {
@@ -81,7 +77,7 @@ export class Usercontrol {
         },
         garbageElementsHT: undefined as HTMLCollection,
         setCSS_globalVar(key: string, value: string): void {
-            stylerRegs.__VAR.SETVALUE(key, this.stampRow.styler.rootInfo.id, 'g', value);
+            stylerRegs.__VAR.SETVALUE(key, '' + this.stampRow.styler.rootInfo.id, 'g', value);
         },
         setCSS_localVar(key: string, value: string): void {
             stylerRegs.__VAR.SETVALUE(key, this.cssVarStampKey, 'l', value, this.self);
@@ -90,7 +86,7 @@ export class Usercontrol {
             stylerRegs.__VAR.SETVALUE(key, stylerRegs.internalKey, 'i', value, this.self);
         },
         getCSS_globalVar(key: string): string {
-            return document.body.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.stampRow.styler.rootInfo.id, 'g'));
+            return document.body.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, '' + this.stampRow.styler.rootInfo.id, 'g'));
         },
         getCSS_localVar(key: string, localEle: HTMLElement): string {
             return this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.cssVarStampKey, 'l'));
@@ -129,7 +125,7 @@ export class Usercontrol {
                 param0.wrapperHT.remove();
             }
             ucExt.wrapperHT.data(propOpt.ATTR.BASE_OBJECT, this);
-            ucExt.passElement(ucExt.wrapperHT.children);
+            ucExt.passElement(controlOpt.getArray(ucExt.wrapperHT.children));
             let sizeChangeEvt = ucExt.Events.sizeChanged;
             sizeChangeEvt.Events.onChangeEventList = () => {
                 if (ucExt.resizerObserver == undefined) {
@@ -177,45 +173,50 @@ export class Usercontrol {
         },
         queryElements(selector: string, callback: (element: HTMLElement) => void): void {
             let elements = document.querySelectorAll(selector);
-            elements.forEach(element => callback(element));
+            elements.forEach(element => callback(element as HTMLElement));
         },
         idList: [],
         //stampRow: userControlStampRow,
         _windowstate: 'normal' as UcStates,
         get windowstate() { return this._windowstate; },
         set windowstate(state: UcStates) { this._windowstate = state; this.Events.winStateChanged.fire(state); },
-        
+
         options: {
             ucExt: () => this.ucExtends,
         },
         Events: {
-            afterInitlize: new CommonEvent(),
-            beforeClose: new CommonEvent(),
-            afterClose: new CommonEvent(),
-            captionChanged: new CommonEvent(),
-            winStateChanged: new CommonEvent(),
-            activate: new CommonEvent(),
-            loaded: new CommonEvent(),
-            loadLastSession: new CommonEvent(),
-            _newSessionGenerate: new CommonEvent(),
-            get newSessionGenerate() {
-                return this.winExt().Events._newSessionGenerate;
-            },
-            _completeSessionLoad: new CommonEvent(),
-            get completeSessionLoad() {
-                return this.winExt().Events._completeSessionLoad;
-            },
-            sizeChanged: new CommonEvent(),
+            afterInitlize: new CommonEvent<void,void>(),
+            beforeClose: new CommonEvent<({prevent= false})=>void>(),
+            afterClose: new CommonEvent<() =>void>(),           
+            captionChanged: new CommonEvent<(newCaptionText:string) =>void>(),
+            winStateChanged: new CommonEvent<(state:UcStates)=>void>(),
+            activate: new CommonEvent<() =>void>(),
+            loaded: new CommonEvent<() =>void>(),
+            loadLastSession: new CommonEvent<() =>void>(),
+            _newSessionGenerate: new CommonEvent<() =>void>(),
+            get newSessionGenerate() { return this.winExt().Events._newSessionGenerate; },
+            _completeSessionLoad: new CommonEvent<() =>void>(),
+            get completeSessionLoad() { return this.winExt().Events._completeSessionLoad; },
+            sizeChanged: new CommonEvent<() =>void>(),
             winExt: () => this.ucExtends.form.ucExtends,
-            onDataExport: (_data: transferDataNode) => {
-                return false;
-            },
-            onDataImport: (_data: transferDataNode) => {
-                return false;
-            },
+            onDataExport: (_data: DragDataNode) => { return false; },
+            onDataImport: (_data: DragDataNode) => { return false; },
         },
-
-        passElement: (ele: HTMLElement, applySubTree:boolean = true) => {
+        destruct: (): boolean => {
+            let res = { prevent: false };
+            this.ucExtends.Events.beforeClose.fire(res);
+            if (!res.prevent) {
+                this.ucExtends.wrapperHT.delete();
+                this.ucExtends.Events.afterClose.fire();
+                for (const key in this) {
+                    this[key] = null;
+                }
+                return true;
+            }
+            
+            return false;
+        },
+        passElement: (ele: HTMLElement | HTMLElement[], applySubTree: boolean = true) => {
             let uExt = this.ucExtends;
             uExt.stampRow.passElement(ele, applySubTree);
             return ele;
@@ -233,12 +234,12 @@ export class Usercontrol {
                 if (specific != undefined) {
                     specific.forEach(itmpath => {
                         if (!(itmpath in childs)) {
-                            let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`);
+                            let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`) as HTMLElement;
                             fillObj(itmpath, ele);
                         }
                     });
                 } else {
-                    let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`));
+                    let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`)) as HTMLElement[];
                     eleAr.forEach((ele) => {
                         fillObj(ele.getAttribute(propOpt.ATTR.ACCESS_KEY), ele);
                     });

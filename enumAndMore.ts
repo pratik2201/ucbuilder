@@ -26,12 +26,12 @@ export const rootPathRow: RootPathRow = {
 
 
 export interface RootPathParam {
-    level: number,
-    addIntoFileDataBankAlso: boolean,
-    addModule: boolean,
-    buildOption: {
-        addPathInProjectBuild: boolean,
-        removeSomeSpecialPathFromProjectBuild: boolean
+    level?: number,
+    addIntoFileDataBankAlso?: boolean,
+    addModule?: boolean,
+    buildOption?: {
+        addPathInProjectBuild?: boolean,
+        removeSomeSpecialPathFromProjectBuild?: boolean
     },
 }
 export const rootPathParam: RootPathParam = {
@@ -58,11 +58,11 @@ export const sessionOptions: SessionOptions = {
 };
 
 
-
+export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
 export type StringExchangerCallback = (content: string) => string;
 export interface SourceOptions {
     cfInfo?: codeFileInfo;
-    nodeNameAs: "wrapper" | "targetElement" | "random";
+    nodeNameAs: WrapperNodeNameAs;
     targetElementNodeName: string;
     templateName: string;
     reloadKey: string;
@@ -72,7 +72,7 @@ export interface SourceOptions {
     beforeContentAssign: StringExchangerCallback;
 }
 export const sourceOptions: SourceOptions = {
-    nodeNameAs: "wrapper",
+    nodeNameAs: 'wrapper',
     targetElementNodeName: "as",
     templateName: "",
     reloadKey: "",
@@ -85,12 +85,12 @@ export const sourceOptions: SourceOptions = {
 
 
 export interface UcOptions {
-    mode: UCGenerateMode;
-    session: SessionOptions;
-    source: SourceOptions;
+    mode?: UCGenerateMode;
+    session?: SessionOptions;
+    source?: SourceOptions;
     parentUc?: Usercontrol;
     loadAt?: HTMLElement;
-    events: {
+    events?: {
         beforeInitlize: (uc: Usercontrol) => void;
     };
     wrapperHT?: HTMLElement;
@@ -108,7 +108,7 @@ export const ucOptions: UcOptions = {
 
 
 
-interface TemplatePathOptions {
+export interface TemplatePathOptions {
     name: string;
     mainFilePath: string;
     htmlContents: string;
@@ -126,7 +126,7 @@ export const templatePathOptions: TemplatePathOptions = {
 
 export interface TptOptions {
     elementHT?: HTMLElement;
-    source: SourceOptions;
+    source?: SourceOptions;
     parentUc?: Usercontrol;
 }
 export const tptOptions: TptOptions = {

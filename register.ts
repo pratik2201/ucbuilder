@@ -1,8 +1,5 @@
+import { Usercontrol } from './Usercontrol';
 
-import { FC } from 'react';
-import { Usercontrol } from './types';
-
-let ACTIVE_USER_CONTROL: Usercontrol | undefined = undefined;
 let _clientPath: string = __dirname.replace(/[\\/]{1,}/g, "/") + '/';
 import alc from 'module-alias';
 alc.addAlias("@ucbuilder:", _clientPath);
@@ -18,18 +15,18 @@ jqFeatures.onReady(() => {
 });
 
 import { rootPathHandler } from '@ucbuilder:/global/rootPathHandler';
-import { commonEvent } from "@ucbuilder:/global/commonEvent";
+import { CommonEvent } from "@ucbuilder:/global/commonEvent";
 rootPathHandler.originalPath = _clientPath;
 rootPathHandler.path = rootPathHandler.originalPath.toLowerCase().trim_('/');
 
-import { rootPathParam } from './enumAndMore';
-
+import { RootPathParam, rootPathParam } from './enumAndMore';
+import {getbasedir} from '@ucbuilder:/global/loader';
 class register {
     static ucSTAMP: string = uniqOpt.guidAs_;
 
     static Events = {
         extended: {
-            ready: new commonEvent(),
+            ready: new CommonEvent(),
         },
         ready(callback: () => void) {
             this.extended.ready.on(callback);
@@ -45,13 +42,14 @@ class register {
         return undefined;
     };
 
-    static registarMe(param2: rootPathParam) {
-        const { newObjectOpt } = require('@ucbuilder:/global/objectOpt');
-        let loader = require('@ucbuilder:/global/loader');
+    static registarMe(param2: RootPathParam) {
+        //import { newObjectOpt }  from '@ucbuilder:/global/newObjectOpt';
+        
+        let rpp = Object.assign({},rootPathParam)
+        let pera = Object.assign(rpp,param2);
+        //let pera = newObjectOpt.copyProps(param2, rootPathParam);
 
-        let pera = newObjectOpt.copyProps(param2, rootPathParam);
-
-        let dirpath = loader.getbasedir(pera.level);
+        let dirpath = getbasedir(pera.level);
         let pname = this.getprojectname(dirpath);
         if (pname != undefined || pname != "")
             pname = `@${pname}:`;
@@ -65,12 +63,13 @@ class register {
                 ACTIVE_USER_CONTROL = this;
                 return rootPathHandler.addRoot(pathAlices, dirpath, pera);
             } else {
-                return ACTIVE_USER_CONTROL.registarMe(pathAlices, dirpath, pera);
+                return ACTIVE_USER_CONTROL.registarMe(param2);
             }
         }
     }
 }
-
+let ACTIVE_USER_CONTROL: typeof register = undefined;
+//let ACTIVE_USER_CONTROL:register = undefined;
 let res = register.registarMe({
     level: 2,
     addModule: false
@@ -79,7 +78,7 @@ let res = register.registarMe({
 module.exports = {
     getprojectname: register.getprojectname,
     get Events() { return register.Events; },
-    registar: (pera: rootPathParam) => {
+    registar: (pera: RootPathParam) => {
         register.registarMe(pera);
     }
 }

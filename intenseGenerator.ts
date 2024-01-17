@@ -2,7 +2,7 @@ import { Usercontrol } from '@ucbuilder:/Usercontrol';
 import { Template } from '@ucbuilder:/Template';
 import { TemplateNode } from '@ucbuilder:/Template';
 import { newObjectOpt } from '@ucbuilder:/global/objectOpt';
-import { UcOptions,ucOptions, TptOptions,tptOptions } from '@ucbuilder:/enumAndMore';
+import { UcOptions,ucOptions, TptOptions,tptOptions, WrapperNodeNameAs } from '@ucbuilder:/enumAndMore';
 import { ResourcesUC } from '@ucbuilder:/ResourcesUC';
 import { objectOpt, propOpt } from '@ucbuilder:/build/common';
 import { UcRendarer } from '@ucbuilder:/build/UcRendarer';
@@ -17,7 +17,7 @@ class intenseGenerator {
             param0.wrapperHT = (param0.parentUc == undefined) ? ResourcesUC.contentHT : param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$());
         } else {
             if (param0.wrapperHT.hasAttribute("x-nodeName")) {
-                param0.source.nodeNameAs = param0.wrapperHT.getAttribute("x-nodeName");
+                param0.source.nodeNameAs = param0.wrapperHT.getAttribute("x-nodeName") as WrapperNodeNameAs;
                 switch (param0.source.nodeNameAs) {
                     case 'targetElement': param0.source.targetElementNodeName = param0.wrapperHT.nodeName; break;
                     case 'random': break;
@@ -52,14 +52,14 @@ class intenseGenerator {
         return uc;
     }
 
-    static parseTPT(val: Template | TemplateNode | string, parentUc: Usercontrol): TemplateNode {
-        if (objectOpt.parse(val, 'Template')) {
-            return val[propOpt.ATTR.TEMPLETE_DEFAULT];
-        } else if (objectOpt.parse(val, 'TemplateNode')) {
-            return val;
+    static parseTPT(val: Template | TemplateNode | String, parentUc: Usercontrol): TemplateNode {
+        if (objectOpt.parse(val as object, 'Template')) {
+            return val[propOpt.ATTR.TEMPLETE_DEFAULT] as TemplateNode;
+        } else if (objectOpt.parse(val as object, 'TemplateNode')) {
+            return val as TemplateNode;
         } else if (objectOpt.parse(val, 'String')) {
-            let splval: string[] = val.split(";");
-            let tpt = intenseGenerator.generateTPT(val, { parentUc: parentUc });
+            let splval: string[] = (''+val).split(";");
+            let tpt = intenseGenerator.generateTPT((''+val), { parentUc: parentUc });
             let res = (splval.length === 1) ?
                 tpt[propOpt.ATTR.TEMPLETE_DEFAULT]
                 :
@@ -68,13 +68,13 @@ class intenseGenerator {
         }
     }
 
-    static parseUC(val: Usercontrol | string | container, parentUc: Usercontrol): Template {
-        if (objectOpt.parse(val, 'Usercontrol')) {
-            return val;
-        } else if (objectOpt.parse(val, 'String')) {
-            return intenseGenerator.generateUC(val, { parentUc: parentUc });
-        } else if (objectOpt.parse(val, 'HTMLElement')) {
-            let _path = val.getAttribute("x-from");
+    static parseUC(val: Usercontrol | string | HTMLElement, parentUc: Usercontrol): Usercontrol {
+        if (objectOpt.parse(val as Usercontrol, 'Usercontrol')) {
+            return val as Usercontrol;
+        } else if (objectOpt.parse(val as String, 'String')) {
+            return intenseGenerator.generateUC(val as string, { parentUc: parentUc });
+        } else if (objectOpt.parse(val as HTMLElement, 'HTMLElement')) {
+            let _path = (val as HTMLElement).getAttribute("x-from") as string;
             if (_path != undefined) return intenseGenerator.generateUC(_path, { parentUc: parentUc });
         }
     }

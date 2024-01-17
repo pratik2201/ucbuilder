@@ -1,4 +1,4 @@
-import { fileInfo } from "@ucbuilder:/build/codeFileInfo";
+import { FileInfo } from "@ucbuilder:/build/codeFileInfo";
 import { strOpt } from "@ucbuilder:/build/common";
 import { ReplaceTextRow } from "@ucbuilder:/global/findAndReplace";
 import { readFileSync, writeFileSync, existsSync } from "fs";
@@ -63,7 +63,7 @@ class FileDataBank {
     } = {}): string {
         let fullPath = path.toLowerCase().trim();
         if (!isFullPath) {
-            let fing = new fileInfo();
+            let fing = new FileInfo();
             fing.parse(path, true);
             fullPath = fing.fullPath;
         }

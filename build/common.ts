@@ -315,6 +315,19 @@ export const controlOpt = {
         wrapper.remove();
         return rtrn;
     },
+    getArray: (obj: any): any[] => {
+        if(obj==undefined)return [];
+        switch (Object.getPrototypeOf(obj.constructor)) {
+            case SVGElement: return [obj];
+            case HTMLElement: return [obj];
+            case HTMLCollection: return Array.from(obj);
+            case Element: return [obj];
+            default:
+                return Array.from(obj);
+                break;
+        }
+    },
+
     xPropToAttr(elementHT: HTMLElement): string {
         let ar = Array.from(elementHT.attributes).filter(s => s.nodeName.startsWith("x:"));
         return ar.length == 0 ? "" : " " + ar.map(s => s.nodeName + '="' + s.value + '"').join(" ") + " ";

@@ -2,11 +2,12 @@ import { commonGenerator } from '@ucbuilder:/build/codefile/commonGenerator';
 import { codeFileInfo } from '@ucbuilder:/build/codeFileInfo';
 import {  commonRow,CommonRow,Control } from '@ucbuilder:/build/buildRow.js';
 import { buildOptions, objectOpt, propOpt, ScopeType } from '@ucbuilder:/build/common';
-import { filterContent } from '@ucbuilder:/global/filterContent';
+import { FilterContent } from '@ucbuilder:/global/filterContent';
 import { FileDataBank } from '@ucbuilder:/global/fileDataBank';
 import { AliceManager } from '@ucbuilder:/build/codefile/aliceManager';
 import { Template } from '@ucbuilder:/Template';
 import { builder } from '../builder';
+import { TemplatePathOptions } from '@ucbuilder:/enumAndMore';
 
 class commonParser {
 
@@ -23,7 +24,7 @@ class commonParser {
     }
 
     aliceMng = new AliceManager();
-    _filterText = new filterContent();
+    _filterText = new FilterContent();
     formHT: HTMLElement;
     fill(filePath: string, htmlContents: string | undefined = undefined): CommonRow {
         let _row = commonRow;
@@ -42,7 +43,7 @@ class commonParser {
         _row.codefile.className = _row.src.name;
         if (!isUserControl) {
             _row.designer.baseClassName = "Template";
-            let tptbyCntnt = Template.getTemplates.byDirectory(filePath);
+            let tptbyCntnt = Template.getTemplates.byDirectory(filePath) as TemplatePathOptions[];
             let tpts = _row.designer.templetes;
             tptbyCntnt.forEach(template => {
                 let rolelwr = template.name.toLowerCase();

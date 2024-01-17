@@ -2,18 +2,11 @@ import { builder } from "@ucbuilder:/build/builder";
 import { tptOptions, ucOptions } from "@ucbuilder:/enumAndMore";
 import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
 import { ResourcesUC } from "@ucbuilder:/ResourcesUC";
+import { Template } from "@ucbuilder:/Template";
+import { Usercontrol } from "@ucbuilder:/Usercontrol";
 import { codeFileInfo } from "./codeFileInfo";
 import { SourceCodeNode } from "./common";
 
-interface Template {
-  // define the properties of the Template interface
-}
-
-
-
-interface Usercontrol {
-  // define the properties of the Usercontrol interface
-}
 
 export class UcRendarer {
   fInfo: codeFileInfo | undefined;
