@@ -2,7 +2,7 @@ import { pathInfo, strOpt } from "@ucbuilder:/build/common";
 import { replaceTextRow,ReplaceTextRow } from "@ucbuilder:/global/findAndReplace";
 import { rootPathParam, RootPathParam } from '@ucbuilder:/enumAndMore';
 import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
-interface RootPathRow{
+export interface RootPathRow{
     id:number ,
     path:string ,
     alices:string,
@@ -10,7 +10,7 @@ interface RootPathRow{
     isAlreadyFullPath:boolean ,
     cssVars : {key:string,value:string}[],
 }
-const rootPathRow:RootPathRow = {
+export const rootPathRow:RootPathRow = {
     id:  -1,
     path: '',
     alices: '',

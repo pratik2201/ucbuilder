@@ -59,7 +59,8 @@ export const sessionOptions: SessionOptions = {
 
 
 
-interface SourceOptions {
+export type StringExchangerCallback = (content: string) => string;
+export interface SourceOptions {
     cfInfo?: codeFileInfo;
     nodeNameAs: "wrapper" | "targetElement" | "random";
     targetElementNodeName: string;
@@ -68,7 +69,7 @@ interface SourceOptions {
     reloadDesign: boolean;
     htmlContents?: string;
     cssContents?: string;
-    beforeContentAssign: (uc: string) => void;
+    beforeContentAssign: StringExchangerCallback;
 }
 export const sourceOptions: SourceOptions = {
     nodeNameAs: "wrapper",
@@ -76,8 +77,8 @@ export const sourceOptions: SourceOptions = {
     templateName: "",
     reloadKey: "",
     reloadDesign: false,
-    beforeContentAssign: (uc) => {
-
+    beforeContentAssign: (content) => {
+        return content;
     },
 };
 
@@ -123,7 +124,7 @@ export const templatePathOptions: TemplatePathOptions = {
 
 
 
-interface TptOptions {
+export interface TptOptions {
     elementHT?: HTMLElement;
     source: SourceOptions;
     parentUc?: Usercontrol;

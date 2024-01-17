@@ -1,0 +1,257 @@
+
+import { propOpt, objectOpt } from "@ucbuilder:/build/common";
+import { FilterContent } from "@ucbuilder:/global/filterContent";
+import { CommonEvent } from "@ucbuilder:/global/commonEvent";
+import { UCGenerateMode, UcOptions, UcStates } from '@ucbuilder:/enumAndMore';
+import { userControlStamp, userControlStampRow } from "@ucbuilder:/global/userControlStamp";
+import { SessionManager } from "@ucbuilder:/global/SessionManager";
+import { FileDataBank } from "@ucbuilder:/global/fileDataBank";
+import { LoadGlobal } from "@ucbuilder:/global/loadGlobal";
+import { ATTR_OF } from "@ucbuilder:/global/runtimeOpt";
+import { ResourcesUC } from "@ucbuilder:/ResourcesUC";
+import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
+import { stylerRegs } from "@ucbuilder:/global/stylerRegs";
+//import { codeFileInfo } from "./build/codeFileInfo";
+/** 
+ * @typedef {import ('@ucbuilder:/global/stylerRegs').stylerRegs} stylerRegs
+ * @typedef {import ('@ucbuilder:/global/userControlStamp').userControlStampRow} userControlStampRow
+ * @typedef {import('@ucbuilder:/global/drag/transferation.js')} transferDataNode
+ * @typedef {import ('@ucbuilder:/build/codeFileInfo').codeFileInfo} codeFileInfo
+ */
+export class Usercontrol {
+    static UcOptionsStc: UcOptions;
+    static setChildValueByNameSpace(obj: {}, namespace: string, valToAssign: string): boolean {
+        return objectOpt.setChildValueByNameSpace(obj, namespace, valToAssign);
+    }
+    static get giveMeHug(): string {
+        let evalExp = /\(@([\w.]*?)\)/gim;
+        let thisExp = /(^|\s)(this)(\W|$)/gim;
+        return `
+            arguments[arguments.length-1].source.beforeContentAssign = (content) => {
+                let rtrn = content.replace(${evalExp},
+                    (match, namespacetoObject, offset, input_string) => {
+                        return eval(namespacetoObject);
+                    });
+                return rtrn;
+            };
+            super(arguments);
+            Array.from(this.ucExtends.self.attributes)
+            .filter(s => s.nodeName.startsWith("x."))
+            .forEach(p => {
+                let atr = p.nodeName.slice(2);
+                let cv = designer.setChildValueByNameSpace(this, atr, eval(p.value.startsWith("=") ? "'" + p.value.slice(1) + "'" : p.value.replace(${thisExp},(mch,fc,ths,lc)=>fc+'this.ucExtends.PARENT'+lc)));
+                if(!cv)
+                    console.log("'"+ atr +"' property not set from designer");                
+                else this.ucExtends.self.removeAttribute(p.nodeName)
+            });
+            
+            if(arguments[arguments.length-1].mode=='designer'){  }
+           
+            `;
+    }
+    static _CSS_VAR_STAMP = 0;
+    constructor() {
+        Usercontrol._CSS_VAR_STAMP++;
+        this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
+    }
+
+    ucExtends = {
+       
+        mode: 'client' as UCGenerateMode,
+        fileInfo: undefined as codeFileInfo,
+        form: undefined as Usercontrol,
+        PARENT : undefined as Usercontrol,
+        session: undefined as SessionManager,
+        stampRow: undefined as userControlStampRow,
+        wrapperHT:undefined as HTMLElement,
+        isForm:false,
+        get formExtends() { return this.form.ucExtends; },
+        get self() { return this.wrapperHT; },
+        set caption(text: string) {
+            this.designer.setCaption(text);
+        },
+        find(skey: string): HTMLElement[] {
+            let ar = skey.split(',');
+            let uniqStamp = this.stampRow.uniqStamp;
+            ar = ar.map((s) => {
+                s = FilterContent.select_inline_filter(s, uniqStamp);
+                return s;
+            });
+            return Array.from(this.self.querySelectorAll(ar.join(",")));
+        },
+        garbageElementsHT: undefined as HTMLCollection,
+        setCSS_globalVar(key: string, value: string): void {
+            stylerRegs.__VAR.SETVALUE(key, this.stampRow.styler.rootInfo.id, 'g', value);
+        },
+        setCSS_localVar(key: string, value: string): void {
+            stylerRegs.__VAR.SETVALUE(key, this.cssVarStampKey, 'l', value, this.self);
+        },
+        setCSS_internalVar(key: string, value: string): void {
+            stylerRegs.__VAR.SETVALUE(key, stylerRegs.internalKey, 'i', value, this.self);
+        },
+        getCSS_globalVar(key: string): string {
+            return document.body.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.stampRow.styler.rootInfo.id, 'g'));
+        },
+        getCSS_localVar(key: string, localEle: HTMLElement): string {
+            return this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.cssVarStampKey, 'l'));
+        },
+        getCSS_internalVar(key: string, value: string): string {
+            return this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, stylerRegs.internalKey, 'i'));
+        },
+        cssVarStampKey: '0',
+        initializecomponent: (param0: UcOptions): void => {
+            let ucExt = this.ucExtends;
+            ucExt.mode = param0.mode;
+            if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
+            ucExt.isForm = (param0.parentUc == undefined);
+            ucExt.fileInfo = param0.source.cfInfo;
+            ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
+            ucExt.stampRow = userControlStamp.getStamp(param0.source);
+            ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true) as HTMLElement;
+            if (ucExt.isForm) {
+                ucExt.PARENT = this;
+                ucExt.form = this;
+                ResourcesUC.styler
+                    .pushChild(
+                        ucExt.fileInfo.mainFilePath,
+                        ucExt.stampRow.styler, param0.wrapperHT.nodeName);
+                param0.wrapperHT.appendChild(ucExt.wrapperHT);
+            } else {
+                ucExt.form = param0.parentUc.ucExtends.form;
+                ucExt.PARENT = param0.parentUc;
+                newObjectOpt.copyAttr(param0.wrapperHT, ucExt.wrapperHT);
+                ucExt.PARENT.ucExtends.stampRow.styler
+                    .pushChild(
+                        ucExt.fileInfo.mainFilePath,
+                        ucExt.stampRow.styler, param0.wrapperHT.nodeName);
+                ucExt.garbageElementsHT = param0.wrapperHT.children;
+                param0.wrapperHT.after(ucExt.wrapperHT);
+                param0.wrapperHT.remove();
+            }
+            ucExt.wrapperHT.data(propOpt.ATTR.BASE_OBJECT, this);
+            ucExt.passElement(ucExt.wrapperHT.children);
+            let sizeChangeEvt = ucExt.Events.sizeChanged;
+            sizeChangeEvt.Events.onChangeEventList = () => {
+                if (ucExt.resizerObserver == undefined) {
+                    ucExt.resizerObserver = new ResizeObserver((cbpera) => {
+                        sizeChangeEvt.fire(cbpera);
+                    });
+                    ucExt.resizerObserver.observe(ucExt.wrapperHT);
+                } else {
+                    if (sizeChangeEvt.length == 0) {
+                        ucExt.resizerObserver.disconnect();
+                        ucExt.resizerObserver = undefined;
+                    }
+                }
+            }
+            ucExt.Events.activate.Events.onChangeEventList = () => {
+                if (ucExt.Events.activate.onCounter == 1) {
+                    ucExt.self.addEventListener("focusin", (e) => {
+                        ucExt.Events.activate.fire();
+                    });
+                }
+            }
+            ucExt.Events.onDataExport = (data) =>
+                ucExt.PARENT.ucExtends.Events.onDataExport(data);
+        },
+        resizerObserver: undefined as ResizeObserver,
+        finalizeInit: (param0: UcOptions): void => {
+            let ext = this.ucExtends;
+            param0.source.cssContents = ext.stampRow.styler.parseStyleSeperator_sub(
+                {
+                    data: (param0.source.cssContents == undefined ?
+                        FileDataBank.readFile(ext.fileInfo.style.rootPath)
+                        :
+                        param0.source.cssContents),
+                    localNodeElement: ext.self,
+                    cssVarStampKey: ext.cssVarStampKey
+                });
+            LoadGlobal.pushRow({
+                url: ext.fileInfo.style.rootPath,
+                stamp: ext.stampRow.stamp,
+                reloadDesign: param0.source.reloadDesign,
+                reloadKey: param0.source.reloadKey,
+                cssContents: param0.source.cssContents
+            });
+            ext.Events.afterInitlize.fire();
+        },
+        queryElements(selector: string, callback: (element: HTMLElement) => void): void {
+            let elements = document.querySelectorAll(selector);
+            elements.forEach(element => callback(element));
+        },
+        idList: [],
+        //stampRow: userControlStampRow,
+        _windowstate: 'normal' as UcStates,
+        get windowstate() { return this._windowstate; },
+        set windowstate(state: UcStates) { this._windowstate = state; this.Events.winStateChanged.fire(state); },
+        
+        options: {
+            ucExt: () => this.ucExtends,
+        },
+        Events: {
+            afterInitlize: new CommonEvent(),
+            beforeClose: new CommonEvent(),
+            afterClose: new CommonEvent(),
+            captionChanged: new CommonEvent(),
+            winStateChanged: new CommonEvent(),
+            activate: new CommonEvent(),
+            loaded: new CommonEvent(),
+            loadLastSession: new CommonEvent(),
+            _newSessionGenerate: new CommonEvent(),
+            get newSessionGenerate() {
+                return this.winExt().Events._newSessionGenerate;
+            },
+            _completeSessionLoad: new CommonEvent(),
+            get completeSessionLoad() {
+                return this.winExt().Events._completeSessionLoad;
+            },
+            sizeChanged: new CommonEvent(),
+            winExt: () => this.ucExtends.form.ucExtends,
+            onDataExport: (_data: transferDataNode) => {
+                return false;
+            },
+            onDataImport: (_data: transferDataNode) => {
+                return false;
+            },
+        },
+
+        passElement: (ele: HTMLElement, applySubTree:boolean = true) => {
+            let uExt = this.ucExtends;
+            uExt.stampRow.passElement(ele, applySubTree);
+            return ele;
+        },
+        designer: {
+            setCaption: (text: string) => {
+                this.ucExtends.wrapperHT.setAttribute("x-caption", text);
+                this.ucExtends.Events.captionChanged.fire(text);
+            },
+            getAllControls: (specific?: string[]): { [key: string]: HTMLElement } => {
+                let childs: { [key: string]: HTMLElement } = {};
+                let uExt = this.ucExtends;
+                let fromElement = uExt.wrapperHT;
+                let uniqStamp = uExt.stampRow.uniqStamp;
+                if (specific != undefined) {
+                    specific.forEach(itmpath => {
+                        if (!(itmpath in childs)) {
+                            let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`);
+                            fillObj(itmpath, ele);
+                        }
+                    });
+                } else {
+                    let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`));
+                    eleAr.forEach((ele) => {
+                        fillObj(ele.getAttribute(propOpt.ATTR.ACCESS_KEY), ele);
+                    });
+                }
+                function fillObj(itmpath: string, htEle: HTMLElement): void {
+                    if (htEle != undefined)
+                        childs[itmpath] = htEle;
+                    else
+                        console.warn('empty-controls-returned');
+                }
+                return childs;
+            }
+        },
+    };
+}
+

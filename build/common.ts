@@ -260,6 +260,10 @@ export const controlOpt = {
     hasFocus($ele: any): boolean {
         return $ele.is(":focus");
     },
+
+    /* getArray(elem: HTMLElement): NodeListOf<HTMLElement> {
+         return elem.querySelectorAll("*");
+     },*/
     selectAllText(elem: HTMLElement): void {
         if ((elem as HTMLInputElement).select) (elem as HTMLInputElement).select();
         else selectElementContents(elem);
@@ -354,6 +358,36 @@ export const controlOpt = {
     }
 }
 export const objectOpt = {
+    setChildValueByNameSpace(obj: object, namespace: string, valToAssign: any): boolean {
+        namespace.toLowerCase();
+        let ars: string[] = namespace.split('.');
+        try {
+            for (let i = 0; i < ars.length - 1; i++) {
+                let k = this.getKeyFromObject(obj, ars[i]);
+
+                if (k != undefined) obj = obj[k];
+                else return false;
+            }
+            let lk = this.getKeyFromObject(obj, ars.pop());
+            if (lk != undefined) {
+                obj[lk] = valToAssign;
+                return true;
+            }
+            return false;
+        } catch (e) {
+            console.error(e);
+            return false;
+        }
+    },
+    getKeyFromObject(obj: Object, ar: string): string | undefined {
+        do {
+            for (const key in Object.getOwnPropertyDescriptors(obj)) {
+                if (key.toLowerCase() == ar) return key;
+            }
+            obj = Object.getPrototypeOf(obj);
+        } while (obj != null || obj != undefined);
+        return undefined;
+    },
     parse(obj: object, isOfthisClass: string): boolean {
         if (obj == undefined || Object.getPrototypeOf(obj) == null) return false;
         while (Object.getPrototypeOf(obj).constructor.name != isOfthisClass) {
@@ -376,7 +410,7 @@ export const objectOpt = {
     deepClone1<T>(obj: T): T {
         return objectOpt.clone(obj);
     },
-    getValByNameSpace (obj: object, str: string):object  {
+    getValByNameSpace(obj: object, str: string): object {
         let ars = str.split('.');
         try {
             ars.forEach(ar => {
@@ -428,7 +462,7 @@ export const buildOptions = {
         '@ucbuilder:/.vscode',
     ],
 }
-export interface SourceCodeNode{
+export interface SourceCodeNode {
     designerCode?: string,
     jsFileCode?: string,
     htmlCode?: string,

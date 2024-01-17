@@ -12,8 +12,8 @@ export interface LoadGlobalRow {
 interface LoadGlobalParameters{
     url: string;
     stamp: string;
-    reloadDesign: boolean;
-    reloadKey: string;
+    reloadDesign?: boolean;
+    reloadKey?: string;
     cssContents?: string;
 };
 const loadGlobalParameters: LoadGlobalParameters = {

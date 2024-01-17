@@ -32,7 +32,7 @@ class codefileHandler {
     }
 }
 
-class fileInfo {
+class FileInfo {
     private _path = "";
     rootPath = "";
     rootInfo: RootPathRow;
@@ -89,8 +89,8 @@ class htmlFileNode {
     static ___HTML_EXT = ".html";
     static ___STYLE_EXT = ".scss";
     rootInfo:  RootPathRow | undefined;
-    html = new fileInfo();
-    style = new fileInfo();
+    html = new FileInfo();
+    style = new FileInfo();
     name: string = '';
     extCode: string = '';
     get existHtmlFile(): boolean {
@@ -125,11 +125,11 @@ class htmlFileNode {
 }
 
 class codeFileInfo {
-    html = new fileInfo();
-    style = new fileInfo();
-    perameters = new fileInfo();
-    designer = new fileInfo();
-    code = new fileInfo();
+    html = new FileInfo();
+    style = new FileInfo();
+    perameters = new FileInfo();
+    designer = new FileInfo();
+    code = new FileInfo();
     name = "";
     extCode : ExtensionType;
     fullPathWithoutExt = "";
@@ -205,4 +205,4 @@ class codeFileInfo {
     }
 }
 
-export { codeFileInfo, fileInfo, codefileHandler };
+export { codeFileInfo, FileInfo, codefileHandler };
