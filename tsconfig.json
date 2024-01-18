@@ -17,8 +17,8 @@
     "noImplicitThis": true, /* Enable error reporting when 'this' is given the type 'any'. */
     "skipLibCheck": true /* Skip type checking all .d.ts files. */ /* Set the JavaScript language version for emitted JavaScript and include compatible library declarations. */,
     "outDir": "dist",
-    "declaration": true,
-    "declarationMap": true,
+    //"declaration": true,
+    //"declarationMap": true,
     "typeRoots": [
         "./node_modules/@types",
     ],
