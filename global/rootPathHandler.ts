@@ -2,6 +2,7 @@ import { pathInfo, strOpt } from "@ucbuilder:/build/common";
 import { replaceTextRow,ReplaceTextRow } from "@ucbuilder:/global/findAndReplace";
 import { rootPathParam, RootPathParam } from '@ucbuilder:/enumAndMore';
 import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
+import { builder } from "@ucbuilder:/build/builder";
 export interface RootPathRow{
     id:number ,
     path:string ,
@@ -51,7 +52,9 @@ export class rootPathHandler {
                     let { fileDataBank } = require("@ucbuilder:/global/fileDataBank")
                     fileDataBank.pushReplacableText(projectName, replaceAlicesWith);
                 }
-                let { builder } = require("@ucbuilder:/build/builder");
+                
+                
+                
                 if (param2.buildOption.addPathInProjectBuild) {
                     builder.addThisDirectories(replaceAlicesWith);
                 }

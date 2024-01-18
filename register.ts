@@ -1,4 +1,4 @@
-import { Usercontrol } from './Usercontrol';
+//import { Usercontrol } from './Usercontrol';
 
 let _clientPath: string = __dirname.replace(/[\\/]{1,}/g, "/") + '/';
 import alc from 'module-alias';
@@ -42,7 +42,7 @@ class register {
         return undefined;
     };
 
-    static registarMe(param2: RootPathParam) {
+    static registarMe(param2: RootPathParam):boolean {
         //import { newObjectOpt }  from '@ucbuilder:/global/newObjectOpt';
         
         let rpp = Object.assign({},rootPathParam)
@@ -75,10 +75,10 @@ let res = register.registarMe({
     addModule: false
 });
 
-module.exports = {
+ export default  {
     getprojectname: register.getprojectname,
     get Events() { return register.Events; },
-    registar: (pera: RootPathParam) => {
-        register.registarMe(pera);
+    registar: (pera?: RootPathParam) => {
+        return register.registarMe(pera);
     }
 }
