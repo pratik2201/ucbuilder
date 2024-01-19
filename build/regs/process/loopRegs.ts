@@ -1,5 +1,5 @@
-import { objectOpt } from "@ucbuilder:/build/common";
-import { patternMatcher } from "@ucbuilder:/build/regs/patternMatcher";
+import { objectOpt } from "ucbuilder/build/common";
+import { patternMatcher } from "ucbuilder/build/regs/patternMatcher";
 
 type LoopEachItemCallback = (obj: {}, content: string, nameSpace: string, loopCode: string) => string;
 const loopEachItemCallback: LoopEachItemCallback = (obj = {}, content, nameSpace, loopCode) => { return content; };

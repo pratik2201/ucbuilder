@@ -1,86 +1,78 @@
-const { fileInfo } = require("@ucbuilder:/build/codeFileInfo");
-const { pathInfo } = require("@ucbuilder:/build/common");
-
-class row {
-    finfo = new fileInfo();
-    /** @type {HTMLElement} only for style sheets */
-    elementHT = undefined;
-    stamp = "";
-    fUniq = "";
-}
-class loadGlobal {
-
-    constructor() {
-
-    }
-    /** @type {HTMLElement}  */
-    static resourcesHT = `<programres></programres>`.$();
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.LoadGlobal = void 0;
+const codeFileInfo_1 = require("ucbuilder/build/codeFileInfo");
+const common_1 = require("ucbuilder/build/common");
+const objectOpt_1 = require("ucbuilder/global/objectOpt");
+;
+const loadGlobalParameters = {
+    url: '',
+    stamp: '',
+    reloadDesign: false,
+    reloadKey: '',
+    cssContents: undefined,
+};
+class LoadGlobal {
+    constructor() { }
     static init() {
         this.resourcesHT.setAttribute("stamp", 'program.stamp');
         document.body.appendChild(this.resourcesHT);
     }
-
-    /**
-     * @type {row[]}
-     */
-    static source = [];
-    static params = {
-        url: "",
-        stamp: "",
-        reloadDesign: false,
-        reloadKey: "",
-        cssContents: undefined
-    }
-    static isGoodToPush(url){
-        let finfo = new fileInfo();
+    static isGoodToPush(url) {
+        let finfo = new codeFileInfo_1.FileInfo();
         finfo.parse(url);
-        if (finfo.rootInfo == undefined) return false;
-        if (!pathInfo.existFile(finfo.fullPath)) return false;
+        if (finfo.rootInfo == undefined)
+            return false;
+        if (!common_1.pathInfo.existFile(finfo.fullPath))
+            return false;
         let pathtoFind = finfo.rootPath.toLowerCase();
         let sindex = this.source.findIndex(s => s.fUniq == pathtoFind);
         return (sindex == -1);
     }
     /**
-     * 
-     * @param {loadGlobal.params} param0 
-     * @returns 
-     */
-    static pushRow({
-        url = "",
-        stamp = "",
-        reloadDesign = false,
-        reloadKey = "",
-        cssContents = undefined
-    } = {}) {
-        let rw = new row();
-        rw.finfo = new fileInfo();
-        rw.finfo.parse(url);
-        if (rw.finfo.rootInfo == undefined) return;
-        if (!pathInfo.existFile(rw.finfo.fullPath)) return;
+     static pushRow({
+            url = "",
+            stamp = "",
+            reloadDesign = false,
+            reloadKey = "",
+            cssContents = undefined
+        }: LoadGlobal.params = {}) {
+            let rw: Row = {
+                finfo: new FileInfo(),
+                elementHT: undefined,
+                stamp: "",
+                fUniq: ""
+            };
+            rw.finfo.parse(url);
+    */
+    static pushRow(ppr) {
+        ppr = objectOpt_1.newObjectOpt.copyProps(ppr, objectOpt_1.newObjectOpt.clone(loadGlobalParameters));
+        let rw = {
+            finfo: new codeFileInfo_1.FileInfo(),
+            elementHT: undefined,
+            stamp: "",
+            fUniq: ""
+        };
+        rw.finfo.parse(ppr.url);
+        if (rw.finfo.rootInfo == undefined)
+            return;
+        if (!common_1.pathInfo.existFile(rw.finfo.fullPath))
+            return;
         let pathtoFind = rw.finfo.rootPath.toLowerCase();
-        if (reloadDesign) pathtoFind += "_" + reloadKey;
+        if (ppr.reloadDesign)
+            pathtoFind += "_" + ppr.reloadKey;
         let sindex = this.source.findIndex(s => s.fUniq == pathtoFind);
-        //console.log(sindex);
         if (sindex == -1) {
-            rw.stamp = stamp;
+            rw.stamp = ppr.stamp;
             rw.fUniq = pathtoFind;
             this.source.push(rw);
-
-
-            this.loadfile(rw, stamp, reloadDesign, cssContents);
-        } else {
-            if (reloadDesign)
-                this.loadfile(this.source[sindex], stamp, reloadDesign, cssContents);
+            this.loadfile(rw, ppr.stamp, ppr.reloadDesign, ppr.cssContents);
+        }
+        else {
+            if (ppr.reloadDesign)
+                this.loadfile(this.source[sindex], ppr.stamp, ppr.reloadDesign, ppr.cssContents);
         }
     }
-
-    /**
-     * 
-     * @param {row} rw 
-     * @param {string} stamp  
-     * @param {boolean} reloadDesign 
-     * @param {string} cssContents 
-     */
     static loadfile(rw, stamp, reloadDesign, cssContents) {
         if (reloadDesign)
             if (rw.elementHT != undefined)
@@ -88,12 +80,13 @@ class loadGlobal {
         switch (rw.finfo.partlyInfo.type) {
             case ".css":
             case ".scss":
-
-                rw.elementHT = `<style type="text/css" 
-                                       rel="stylesheet" 
-                                       path="${rw.finfo.path}"
-                                       fUniq="${rw.fUniq}" 
-                                       stamp="${stamp}" > ${cssContents} </style>`.$();
+                rw.elementHT = document.createElement("style");
+                rw.elementHT.type = "text/css";
+                rw.elementHT.setAttribute("rel", 'stylesheet');
+                rw.elementHT.setAttribute("path", rw.finfo.path);
+                rw.elementHT.setAttribute("fUniq", rw.fUniq);
+                rw.elementHT.setAttribute("stamp", stamp);
+                rw.elementHT.innerHTML = cssContents;
                 this.resourcesHT.appendChild(rw.elementHT);
                 break;
             case ".js":
@@ -102,4 +95,6 @@ class loadGlobal {
         }
     }
 }
-module.exports = { loadGlobal, row };
+exports.LoadGlobal = LoadGlobal;
+LoadGlobal.resourcesHT = document.createElement("programres");
+LoadGlobal.source = [];

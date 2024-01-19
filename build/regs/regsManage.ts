@@ -1,8 +1,8 @@
 
-import { loopRegs } from "@ucbuilder:/build/regs/process/loopRegs";
-import { switchRegs } from "@ucbuilder:/build/regs/process/switchRegs";
-import { objectOpt } from "@ucbuilder:/build/common";
-import { patternMatcher } from "@ucbuilder:/build/regs/patternMatcher";
+import { loopRegs } from "ucbuilder/build/regs/process/loopRegs";
+import { switchRegs } from "ucbuilder/build/regs/process/switchRegs";
+import { objectOpt } from "ucbuilder/build/common";
+import { patternMatcher } from "ucbuilder/build/regs/patternMatcher";
 
 class regsManage {
     private switchRgx: switchRegs;

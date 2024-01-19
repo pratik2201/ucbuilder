@@ -1,7 +1,6 @@
-import { FileInfo } from "@ucbuilder:/build/codeFileInfo";
-import { pathInfo } from "@ucbuilder:/build/common";
-import { Interface } from "readline";
-import { newObjectOpt } from "./objectOpt";
+import { FileInfo } from "ucbuilder/build/codeFileInfo";
+import { pathInfo } from "ucbuilder/build/common";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
 
 export interface LoadGlobalRow {
     finfo: FileInfo;

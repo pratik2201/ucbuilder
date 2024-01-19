@@ -1,5 +1,5 @@
-import { objectOpt } from "@ucbuilder:/build/common";
-import { patternMatcher } from "@ucbuilder:/build/regs/patternMatcher";
+import { objectOpt } from "ucbuilder/build/common";
+import { patternMatcher } from "ucbuilder/build/regs/patternMatcher";
 
 class switchRegs {
     switchPattern: patternMatcher;

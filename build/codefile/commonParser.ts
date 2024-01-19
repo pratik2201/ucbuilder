@@ -1,13 +1,13 @@
-import { commonGenerator } from '@ucbuilder:/build/codefile/commonGenerator';
-import { codeFileInfo } from '@ucbuilder:/build/codeFileInfo';
-import {  commonRow,CommonRow,Control } from '@ucbuilder:/build/buildRow.js';
-import { buildOptions, objectOpt, propOpt, ScopeType } from '@ucbuilder:/build/common';
-import { FilterContent } from '@ucbuilder:/global/filterContent';
-import { FileDataBank } from '@ucbuilder:/global/fileDataBank';
-import { AliceManager } from '@ucbuilder:/build/codefile/aliceManager';
-import { Template } from '@ucbuilder:/Template';
-import { builder } from '../builder';
-import { TemplatePathOptions } from '@ucbuilder:/enumAndMore';
+import { commonGenerator } from 'ucbuilder/build/codefile/commonGenerator';
+import { codeFileInfo } from 'ucbuilder/build/codeFileInfo';
+import {  commonRow,CommonRow,Control } from 'ucbuilder/build/buildRow.js';
+import { buildOptions, objectOpt, propOpt, ScopeType } from 'ucbuilder/build/common';
+import { FilterContent } from 'ucbuilder/global/filterContent';
+import { FileDataBank } from 'ucbuilder/global/fileDataBank';
+import { AliceManager } from 'ucbuilder/build/codefile/aliceManager';
+import { Template } from 'ucbuilder/Template';
+import { builder } from 'ucbuilder/build/builder';
+import { TemplatePathOptions } from 'ucbuilder/enumAndMore';
 
 class commonParser {
 

@@ -1,18 +1,18 @@
 
-import { propOpt, objectOpt, controlOpt } from "@ucbuilder:/build/common";
-import { FilterContent } from "@ucbuilder:/global/filterContent";
-import { CommonEvent } from "@ucbuilder:/global/commonEvent";
-import { UCGenerateMode, UcOptions, UcStates } from '@ucbuilder:/enumAndMore';
-import { userControlStamp, userControlStampRow } from "@ucbuilder:/global/userControlStamp";
-import { SessionManager } from "@ucbuilder:/global/SessionManager";
-import { FileDataBank } from "@ucbuilder:/global/fileDataBank";
-import { LoadGlobal } from "@ucbuilder:/global/loadGlobal";
-import { ATTR_OF } from "@ucbuilder:/global/runtimeOpt";
-import { ResourcesUC } from "@ucbuilder:/ResourcesUC";
-import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
-import { stylerRegs } from "@ucbuilder:/global/stylerRegs";
-import { codeFileInfo } from "@ucbuilder:/build/codeFileInfo";
-import { DragDataNode } from "./global/drag/dragHelper";
+import { propOpt, objectOpt, controlOpt } from "ucbuilder/build/common";
+import { FilterContent } from "ucbuilder/global/filterContent";
+import { CommonEvent } from "ucbuilder/global/commonEvent";
+import { UCGenerateMode, UcOptions, UcStates } from 'ucbuilder/enumAndMore';
+import { userControlStamp, userControlStampRow } from "ucbuilder/global/userControlStamp";
+import { SessionManager } from "ucbuilder/global/SessionManager";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { LoadGlobal } from "ucbuilder/global/loadGlobal";
+import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
+import { ResourcesUC } from "ucbuilder/ResourcesUC";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
+import { stylerRegs } from "ucbuilder/global/stylerRegs";
+import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
+import { DragDataNode } from "ucbuilder/global/drag/dragHelper";
 
 export class Usercontrol {
     static UcOptionsStc: UcOptions;

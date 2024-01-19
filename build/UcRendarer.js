@@ -1,89 +1,56 @@
-const { builder } = require("@ucbuilder:/build/builder");
-const { tptOptions, ucOptions } = require("@ucbuilder:/enumAndMore");
-const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
-const { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
-/**
- * @typedef {import ('@ucbuilder:/Template').Template} Template
- * @typedef {import ('@ucbuilder:/build/codeFileInfo').codeFileInfo} codeFileInfo
- * @typedef {import ('@ucbuilder:/Usercontrol').Usercontrol} Usercontrol
- */
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.UcRendarer = void 0;
+const builder_1 = require("ucbuilder/build/builder");
+const enumAndMore_1 = require("ucbuilder/enumAndMore");
+const objectOpt_1 = require("ucbuilder/global/objectOpt");
+const ResourcesUC_1 = require("ucbuilder/ResourcesUC");
 class UcRendarer {
-    /** @type {codeFileInfo}  */
-    fInfo = undefined;
-    /** @type {ucOptions}  */
-    ucParams = {};
-    /** @type {tptOptions}  */
-    tptParams = {};
-    build = new builder();
     constructor() {
-        
+        this.ucParams = enumAndMore_1.ucOptions;
+        this.tptParams = enumAndMore_1.tptOptions;
+        this.build = new builder_1.builder();
     }
-
-
-
-    /** 
-     * @param {filepath} fInfo
-     * @param {Usercontrol} parentUc
-     */
     init(fInfo, parentUc) {
         this.fInfo = fInfo;
-        this.ucParams = newObjectOpt.clone(ucOptions);
-        // this.tptParams = newObjectOpt.clone(tptOptions);
-        //this._programRef = parentUc.ucExtends.program;
-        ResourcesUC.rendrarCounter++;
+        this.ucParams = objectOpt_1.newObjectOpt.clone(enumAndMore_1.ucOptions);
+        ResourcesUC_1.ResourcesUC.rendrarCounter++;
         let tname = this.fInfo.name;
+        tname = `<${tname}></${tname}>`;
         this.ucParams.source.cfInfo = this.fInfo;
         this.ucParams.parentUc = parentUc;
-        this.ucParams.wrapperHT = `<${tname}></${tname}>`.$();
-        //this.ucParams.programRef = this._programRef;
+        this.ucParams.wrapperHT = tname.$();
         this.ucParams.source.reloadDesign = true;
-        this.ucParams.source.reloadKey = "" + ResourcesUC.rendrarCounter;
-
-        this.tptParams = newObjectOpt.clone(tptOptions);
+        this.ucParams.source.reloadKey = "" + ResourcesUC_1.ResourcesUC.rendrarCounter;
+        this.tptParams = objectOpt_1.newObjectOpt.clone(enumAndMore_1.tptOptions);
         this.tptParams.source.cfInfo = this.fInfo;
         this.tptParams.parentUc = parentUc;
         this.tptParams.elementHT = `<${tname}></${tname}>`.$();
-        //this.tptParams.programRef = this._programRef;
         this.tptParams.source.reloadDesign = true;
-        this.tptParams.source.reloadKey = "" + ResourcesUC.rendrarCounter;
+        this.tptParams.source.reloadKey = "" + ResourcesUC_1.ResourcesUC.rendrarCounter;
     }
-    /** 
-     * @param {string} htmlContents 
-     * @param {string} cssContent 
-     * @returns {Usercontrol}
-    */
     generateUC(htmlContents, cssContent) {
         this.ucParams.source.htmlContents = htmlContents;
         this.ucParams.source.cssContents = cssContent;
         this.ucParams.mode = 'designer';
         let desCode = undefined;
         this.output = this.build.getOutputCode(this.fInfo, htmlContents);
-        //console.log(this.output);
         eval(`
-        ${this.output.designerCode} 
-        desCode = new designer([this.ucParams]); 
-        `);
+      ${this.output.designerCode} 
+      desCode = new designer([this.ucParams]); 
+    `);
         return desCode;
     }
-
-    /** 
-     * @param {string} htmlContents 
-     * @param {string} cssContent 
-     * @returns {Template}
-    */
     generateTpt(htmlContents, cssContent) {
         this.tptParams.source.htmlContents = htmlContents;
         this.tptParams.source.cssContents = cssContent;
-        /** @type {Template}  */
         let desCode = undefined;
         this.output = this.build.getOutputCode(this.fInfo, htmlContents);
-
-        // console.log(this.output);
         eval(`
-        ${this.output.designerCode} 
-        desCode = new designer([this.tptParams]); 
-        `);
+      ${this.output.designerCode} 
+      desCode = new designer([this.tptParams]); 
+    `);
         return desCode;
     }
 }
-module.exports = { UcRendarer };
+exports.UcRendarer = UcRendarer;

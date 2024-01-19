@@ -1,7 +1,7 @@
-import { uniqOpt, controlOpt, objectOpt, arrayOpt } from "@ucbuilder:/build/common";
-import { CommonEvent } from "@ucbuilder:/global/commonEvent";
-//import transferDataNode from "@ucbuilder:/global/drag/transferation.js";
-import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
+import { uniqOpt, controlOpt, objectOpt, arrayOpt } from "ucbuilder/build/common";
+import { CommonEvent } from "ucbuilder/global/commonEvent";
+//import transferDataNode from "ucbuilder/global/drag/transferation.js";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
 
 interface DragElementEventRow {
     dragenter: string;

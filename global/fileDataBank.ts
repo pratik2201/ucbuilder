@@ -1,6 +1,6 @@
-import { FileInfo } from "@ucbuilder:/build/codeFileInfo";
-import { strOpt } from "@ucbuilder:/build/common";
-import { ReplaceTextRow } from "@ucbuilder:/global/findAndReplace";
+import { FileInfo } from "ucbuilder/build/codeFileInfo";
+import { strOpt } from "ucbuilder/build/common";
+import { ReplaceTextRow } from "ucbuilder/global/findAndReplace";
 import { readFileSync, writeFileSync, existsSync } from "fs";
 
 interface FileDataRow {

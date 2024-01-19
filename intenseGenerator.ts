@@ -1,11 +1,11 @@
-import { Usercontrol } from '@ucbuilder:/Usercontrol';
-import { Template } from '@ucbuilder:/Template';
-import { TemplateNode } from '@ucbuilder:/Template';
-import { newObjectOpt } from '@ucbuilder:/global/objectOpt';
-import { UcOptions,ucOptions, TptOptions,tptOptions, WrapperNodeNameAs } from '@ucbuilder:/enumAndMore';
-import { ResourcesUC } from '@ucbuilder:/ResourcesUC';
-import { objectOpt, propOpt } from '@ucbuilder:/build/common';
-import { UcRendarer } from '@ucbuilder:/build/UcRendarer';
+import { Usercontrol } from 'ucbuilder/Usercontrol';
+import { Template } from 'ucbuilder/Template';
+import { TemplateNode } from 'ucbuilder/Template';
+import { newObjectOpt } from 'ucbuilder/global/objectOpt';
+import { UcOptions,ucOptions, TptOptions,tptOptions, WrapperNodeNameAs } from 'ucbuilder/enumAndMore';
+import { ResourcesUC } from 'ucbuilder/ResourcesUC';
+import { objectOpt, propOpt } from 'ucbuilder/build/common';
+import { UcRendarer } from 'ucbuilder/build/UcRendarer';
 
 class intenseGenerator {
     static generateUC(path: string, pera: UcOptions, ...args: any[]): Usercontrol {
@@ -14,7 +14,10 @@ class intenseGenerator {
         param0.source.cfInfo = row.codefileObj;
         if (param0.wrapperHT == undefined) {
             let tname = row.codefileObj.name;
-            param0.wrapperHT = (param0.parentUc == undefined) ? ResourcesUC.contentHT : param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$());
+            param0.wrapperHT = (param0.parentUc == undefined) ?
+                ResourcesUC.contentHT
+                :                    
+                param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$()) as HTMLElement;
         } else {
             if (param0.wrapperHT.hasAttribute("x-nodeName")) {
                 param0.source.nodeNameAs = param0.wrapperHT.getAttribute("x-nodeName") as WrapperNodeNameAs;
@@ -45,7 +48,10 @@ class intenseGenerator {
         param0.source.cfInfo = row.codefileObj;
         if (param0.elementHT == undefined) {
             let tname = row.codefileObj.name;
-            param0.elementHT = (param0.parentUc == undefined) ? ResourcesUC.contentHT : param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$());
+            param0.elementHT =
+                (param0.parentUc == undefined) ?
+                    ResourcesUC.contentHT :
+                    param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$()) as HTMLElement;
         }
         args.push(param0);
         let uc: Template = (new (row.obj)(...args));

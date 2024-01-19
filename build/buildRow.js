@@ -1,66 +1,40 @@
-const { codeFileInfo } = require("@ucbuilder:/build/codeFileInfo")
-const { buildOptions } = require("@ucbuilder:/build/common")
-
-class buildRow {
-    static templeteControls = {
-        name:"",
-        nodeName:"",
-        /** @type {"private"|"protected"|"package"|"public"} */
-        scope:"",
-
-        proto:"",
-        
-    };
-    static templete = {
-        name: "",
-
-        /** @type {"private"|"protected"|"package"|"public"} */
-        scope:"",
-        /** @type {buildRow.control[]}  */ 
-        controls:[]
-    }
-    static control = {
-        name: "",
-        /** @type {buildOptions.extType}  */
-        type:  buildOptions.extType.none,
-        /** @type {"private"|"protected"|"package"|"public"} */
-        scope:"",
-
-        proto:"",
-        
-        /** @type {codeFileInfo} */
-        src: undefined,
-
-        /** @type {string} */
-        nodeName: "",
-    }
- 
-    static commonRow = {
-        /** @type {codeFileInfo}  */ 
-        src : undefined,       
-       
-        htmlFile:{
-            reGenerate:false, 
-            content:"",        
-        },
-
-        designer : {            
-            extType : "",
-            /**
-            * BASE CLASS OF CURRENT CLASS I.E Usercontrol
-            */
-            baseClassName: "",
-            className: "",
-            /** @type {buildRow.templete[]} */
-            templetes : [],
-            /** @type {buildRow.control[]} */
-            controls: [],
-            
-        },
-        codefile : {           
-            baseClassName: "",
-            className: "",            
-        },
-    }
-}
-module.exports = { buildRow }
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.templeteControl = exports.commonRow = exports.templete = exports.control = void 0;
+exports.control = {
+    name: "",
+    type: 'none',
+    scope: "public",
+    proto: "",
+    src: undefined,
+    nodeName: "",
+};
+exports.templete = {
+    name: "",
+    scope: 'public',
+    controls: [],
+};
+exports.commonRow = {
+    src: undefined,
+    htmlFile: {
+        reGenerate: false,
+        content: "",
+    },
+    designer: {
+        extType: "",
+        baseClassName: "",
+        className: "",
+        templetes: [],
+        controls: [],
+    },
+    codefile: {
+        baseClassName: "",
+        className: "",
+    },
+};
+exports.templeteControl = {
+    name: "",
+    nodeName: "",
+    scope: "public",
+    proto: "",
+};

@@ -1,4 +1,4 @@
-import { arrayOpt, uniqOpt, objectOpt } from "@ucbuilder:/build/common";
+import { arrayOpt, uniqOpt, objectOpt } from "ucbuilder/build/common";
 
 interface EventRecord {
     callback: Function;

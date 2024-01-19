@@ -1,8 +1,10 @@
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.timeoutCall = void 0;
 class tmoNode {
-    constructor() { }
-    /** @type {(()=>{})[]}  */
-    callbacklist = [];
-    /** @param {()=>{}} callback */
+    constructor() {
+        this.callbacklist = [];
+    }
     push(callback) {
         this.callbacklist.push(callback);
     }
@@ -12,19 +14,6 @@ class tmoNode {
     }
 }
 class timeoutCall {
-    
-    /**
-     * @param {()=>{}} callback 
-     
-    static doProcess(callback){
-        
-    }*/
-    static oldnode = new tmoNode();
-    static newnode = new tmoNode();
-    /** @type {'add'|''}  */
-    static mode = '';
-    static isOn = false;
-    static counter = 0;
     static start(callback) {
         callback();
         return;
@@ -33,10 +22,15 @@ class timeoutCall {
         if (!this.isOn) {
             this.isOn = true;
             setTimeout(() => {
-                this.newnode.fire();                
+                this.newnode.fire();
                 this.isOn = false;
             });
         }
     }
 }
-module.exports = { timeoutCall };
+exports.timeoutCall = timeoutCall;
+timeoutCall.oldnode = new tmoNode();
+timeoutCall.newnode = new tmoNode();
+timeoutCall.mode = '';
+timeoutCall.isOn = false;
+timeoutCall.counter = 0;

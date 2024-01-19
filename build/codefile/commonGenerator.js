@@ -1,81 +1,56 @@
-const fs = require('fs');
-const { buildRow } = require('@ucbuilder:/build/buildRow.js');
-const { regsManage } = require('@ucbuilder:/build/regs/regsManage.js');
-const { buildOptions, pathInfo } = require('@ucbuilder:/build/common');
-const { fileDataBank } = require('@ucbuilder:/global/fileDataBank');
-
-const { rootPathHandler } = require('@ucbuilder:/global/rootPathHandler');
-
+"use strict";
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.commonGenerator = void 0;
+const fs_1 = __importDefault(require("fs"));
+const regsManage_js_1 = require("ucbuilder/build/regs/regsManage.js");
+const common_1 = require("ucbuilder/build/common");
+const fileDataBank_1 = require("ucbuilder/global/fileDataBank");
 class commonGenerator {
-    /**
-     * @type {buildRow.commonRow[]}
-     */
-    rows = [];
-    //templatePath = rootPathHandler.rootPath('common/utility/appBuilder/templete/designer.js');
     constructor() {
-        this.rgxManage = new regsManage();
-
-        this.designerTMPLT[buildOptions.extType.Usercontrol] = fileDataBank.readFile('@ucbuilder:/buildTempates/uc/designer.js', { replaceContentWithKeys: true, });
-        this.codefileTMPLT[buildOptions.extType.Usercontrol] = fileDataBank.readFile('@ucbuilder:/buildTempates/uc/codefile.js', { replaceContentWithKeys: true, });
-        this.styleTMPLT[buildOptions.extType.Usercontrol] = fileDataBank.readFile('@ucbuilder:/buildTempates/uc/styles.css', { replaceContentWithKeys: true, });
-
-
-        this.designerTMPLT[buildOptions.extType.template] = fileDataBank.readFile('@ucbuilder:/buildTempates/tpt/designer.js', { replaceContentWithKeys: true, });
-        this.codefileTMPLT[buildOptions.extType.template] = fileDataBank.readFile('@ucbuilder:/buildTempates/tpt/codefile.js', { replaceContentWithKeys: true, });
-        this.styleTMPLT[buildOptions.extType.template] = fileDataBank.readFile('@ucbuilder:/buildTempates/tpt/styles.css', { replaceContentWithKeys: true, });
-
-
+        this.rows = [];
+        this.designerTMPLT = {};
+        this.codefileTMPLT = {};
+        this.styleTMPLT = {};
+        this.rgxManage = new regsManage_js_1.regsManage();
+        this.designerTMPLT[common_1.buildOptions.extType.Usercontrol] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/uc/designer.js', { replaceContentWithKeys: true, });
+        this.codefileTMPLT[common_1.buildOptions.extType.Usercontrol] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/uc/codefile.js', { replaceContentWithKeys: true, });
+        this.styleTMPLT[common_1.buildOptions.extType.Usercontrol] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/uc/styles.css', { replaceContentWithKeys: true, });
+        this.designerTMPLT[common_1.buildOptions.extType.template] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/tpt/designer.js', { replaceContentWithKeys: true, });
+        this.codefileTMPLT[common_1.buildOptions.extType.template] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/tpt/codefile.js', { replaceContentWithKeys: true, });
+        this.styleTMPLT[common_1.buildOptions.extType.template] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/tpt/styles.css', { replaceContentWithKeys: true, });
     }
-    designerTMPLT = {};
-    codefileTMPLT = {};
-    styleTMPLT = {};
-
-    /** @param {buildRow.commonRow[]} rows */
     generateFiles(rows = []) {
         let _this = this;
         this.rows = rows;
         let _data = "";
         this.rows.forEach(row => {
             _data = _this.generateNew(row, _this.designerTMPLT[row.src.extCode]);
-            fs.writeFileSync(`${row.src.designer.fullPath}`, _data);
-
+            fs_1.default.writeFileSync(`${row.src.designer.fullPath}`, _data);
             if (row.htmlFile.reGenerate)
-                fs.writeFileSync(`${row.src.html.fullPath}`, row.htmlFile.content);
-
-            if (!fs.existsSync(`${row.src.code.fullPath}`)) {
+                fs_1.default.writeFileSync(`${row.src.html.fullPath}`, row.htmlFile.content);
+            if (!fs_1.default.existsSync(`${row.src.code.fullPath}`)) {
                 _data = _this.generateNew(row, _this.codefileTMPLT[row.src.extCode]);
-                fs.writeFileSync(`${row.src.code.fullPath}`, _data);
+                fs_1.default.writeFileSync(`${row.src.code.fullPath}`, _data);
             }
-            if (!fs.existsSync(`${row.src.style.fullPath}`)) {
+            if (!fs_1.default.existsSync(`${row.src.style.fullPath}`)) {
                 _data = _this.generateNew(row, _this.styleTMPLT[row.src.extCode]);
-                fs.writeFileSync(`${row.src.style.fullPath}`, _data);
-            }/*else{
-                //console.log(row.src.style.fullPath);
-                //let replsName = row.src.style.fullPath.replace(".css",".scss");
-                //console.log(replsName);
-                //fs.renameSync(row.src.style.fullPath,replsName);
-            }*/
+                fs_1.default.writeFileSync(`${row.src.style.fullPath}`, _data);
+            }
         });
     }
-    /** @param {buildRow.commonRow} rw */
     getDesignerCode(rw) {
         return this.generateNew(rw, this.designerTMPLT[rw.src.extCode]);
     }
-    /** @param {buildRow.commonRow} rw */
     getJsFileCode(rw) {
         return this.generateNew(rw, this.codefileTMPLT[rw.src.extCode]);
     }
-
-    /**
-     * @private
-     * @param {buildRow.commonRow} node 
-     * @returns 
-     */
     generateNew(node, templateText) {
         let dta = templateText;
-
         dta = this.rgxManage.parse(node, dta);
         return dta;
     }
 }
-module.exports = { commonGenerator };
+exports.commonGenerator = commonGenerator;

@@ -1,26 +1,27 @@
-//import { Usercontrol } from './Usercontrol';
-
+//import { Usercontrol } from 'ucbuilder/Usercontrol';
 let _clientPath: string = __dirname.replace(/[\\/]{1,}/g, "/") + '/';
+
 import alc from 'module-alias';
-alc.addAlias("@ucbuilder:", _clientPath);
-
-import { jqFeatures } from "@ucbuilder:/global/jqFeatures";
+alc.addAlias("ucbuilder", _clientPath);
+import "ucbuilder/global/jqProto";
+import { jqFeatures } from "ucbuilder/global/jqFeatures";
 jqFeatures.init();
-import { uniqOpt } from "@ucbuilder:/build/common";
+import { uniqOpt } from "ucbuilder/build/common";
 
-import { ResourcesUC } from "@ucbuilder:/ResourcesUC";
+import { ResourcesUC } from "ucbuilder/ResourcesUC";
 jqFeatures.onReady(() => {
-    ResourcesUC.init(document.body);
+    ResourcesUC.init();
     register.Events.extended.ready.fire();
 });
 
-import { rootPathHandler } from '@ucbuilder:/global/rootPathHandler';
-import { CommonEvent } from "@ucbuilder:/global/commonEvent";
+import { rootPathHandler } from 'ucbuilder/global/rootPathHandler';
+import { CommonEvent } from "ucbuilder/global/commonEvent";
 rootPathHandler.originalPath = _clientPath;
 rootPathHandler.path = rootPathHandler.originalPath.toLowerCase().trim_('/');
 
-import { RootPathParam, rootPathParam } from './enumAndMore';
-import {getbasedir} from '@ucbuilder:/global/loader';
+import { RootPathParam, rootPathParam } from 'ucbuilder/enumAndMore';
+import {getbasedir} from 'ucbuilder/global/loader';
+
 class register {
     static ucSTAMP: string = uniqOpt.guidAs_;
 
@@ -35,6 +36,7 @@ class register {
 
     static getprojectname(dirpath: string): string | undefined {
         let fpath: string = `${dirpath}/package.json`;
+        //let s = await (async () => {let {X} = await import('./roles/x'); return X;})()
         let pjson = require(fpath);
         if (pjson != undefined) {
             return pjson.name;
@@ -43,7 +45,7 @@ class register {
     };
 
     static registarMe(param2: RootPathParam):boolean {
-        //import { newObjectOpt }  from '@ucbuilder:/global/newObjectOpt';
+        //import { newObjectOpt }  from 'ucbuilder/global/newObjectOpt';
         
         let rpp = Object.assign({},rootPathParam)
         let pera = Object.assign(rpp,param2);

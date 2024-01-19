@@ -1,85 +1,61 @@
-/**
- * @param {{}} c 
- * @returns {string|undefined}
- */
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.newObjectOpt = void 0;
+//namespace ucbuilder.global.objectOptions {
 const getC = (c) => {
-    if (c === undefined || c === null || c === NaN) return "";
-    return c.__proto__.constructor.name;
-}
-const newObjectOpt = {
-    /**
-     * @template {{}} T
-     * @param {T} from 
-     * @param {T} to 
-     * @returns {T}
-     */
-    copyProps(from, to) {
+    if (c === undefined || c === null || isNaN(c))
+        return "";
+    return Object.getPrototypeOf(c).constructor.name;
+};
+class newObjectOpt {
+    static copyProps(from, to) {
         let rtrn = this.clone(to);
-        this.recursiveProp(from,rtrn);
+        this.recursiveProp(from, rtrn);
         return rtrn;
-    },
-    /** @private */
-    recursiveProp(from, to) {
+    }
+    static recursiveProp(from, to) {
         try {
-
             for (const key in from) {
                 if (Object.hasOwnProperty.call(from, key)) {
                     const element = from[key];
                     if (getC(element) == "Object") {
                         let sobj = to[key];
-                        if(sobj!=undefined) this.recursiveProp(element, sobj);
-                        else to[key] = element;
-                    } else {
+                        if (sobj != undefined)
+                            this.recursiveProp(element, sobj);
+                        else
+                            to[key] = element;
+                    }
+                    else {
                         to[key] = element;
                     }
                 }
             }
-        } catch (ex) {
-            if (from === undefined) to = from;
+        }
+        catch (ex) {
+            if (from === undefined)
+                to = from;
             return;
         }
-    },
-    /**
-    * @template T 
-    * 
-    * @param {T} obj 
-    * @returns {T}
-    */
-    clone(obj) {
+    }
+    static clone(obj) {
         return JSON.parse(JSON.stringify(obj));
-    },
-    /**
-     * @param {HTMLElement} from 
-     * @param {HTMLElement} to 
-     */
-    copyAttr(from, to) {
-        Array.from(from.attributes).forEach(s =>
-            to.setAttribute(s.name, s.value)
-        );
-    },
-
-    /**
-     * @param {any} obj class reference
-     * @returns {string}
-     */
-    getClassName(obj) { return Object.getPrototypeOf(obj).constructor.name; },
-    /**
-     * @param {Object} obj 
-     * @param {string} ar lowercase string to find
-     */
-    analysisObject(obj) {
-        /** 
-         * @type {{
-         *    key:string,
-         *    value:object,
-         *    type:string
-         * }[]}  
-         **/
+    }
+    static copyAttr(from, to) {
+        Array.from(from.attributes).forEach(s => to.setAttribute(s.name, s.value));
+    }
+    static getClassName(obj) {
+        return Object.getPrototypeOf(obj).constructor.name;
+    }
+    static analysisObject(obj) {
         let rtrn = [];
+        let npro;
         do {
             for (const key in Object.getOwnPropertyDescriptors(obj)) {
                 let val = undefined;
-                try { val = obj[key]; } catch (excp) { }
+                try {
+                    val = obj[key];
+                }
+                catch (excp) { }
                 let type = val != undefined ? this.getClassName(obj[key]) : "undefined";
                 rtrn.push({
                     key: key,
@@ -87,15 +63,11 @@ const newObjectOpt = {
                     value: val
                 });
             }
-            obj = obj.__proto__;
-        } while ((obj.__proto__ != null || obj.__proto__ != undefined));
-
+            obj = Object.getPrototypeOf(obj);
+            npro = Object.getPrototypeOf(obj);
+        } while ((npro != null || npro != undefined));
         return rtrn;
-    },
-
+    }
 }
-
-
-
-
-module.exports = { newObjectOpt };
+exports.newObjectOpt = newObjectOpt;
+//}

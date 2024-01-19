@@ -1,9 +1,9 @@
-import { codeFileInfo } from "@ucbuilder:/build/codeFileInfo";
-import { pathInfo, controlOpt } from "@ucbuilder:/build/common";
-import { sourceOptions,SourceOptions, StringExchangerCallback } from "@ucbuilder:/enumAndMore";
-import { FileDataBank } from "@ucbuilder:/global/fileDataBank";
-import { ATTR_OF } from "@ucbuilder:/global/runtimeOpt";
-import { stylerRegs } from "@ucbuilder:/global/stylerRegs";
+import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
+import { pathInfo, controlOpt } from "ucbuilder/build/common";
+import { sourceOptions,SourceOptions, StringExchangerCallback } from "ucbuilder/enumAndMore";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
+import { stylerRegs } from "ucbuilder/global/stylerRegs";
 
 export class userControlStampRow {
     cInfo: codeFileInfo;

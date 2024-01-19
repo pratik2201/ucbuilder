@@ -1,124 +1,111 @@
-module.exports = {
-    keyBoard: {
-        keys: Object.freeze({
-            /*spacebar:32,
-            up: 38,
-            down: 40,
-            left: 37,
-            right: 39,
-            pageUp: 33,
-            pageDown: 34,
-            tab: 9,
-            enter: 13,
-            end: 35,
-            home: 36,
-            F5: 116,
-            F7: 117,
-            F12: 123,*/
-            backspace: 8,
-            tab: 9,
-            enter: 13,
-            shift: 16,
-            ctrl: 17,
-            alt: 18,
-            pause_break: 19,
-            capslock: 20,
-            escape: 27,
-            pageUp: 33,
-            space: 32,
-            pageDown: 34,
-            end: 35,
-            home: 36,
-            left: 37,
-            up: 38,
-            right: 39,
-            down: 40,
-            print_screen: 44,
-            insert: 45,
-            delete: 46,
-            key_0: 48,
-            key_1: 49,
-            key_2: 50,
-            key_3: 51,
-            key_4: 52,
-            key_5: 53,
-            key_6: 54,
-            key_7: 55,
-            key_8: 56,
-            key_9: 57,
-            a: 65,
-            b: 66,
-            c: 67,
-            d: 68,
-            e: 69,
-            f: 70,
-            g: 71,
-            h: 72,
-            i: 73,
-            j: 74,
-            k: 75,
-            l: 76,
-            m: 77,
-            n: 78,
-            o: 79,
-            p: 80,
-            q: 81,
-            r: 82,
-            s: 83,
-            t: 84,
-            u: 85,
-            v: 86,
-            w: 87,
-            x: 88,
-            y: 89,
-            z: 90,
-            left_window_key: 91,
-            right_window_key: 92,
-            select_key: 93,
-            numpad_0: 96,
-            numpad_1: 97,
-            numpad_2: 98,
-            numpad_3: 99,
-            numpad_4: 100,
-            numpad_5: 101,
-            numpad_6: 102,
-            numpad_7: 103,
-            numpad_8: 104,
-            numpad_9: 105,
-            multiply: 106,
-            add: 107,
-            subtract: 109,
-            decimal_point: 110,
-            divide: 111,
-            f1: 112,
-            f2: 113,
-            f3: 114,
-            f4: 115,
-            f5: 116,
-            f6: 117,
-            f7: 118,
-            f8: 119,
-            f9: 120,
-            f10: 121,
-            f11: 122,
-            f12: 123,
-            num_lock: 144,
-            scroll_lock: 145,
-
-
-            mycomputer_multimedia: 182,
-            mycalculator_multimedia: 183,
-
-            semi_colon: 186,
-            equal_sign: 187,
-            comma: 188,
-            dash: 189,
-            period: 190,
-            forward_slash: 191,
-            open_bracket: 219,
-            back_slash: 220,
-            close_braket: 221,
-            single_quote: 222,
-        })
-    },
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.keyBoard = void 0;
+var KeyboardKeys;
+(function (KeyboardKeys) {
+    KeyboardKeys[KeyboardKeys["backspace"] = 8] = "backspace";
+    KeyboardKeys[KeyboardKeys["tab"] = 9] = "tab";
+    KeyboardKeys[KeyboardKeys["enter"] = 13] = "enter";
+    KeyboardKeys[KeyboardKeys["shift"] = 16] = "shift";
+    KeyboardKeys[KeyboardKeys["ctrl"] = 17] = "ctrl";
+    KeyboardKeys[KeyboardKeys["alt"] = 18] = "alt";
+    KeyboardKeys[KeyboardKeys["pause_break"] = 19] = "pause_break";
+    KeyboardKeys[KeyboardKeys["capslock"] = 20] = "capslock";
+    KeyboardKeys[KeyboardKeys["escape"] = 27] = "escape";
+    KeyboardKeys[KeyboardKeys["pageUp"] = 33] = "pageUp";
+    KeyboardKeys[KeyboardKeys["space"] = 32] = "space";
+    KeyboardKeys[KeyboardKeys["pageDown"] = 34] = "pageDown";
+    KeyboardKeys[KeyboardKeys["end"] = 35] = "end";
+    KeyboardKeys[KeyboardKeys["home"] = 36] = "home";
+    KeyboardKeys[KeyboardKeys["left"] = 37] = "left";
+    KeyboardKeys[KeyboardKeys["up"] = 38] = "up";
+    KeyboardKeys[KeyboardKeys["right"] = 39] = "right";
+    KeyboardKeys[KeyboardKeys["down"] = 40] = "down";
+    KeyboardKeys[KeyboardKeys["print_screen"] = 44] = "print_screen";
+    KeyboardKeys[KeyboardKeys["insert"] = 45] = "insert";
+    KeyboardKeys[KeyboardKeys["delete"] = 46] = "delete";
+    KeyboardKeys[KeyboardKeys["key_0"] = 48] = "key_0";
+    KeyboardKeys[KeyboardKeys["key_1"] = 49] = "key_1";
+    KeyboardKeys[KeyboardKeys["key_2"] = 50] = "key_2";
+    KeyboardKeys[KeyboardKeys["key_3"] = 51] = "key_3";
+    KeyboardKeys[KeyboardKeys["key_4"] = 52] = "key_4";
+    KeyboardKeys[KeyboardKeys["key_5"] = 53] = "key_5";
+    KeyboardKeys[KeyboardKeys["key_6"] = 54] = "key_6";
+    KeyboardKeys[KeyboardKeys["key_7"] = 55] = "key_7";
+    KeyboardKeys[KeyboardKeys["key_8"] = 56] = "key_8";
+    KeyboardKeys[KeyboardKeys["key_9"] = 57] = "key_9";
+    KeyboardKeys[KeyboardKeys["a"] = 65] = "a";
+    KeyboardKeys[KeyboardKeys["b"] = 66] = "b";
+    KeyboardKeys[KeyboardKeys["c"] = 67] = "c";
+    KeyboardKeys[KeyboardKeys["d"] = 68] = "d";
+    KeyboardKeys[KeyboardKeys["e"] = 69] = "e";
+    KeyboardKeys[KeyboardKeys["f"] = 70] = "f";
+    KeyboardKeys[KeyboardKeys["g"] = 71] = "g";
+    KeyboardKeys[KeyboardKeys["h"] = 72] = "h";
+    KeyboardKeys[KeyboardKeys["i"] = 73] = "i";
+    KeyboardKeys[KeyboardKeys["j"] = 74] = "j";
+    KeyboardKeys[KeyboardKeys["k"] = 75] = "k";
+    KeyboardKeys[KeyboardKeys["l"] = 76] = "l";
+    KeyboardKeys[KeyboardKeys["m"] = 77] = "m";
+    KeyboardKeys[KeyboardKeys["n"] = 78] = "n";
+    KeyboardKeys[KeyboardKeys["o"] = 79] = "o";
+    KeyboardKeys[KeyboardKeys["p"] = 80] = "p";
+    KeyboardKeys[KeyboardKeys["q"] = 81] = "q";
+    KeyboardKeys[KeyboardKeys["r"] = 82] = "r";
+    KeyboardKeys[KeyboardKeys["s"] = 83] = "s";
+    KeyboardKeys[KeyboardKeys["t"] = 84] = "t";
+    KeyboardKeys[KeyboardKeys["u"] = 85] = "u";
+    KeyboardKeys[KeyboardKeys["v"] = 86] = "v";
+    KeyboardKeys[KeyboardKeys["w"] = 87] = "w";
+    KeyboardKeys[KeyboardKeys["x"] = 88] = "x";
+    KeyboardKeys[KeyboardKeys["y"] = 89] = "y";
+    KeyboardKeys[KeyboardKeys["z"] = 90] = "z";
+    KeyboardKeys[KeyboardKeys["left_window_key"] = 91] = "left_window_key";
+    KeyboardKeys[KeyboardKeys["right_window_key"] = 92] = "right_window_key";
+    KeyboardKeys[KeyboardKeys["select_key"] = 93] = "select_key";
+    KeyboardKeys[KeyboardKeys["numpad_0"] = 96] = "numpad_0";
+    KeyboardKeys[KeyboardKeys["numpad_1"] = 97] = "numpad_1";
+    KeyboardKeys[KeyboardKeys["numpad_2"] = 98] = "numpad_2";
+    KeyboardKeys[KeyboardKeys["numpad_3"] = 99] = "numpad_3";
+    KeyboardKeys[KeyboardKeys["numpad_4"] = 100] = "numpad_4";
+    KeyboardKeys[KeyboardKeys["numpad_5"] = 101] = "numpad_5";
+    KeyboardKeys[KeyboardKeys["numpad_6"] = 102] = "numpad_6";
+    KeyboardKeys[KeyboardKeys["numpad_7"] = 103] = "numpad_7";
+    KeyboardKeys[KeyboardKeys["numpad_8"] = 104] = "numpad_8";
+    KeyboardKeys[KeyboardKeys["numpad_9"] = 105] = "numpad_9";
+    KeyboardKeys[KeyboardKeys["multiply"] = 106] = "multiply";
+    KeyboardKeys[KeyboardKeys["add"] = 107] = "add";
+    KeyboardKeys[KeyboardKeys["subtract"] = 109] = "subtract";
+    KeyboardKeys[KeyboardKeys["decimal_point"] = 110] = "decimal_point";
+    KeyboardKeys[KeyboardKeys["divide"] = 111] = "divide";
+    KeyboardKeys[KeyboardKeys["f1"] = 112] = "f1";
+    KeyboardKeys[KeyboardKeys["f2"] = 113] = "f2";
+    KeyboardKeys[KeyboardKeys["f3"] = 114] = "f3";
+    KeyboardKeys[KeyboardKeys["f4"] = 115] = "f4";
+    KeyboardKeys[KeyboardKeys["f5"] = 116] = "f5";
+    KeyboardKeys[KeyboardKeys["f6"] = 117] = "f6";
+    KeyboardKeys[KeyboardKeys["f7"] = 118] = "f7";
+    KeyboardKeys[KeyboardKeys["f8"] = 119] = "f8";
+    KeyboardKeys[KeyboardKeys["f9"] = 120] = "f9";
+    KeyboardKeys[KeyboardKeys["f10"] = 121] = "f10";
+    KeyboardKeys[KeyboardKeys["f11"] = 122] = "f11";
+    KeyboardKeys[KeyboardKeys["f12"] = 123] = "f12";
+    KeyboardKeys[KeyboardKeys["num_lock"] = 144] = "num_lock";
+    KeyboardKeys[KeyboardKeys["scroll_lock"] = 145] = "scroll_lock";
+    KeyboardKeys[KeyboardKeys["mycomputer_multimedia"] = 182] = "mycomputer_multimedia";
+    KeyboardKeys[KeyboardKeys["mycalculator_multimedia"] = 183] = "mycalculator_multimedia";
+    KeyboardKeys[KeyboardKeys["semi_colon"] = 186] = "semi_colon";
+    KeyboardKeys[KeyboardKeys["equal_sign"] = 187] = "equal_sign";
+    KeyboardKeys[KeyboardKeys["comma"] = 188] = "comma";
+    KeyboardKeys[KeyboardKeys["dash"] = 189] = "dash";
+    KeyboardKeys[KeyboardKeys["period"] = 190] = "period";
+    KeyboardKeys[KeyboardKeys["forward_slash"] = 191] = "forward_slash";
+    KeyboardKeys[KeyboardKeys["open_bracket"] = 219] = "open_bracket";
+    KeyboardKeys[KeyboardKeys["back_slash"] = 220] = "back_slash";
+    KeyboardKeys[KeyboardKeys["close_braket"] = 221] = "close_braket";
+    KeyboardKeys[KeyboardKeys["single_quote"] = 222] = "single_quote";
+})(KeyboardKeys || (KeyboardKeys = {}));
+;
+exports.keyBoard = {
+    keys: KeyboardKeys
 };

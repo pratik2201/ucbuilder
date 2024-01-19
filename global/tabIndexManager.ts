@@ -1,5 +1,5 @@
-import { propOpt, controlOpt, objectOpt, strOpt } from "@ucbuilder:/build/common";
-import { keyBoard } from "@ucbuilder:/global/hardware/keyboard";
+import { propOpt, controlOpt, objectOpt, strOpt } from "ucbuilder/build/common";
+import { keyBoard } from "ucbuilder/global/hardware/keyboard";
 
 interface TabIndexRow {
     container: HTMLElement;

@@ -1,38 +1,46 @@
-const crypto = require("crypto");
+"use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.xcrypto = void 0;
+const crypto = __importStar(require("crypto"));
+//{, CipherGCMTypes, Encoding }
 class xcrypto {
-  /** @type {CipherGCMTypes}  */ 
-  static algorithm = "aes-256-cbc";
-  static key = 'prat';//crypto.randomBytes(32);
-  static iv = crypto.randomBytes(16);
-  /**
-   * @param {any} data
-   * @param {crypto.Encoding} from
-   * @param {crypto.Encoding} to
-   */
-  static encrypt(data, from = "utf-8", to = "hex") {
-    let cipher = crypto.createCipher(this.algorithm, this.key);
-    let encrypted = cipher.update(data, from, to);
-    encrypted += cipher.final(to);
-    
-    return encrypted;
-  }
-  /**
-   * @param {any} data
-   * @param {crypto.Encoding} from
-   * @param {crypto.Encoding} to
-   */
-  static decrypt(data, from = "hex", to = "utf8") {
-    let decipher = crypto.createDecipher(this.algorithm, this.key);
-    let decrypted = decipher.update(data, from, to);
-    decrypted += decipher.final(to);
-    return decrypted;
-  }
+    static encrypt(data, from = "utf-8", to = "hex") {
+        let cipher = crypto.createCipher(this.algorithm, this.key);
+        let encrypted = cipher.update(data, from, to);
+        encrypted += cipher.final(to);
+        return encrypted;
+    }
+    static decrypt(data, from = "hex", to = "utf8") {
+        let decipher = crypto.createDecipher(this.algorithm, this.key);
+        let decrypted = decipher.update(data, from, to);
+        decrypted += decipher.final(to);
+        return decrypted;
+    }
 }
-module.exports = { xcrypto };
-/*
-let decrypted = decipher.update(encrypted, "hex", "utf8");
-decrypted += decipher.final("utf8");
-
-console.log("Original text: ", "Hello World");
-console.log("Encrypted text: ", encrypted);
-console.log("Decrypted text: ", decrypted);*/
+exports.xcrypto = xcrypto;
+xcrypto.algorithm = "aes-256-gcm";
+xcrypto.key = 'prat'; //crypto.randomBytes(32);
+xcrypto.iv = crypto.randomBytes(16);

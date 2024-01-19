@@ -1,5 +1,5 @@
-import { codeFileInfo } from "@ucbuilder:/build/codeFileInfo";
-import { ExtensionType,ScopeType } from "@ucbuilder:/build/common";
+import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
+import { ExtensionType,ScopeType } from "ucbuilder/build/common";
 export interface Control {
     name: string;
     type?: ExtensionType;

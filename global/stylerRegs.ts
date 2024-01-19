@@ -1,13 +1,13 @@
-import { AliceManager } from "@ucbuilder:/build/codefile/aliceManager";
-import { uniqOpt, propOpt } from "@ucbuilder:/build/common";
-import { LoadGlobal } from "@ucbuilder:/global/loadGlobal";
-import { FileDataBank } from "@ucbuilder:/global/fileDataBank";
-import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
-import { openCloser } from "@ucbuilder:/global/openCloser";
-import { rootPathHandler, RootPathRow, } from "@ucbuilder:/global/rootPathHandler";
-import { ATTR_OF } from "@ucbuilder:/global/runtimeOpt";
-import { ReplaceTextRow } from "./findAndReplace";
-import { rootPathRow } from "@ucbuilder:/enumAndMore";
+import { AliceManager } from "ucbuilder/build/codefile/aliceManager";
+import { uniqOpt, propOpt } from "ucbuilder/build/common";
+import { LoadGlobal } from "ucbuilder/global/loadGlobal";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
+import { openCloser } from "ucbuilder/global/openCloser";
+import { rootPathHandler, RootPathRow, } from "ucbuilder/global/rootPathHandler";
+import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
+import { ReplaceTextRow } from "ucbuilder/global/findAndReplace";
+import { rootPathRow } from "ucbuilder/enumAndMore";
 
 interface PatternList {
   globalFinderPathPattern: RegExp;
@@ -86,7 +86,7 @@ export class stylerRegs {
   alices: string = "";
   path: string = "";
 
-  constructor(rootInfo: RootPathRow, generateStamp: boolean = false) {
+  constructor(rootInfo?: RootPathRow, generateStamp: boolean = false) {
     this.rootInfo = rootInfo;
 
     stylerRegs.stampCallTimes++;

@@ -1,4 +1,4 @@
-import { attrOfUC } from "@ucbuilder:/global/runtimeOpt";
+import { attrOfUC } from "ucbuilder/global/runtimeOpt";
 
 class FilterContent {
     static select_inline_Pattern: RegExp = /(["=> \w\[\]-^|#~$*.+]*)(::|:)([-\w\(\)]+)/g;

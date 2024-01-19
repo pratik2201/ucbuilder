@@ -1,6 +1,7 @@
-import { looping, uniqOpt } from "@ucbuilder:/build/common";
-import { regsManage } from "@ucbuilder:/build/regs/regsManage";
-import { FileDataBank } from "@ucbuilder:/global/fileDataBank";
+
+import { looping, uniqOpt } from "ucbuilder/build/common";
+import { regsManage } from "ucbuilder/build/regs/regsManage";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
 
 class rowInfo {
     id: string = "";

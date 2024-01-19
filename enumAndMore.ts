@@ -1,7 +1,7 @@
-import { Usercontrol } from '@ucbuilder:/Usercontrol';
-import { Template } from '@ucbuilder:/Template';
-import { codeFileInfo } from '@ucbuilder:/build/codeFileInfo';
-import { newObjectOpt } from '@ucbuilder:/global/objectOpt';
+import { Usercontrol } from 'ucbuilder/Usercontrol';
+import { Template } from 'ucbuilder/Template';
+import { codeFileInfo } from 'ucbuilder/build/codeFileInfo';
+import { newObjectOpt } from 'ucbuilder/global/objectOpt';
 
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";

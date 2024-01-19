@@ -1,13 +1,13 @@
-import { pathInfo, strOpt, buildOptions, FilePartlyInfo, ExtensionType } from "@ucbuilder:/build/common";
-import { rootPathHandler } from "@ucbuilder:/global/rootPathHandler";
-import {  RootPathRow } from "@ucbuilder:/enumAndMore";
+import { pathInfo, strOpt, buildOptions, FilePartlyInfo, ExtensionType } from "ucbuilder/build/common";
+import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
+import {  RootPathRow } from "ucbuilder/enumAndMore";
 
 class row {
     codefileObj: codeFileInfo | undefined;
     obj: any | undefined;
 }
 
-class codefileHandler {
+export class codefileHandler {
     nodes: row[] = [];
     usageCount = 0;
 
@@ -32,7 +32,7 @@ class codefileHandler {
     }
 }
 
-class FileInfo {
+export class FileInfo {
     private _path = "";
     rootPath = "";
     rootInfo: RootPathRow;
@@ -124,7 +124,7 @@ class htmlFileNode {
     }
 }
 
-class codeFileInfo {
+export class codeFileInfo {
     html = new FileInfo();
     style = new FileInfo();
     perameters = new FileInfo();
@@ -205,4 +205,4 @@ class codeFileInfo {
     }
 }
 
-export { codeFileInfo, FileInfo, codefileHandler };
+//export { codeFileInfo, FileInfo, codefileHandler };

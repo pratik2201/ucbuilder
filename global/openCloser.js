@@ -1,25 +1,11 @@
-const ocNode = {
-    openingChar: "",
-    closingChar: ""
-}
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.openCloser = void 0;
 class openCloser {
-
-    /** @type {ocNode[]}  */
-    ignoreList = [];
-    /**
-      * @param {string} openTxt 
-      * @param {string} closeTxt 
-      * @param {string} contents 
-      * @param {Function} callback 
-      */
-    doTask(openTxt, closeTxt, contents, callback =
-        /**
-         * @param {string} outText outer string 
-         * @param {string} inText inner string 
-         * @param {number} txtCount number of `openTxt` found in contents
-         */
-        (outText, inText, txtCount) => { }) {
-
+    constructor() {
+        this.ignoreList = [];
+    }
+    doTask(openTxt, closeTxt, contents, callback = (outText, inText, txtCount) => { }) {
         let opened = 0, closed = 0;
         let rtrn = "";
         let lastoutIndex = 0, lastinIndex = 0;
@@ -45,15 +31,14 @@ class openCloser {
                         break;
                 }
             }
-        } else {
-            /** @type {ocNode}  */
-            let charNode = undefined;
-            /** @type {"pause"|"resume"}  */
-            let state = 'resume';
+        }
+        else {
+            let charNode;
+            let state = "resume";
             for (let index = 0, len = contents.length; index < len; index++) {
                 let cnt = contents.charAt(index);
                 switch (state) {
-                    case 'resume':
+                    case "resume":
                         if (opened == closed && index > 0 && opened > 0) {
                             let selector = contents.substring(lastoutIndex, lastinIndex);
                             let cssStyle = contents.substring(lastinIndex + 1, index - 1);
@@ -71,23 +56,20 @@ class openCloser {
                                 closed++;
                                 break;
                             default:
-                                charNode = iList.find(s => s.openingChar === cnt);
+                                charNode = iList.find((s) => s.openingChar === cnt);
                                 if (charNode != undefined)
-                                    state = 'pause';
+                                    state = "pause";
                                 break;
                         }
                         break;
-                    case 'pause':
+                    case "pause":
                         if (cnt === charNode.closingChar)
-                            state = 'resume';
+                            state = "resume";
                         break;
-
                 }
             }
         }
         return rtrn;
     }
 }
-module.exports = {
-    openCloser
-}
+exports.openCloser = openCloser;

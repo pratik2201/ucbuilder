@@ -1,5 +1,5 @@
-import { Point } from "@ucbuilder:/global/drawing/shapes";
-import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
+import { Point } from "ucbuilder/global/drawing/shapes";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
 
 interface MouseEvent {
     pageX: number;

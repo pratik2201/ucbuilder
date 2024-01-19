@@ -1,103 +1,54 @@
-const { newObjectOpt } = require('@ucbuilder:/global/objectOpt');
-
-/**
- * @typedef {import ('@ucbuilder:/Usercontrol').Usercontrol} Usercontrol
- * @typedef {import ('@ucbuilder:/Template').Template} Template
- * @typedef {import ('@ucbuilder:/build/codeFileInfo').codeFileInfo} codeFileInfo 
- */
-
-const sessionOptions = {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.tptOptions = exports.templatePathOptions = exports.ucOptions = exports.sourceOptions = exports.sessionOptions = exports.rootPathParam = exports.rootPathRow = void 0;
+const objectOpt_1 = require("ucbuilder/global/objectOpt");
+exports.rootPathRow = {
+    id: -1,
+    path: '',
+    alices: '',
+    index: -1,
+    isAlreadyFullPath: false,
+    cssVars: [],
+};
+exports.rootPathParam = {
+    level: 4,
+    addIntoFileDataBankAlso: true,
+    addModule: true,
+    buildOption: {
+        addPathInProjectBuild: true,
+        removeSomeSpecialPathFromProjectBuild: true
+    },
+};
+exports.sessionOptions = {
     addNodeToParentSession: false,
     loadBySession: false,
     uniqueIdentity: "",
 };
-const sourceOptions = {
-    /** @type {codeFileInfo}  */
-    cfInfo: undefined,
-
-    
-    /** @type {"wrapper"|"targetElement"|"random"}  */
+exports.sourceOptions = {
     nodeNameAs: 'wrapper',
-
     targetElementNodeName: "as",
-
-
     templateName: "",
-
     reloadKey: "",
     reloadDesign: false,
-
-
-    /** @type {string}  */
-    htmlContents: undefined,
-
-    /** @type {string}  */
-    cssContents: undefined,
-
-    /**
-    * @param {string} uc content which is being Initlize for html tag  
-    */
-    beforeContentAssign: (uc) => {
-
+    beforeContentAssign: (content) => {
+        return content;
     },
-}
-
-
-const ucOptions = {
-    /** @type {UCGenMode}  */ 
-    mode: 'client',
-    session: newObjectOpt.clone(sessionOptions),
-    source: newObjectOpt.clone(sourceOptions),
-    /** @type {Usercontrol}  uc parent `Usercontrol` object reference */
-    parentUc: undefined,
-    /** @type {HTMLElement}  */
-    loadAt: undefined,
-
-    events: {
-        /** @param {Usercontrol} uc uc which is being Initlize  */
-        beforeInitlize: (uc) => {
-
-        },
-      
-    },
-
-    /** @type {HTMLElement}  */
-    wrapperHT: undefined,
-
 };
-
-const templatePathOptions = {
+exports.ucOptions = {
+    mode: 'client',
+    session: objectOpt_1.newObjectOpt.clone(exports.sessionOptions),
+    source: objectOpt_1.newObjectOpt.clone(exports.sourceOptions),
+    events: {
+        beforeInitlize: (uc) => {
+        },
+    },
+};
+exports.templatePathOptions = {
     name: "",
     mainFilePath: "",
     htmlContents: "",
     cssContents: "",
-    /** @type {Template}  */
-    mainTpt: undefined,
-
-}
-const tptOptions = {
-    /** @type {HTMLElement}  */
-    elementHT: undefined,
-
-    source: newObjectOpt.clone(sourceOptions),
-
-    /** @type {Usercontrol}  */
-    parentUc: undefined,
-
-
 };
-
-
-
-module.exports = {
-    /** @type {'client'|'designer'}  */ 
-    UCGenerateMode : 'client',
-    templatePathOptions,
-    rootPathParam,
-    ucOptions,
-    tptOptions,
-    sessionOptions,
-    sourceOptions,
-    /** @type {"normal"|"dock"|"minimize"|"maximize"}  */
-    ucStates: "normal",
-}
+exports.tptOptions = {
+    source: objectOpt_1.newObjectOpt.clone(exports.sourceOptions),
+};

@@ -1,17 +1,17 @@
-import { propOpt, strOpt, pathInfo } from "@ucbuilder:/build/common";
-import { regsManage } from "@ucbuilder:/build/regs/regsManage";
-import { FileDataBank } from "@ucbuilder:/global/fileDataBank";
-import { FilterContent } from "@ucbuilder:/global/filterContent";
-import { LoadGlobal } from "@ucbuilder:/global/loadGlobal";
-import { ATTR_OF } from "@ucbuilder:/global/runtimeOpt";
-import { stylerRegs } from "@ucbuilder:/global/stylerRegs";
-import { userControlStampRow, userControlStamp, } from "@ucbuilder:/global/userControlStamp";
-import { Usercontrol } from "@ucbuilder:/Usercontrol";
-import { tptOptions, TemplatePathOptions, templatePathOptions, TptOptions } from "@ucbuilder:/enumAndMore";
-import { transferDataNode } from "@ucbuilder:/global/drag/transferation";
-import { FileInfo, codeFileInfo } from "@ucbuilder:/build/codeFileInfo";
-import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
-import { Size } from "@ucbuilder:/global/drawing/shapes";
+import { propOpt, strOpt, pathInfo } from "ucbuilder/build/common";
+import { regsManage } from "ucbuilder/build/regs/regsManage";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { FilterContent } from "ucbuilder/global/filterContent";
+import { LoadGlobal } from "ucbuilder/global/loadGlobal";
+import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
+import { stylerRegs } from "ucbuilder/global/stylerRegs";
+import { userControlStampRow, userControlStamp, } from "ucbuilder/global/userControlStamp";
+import { Usercontrol } from "ucbuilder/Usercontrol";
+import { tptOptions, TemplatePathOptions, templatePathOptions, TptOptions } from "ucbuilder/enumAndMore";
+import { transferDataNode } from "ucbuilder/global/drag/transferation";
+import { FileInfo, codeFileInfo } from "ucbuilder/build/codeFileInfo";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
+import { Size } from "ucbuilder/global/drawing/shapes";
 
 export class Template {
   static getTemplates = {

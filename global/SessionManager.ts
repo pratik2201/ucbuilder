@@ -1,7 +1,7 @@
-import { pathInfo, objectOpt } from "@ucbuilder:/build/common";
-import { FileDataBank } from "@ucbuilder:/global/fileDataBank";
-import { Usercontrol } from "@ucbuilder:/Usercontrol";
-import { sessionOptions,SessionOptions } from "@ucbuilder:/enumAndMore";
+import { pathInfo, objectOpt } from "ucbuilder/build/common";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { Usercontrol } from "ucbuilder/Usercontrol";
+import { sessionOptions,SessionOptions } from "ucbuilder/enumAndMore";
 
 class SessionManager {
     varName: string = "SESSION_DATA";

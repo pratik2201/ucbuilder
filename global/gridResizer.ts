@@ -1,6 +1,6 @@
-import { Rect } from "@ucbuilder:/global/drawing/shapes";
-import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
-import { Usercontrol } from "@ucbuilder:/Usercontrol";
+import { Rect } from "ucbuilder/global/drawing/shapes";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
+import { Usercontrol } from "ucbuilder/Usercontrol";
 
 interface MeasurementRow {
     size: number | undefined;

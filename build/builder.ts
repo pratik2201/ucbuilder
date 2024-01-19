@@ -1,7 +1,7 @@
 import * as fs from 'fs';
-import { commonParser } from '@ucbuilder:/build/codefile/commonParser';
-import { buildOptions, pathInfo, SourceCodeNode } from '@ucbuilder:/build/common';
-import { codeFileInfo } from '@ucbuilder:/build/codeFileInfo';
+import { commonParser } from 'ucbuilder/build/codefile/commonParser';
+import { buildOptions, pathInfo, SourceCodeNode } from 'ucbuilder/build/common';
+import { codeFileInfo } from 'ucbuilder/build/codeFileInfo';
 import * as path from 'path';
 
 

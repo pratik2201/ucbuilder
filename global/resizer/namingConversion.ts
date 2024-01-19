@@ -1,4 +1,4 @@
-import { newObjectOpt } from "@ucbuilder:/global/objectOpt";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
 
 export interface NamingConversion {
   offsetSize: string;

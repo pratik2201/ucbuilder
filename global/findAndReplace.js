@@ -1,16 +1,12 @@
-module.exports = {
-    replaceTextRow: {
-        id: 0,
-        originalFinderText: "",
-        originalLowerCaseText: "",
-        textToFind: "",
-        replaceWith: "",
-        replaceLowerCaseText: "",
-        /** @type {{key:string,value:string}[]}  */
-        cssVars: [],
-    }/*,
-    rootInfoRow: {
-        path:"",
-        alices:"",
-    }*/
-}
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.replaceTextRow = void 0;
+exports.replaceTextRow = {
+    id: 0,
+    originalFinderText: "",
+    originalLowerCaseText: "",
+    textToFind: "",
+    replaceWith: "",
+    replaceLowerCaseText: "",
+    cssVars: [],
+};
