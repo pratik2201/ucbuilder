@@ -1,9 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResourcesUC = void 0;
-
 const codeFileInfo_1 = require("ucbuilder/build/codeFileInfo");
-
 const common_1 = require("ucbuilder/build/common");
 const stylerRegs_1 = require("ucbuilder/global/stylerRegs");
 const tabIndexManager_1 = require("ucbuilder/global/tabIndexManager");

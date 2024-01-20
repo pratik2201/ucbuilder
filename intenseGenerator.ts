@@ -6,11 +6,13 @@ import { UcOptions,ucOptions, TptOptions,tptOptions, WrapperNodeNameAs } from 'u
 import { ResourcesUC } from 'ucbuilder/ResourcesUC';
 import { objectOpt, propOpt } from 'ucbuilder/build/common';
 import { UcRendarer } from 'ucbuilder/build/UcRendarer';
+import { createRequire, Module } from 'module';
 
 class intenseGenerator {
-    static generateUC(path: string, pera: UcOptions, ...args: any[]): Usercontrol {
+    static generateUC<T = string>(path: T, pera: UcOptions, ...args: any[]): Usercontrol {
+        
         let param0: UcOptions = Object.assign(pera, ucOptions);
-        let row = ResourcesUC.codefilelist.getObj(path);
+        let row = ResourcesUC.codefilelist.getObj(path as string);
         param0.source.cfInfo = row.codefileObj;
         if (param0.wrapperHT == undefined) {
             let tname = row.codefileObj.name;
@@ -29,7 +31,8 @@ class intenseGenerator {
             }
         }
         args.push(param0);
-        let uc: Usercontrol = (new (row.obj)(...args));
+        let classObj = Object.values(row.obj)[0] as any;
+        let uc: Usercontrol = (new (classObj)(...args));
         let ext = uc.ucExtends;
         ext.session.prepareForAutoLoadIfExist();
         ext.Events.loaded.fire();

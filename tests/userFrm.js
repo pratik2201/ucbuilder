@@ -1,5 +1,5 @@
-const designer = require("@ucbuilder:/test/designer");
-const prgram = require("@ucbuilder:/test/prgram");
+const designer = require("ucbuilder/test/designer");
+const prgram = require("ucbuilder/test/prgram");
 class userFrm extends designer {
     constructor() {
         super();

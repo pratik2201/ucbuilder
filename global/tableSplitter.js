@@ -1,4 +1,4 @@
-const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
+const { newObjectOpt } = require("ucbuilder/global/objectOpt");
 const tableParam = {
   /** @type {HTMLElement} */
   table: undefined,

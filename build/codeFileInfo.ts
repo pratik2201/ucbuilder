@@ -1,6 +1,6 @@
 import { pathInfo, strOpt, buildOptions, FilePartlyInfo, ExtensionType } from "ucbuilder/build/common";
-import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import {  RootPathRow } from "ucbuilder/enumAndMore";
+import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 
 class row {
     codefileObj: codeFileInfo | undefined;

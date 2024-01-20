@@ -1,4 +1,4 @@
-const { Point, Size } = require("@ucbuilder:/global/drawing/shapes");
+const { Point, Size } = require("ucbuilder/global/drawing/shapes");
 const { unitType } = require("@ucreport:/enumAndMore");
 class measureManage {
   /** @type {number} ITS `pt` value of 1 `millimeter` */

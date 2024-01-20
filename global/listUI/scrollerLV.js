@@ -1,5 +1,5 @@
-const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
-const { listUiHandler } = require("@ucbuilder:/global/listUI/extended/listUiHandler");
+const { keyBoard } = require("ucbuilder/global/hardware/keyboard");
+const { listUiHandler } = require("ucbuilder/global/listUI/extended/listUiHandler");
 class scrollerLV extends listUiHandler {
     constructor() {
         super();

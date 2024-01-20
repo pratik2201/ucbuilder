@@ -8,7 +8,6 @@ const common_1 = require("ucbuilder/build/common");
 const filterContent_1 = require("ucbuilder/global/filterContent");
 const fileDataBank_1 = require("ucbuilder/global/fileDataBank");
 const aliceManager_1 = require("ucbuilder/build/codefile/aliceManager");
-
 const Template_1 = require("ucbuilder/Template");
 class commonParser {
     constructor(bldr) {

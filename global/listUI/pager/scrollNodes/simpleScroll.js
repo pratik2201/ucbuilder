@@ -1,7 +1,7 @@
-const { namingConversion } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
-const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
-const { pagerLV } = require("@ucbuilder:/global/listUI/pagerLV");
-const { commonEvent } = require("@ucbuilder:/global/commonEvent");
+const { namingConversion } = require("ucbuilder/global/listUI/pager/enumAndMore");
+const { newObjectOpt } = require("ucbuilder/global/objectOpt");
+const { pagerLV } = require("ucbuilder/global/listUI/pagerLV");
+const { commonEvent } = require("ucbuilder/global/commonEvent");
 class simpleScroll {
     nameList = newObjectOpt.copyProps(namingConversion, {});
     elementNode = {

@@ -8,7 +8,6 @@ const userControlStamp_1 = require("ucbuilder/global/userControlStamp");
 const fileDataBank_1 = require("ucbuilder/global/fileDataBank");
 const loadGlobal_1 = require("ucbuilder/global/loadGlobal");
 const runtimeOpt_1 = require("ucbuilder/global/runtimeOpt");
-
 const ResourcesUC_1 = require("ucbuilder/ResourcesUC");
 const objectOpt_1 = require("ucbuilder/global/objectOpt");
 const stylerRegs_1 = require("ucbuilder/global/stylerRegs");

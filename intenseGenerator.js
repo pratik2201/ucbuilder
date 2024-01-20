@@ -31,7 +31,8 @@ class intenseGenerator {
             }
         }
         args.push(param0);
-        let uc = (new (row.obj)(...args));
+        let classObj = Object.values(row.obj)[0];
+        let uc = (new (classObj)(...args));
         let ext = uc.ucExtends;
         ext.session.prepareForAutoLoadIfExist();
         ext.Events.loaded.fire();

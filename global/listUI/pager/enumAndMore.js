@@ -1,4 +1,4 @@
-const { uniqOpt, objectOpt } = require("@ucbuilder:/build/common");
+const { uniqOpt, objectOpt } = require("ucbuilder/build/common");
 
 module.exports = {
     /** @type {"DISPLAYED"|"OUTSIDE"|"LAST"|"FIRST"}  */

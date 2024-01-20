@@ -1,11 +1,11 @@
-const { Point, Size } = require("@ucbuilder:/global/drawing/shapes");
-const { numOpt } = require("@ucbuilder:/build/common");
-const { mouseForMove } = require("@ucbuilder:/global/mouseForMove");
-const { scrollbarHandler } = require("@ucbuilder:/global/listUI/pager/scrollbarHandler");
-const { namingConversion, scrollerUIElements } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
-const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
-const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
-const { timeoutCall } = require("@ucbuilder:/global/timeoutCall");
+const { Point, Size } = require("ucbuilder/global/drawing/shapes");
+const { numOpt } = require("ucbuilder/build/common");
+const { mouseForMove } = require("ucbuilder/global/mouseForMove");
+const { scrollbarHandler } = require("ucbuilder/global/listUI/pager/scrollbarHandler");
+const { namingConversion, scrollerUIElements } = require("ucbuilder/global/listUI/pager/enumAndMore");
+const { newObjectOpt } = require("ucbuilder/global/objectOpt");
+const { keyBoard } = require("ucbuilder/global/hardware/keyboard");
+const { timeoutCall } = require("ucbuilder/global/timeoutCall");
 class pagerScroll {
 
     nameList = newObjectOpt.copyProps(namingConversion, {});

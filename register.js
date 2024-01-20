@@ -3,13 +3,11 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-
 //import { Usercontrol } from 'ucbuilder/Usercontrol';
 let _clientPath = __dirname.replace(/[\\/]{1,}/g, "/") + '/';
 const module_alias_1 = __importDefault(require("module-alias"));
 module_alias_1.default.addAlias("ucbuilder", _clientPath);
 require("ucbuilder/global/jqProto");
-debugger;
 const jqFeatures_1 = require("ucbuilder/global/jqFeatures");
 jqFeatures_1.jqFeatures.init();
 const common_1 = require("ucbuilder/build/common");
@@ -27,6 +25,7 @@ const loader_1 = require("ucbuilder/global/loader");
 class register {
     static getprojectname(dirpath) {
         let fpath = `${dirpath}/package.json`;
+        //let s = await (async () => {let {X} = await import('./roles/x'); return X;})()
         let pjson = require(fpath);
         if (pjson != undefined) {
             return pjson.name;

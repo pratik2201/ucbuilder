@@ -1,6 +1,6 @@
 import { commonGenerator } from 'ucbuilder/build/codefile/commonGenerator';
 import { codeFileInfo } from 'ucbuilder/build/codeFileInfo';
-import {  commonRow,CommonRow,Control } from 'ucbuilder/build/buildRow.js';
+import { commonRow,CommonRow,Control } from 'ucbuilder/build/buildRow.js';
 import { buildOptions, objectOpt, propOpt, ScopeType } from 'ucbuilder/build/common';
 import { FilterContent } from 'ucbuilder/global/filterContent';
 import { FileDataBank } from 'ucbuilder/global/fileDataBank';
@@ -34,7 +34,8 @@ class commonParser {
             replaceContentWithKeys: false
         }) : htmlContents;
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
-
+       
+        
         this.formHT = code.$() as HTMLElement;
 
         this.aliceMng.fillAlices(this.formHT);

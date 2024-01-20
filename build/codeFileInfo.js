@@ -2,7 +2,6 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.codeFileInfo = exports.FileInfo = exports.codefileHandler = void 0;
 const common_1 = require("ucbuilder/build/common");
-
 const rootPathHandler_1 = require("ucbuilder/global/rootPathHandler");
 class row {
 }

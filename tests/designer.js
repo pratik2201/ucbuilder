@@ -1,5 +1,5 @@
-const prgram = require("@ucbuilder:/test/prgram");
-const userControlCls  = require("@ucbuilder:/test/userControlCls");
+const prgram = require("ucbuilder/test/prgram");
+const userControlCls  = require("ucbuilder/test/userControlCls");
 class designer extends userControlCls {
     constructor() {
         super();        

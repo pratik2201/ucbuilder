@@ -1,23 +1,23 @@
 import { pathInfo, strOpt } from "ucbuilder/build/common";
-import { replaceTextRow,ReplaceTextRow } from "ucbuilder/global/findAndReplace";
+import { replaceTextRow, ReplaceTextRow } from "ucbuilder/global/findAndReplace";
 import { rootPathParam, RootPathParam } from 'ucbuilder/enumAndMore';
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { builder } from "ucbuilder/build/builder";
-export interface RootPathRow{
-    id:number ,
-    path:string ,
-    alices:string,
-    index:number ,
-    isAlreadyFullPath:boolean ,
-    cssVars : {key:string,value:string}[],
+export interface RootPathRow {
+    id: number,
+    path: string,
+    alices: string,
+    index: number,
+    isAlreadyFullPath: boolean,
+    cssVars: { key: string, value: string }[],
 }
-export const rootPathRow:RootPathRow = {
-    id:  -1,
+export const rootPathRow: RootPathRow = {
+    id: -1,
     path: '',
     alices: '',
     index: -1,
-    isAlreadyFullPath: false,    
-    cssVars : [],
+    isAlreadyFullPath: false,
+    cssVars: [],
 }
 export class rootPathHandler {
     private static _source: ReplaceTextRow[] = [];
@@ -47,14 +47,16 @@ export class rootPathHandler {
         let result = this.checkStatus(pathAlicesLower, replaceAlicesWith);
         switch (result) {
             case "newRegister":
-                replaceAlicesWith = strOpt.trim__(replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase(),'/');
+                replaceAlicesWith = strOpt.trim__(replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase(), '/');
                 if (param2.addIntoFileDataBankAlso) {
-                    let { fileDataBank } = require("@ucbuilder:/global/fileDataBank")
-                    fileDataBank.pushReplacableText(projectName, replaceAlicesWith);
+                    (async () => {
+                        let { FileDataBank } = await import('ucbuilder/global/fileDataBank');
+                        FileDataBank.pushReplacableText(projectName, replaceAlicesWith);
+                    })();
                 }
-                
-                
-                
+
+
+
                 if (param2.buildOption.addPathInProjectBuild) {
                     builder.addThisDirectories(replaceAlicesWith);
                 }

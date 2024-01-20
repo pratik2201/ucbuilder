@@ -1,7 +1,8 @@
 
 import { looping, uniqOpt } from "ucbuilder/build/common";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
-import { FileDataBank } from "ucbuilder/global/fileDataBank";
+
+
 
 class rowInfo {
     id: string = "";
@@ -341,11 +342,11 @@ class jqFeatures {
             });
         }
 
-        NodeList.prototype.on = function  <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+        NodeList.prototype.on = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
             Array.from(this).on(eventList, handlerCallback);
         }
 
-        Array.prototype.on = function  <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+        Array.prototype.on = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
             let splEvt: string[] = eventList.split(" ");
             this.forEach((tar: HTMLElement) => {
                 splEvt.forEach(function (e) {
@@ -372,7 +373,7 @@ class jqFeatures {
         }
 
 
-
+        
         String.prototype.$ = function (): HTMLElement {
             var div = document.createElement('pre');
             div.innerHTML = this.trim();
@@ -390,15 +391,38 @@ class jqFeatures {
                 charlist = "\s";
             return this.replace(new RegExp("[" + charlist + "]+$"), "");
         }
-
-        String.prototype.__ = function (jsonRow: {} = undefined): string {
-            let rtrn: string = this as string;
+        String.prototype.__ = function (jsonRow: {}): Promise<string> {
+            //return new Promise((resolve, reject) => {
+            let rtrn = this;
             if (jsonRow != undefined)
                 rtrn = jqFeatures.regsMng.parse(jsonRow, rtrn);
-            return FileDataBank.getReplacedContent(rtrn);
-        };
+            return (async () => {
+                let { FileDataBank } = await import("ucbuilder/global/fileDataBank");
+                return FileDataBank.getReplacedContent(rtrn);
+            })();
+            //});
+        }
+        //console.log(`hello {=s}`.__({ s: 'd' }).then(s => s));
+        //
+        // String.prototype.__ = async function (jsonRow: {} = undefined): string {
+
+        //     //.then(({ FileDataBank }) => {
+        //     let rtrn: string = this as string;
+        //     if (jsonRow != undefined)
+        //         rtrn = jqFeatures.regsMng.parse(jsonRow, rtrn);
+        //     return FileDataBank.getReplacedContent(rtrn);
+        //     // });
+
+        // };
 
         jqFeatures.isInited = true;
+    }
+    static importMod = async (url: string, jsonRow = {}): Promise<string> => {
+        let { FileDataBank } = await import("ucbuilder/global/fileDataBank");
+        let rtrn: string = url;
+        if (jsonRow != undefined)
+            rtrn = jqFeatures.regsMng.parse(jsonRow, rtrn);
+        return rtrn;
     }
 }
 

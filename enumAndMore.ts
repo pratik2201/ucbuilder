@@ -47,9 +47,9 @@ export const rootPathParam: RootPathParam = {
 
 
 export interface SessionOptions {
-    addNodeToParentSession: boolean;
-    loadBySession: boolean;
-    uniqueIdentity: string;
+    addNodeToParentSession?: boolean;
+    loadBySession?: boolean;
+    uniqueIdentity?: string;
 }
 export const sessionOptions: SessionOptions = {
     addNodeToParentSession: false,

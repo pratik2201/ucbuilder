@@ -1,4 +1,4 @@
-const { Rect } = require("@ucbuilder:/global/drawing/shapes");
+const { Rect } = require("ucbuilder/global/drawing/shapes");
 
 /**
  * @typedef {import ("@ucbuilder:/Usercontrol").Usercontrol} Usercontrol

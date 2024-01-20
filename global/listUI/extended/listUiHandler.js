@@ -1,6 +1,6 @@
-const { commonEvent } = require("@ucbuilder:/global/commonEvent");
-const { listUiSearch } = require("@ucbuilder:/global/listUiSearch");
-const { timeoutCall } = require("@ucbuilder:/global/timeoutCall");
+const { commonEvent } = require("ucbuilder/global/commonEvent");
+const { listUiSearch } = require("ucbuilder/global/listUiSearch");
+const { timeoutCall } = require("ucbuilder/global/timeoutCall");
 /**
  * @typedef {import ("@ucbuilder:/Template").TemplateNode} TemplateNode
  */

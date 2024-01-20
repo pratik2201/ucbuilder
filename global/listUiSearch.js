@@ -1,6 +1,6 @@
-const { objectOpt } = require("@ucbuilder:/build/common");
-const { listUiHandler } = require("@ucbuilder:/global/listUI/extended/listUiHandler");
-const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
+const { objectOpt } = require("ucbuilder/build/common");
+const { listUiHandler } = require("ucbuilder/global/listUI/extended/listUiHandler");
+const { newObjectOpt } = require("ucbuilder/global/objectOpt");
 
 /**
  * @typedef {import ("@ucbuilder:/Template").Template} Template

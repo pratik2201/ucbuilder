@@ -1,4 +1,27 @@
 "use strict";
+var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    var desc = Object.getOwnPropertyDescriptor(m, k);
+    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
+      desc = { enumerable: true, get: function() { return m[k]; } };
+    }
+    Object.defineProperty(o, k2, desc);
+}) : (function(o, m, k, k2) {
+    if (k2 === undefined) k2 = k;
+    o[k2] = m[k];
+}));
+var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
+    Object.defineProperty(o, "default", { enumerable: true, value: v });
+}) : function(o, v) {
+    o["default"] = v;
+});
+var __importStar = (this && this.__importStar) || function (mod) {
+    if (mod && mod.__esModule) return mod;
+    var result = {};
+    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
+    __setModuleDefault(result, mod);
+    return result;
+};
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.stylerRegs = void 0;
 const aliceManager_1 = require("ucbuilder/build/codefile/aliceManager");
@@ -51,23 +74,24 @@ class stylerRegs {
         this.nodeName = "f" + common_1.uniqOpt.randomNo();
     }
     static pushPublicStyles() {
-        let { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
-        rootPathHandler_1.rootPathHandler.source.forEach((row) => {
-            let _stylepath = row.replaceLowerCaseText + "/styles.scss";
-            let node = rootPathHandler_1.rootPathHandler.convertToRow(row, true);
-            let styler = new stylerRegs(node, true);
-            ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
-            let _data = fileDataBank_1.FileDataBank.readFile(_stylepath, {
-                isFullPath: true,
-                replaceContentWithKeys: true,
-            });
-            if (_data != undefined) {
-                loadGlobal_1.LoadGlobal.pushRow({
-                    url: _stylepath,
-                    cssContents: styler.parseStyleSeperator_sub({ data: _data }),
-                    stamp: styler.stamp,
+        Promise.resolve().then(() => __importStar(require("ucbuilder/ResourcesUC"))).then(({ ResourcesUC }) => {
+            rootPathHandler_1.rootPathHandler.source.forEach((row) => {
+                let _stylepath = row.replaceLowerCaseText + "/styles.scss";
+                let node = rootPathHandler_1.rootPathHandler.convertToRow(row, true);
+                let styler = new stylerRegs(node, true);
+                ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
+                let _data = fileDataBank_1.FileDataBank.readFile(_stylepath, {
+                    isFullPath: true,
+                    replaceContentWithKeys: true,
                 });
-            }
+                if (_data != undefined) {
+                    loadGlobal_1.LoadGlobal.pushRow({
+                        url: _stylepath,
+                        cssContents: styler.parseStyleSeperator_sub({ data: _data }),
+                        stamp: styler.stamp,
+                    });
+                }
+            });
         });
     }
     LoadGlobalPath(data) {

@@ -1,8 +1,8 @@
-const { namingConversion } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
-const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
-const { pagerLV } = require("@ucbuilder:/global/listUI/pagerLV");
-const { commonEvent } = require("@ucbuilder:/global/commonEvent");
-const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
+const { namingConversion } = require("ucbuilder/global/listUI/pager/enumAndMore");
+const { newObjectOpt } = require("ucbuilder/global/objectOpt");
+const { pagerLV } = require("ucbuilder/global/listUI/pagerLV");
+const { commonEvent } = require("ucbuilder/global/commonEvent");
+const { keyBoard } = require("ucbuilder/global/hardware/keyboard");
 class newPagerScroll {
     nameList = newObjectOpt.copyProps(namingConversion, {});
     elementNode = {

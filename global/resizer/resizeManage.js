@@ -1,8 +1,8 @@
-const { mouseForMove } = require("@ucbuilder:/global/mouseForMove");
-const { getConvertedNames } = require("@ucbuilder:/global/resizer/namingConversion");
-const { Point } = require("@ucbuilder:/global/drawing/shapes");
-const { commonEvent } = require("@ucbuilder:/global/commonEvent");
-const { measureManage } = require("@ucbuilder:/global/measurement/measureManage");
+const { mouseForMove } = require("ucbuilder/global/mouseForMove");
+const { getConvertedNames } = require("ucbuilder/global/resizer/namingConversion");
+const { Point } = require("ucbuilder/global/drawing/shapes");
+const { commonEvent } = require("ucbuilder/global/commonEvent");
+const { measureManage } = require("ucbuilder/global/measurement/measureManage");
 class measurementNode {
   /** @type {number}  */
   size = 0;

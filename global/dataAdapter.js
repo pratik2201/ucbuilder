@@ -1,5 +1,5 @@
-const { newObjectOpt } = require("@ucbuilder:/global/objectOpt");
-const { commonEvent } = require("@ucbuilder:/global/commonEvent");
+const { newObjectOpt } = require("ucbuilder/global/objectOpt");
+const { commonEvent } = require("ucbuilder/global/commonEvent");
 
 class dataAdapter extends Array{
     constructor(){

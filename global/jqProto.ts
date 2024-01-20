@@ -20,7 +20,7 @@ interface String {
     $(): HTMLElement,
     _trim(charlist?: string): string,
     trim_(charlist?: string): string,
-    __(jsonRow: {}): string,
+    __(jsonRow: {}): Promise<string>,
 }
 interface NodeList {
     on<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,

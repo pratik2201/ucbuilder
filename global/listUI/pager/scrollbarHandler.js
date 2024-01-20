@@ -1,7 +1,7 @@
-const { pagerLV } = require("@ucbuilder:/global/listUI/pagerLV");
-const { Size } = require("@ucbuilder:/global/drawing/shapes");
-const { pagerScroll } = require("@ucbuilder:/global/listUI/pager/scrollNodes/pagerScroll");
-const { simpleScroll } = require("@ucbuilder:/global/listUI/pager/scrollNodes/simpleScroll");
+const { pagerLV } = require("ucbuilder/global/listUI/pagerLV");
+const { Size } = require("ucbuilder/global/drawing/shapes");
+const { pagerScroll } = require("ucbuilder/global/listUI/pager/scrollNodes/pagerScroll");
+const { simpleScroll } = require("ucbuilder/global/listUI/pager/scrollNodes/simpleScroll");
 
 
 class scrollbarHandler {

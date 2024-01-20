@@ -1,7 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileDataBank = void 0;
-
 const codeFileInfo_1 = require("ucbuilder/build/codeFileInfo");
 const common_1 = require("ucbuilder/build/common");
 const fs_1 = require("fs");

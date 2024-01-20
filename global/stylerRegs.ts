@@ -54,24 +54,25 @@ const styleSeperatorOptions: StyleSeperatorOptions = {
 };
 export class stylerRegs {
   static pushPublicStyles(): void {
-    let { ResourcesUC } = require("@ucbuilder:/ResourcesUC");
-    rootPathHandler.source.forEach((row: ReplaceTextRow) => {
-      let _stylepath: string = row.replaceLowerCaseText + "/styles.scss";
-      let node: RootPathRow = rootPathHandler.convertToRow(row, true);
-      let styler: stylerRegs = new stylerRegs(node, true);
-      ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
-      let _data: string = FileDataBank.readFile(_stylepath, {
-        isFullPath: true,
-        replaceContentWithKeys: true,
-      });
-
-      if (_data != undefined) {
-        LoadGlobal.pushRow({
-          url: _stylepath,
-          cssContents: styler.parseStyleSeperator_sub({ data: _data }),
-          stamp: styler.stamp,
+    import("ucbuilder/ResourcesUC").then(({ResourcesUC}) => {
+      rootPathHandler.source.forEach((row: ReplaceTextRow) => {
+        let _stylepath: string = row.replaceLowerCaseText + "/styles.scss";
+        let node: RootPathRow = rootPathHandler.convertToRow(row, true);
+        let styler: stylerRegs = new stylerRegs(node, true);
+        ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
+        let _data: string = FileDataBank.readFile(_stylepath, {
+          isFullPath: true,
+          replaceContentWithKeys: true,
         });
-      }
+  
+        if (_data != undefined) {
+          LoadGlobal.pushRow({
+            url: _stylepath,
+            cssContents: styler.parseStyleSeperator_sub({ data: _data }),
+            stamp: styler.stamp,
+          });
+        }
+      });
     });
   }
   stamp: string = "";

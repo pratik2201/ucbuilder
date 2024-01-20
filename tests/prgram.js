@@ -1,4 +1,4 @@
-const { userControlCls } = require("@ucbuilder:/test/userControlCls");
+const { userControlCls } = require("ucbuilder/test/userControlCls");
 
 class prgram {
     constructor() { }

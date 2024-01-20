@@ -1,11 +1,11 @@
 
-const { looping, controlOpt, objectOpt, numOpt } = require("@ucbuilder:/build/common");
-const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
-const { listUiHandler } = require("@ucbuilder:/global/listUI/extended/listUiHandler");
-const { pagerATTR, PageNavigationResult } = require("@ucbuilder:/global/listUI/pager/enumAndMore");
-const { Usercontrol } = require("@ucbuilder:/Usercontrol");
-const { scrollbarHandler } = require("@ucbuilder:/global/listUI/pager/scrollbarHandler");
-const { timeoutCall } = require("@ucbuilder:/global/timeoutCall");
+const { looping, controlOpt, objectOpt, numOpt } = require("ucbuilder/build/common");
+const { keyBoard } = require("ucbuilder/global/hardware/keyboard");
+const { listUiHandler } = require("ucbuilder/global/listUI/extended/listUiHandler");
+const { pagerATTR, PageNavigationResult } = require("ucbuilder/global/listUI/pager/enumAndMore");
+const { Usercontrol } = require("ucbuilder/Usercontrol");
+const { scrollbarHandler } = require("ucbuilder/global/listUI/pager/scrollbarHandler");
+const { timeoutCall } = require("ucbuilder/global/timeoutCall");
 
 
 

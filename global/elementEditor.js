@@ -1,5 +1,5 @@
-const { controlOpt, uniqOpt, strOpt } = require("@ucbuilder:/build/common");
-const { keyBoard } = require("@ucbuilder:/global/hardware/keyboard");
+const { controlOpt, uniqOpt, strOpt } = require("ucbuilder/build/common");
+const { keyBoard } = require("ucbuilder/global/hardware/keyboard");
 
 class elementEditor {
     constructor() {
