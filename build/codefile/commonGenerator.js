@@ -15,12 +15,12 @@ class commonGenerator {
         this.codefileTMPLT = {};
         this.styleTMPLT = {};
         this.rgxManage = new regsManage_js_1.regsManage();
-        this.designerTMPLT[common_1.buildOptions.extType.Usercontrol] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/uc/designer.js', { replaceContentWithKeys: true, });
-        this.codefileTMPLT[common_1.buildOptions.extType.Usercontrol] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/uc/codefile.js', { replaceContentWithKeys: true, });
-        this.styleTMPLT[common_1.buildOptions.extType.Usercontrol] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/uc/styles.css', { replaceContentWithKeys: true, });
-        this.designerTMPLT[common_1.buildOptions.extType.template] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/tpt/designer.js', { replaceContentWithKeys: true, });
-        this.codefileTMPLT[common_1.buildOptions.extType.template] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/tpt/codefile.js', { replaceContentWithKeys: true, });
-        this.styleTMPLT[common_1.buildOptions.extType.template] = fileDataBank_1.FileDataBank.readFile('@ucbuilder:/buildTempates/tpt/styles.css', { replaceContentWithKeys: true, });
+        this.designerTMPLT[common_1.buildOptions.extType.Usercontrol] = fileDataBank_1.FileDataBank.readFile('ucbuilder/buildTempates/uc/designer.js', { replaceContentWithKeys: true, });
+        this.codefileTMPLT[common_1.buildOptions.extType.Usercontrol] = fileDataBank_1.FileDataBank.readFile('ucbuilder/buildTempates/uc/codefile.js', { replaceContentWithKeys: true, });
+        this.styleTMPLT[common_1.buildOptions.extType.Usercontrol] = fileDataBank_1.FileDataBank.readFile('ucbuilder/buildTempates/uc/styles.css', { replaceContentWithKeys: true, });
+        this.designerTMPLT[common_1.buildOptions.extType.template] = fileDataBank_1.FileDataBank.readFile('ucbuilder/buildTempates/tpt/designer.js', { replaceContentWithKeys: true, });
+        this.codefileTMPLT[common_1.buildOptions.extType.template] = fileDataBank_1.FileDataBank.readFile('ucbuilder/buildTempates/tpt/codefile.js', { replaceContentWithKeys: true, });
+        this.styleTMPLT[common_1.buildOptions.extType.template] = fileDataBank_1.FileDataBank.readFile('ucbuilder/buildTempates/tpt/styles.css', { replaceContentWithKeys: true, });
     }
     generateFiles(rows = []) {
         let _this = this;

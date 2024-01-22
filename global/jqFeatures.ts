@@ -323,7 +323,9 @@ class jqFeatures {
             if (target == undefined || target == null) return false;
             return jqFeatures.data.compareElements(this, target);
         }
-
+        Element.prototype.is = function (target: any): boolean {
+            return (this as HTMLElement).is(target);
+        }
         HTMLElement.prototype.$ = function (): HTMLElement {
             jqFeatures.data.initElement(this);
             return this;

@@ -1,8 +1,7 @@
-const { {=codefile.baseClassName} } = require('./{=codefile.className}.tpt.designer.js');
-class {=codefile.className} extends {=codefile.baseClassName}{
+import { {=designer.className} } from './{=codefile.className}.tpt.designer.js';
+export class {=codefile.className} extends {=designer.className} {
     constructor() {
         super(arguments);
         
     }
 }
-module.exports = {=codefile.className};

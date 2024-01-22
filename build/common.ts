@@ -176,7 +176,7 @@ export const pathInfo = {
     },
     getFileInfoPartly(fullPath: string): FilePartlyInfo {
         let rtrn = {} as FilePartlyInfo;
-        let array = Array.from(fullPath.matchAll(/(^.*[\\\/])(.*)/gm))[0];
+        let array = Array.from(fullPath.matchAll(/(^.*[\\\/])(.*)/gmi))[0];
         if (array != undefined) {
             let dirPath = array[1];
             let filename = array[2];
@@ -316,7 +316,7 @@ export const controlOpt = {
         return rtrn;
     },
     getArray: (obj: any): any[] => {
-        if(obj==undefined)return [];
+        if (obj == undefined) return [];
         switch (Object.getPrototypeOf(obj.constructor)) {
             case SVGElement: return [obj];
             case HTMLElement: return [obj];
@@ -463,6 +463,11 @@ export const uniqOpt = {
     template = ".tpt",
 }*/
 export type ExtensionType = "none" | ".uc" | ".tpt";
+export enum ExtensionEnum {
+    none = "none",
+    uc = ".uc",
+    tpt = ".tpt",
+}
 export type ScopeType = "private" | "protected" | "package" | "public";
 export const buildOptions = {
     extType: {
@@ -471,8 +476,8 @@ export const buildOptions = {
         template: ".tpt",
     },
     ignoreDirs: [
-        '@ucbuilder:/node_modules',
-        '@ucbuilder:/.vscode',
+        'ucbuilder/node_modules',
+        'ucbuilder/.vscode',
     ],
 }
 export interface SourceCodeNode {

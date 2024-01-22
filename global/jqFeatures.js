@@ -245,6 +245,9 @@ class jqFeatures {
                 return false;
             return jqFeatures.data.compareElements(this, target);
         };
+        Element.prototype.is = function (target) {
+            return this.is(target);
+        };
         HTMLElement.prototype.$ = function () {
             jqFeatures.data.initElement(this);
             return this;

@@ -54,7 +54,7 @@ class register {
         let dirpath = getbasedir(pera.level);
         let pname = this.getprojectname(dirpath);
         if (pname != undefined || pname != "")
-            pname = `@${pname}:`;
+            pname = `${pname}`;
         let pathAlices = pname;
 
         if (ACTIVE_USER_CONTROL == undefined) {
@@ -77,7 +77,7 @@ let res = register.registarMe({
     addModule: false
 });
 
- export default  {
+ export = {
     getprojectname: register.getprojectname,
     get Events() { return register.Events; },
     registar: (pera?: RootPathParam) => {

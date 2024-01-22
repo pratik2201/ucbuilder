@@ -10,8 +10,8 @@ const eventRecord: EventRecord = {
 }
 type ResultCallback = (returnedValue: any) => boolean;
 const resultCallback: ResultCallback = (returnedValue: any) => false;
-
-class CommonEvent<F,T=F extends (a: infer F) => any ? F : never> {
+type Parameter<T> = T extends (...arg: infer T) => any ? T : never;
+class CommonEvent<F extends (...arg: any) => any> {
     isSingleEvent: boolean = false;
    
     Events = {
@@ -62,7 +62,7 @@ class CommonEvent<F,T=F extends (a: infer F) => any ? F : never> {
         return this._eventList.length;
     }
 
-    fire(args: T=undefined): void {
+    fire<S = Parameter<F>>(...args:S[]): void {
         this._eventList.forEach(s => {
             s.callback.apply(this, args);
         });

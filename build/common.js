@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildOptions = exports.uniqOpt = exports.objectOpt = exports.controlOpt = exports.propOpt = exports.looping = exports.pathInfo = exports.arrayOpt = exports.strOpt = exports.numOpt = void 0;
+exports.buildOptions = exports.ExtensionEnum = exports.uniqOpt = exports.objectOpt = exports.controlOpt = exports.propOpt = exports.looping = exports.pathInfo = exports.arrayOpt = exports.strOpt = exports.numOpt = void 0;
 const fs_1 = require("fs");
 const crypto_1 = __importDefault(require("crypto"));
 exports.numOpt = {
@@ -180,7 +180,7 @@ exports.pathInfo = {
     },
     getFileInfoPartly(fullPath) {
         let rtrn = {};
-        let array = Array.from(fullPath.matchAll(/(^.*[\\\/])(.*)/gm))[0];
+        let array = Array.from(fullPath.matchAll(/(^.*[\\\/])(.*)/gmi))[0];
         if (array != undefined) {
             let dirPath = array[1];
             let filename = array[2];
@@ -471,6 +471,12 @@ exports.uniqOpt = {
         return rand;
     },
 };
+var ExtensionEnum;
+(function (ExtensionEnum) {
+    ExtensionEnum["none"] = "none";
+    ExtensionEnum["uc"] = ".uc";
+    ExtensionEnum["tpt"] = ".tpt";
+})(ExtensionEnum = exports.ExtensionEnum || (exports.ExtensionEnum = {}));
 exports.buildOptions = {
     extType: {
         none: "none",
@@ -478,7 +484,7 @@ exports.buildOptions = {
         template: ".tpt",
     },
     ignoreDirs: [
-        '@ucbuilder:/node_modules',
-        '@ucbuilder:/.vscode',
+        'ucbuilder/node_modules',
+        'ucbuilder/.vscode',
     ],
 };

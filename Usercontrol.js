@@ -5,6 +5,7 @@ const common_1 = require("ucbuilder/build/common");
 const filterContent_1 = require("ucbuilder/global/filterContent");
 const commonEvent_1 = require("ucbuilder/global/commonEvent");
 const userControlStamp_1 = require("ucbuilder/global/userControlStamp");
+const SessionManager_1 = require("ucbuilder/global/SessionManager");
 const fileDataBank_1 = require("ucbuilder/global/fileDataBank");
 const loadGlobal_1 = require("ucbuilder/global/loadGlobal");
 const runtimeOpt_1 = require("ucbuilder/global/runtimeOpt");
@@ -18,7 +19,7 @@ class Usercontrol {
             fileInfo: undefined,
             form: undefined,
             PARENT: undefined,
-            session: undefined,
+            session: new SessionManager_1.SessionManager(),
             stampRow: undefined,
             wrapperHT: undefined,
             isForm: false,

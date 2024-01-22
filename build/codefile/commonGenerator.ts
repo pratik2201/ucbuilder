@@ -13,13 +13,13 @@ export class commonGenerator {
     constructor() {
         this.rgxManage = new regsManage();
 
-        this.designerTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('@ucbuilder:/buildTempates/uc/designer.js', { replaceContentWithKeys: true, });
-        this.codefileTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('@ucbuilder:/buildTempates/uc/codefile.js', { replaceContentWithKeys: true, });
-        this.styleTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('@ucbuilder:/buildTempates/uc/styles.css', { replaceContentWithKeys: true, });
+        this.designerTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('ucbuilder/buildTempates/uc/designer.js', { replaceContentWithKeys: true, });
+        this.codefileTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('ucbuilder/buildTempates/uc/codefile.js', { replaceContentWithKeys: true, });
+        this.styleTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('ucbuilder/buildTempates/uc/styles.css', { replaceContentWithKeys: true, });
 
-        this.designerTMPLT[buildOptions.extType.template] = FileDataBank.readFile('@ucbuilder:/buildTempates/tpt/designer.js', { replaceContentWithKeys: true, });
-        this.codefileTMPLT[buildOptions.extType.template] = FileDataBank.readFile('@ucbuilder:/buildTempates/tpt/codefile.js', { replaceContentWithKeys: true, });
-        this.styleTMPLT[buildOptions.extType.template] = FileDataBank.readFile('@ucbuilder:/buildTempates/tpt/styles.css', { replaceContentWithKeys: true, });
+        this.designerTMPLT[buildOptions.extType.template] = FileDataBank.readFile('ucbuilder/buildTempates/tpt/designer.js', { replaceContentWithKeys: true, });
+        this.codefileTMPLT[buildOptions.extType.template] = FileDataBank.readFile('ucbuilder/buildTempates/tpt/codefile.js', { replaceContentWithKeys: true, });
+        this.styleTMPLT[buildOptions.extType.template] = FileDataBank.readFile('ucbuilder/buildTempates/tpt/styles.css', { replaceContentWithKeys: true, });
     }
 
     rgxManage: regsManage;
@@ -29,9 +29,11 @@ export class commonGenerator {
         this.rows = rows;
         let _data = "";
         this.rows.forEach(row => {
+            
+            
             _data = _this.generateNew(row, _this.designerTMPLT[row.src.extCode]);
             fs.writeFileSync(`${row.src.designer.fullPath}`, _data);
-
+            
             if (row.htmlFile.reGenerate)
                 fs.writeFileSync(`${row.src.html.fullPath}`, row.htmlFile.content);
 

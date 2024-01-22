@@ -57,7 +57,7 @@ export class Usercontrol {
         fileInfo: undefined as codeFileInfo,
         form: undefined as Usercontrol,
         PARENT: undefined as Usercontrol,
-        session: undefined as SessionManager,
+        session: new SessionManager(),
         stampRow: undefined as userControlStampRow,
         wrapperHT: undefined as HTMLElement,
         isForm: false,
@@ -101,6 +101,7 @@ export class Usercontrol {
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
             ucExt.fileInfo = param0.source.cfInfo;
+            
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             ucExt.stampRow = userControlStamp.getStamp(param0.source);
             ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true) as HTMLElement;
@@ -185,8 +186,8 @@ export class Usercontrol {
             ucExt: () => this.ucExtends,
         },
         Events: {
-            afterInitlize: new CommonEvent<void,void>(),
-            beforeClose: new CommonEvent<({prevent= false})=>void>(),
+            afterInitlize: new CommonEvent<() =>void>(),
+            beforeClose: new CommonEvent<({prevent=false})=>void>(),
             afterClose: new CommonEvent<() =>void>(),           
             captionChanged: new CommonEvent<(newCaptionText:string) =>void>(),
             winStateChanged: new CommonEvent<(state:UcStates)=>void>(),

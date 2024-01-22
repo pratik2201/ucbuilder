@@ -1,4 +1,3 @@
-
 interface HTMLElement {
     index(): number,
     selector(): string,
@@ -7,12 +6,14 @@ interface HTMLElement {
     delete(): void,
     stamp(): string,
     data(key?: string, value?: any): any
-    is(target: HTMLElement): boolean,
+    is(target: any): boolean,    
     $(): HTMLElement,
     on<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
     off<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
 }
-
+interface Element{
+    is(target: any): boolean,
+}
 interface SVGElement {
     data(key?: string, value?: any): any
 }
@@ -27,4 +28,11 @@ interface NodeList {
 }
 interface Array<T> {
     on<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
+}
+interface JQuery{
+    css(args:any):void,
+    position(): { left: number, top: number },
+    height(): number,
+    width(): number,
+    
 }

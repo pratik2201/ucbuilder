@@ -1,33 +1,51 @@
-const { Usercontrol } = require('\@ucbuilder:/Usercontrol.js');
-const { intenseGenerator } = require('\@ucbuilder:/intenseGenerator');
+import { Usercontrol } from '\ucbuilder/Usercontrol';
+import { intenseGenerator } from '\ucbuilder/intenseGenerator';
+import { UcOptions } from '\ucbuilder/enumAndMore';
+/**
+ *  code filename must same and case sensitive with classname 
+ */
+import { {=src.name} } from './{=src.name}.uc';
 
 
-class designer extends Usercontrol {    
-    static get giveMeHug(){ return Usercontrol.giveMeHug; }
-    constructor(){    
-        super();    
-        let fargs = arguments[0];
-        /** @type {Usercontrol.ucOptionsStc}   */ 
-        let args = fargs[fargs.length-1];
+export class {=designer.className} extends Usercontrol {    
+    static get giveMeHug(): string {
+        return Usercontrol.giveMeHug;
+    }
+    `{loop=designer.controls}``
+        {switch=type}`
+            `[case=none]
+        `
+    {=scope} {=name}: {=proto};
+        `
+        [/case]`
+        `[case=.tpt]`
+    {=scope} {=name}: import('{=src.code.rootPath}');
+        ` 
+        [/case]` 
+   `[case=.uc]
+   `
+    {=scope} {=name}: import('{=src.code.rootPath}');
+   ` 
+   [/case]`    
+    `{/switch}``{/loop}`
+
+    
+    constructor(){ super(); }
+    initializecomponent(argsLst: IArguments, form: {=src.name}) {
+         //let fargs = argsLst[0];
+        //let args = fargs[fargs.length - 1];
+        let args = argsLst[argsLst.length - 1] as UcOptions;
         let ucExt = this.ucExtends;
-       
         ucExt.initializecomponent(args);        
         let CONTROLS = ucExt.designer.getAllControls();`
         {loop=designer.controls}``
         {switch=type}`
             `[case=none]
         `
-        
-        /** 
-         * @{=scope}  
-         * @type {{=proto}} \<{=nodeName}\> 
-         **/
-        this.{=name} = CONTROLS.{=name};`
+          this.{=name} = CONTROLS.{=name} as {=proto};`
         [/case]`
         `[case=.tpt]`
-
         /**
-         * @{=scope}  
          * @type {import ('{=src.code.rootPath}')} \<{=nodeName}\> 
          **/
         this.{=name} = intenseGenerator.generateTPT('{=src.code.rootPath}',{ 
@@ -39,7 +57,6 @@ class designer extends Usercontrol {
         `[case=.uc]
         `
         /** 
-         * @{=scope}  
          * @type {import ('{=src.code.rootPath}')} \<{=nodeName}\>
          **/
         this.{=name} = intenseGenerator.generateUC('{=src.code.rootPath}',{ 
@@ -52,14 +69,10 @@ class designer extends Usercontrol {
                             },                           
                             wrapperHT : CONTROLS.{=name} 
                         });
-       
         ` 
              [/case]`    
         `{/switch}``{/loop}`
 
         ucExt.finalizeInit(args);
     }
-
-      
 }
-module.exports = { designer };

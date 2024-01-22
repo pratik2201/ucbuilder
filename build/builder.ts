@@ -1,6 +1,6 @@
 import * as fs from 'fs';
 import { commonParser } from 'ucbuilder/build/codefile/commonParser';
-import { buildOptions, pathInfo, SourceCodeNode } from 'ucbuilder/build/common';
+import { buildOptions, ExtensionEnum, ExtensionType, pathInfo, SourceCodeNode } from 'ucbuilder/build/common';
 import { codeFileInfo } from 'ucbuilder/build/codeFileInfo';
 import * as path from 'path';
 
@@ -68,9 +68,10 @@ export class builder {
     }
 
     checkFileState(filePath: string, htmlContents: string = undefined) {
-        if (filePath.endsWith(buildOptions.extType.Usercontrol + '.html')) { //  IF USER CONTROL
+        
+        if (filePath.endsWith(ExtensionEnum.uc + '.html')) { //  IF USER CONTROL
             this.commonMng.init(filePath, htmlContents);
-        } else if (filePath.endsWith(buildOptions.extType.template + '.html')) { //  IF TEMPLATE
+        } else if (filePath.endsWith(ExtensionEnum.tpt + '.html')) { //  IF TEMPLATE
             this.commonMng.init(filePath, htmlContents);
         }
     }    

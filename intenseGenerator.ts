@@ -12,6 +12,7 @@ class intenseGenerator {
     static generateUC<T = string>(path: T, pera: UcOptions, ...args: any[]): Usercontrol {
         
         let param0: UcOptions = Object.assign(pera, ucOptions);
+        
         let row = ResourcesUC.codefilelist.getObj(path as string);
         param0.source.cfInfo = row.codefileObj;
         if (param0.wrapperHT == undefined) {
@@ -31,7 +32,7 @@ class intenseGenerator {
             }
         }
         args.push(param0);
-        let classObj = Object.values(row.obj)[0] as any;
+        let classObj = row.obj; //Object.values(row.obj)[0] as any;
         let uc: Usercontrol = (new (classObj)(...args));
         let ext = uc.ucExtends;
         ext.session.prepareForAutoLoadIfExist();

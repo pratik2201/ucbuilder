@@ -5,7 +5,7 @@ export interface Control {
     type?: ExtensionType;
     scope: ScopeType;
     proto: string;
-    src?: codeFileInfo | undefined;
+    src?: codeFileInfo;
     nodeName: string;
 }
 export const control: Control = {
@@ -27,7 +27,7 @@ export const templete: Template = {
     controls: [],
 };
 export interface CommonRow {
-    src: codeFileInfo | undefined;
+    src: codeFileInfo;
     htmlFile: {
         reGenerate: boolean;
         content: string;

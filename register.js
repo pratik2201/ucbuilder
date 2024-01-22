@@ -2,7 +2,6 @@
 var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
-Object.defineProperty(exports, "__esModule", { value: true });
 //import { Usercontrol } from 'ucbuilder/Usercontrol';
 let _clientPath = __dirname.replace(/[\\/]{1,}/g, "/") + '/';
 const module_alias_1 = __importDefault(require("module-alias"));
@@ -41,7 +40,7 @@ class register {
         let dirpath = (0, loader_1.getbasedir)(pera.level);
         let pname = this.getprojectname(dirpath);
         if (pname != undefined || pname != "")
-            pname = `@${pname}:`;
+            pname = `${pname}`;
         let pathAlices = pname;
         if (ACTIVE_USER_CONTROL == undefined) {
             ACTIVE_USER_CONTROL = this;
@@ -73,7 +72,7 @@ let res = register.registarMe({
     level: 2,
     addModule: false
 });
-exports.default = {
+module.exports = {
     getprojectname: register.getprojectname,
     get Events() { return register.Events; },
     registar: (pera) => {

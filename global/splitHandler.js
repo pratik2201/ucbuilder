@@ -1,7 +1,7 @@
 const { Rect } = require("ucbuilder/global/drawing/shapes");
 
 /**
- * @typedef {import ("@ucbuilder:/Usercontrol").Usercontrol} Usercontrol
+ * @typedef {import ("ucbuilder/Usercontrol").Usercontrol} Usercontrol
  */
 const splitterCell = {
     /** @type {number}  */

@@ -1,8 +1,8 @@
-const { {=codefile.baseClassName} } = require('./{=codefile.className}.uc.designer.js');
-class {=codefile.className} extends {=codefile.baseClassName}{
-    constructor() { eval({=codefile.baseClassName}.giveMeHug);
+import { {=designer.className} } from './{=codefile.className}.uc.designer';
+export class {=codefile.className} extends {=designer.className}{
+    constructor() { super();  this.initializecomponent(arguments,this);
         
         
     }
 }
-module.exports = {=codefile.className};
+

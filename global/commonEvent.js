@@ -52,7 +52,7 @@ class CommonEvent {
     get length() {
         return this._eventList.length;
     }
-    fire(args = undefined) {
+    fire(...args) {
         this._eventList.forEach(s => {
             s.callback.apply(this, args);
         });

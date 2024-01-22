@@ -3,7 +3,7 @@ const { listUiHandler } = require("ucbuilder/global/listUI/extended/listUiHandle
 const { newObjectOpt } = require("ucbuilder/global/objectOpt");
 
 /**
- * @typedef {import ("@ucbuilder:/Template").Template} Template
+ * @typedef {import ("ucbuilder/Template").Template} Template
  */
 class listUiSearch {
     /** @param {listUiHandler} main */

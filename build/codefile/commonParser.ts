@@ -20,16 +20,18 @@ class commonParser {
     }
 
     init(filePath: string, htmlContents: string | undefined = undefined) {
-        this.rows.push(this.fill(filePath, htmlContents));
+        let row = this.fill(filePath, htmlContents);
+        if(row!=undefined)
+            this.rows.push(row);
     }
 
     aliceMng = new AliceManager();
     _filterText = new FilterContent();
     formHT: HTMLElement;
     fill(filePath: string, htmlContents: string | undefined = undefined): CommonRow {
-        let _row = commonRow;
+        let _row = objectOpt.clone(commonRow);
         _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
-        _row.src.parseUrl(filePath);
+        if (!_row.src.parseUrl(filePath)) return undefined;
         let code = (htmlContents == undefined) ? FileDataBank.readFile(_row.src.html.rootPath, {
             replaceContentWithKeys: false
         }) : htmlContents;
@@ -37,12 +39,14 @@ class commonParser {
        
         
         this.formHT = code.$() as HTMLElement;
-
+        
         this.aliceMng.fillAlices(this.formHT);
         _row.designer.className =
-            _row.codefile.baseClassName = "designer";
+            _row.codefile.baseClassName = "Designer";
         _row.codefile.className = _row.src.name;
         if (!isUserControl) {
+           
+            
             _row.designer.baseClassName = "Template";
             let tptbyCntnt = Template.getTemplates.byDirectory(filePath) as TemplatePathOptions[];
             let tpts = _row.designer.templetes;
@@ -80,12 +84,18 @@ class commonParser {
                     scope = 'public';
                 let proto = Object.getPrototypeOf(ele).constructor.name;
 
-                if (isUserControl && ele.hasAttribute("x-from")) {
-
+                if (ele.hasAttribute("x-from")) {
+                   
                     let _subpath = ele.getAttribute("x-from");
 
                     let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath));
+
                     uFInf.parseUrl(_subpath);
+                    console.log(filePath);
+                    
+                    console.log(uFInf.html.fullPath);
+                    
+
                     if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {
                         _row.designer.controls.push({
                             name: nameAttr,

@@ -18,12 +18,15 @@ class commonParser {
         this.gen = new commonGenerator_1.commonGenerator();
     }
     init(filePath, htmlContents = undefined) {
-        this.rows.push(this.fill(filePath, htmlContents));
+        let row = this.fill(filePath, htmlContents);
+        if (row != undefined)
+            this.rows.push(row);
     }
     fill(filePath, htmlContents = undefined) {
-        let _row = buildRow_js_1.commonRow;
+        let _row = common_1.objectOpt.clone(buildRow_js_1.commonRow);
         _row.src = new codeFileInfo_1.codeFileInfo(codeFileInfo_1.codeFileInfo.getExtType(filePath));
-        _row.src.parseUrl(filePath);
+        if (!_row.src.parseUrl(filePath))
+            return undefined;
         let code = (htmlContents == undefined) ? fileDataBank_1.FileDataBank.readFile(_row.src.html.rootPath, {
             replaceContentWithKeys: false
         }) : htmlContents;
@@ -31,7 +34,7 @@ class commonParser {
         this.formHT = code.$();
         this.aliceMng.fillAlices(this.formHT);
         _row.designer.className =
-            _row.codefile.baseClassName = "designer";
+            _row.codefile.baseClassName = "Designer";
         _row.codefile.className = _row.src.name;
         if (!isUserControl) {
             _row.designer.baseClassName = "Template";
@@ -72,10 +75,12 @@ class commonParser {
                 if (scope == undefined)
                     scope = 'public';
                 let proto = Object.getPrototypeOf(ele).constructor.name;
-                if (isUserControl && ele.hasAttribute("x-from")) {
+                if (ele.hasAttribute("x-from")) {
                     let _subpath = ele.getAttribute("x-from");
                     let uFInf = new codeFileInfo_1.codeFileInfo(codeFileInfo_1.codeFileInfo.getExtType(_subpath));
                     uFInf.parseUrl(_subpath);
+                    console.log(filePath);
+                    console.log(uFInf.html.fullPath);
                     if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {
                         _row.designer.controls.push({
                             name: nameAttr,
