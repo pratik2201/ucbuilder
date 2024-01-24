@@ -50,6 +50,7 @@ export class FileInfo {
             } else {
                 this.fullPath = this._path;
                 this.sortPath = strOpt._trim(this.fullPath, `${this.rootInfo.path}/`);
+                
                 this.rootPath = `${this.rootInfo.alices}/${this.sortPath}`;
             }
         } else {
@@ -149,6 +150,7 @@ export class codeFileInfo {
     extCode : ExtensionType;
     fullPathWithoutExt = "";
     mainFilePath = "";
+    mainFileRootPath = "";
     constructor(extCode:ExtensionType) {
         this.extCode = extCode;
     }
@@ -219,9 +221,9 @@ export class codeFileInfo {
         let fullPath = !this.rootInfo.isAlreadyFullPath ? (this.rootInfo.path + "" + url) : url;
         this.partInfo = pathInfo.getFileInfoPartly(fullPath);
        
-       //console.log(_url);
+    //    console.log(_url);
        
-      //  console.log(this.partInfo);
+    //     console.log(this);
         
         let s = (this.partInfo.dirPath.toLowerCase() + "" + this.partInfo.fileName);
         this.fullPathWithoutExt = s;
@@ -237,6 +239,7 @@ export class codeFileInfo {
         this.codeSrc.parse(sortPath + this.codeSrcExt, false);
         this.name = this.partInfo.fileName;
         this.mainFilePath = s + this.extCode;
+        this.mainFileRootPath =this.rootInfo.alices+'/'+ sortPath + this.extCode;
         return true;
     }
 }

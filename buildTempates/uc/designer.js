@@ -19,12 +19,12 @@ export class {=designer.className} extends Usercontrol {
         `
         [/case]`
         `[case=.tpt]`
-    {=scope} {=name}: import('{=src.code.rootPath}');
+    {=scope} {=name}: import('{=src.mainFileRootPath}').{=src.name};
         ` 
         [/case]` 
    `[case=.uc]
    `
-    {=scope} {=name}: import('{=src.code.rootPath}');
+    {=scope} {=name}: import('{=src.mainFileRootPath}').{=src.name};
    ` 
    [/case]`    
     `{/switch}``{/loop}`
@@ -45,20 +45,16 @@ export class {=designer.className} extends Usercontrol {
           this.{=name} = CONTROLS.{=name} as {=proto};`
         [/case]`
         `[case=.tpt]`
-        /**
-         * @type {import ('{=src.code.rootPath}')} \<{=nodeName}\> 
-         **/
+        
         this.{=name} = intenseGenerator.generateTPT('{=src.code.rootPath}',{ 
                             parentUc : this, 
                             elementHT : CONTROLS.{=name} 
-                       });       
+                       }) as any;       
         ` 
              [/case]` 
         `[case=.uc]
         `
-        /** 
-         * @type {import ('{=src.code.rootPath}')} \<{=nodeName}\>
-         **/
+       
         this.{=name} = intenseGenerator.generateUC('{=src.code.rootPath}',{ 
                             parentUc : this, 
                             mode:args.mode,
@@ -68,7 +64,7 @@ export class {=designer.className} extends Usercontrol {
                                 addNodeToParentSession:true,
                             },                           
                             wrapperHT : CONTROLS.{=name} 
-                        });
+                        }) as any;
         ` 
              [/case]`    
         `{/switch}``{/loop}`

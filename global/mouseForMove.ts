@@ -7,7 +7,7 @@ interface MouseEvent {
 }
 
 interface MouseForMoveOptions {
-    onDown: (evt: MouseEvent, downPoint: Point) => boolean;
+    onDown: (evt: MouseEvent, downPoint: Point) => boolean|void;
     onMove: (evt: MouseEvent, diff: Point) => void;
     onUp: (evt: MouseEvent, diff: Point) => void;
 }

@@ -1,5 +1,5 @@
 
-class FocusManager {
+export class FocusManager {
     currentElement: HTMLElement | undefined;
 
     fetch() {
@@ -15,4 +15,3 @@ class FocusManager {
     }
 }
 
-export { FocusManager };

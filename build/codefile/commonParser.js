@@ -80,7 +80,7 @@ class commonParser {
                     let uFInf = new codeFileInfo_1.codeFileInfo(codeFileInfo_1.codeFileInfo.getExtType(_subpath));
                     uFInf.parseUrl(_subpath);
                     console.log(filePath);
-                    console.log(uFInf.html.fullPath);
+                    console.log(uFInf);
                     if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {
                         _row.designer.controls.push({
                             name: nameAttr,

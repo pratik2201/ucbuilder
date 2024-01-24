@@ -83,7 +83,8 @@ class commonParser {
                 if (scope == undefined)
                     scope = 'public';
                 let proto = Object.getPrototypeOf(ele).constructor.name;
-
+              
+                
                 if (ele.hasAttribute("x-from")) {
                    
                     let _subpath = ele.getAttribute("x-from");
@@ -93,8 +94,7 @@ class commonParser {
                     uFInf.parseUrl(_subpath);
                     console.log(filePath);
                     
-                    console.log(uFInf.html.fullPath);
-                    
+                    console.log(uFInf);
 
                     if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {
                         _row.designer.controls.push({

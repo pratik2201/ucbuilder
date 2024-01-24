@@ -139,6 +139,7 @@ class codeFileInfo {
         this.name = "";
         this.fullPathWithoutExt = "";
         this.mainFilePath = "";
+        this.mainFileRootPath = "";
         this.partInfo = { dirPath: "", sortDirPath: "", fileName: "", extension: 'none', type: "" };
         this.extCode = extCode;
     }
@@ -193,8 +194,8 @@ class codeFileInfo {
                 this.designerSrc.rootInfo = this.rootInfo;
         let fullPath = !this.rootInfo.isAlreadyFullPath ? (this.rootInfo.path + "" + url) : url;
         this.partInfo = common_1.pathInfo.getFileInfoPartly(fullPath);
-        //console.log(_url);
-        //  console.log(this.partInfo);
+        //    console.log(_url);
+        //     console.log(this);
         let s = (this.partInfo.dirPath.toLowerCase() + "" + this.partInfo.fileName);
         this.fullPathWithoutExt = s;
         let sortPath = common_1.strOpt._trim(s, this.rootInfo.path + "/");
@@ -209,6 +210,7 @@ class codeFileInfo {
         this.codeSrc.parse(sortPath + this.codeSrcExt, false);
         this.name = this.partInfo.fileName;
         this.mainFilePath = s + this.extCode;
+        this.mainFileRootPath = this.rootInfo.alices + '/' + sortPath + this.extCode;
         return true;
     }
 }

@@ -60,6 +60,7 @@ export class Usercontrol {
         session: new SessionManager(),
         stampRow: undefined as userControlStampRow,
         wrapperHT: undefined as HTMLElement,
+        stageHT:undefined as HTMLElement,
         isForm: false,
         get formExtends() { return this.form.ucExtends; },
         get self() { return this.wrapperHT; },
@@ -256,4 +257,3 @@ export class Usercontrol {
         },
     };
 }
-
