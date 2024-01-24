@@ -1,6 +1,6 @@
 import { uniqOpt, controlOpt, objectOpt, arrayOpt } from "ucbuilder/build/common";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
-//import transferDataNode from "ucbuilder/global/drag/transferation.js";
+import { transferDataNode,TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 
 interface DragElementEventRow {
@@ -10,18 +10,13 @@ interface DragElementEventRow {
     dragover: string;
     dragNumber: number;
 }
-type DragDataType = "unknown" | "uc" | "uc-link" | "tpt" | "tpt-link" | "text" | "json" | "link";
-export interface DragDataNode {
-    type: DragDataType,
-    unqKey: string,
-    data: any,
-}
-export const dragDataNode: DragDataNode = {
-    type: 'unknown',
-    unqKey: '',
-    data: undefined,
-}
-class DragRow {
+
+type DragEventType = "dragenter" | "drop" | "dragleave" | "dragover";
+type DragEventCaller = (ele: HTMLElement, evt: DragEvent) => any;
+
+//type DragingEvent = <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any)=> void;
+
+export class DragRow {
     elements: HTMLElement[] = [];
     event = new CommonEvent();
 
@@ -34,7 +29,7 @@ class DragNode {
     source: any = {};
 
     elementList: HTMLElement[] = [];
-    callback: Function | undefined = undefined;
+    callback: Function = undefined;
     hasBound = false;
 
     generateEvent(elementList: HTMLElement[], callback: Function): void {
@@ -58,12 +53,12 @@ class DragNode {
 
     addEvent(elements = this.elementList): void {
         elements.forEach(element =>
-            element.addEventListener(this.eventName, this.eventCaller as DragEventCallback));
+            element.addEventListener(this.eventName, this.eventCaller));
     }
 
     removeEvent(elements = this.elementList): void {
         elements.forEach(element =>
-            element.removeEventListener(this.eventName, this.eventCaller as DragEventCallback));
+            element.removeEventListener(this.eventName, this.eventCaller));
     }
 
     fireEvent(ev: DragEvent): void {
@@ -71,17 +66,16 @@ class DragNode {
             this.callback(ev);
     }
 
-    main: DragHelper;
-    eventName: "dragenter" | "drop" | "dragleave" | "dragover" = "dragenter";
-    eventCaller: Function | undefined = undefined;
+    main: DragHelper = undefined;
+    eventName: DragEventType = "dragenter";
+    eventCaller: any = undefined;
 
-    init(main: DragHelper, eventName: "dragenter" | "drop" | "dragleave" | "dragover", eventCaller: Function): void {
+    init(main: DragHelper, eventName: DragEventType, eventCaller: DragEventCaller): void {
         this.main = main;
         this.eventName = eventName;
         this.eventCaller = eventCaller;
     }
 }
-type DragEventCallback = (ev: DragEvent)=> void;
 
 const ATTR = Object.freeze({
     dragTag: "dragTag"
@@ -124,7 +118,7 @@ export class DragHelper {
         }
     }
     tagName = "";
-    dragNumber: number = -1;
+    dragNumber: number = 0;
     constructor() {
         DragHelper.dragNumberCounter++;
         this.dragNumber = DragHelper.dragNumberCounter;
@@ -132,7 +126,7 @@ export class DragHelper {
         this.node.init();
     }
 
-    static dragEventCallback = (ev: DragEvent): void => { };
+    //static dragEventCallback = (ev: DragEvent): void => { };
 
     pushElements(htEleAr: HTMLElement[], clearOldIfExists = true): DragHelper {
         this.node.enter.reFill(htEleAr, clearOldIfExists, this.node.added);
@@ -142,38 +136,38 @@ export class DragHelper {
         return this;
     }
 
-    lastDragEvent: DragEvent | undefined = undefined;
+    lastDragEvent: DragEvent = undefined;
 
-    dragEnter = (callback: DragEventCallback, htEleAr: HTMLElement[]): DragHelper => {
+    dragEnter = (callback: DragEventCaller, htEleAr: HTMLElement[]): DragHelper => {
         this.node.enter.generateEvent(htEleAr, callback);
         return this;
     }
 
-    dragDrop = (callback: DragEventCallback, htEleAr: HTMLElement[]): DragHelper => {
+    dragDrop = (callback: DragEventCaller, htEleAr: HTMLElement[]): DragHelper => {
         this.node.drop.generateEvent(htEleAr, callback);
         return this;
     }
 
-    dragLeave = (callback: DragEventCallback, htEleAr: HTMLElement[]): DragHelper => {
+    dragLeave = (callback: DragEventCaller, htEleAr: HTMLElement[]): DragHelper => {
         this.node.leave.generateEvent(htEleAr, callback);
         return this;
     }
 
-    dragOver = (callback: DragEventCallback, htEleAr: HTMLElement[]): DragHelper => {
+    dragOver = (callback: DragEventCaller, htEleAr: HTMLElement[]): DragHelper => {
         this.node.over.generateEvent(htEleAr, callback);
         return this;
     }
 
-    static ON_START = (onStart: DragEventCallback, onEnd: DragEventCallback): void => {
+    static ON_START = (onStart: DragEventCaller, onEnd: DragEventCaller): void => {
         this._dragstart.on(onStart);
         this._dragend.on(onEnd);
-       // return DragHelper;
+        // return this;
     }
 
     static _dragend = new CommonEvent();
     static _dragstart = new CommonEvent();
 
-    static draggedData = Object.assign({},dragDataNode);
+    static draggedData = objectOpt.clone(transferDataNode);
     static dragResult = false;
 
     start(): void {
@@ -183,35 +177,64 @@ export class DragHelper {
     stop(): void {
         this.node.removeEvent();
     }
+    
+    static DRAG_ME(elements: HTMLElement | HTMLElement[],
+        callOnDragStart: (evt: DragEvent) => TransferDataNode =
+            (evt: DragEvent) => {
+                return {
+                    type: "unknown",
+                    data: undefined,
+                }
+            },
+        callOnDragEnd: (evt: DragEvent) => void = (evt: DragEvent) => { }): void {
+        let dragstartEventListner = (ev: DragEvent) => {
+            //this.lastDragEvent = ev;
+            DragHelper.draggedData = callOnDragStart(ev);
+            DragHelper._dragstart.fire(ev);
+        };
+        // dragHelper._dragend.assign(callOnDragEnd);
+        let dragendEventListner = (ev: DragEvent) => {
+            //this.lastDragEvent = ev;
+            DragHelper._dragend.fire(ev);
+            callOnDragEnd(ev);
+            DragHelper.dragResult = false;
+        };
+        let ar: HTMLElement[] = controlOpt.getArray(elements);
 
-    isEntered = false;
-    RES: DragElementEventRow | undefined = undefined;
+        ar.forEach(element => {
+            element.addEventListener("dragstart", dragstartEventListner);
+            element.addEventListener("dragend", dragendEventListner);
+        });
+    }
+    isEntered: boolean = false;
+
+    RES: DragElementEventRow = undefined;
     lastEnteredElement: any = undefined;
 
-    _dragenter_EVENT = (ev: DragEvent): void => {
+    _dragenter_EVENT = (ele: HTMLElement, ev: DragEvent): any => {
         this.lastDragEvent = ev;
         this.node.enter.fireEvent(ev);
     }
 
-    _dragover_EVENT = (ev: DragEvent): void => {
+    _dragover_EVENT = (ele: HTMLElement, ev: DragEvent): any => {
         ev.preventDefault();
         this.lastDragEvent = ev;
         this.node.over.fireEvent(ev);
         ev.dataTransfer.dropEffect = "move";
     }
 
-    _dragleave_EVENT = (ev: DragEvent): void => {
+    _dragleave_EVENT = (ele: HTMLElement, ev: DragEvent): any => {
         this.lastDragEvent = ev;
         this.node.leave.fireEvent(ev);
     }
 
-    _drop_EVENT = (ev: DragEvent): void => {
+    _drop_EVENT = (ele: HTMLElement, ev: DragEvent): any => {
         this.isEntered = false;
         this.lastDragEvent = ev;
         this.node.drop.fireEvent(ev);
     }
 
-    getDTag(ele: HTMLElement, eventName: "dragenter" | "drop" | "dragleave" | "dragover"): string {
+    getDTag(ele: HTMLElement, eventName: DragEventType): string {
         let dTAg = ele.data(ATTR.dragTag);
         if (dTAg != undefined) {
             if (dTAg.dragNumber != this.dragNumber) dTAg = undefined;
@@ -224,4 +247,3 @@ export class DragHelper {
         return dTAg;
     }
 }
-

@@ -8,7 +8,7 @@ import { stylerRegs } from "ucbuilder/global/stylerRegs";
 import { userControlStampRow, userControlStamp, } from "ucbuilder/global/userControlStamp";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { tptOptions, TemplatePathOptions, templatePathOptions, TptOptions } from "ucbuilder/enumAndMore";
-import { transferDataNode } from "ucbuilder/global/drag/transferation";
+import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { FileInfo, codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { Size } from "ucbuilder/global/drawing/shapes";
@@ -299,11 +299,11 @@ export class TemplateNode {
       onGenerateContent: (content: string, jsonRow: {}) => content,
       onGenerateNode: (mainNode: HTMLElement, jsonRow: {}) => {},
 
-      onDataExport: (data: transferDataNode) => {
+      onDataExport: (data: TransferDataNode) => {
         return false;
       },
 
-      onDataImport: (data: transferDataNode) => {
+      onDataImport: (data: TransferDataNode) => {
         return false;
       },
     },
