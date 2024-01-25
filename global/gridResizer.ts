@@ -90,22 +90,7 @@ export class GridResizer {
     }
 
 
-    static getConvertedNames(gridTemplate: "grid-template-columns" | "grid-template-rows" = "grid-template-columns"): NamingConversion {
-        let _rtrn = newObjectOpt.clone(namingConversion);
-        if (gridTemplate == "grid-template-rows") {
-            _rtrn.offsetSize = "offsetHeight";
-            _rtrn.splitterText = "splitter-height";
-            _rtrn.gridTemplate = gridTemplate;
-            _rtrn.gridAuto = "grid-auto-columns";
-            _rtrn.size = "height";
-            _rtrn.point = "y";
-            _rtrn.dir = "top";
-            _rtrn.pagePoint = "pageY";
-            _rtrn.OPPOSITE = {
-                scrollPoint: "scrollLeft",
-                scrollSize: "scrollBarWidth",
-            };
-        }
-        return _rtrn;
+    static getConvertedNames(gridTemplate: "grid-template-columns" | "grid-template-rows" = "grid-template-columns"): NamingConversion {       
+        return getConvertedNames(gridTemplate);
     }
 }

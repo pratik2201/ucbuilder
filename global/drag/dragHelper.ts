@@ -164,8 +164,8 @@ export class DragHelper {
         // return this;
     }
 
-    static _dragend = new CommonEvent();
-    static _dragstart = new CommonEvent();
+    static _dragend = new CommonEvent<(ele:HTMLElement,ev:DragEvent)=>void>();
+    static _dragstart = new CommonEvent<(ele:HTMLElement,ev:DragEvent)=>void>();
 
     static draggedData = objectOpt.clone(transferDataNode);
     static dragResult = false;

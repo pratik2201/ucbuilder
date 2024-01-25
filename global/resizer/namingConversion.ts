@@ -12,8 +12,9 @@ export interface NamingConversion {
   pagePoint: string;
   client: string;
   offsetPoint: string;
+  scrollPosition: string;
   OPPOSITE: {
-    scrollPoint: string;
+    scrollPosition: string;
     scrollSize: string;
   };
 }
@@ -30,8 +31,9 @@ export const namingConversion: NamingConversion = {
   pagePoint: "pageX",
   client: "clientX",
   offsetPoint: "offsetX",
+  scrollPosition:"scrollLeft",
   OPPOSITE: {
-    scrollPoint: "scrollTop",
+    scrollPosition: "scrollTop",
     scrollSize: "scrollBarHeight",
   },
 };
@@ -50,8 +52,9 @@ export const getConvertedNames = (gridTemplate: "grid-template-columns" | "grid-
     _rtrn.pagePoint = "pageY";
     _rtrn.client = "clientY";
     _rtrn.offsetPoint = "offsetY";
+    _rtrn.scrollPosition = "scrollTop";
     _rtrn.OPPOSITE = {
-      scrollPoint: "scrollLeft",
+      scrollPosition: "scrollLeft",
       scrollSize: "scrollBarWidth",
     };
   }

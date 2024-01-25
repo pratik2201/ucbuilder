@@ -132,7 +132,7 @@ export class Usercontrol {
             sizeChangeEvt.Events.onChangeEventList = () => {
                 if (ucExt.resizerObserver == undefined) {
                     ucExt.resizerObserver = new ResizeObserver((cbpera) => {
-                        sizeChangeEvt.fire(cbpera);
+                        sizeChangeEvt.fire([cbpera]);
                     });
                     ucExt.resizerObserver.observe(ucExt.wrapperHT);
                 } else {
@@ -199,14 +199,14 @@ export class Usercontrol {
             get newSessionGenerate() { return this.winExt().Events._newSessionGenerate; },
             _completeSessionLoad: new CommonEvent<() =>void>(),
             get completeSessionLoad() { return this.winExt().Events._completeSessionLoad; },
-            sizeChanged: new CommonEvent<() =>void>(),
+            sizeChanged: new CommonEvent<(size:ResizeObserverEntry[]) =>void>(),
             winExt: () => this.ucExtends.form.ucExtends,
             onDataExport: (_data: DragDataNode) => { return false; },
             onDataImport: (_data: DragDataNode) => { return false; },
         },
         destruct: (): boolean => {
             let res = { prevent: false };
-            this.ucExtends.Events.beforeClose.fire(res);
+            this.ucExtends.Events.beforeClose.fire([res]);
             if (!res.prevent) {
                 this.ucExtends.wrapperHT.delete();
                 this.ucExtends.Events.afterClose.fire();
@@ -226,7 +226,7 @@ export class Usercontrol {
         designer: {
             setCaption: (text: string) => {
                 this.ucExtends.wrapperHT.setAttribute("x-caption", text);
-                this.ucExtends.Events.captionChanged.fire(text);
+                this.ucExtends.Events.captionChanged.fire([text]);
             },
             getAllControls: (specific?: string[]): { [key: string]: HTMLElement } => {
                 let childs: { [key: string]: HTMLElement } = {};

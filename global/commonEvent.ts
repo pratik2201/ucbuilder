@@ -62,7 +62,7 @@ class CommonEvent<F extends (...arg: any) => any> {
         return this._eventList.length;
     }
 
-    fire<S = Parameter<F>>(...args:S[]): void {
+    fire<S = Parameter<F>>(args:Parameter<F>|void): void {
         this._eventList.forEach(s => {
             s.callback.apply(this, args);
         });

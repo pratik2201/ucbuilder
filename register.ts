@@ -27,7 +27,7 @@ class register {
 
     static Events = {
         extended: {
-            ready: new CommonEvent(),
+            ready: new CommonEvent<()=>void>(),
         },
         ready(callback: () => void) {
             this.extended.ready.on(callback);
