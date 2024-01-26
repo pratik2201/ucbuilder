@@ -22,6 +22,7 @@ class Usercontrol {
             session: new SessionManager_1.SessionManager(),
             stampRow: undefined,
             wrapperHT: undefined,
+            stageHT: undefined,
             isForm: false,
             get formExtends() { return this.form.ucExtends; },
             get self() { return this.wrapperHT; },
@@ -90,7 +91,7 @@ class Usercontrol {
                 sizeChangeEvt.Events.onChangeEventList = () => {
                     if (ucExt.resizerObserver == undefined) {
                         ucExt.resizerObserver = new ResizeObserver((cbpera) => {
-                            sizeChangeEvt.fire(cbpera);
+                            sizeChangeEvt.fire([cbpera]);
                         });
                         ucExt.resizerObserver.observe(ucExt.wrapperHT);
                     }
@@ -162,7 +163,7 @@ class Usercontrol {
             },
             destruct: () => {
                 let res = { prevent: false };
-                this.ucExtends.Events.beforeClose.fire(res);
+                this.ucExtends.Events.beforeClose.fire([res]);
                 if (!res.prevent) {
                     this.ucExtends.wrapperHT.delete();
                     this.ucExtends.Events.afterClose.fire();
@@ -181,7 +182,7 @@ class Usercontrol {
             designer: {
                 setCaption: (text) => {
                     this.ucExtends.wrapperHT.setAttribute("x-caption", text);
-                    this.ucExtends.Events.captionChanged.fire(text);
+                    this.ucExtends.Events.captionChanged.fire([text]);
                 },
                 getAllControls: (specific) => {
                     let childs = {};

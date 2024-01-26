@@ -1,30 +1,26 @@
-const { objectOpt } = require("ucbuilder/build/common");
-const { listUiHandler } = require("ucbuilder/global/listUI/extended/listUiHandler");
-const { newObjectOpt } = require("ucbuilder/global/objectOpt");
-
-/**
- * @typedef {import ("ucbuilder/Template").Template} Template
- */
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.listUiSearch = void 0;
 class listUiSearch {
-    /** @param {listUiHandler} main */
     constructor(main) {
+        this.sampleRow = undefined;
         this.main = main;
     }
-    get rows(){ return this.main.source.rows; }
-    /** @type {{}}  */ 
-    sampleRow = undefined
-    /** @param {boolean} force */
+    get rows() {
+        return this.main.source.rows;
+    }
     takeBlueprint(force = false) {
-        let hasTakenSample = this.sampleRow!=undefined;
-        if(!force && hasTakenSample)return;
-        if(this.rows.length==0)return;
+        let hasTakenSample = this.sampleRow != undefined;
+        if (!force && hasTakenSample)
+            return;
+        if (this.rows.length == 0)
+            return;
         this.sampleRow = this.rows[0];
         this.experiment();
     }
-    experiment(){
+    experiment() {
         //console.log(this.sampleRow);        
         //console.log(newObjectOpt.analysisObject(this.sampleRow));
     }
-
 }
-module.exports = { listUiSearch }
+exports.listUiSearch = listUiSearch;

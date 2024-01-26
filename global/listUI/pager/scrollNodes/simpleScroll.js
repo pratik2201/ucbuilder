@@ -1,28 +1,21 @@
-const { namingConversion } = require("ucbuilder/global/listUI/pager/enumAndMore");
-const { newObjectOpt } = require("ucbuilder/global/objectOpt");
-const { pagerLV } = require("ucbuilder/global/listUI/pagerLV");
-const { commonEvent } = require("ucbuilder/global/commonEvent");
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.simpleScroll = void 0;
+const commonEvent_1 = require("ucbuilder/global/commonEvent");
+const namingConversion_1 = require("ucbuilder/global/resizer/namingConversion");
 class simpleScroll {
-    nameList = newObjectOpt.copyProps(namingConversion, {});
-    elementNode = {
-        /** @type {HTMLElement}  */
-        sizer: `<sizer style="position: absolute; width: 100%; height: 100%; "></sizer>`,
-    }
-    /**
-     * @param {"h"|"v"} dir 
-     */
     constructor(dir) {
-        this.nameList.initByType(dir);
+        this.nameList = Object.assign({}, namingConversion_1.namingConversion);
+        this.elementNode = {
+            sizer: `<sizer style="position: absolute; width: 100%; height: 100%; "></sizer>`,
+        };
+        this.Event = {
+            onScroll: new commonEvent_1.CommonEvent()
+        };
         this.dir = dir;
+        this.nameList = (0, namingConversion_1.getConvertedNames)(dir == 'Horizontal' ? 'grid-template-columns' : 'grid-template-rows');
     }
-    
-
     get pagerLv() { return this.main; }
-
-    /**
-     * @param {pagerLV} main
-     * @param {HTMLElement} scrollbarElement
-     */
     init(main, scrollbarElement) {
         this.main = main;
         this.scrollbarElement = scrollbarElement;
@@ -32,13 +25,13 @@ class simpleScroll {
         let _size_text = this.nameList.size;
         let _offsetsize_text = this.nameList.offsetSize;
         switch (this.dir) {
-            case 'h':
+            case 'Horizontal':
                 Object.assign(this.scrollbarElement.style, {
                     "width": "100%",
                     "overflow-x": "auto",
                 });
                 break;
-            case 'v':
+            case 'Vertical':
                 Object.assign(this.scrollbarElement.style, {
                     "height": "100%",
                     "overflow-y": "auto",
@@ -48,23 +41,11 @@ class simpleScroll {
         new ResizeObserver((e, obs) => {
             _szr.style[_size_text] = this.pagerLv.Records.lstVWEle[_offsetsize_text] + "px";
         }).observe(this.pagerLv.Records.lstVWEle, { box: "border-box" });
-
         let _scrollposition_text = this.nameList.scrollPosition;
         this.scrollbarElement.addEventListener("scroll", (e) => {
-            this.Event.onScroll.fire(e);
+            this.Event.onScroll.fire([e]);
             this.pagerLv.Records.scrollerElement[_scrollposition_text] = this.scrollbarElement[_scrollposition_text];
         });
     }
-
-    Event = {
-        /**
-         * @type {{on:(callback = (
-         *          e:Event
-         * ) =>{})} & commonEvent}
-         */
-
-        onScroll: new commonEvent<(evt:Event)=>void>()
-    }
-
 }
-module.exports = { simpleScroll }
+exports.simpleScroll = simpleScroll;

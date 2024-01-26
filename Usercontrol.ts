@@ -12,7 +12,7 @@ import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { stylerRegs } from "ucbuilder/global/stylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
-import { DragDataNode } from "ucbuilder/global/drag/dragHelper";
+import {  TransferDataNode  } from "ucbuilder/global/drag/transferation";
 
 export class Usercontrol {
     static UcOptionsStc: UcOptions;
@@ -201,8 +201,8 @@ export class Usercontrol {
             get completeSessionLoad() { return this.winExt().Events._completeSessionLoad; },
             sizeChanged: new CommonEvent<(size:ResizeObserverEntry[]) =>void>(),
             winExt: () => this.ucExtends.form.ucExtends,
-            onDataExport: (_data: DragDataNode) => { return false; },
-            onDataImport: (_data: DragDataNode) => { return false; },
+            onDataExport: (_data: TransferDataNode) => { return false; },
+            onDataImport: (_data: TransferDataNode) => { return false; },
         },
         destruct: (): boolean => {
             let res = { prevent: false };

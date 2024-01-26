@@ -1,321 +1,164 @@
-const { commonEvent } = require("ucbuilder/global/commonEvent");
-const { listUiSearch } = require("ucbuilder/global/listUiSearch");
-const { timeoutCall } = require("ucbuilder/global/timeoutCall");
-/**
- * @typedef {import ("ucbuilder/Template").TemplateNode} TemplateNode
- */
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.listUiHandler = void 0;
+const CommonEvent_1 = require("ucbuilder/global/CommonEvent");
+const timeoutCall_1 = require("ucbuilder/global/timeoutCall");
+const enumAndMore_1 = require("../pager/enumAndMore");
 class listUiHandler {
     constructor() {
-        this.search = new listUiSearch(this);
+        this.OPTIONS = {
+            SESSION: {
+                currentIndex: -1,
+                scrollTop: 0,
+            },
+            listSize: undefined,
+            currentItem: undefined,
+        };
+        this.source = new enumAndMore_1.SourceManage();
+        this.nodes = {
+            itemSize: {
+                hasSet: false,
+                width: 0,
+                height: 0,
+                update(htEle) {
+                    this.hasSet = true;
+                    if (!htEle.isConnected) {
+                        document.body.appendChild(htEle);
+                        timeoutCall_1.timeoutCall.start(() => {
+                            this.width = htEle.offsetWidth;
+                            this.height = htEle.offsetHeight;
+                        });
+                        document.body.removeChild(htEle);
+                    }
+                    else {
+                        this.width = htEle.offsetWidth;
+                        this.height = htEle.offsetHeight;
+                    }
+                },
+            },
+            getNode: (index) => {
+                return this.itemTemplate.extended.generateNode(this.source.rows[index]);
+            },
+            prepend: (index) => { debugger; return undefined; },
+            append: (index, replaceNode = false) => { debugger; return undefined; },
+            update: (index) => {
+                let nodes = this.nodes;
+                let ele = nodes.append(index, true);
+                this.setCurrentIndex(this.currentIndex);
+                return ele;
+            },
+            clear: () => {
+                this.Records.lstVWEle.innerHTML = "";
+                this.Events.onClearContainer.fire();
+            },
+            indexOf: (ele) => { return -1; },
+            fill: () => {
+                console.log("ds");
+            },
+            callToFill: () => { },
+            loopVisibleRows: (callback = (ele) => {
+                return true;
+            }) => { },
+            onRendar: () => {
+                this.nodes.loopVisibleRows((ele) => {
+                    return true;
+                });
+            },
+            __doactualRendar: () => {
+                this.nodes.onRendar();
+                this.nodes.refreshHiddenCount();
+            },
+            render() {
+                this.__doactualRendar();
+            },
+            refreshHiddenCount: () => { },
+        };
+        this.Records = {
+            itemAt(index) {
+                return undefined;
+            },
+            lstVWEle: undefined,
+            scrollerElement: undefined,
+            getItemFromChild(ele) {
+                let _container = this.lstVWEle;
+                while (true) {
+                    if (ele.parentElement == null) {
+                        return null;
+                    }
+                    else if (_container.is(ele.parentElement)) {
+                        return ele;
+                    }
+                    else {
+                        ele = ele.parentElement;
+                    }
+                }
+            },
+            getNode: (index) => {
+                return this.itemTemplate.extended.generateNode(this.source.rows[index]);
+            },
+        };
+        this.Events = {
+            onSourceUpdate: new CommonEvent_1.CommonEvent(),
+            itemDoubleClick: new CommonEvent_1.CommonEvent(),
+            itemMouseDown: new CommonEvent_1.CommonEvent(),
+            itemMouseUp: new CommonEvent_1.CommonEvent(),
+            onClearContainer: new CommonEvent_1.CommonEvent(),
+            currentItemIndexChange: new CommonEvent_1.CommonEvent(),
+            newItemGenerate: new CommonEvent_1.CommonEvent(),
+            onListUISizeChanged: new CommonEvent_1.CommonEvent(),
+            beforeOldItemRemoved: new CommonEvent_1.CommonEvent(),
+            onRowNavigationChanged: (callback, event, valToAddRemove) => {
+                callback(event, valToAddRemove);
+            },
+            onReachLastRecord: () => {
+                return false;
+            },
+            onReachFirstRecord: () => {
+                return false;
+            },
+            onkeydown: (e) => { },
+        };
+        this.keydown_listner = (evt) => {
+            this.Events.onkeydown(evt);
+        };
     }
-
-    OPTIONS = {
-        SESSION: {
-            currentIndex: -1,
-            scrollTop: 0,
-        },
-
-        /** @type {DOMRectReadOnly}  */
-        listSize: undefined,
-        /** @type {HTMLElement}  */
-        currentItem: undefined,
-    }
-    source = {
-        _rows: [],
-        get rows() {
-            return this._rows;
-        },
-        _this: () => this,
-        set rows(value) {
-            this._rows = value;
-
-            this.update();
-        },
-        update() {
-            this._this().Events.onSourceUpdate.fire(this._rows.length);
-            //this._this().length = this._rows.length;
-        }
-    }
-
-    /** @type {TemplateNode}  */
-    itemTemplate = undefined;
-
-
-
     get length() {
         return this.source.rows.length;
     }
-
-
-    nodes = {
-        itemSize: {
-            hasSet: false,
-            /** @type {number}  */
-            width: 0,
-            /** @type {number}  */
-            height: 0,
-            /** @param {HTMLElement} htEle */
-            update(htEle) {
-                this.hasSet = true;
-                   
-                if (!htEle.isConnected) {
-                    document.body.appendChild(htEle);
-                    timeoutCall.start(() => {
-                        this.width = htEle.offsetWidth;
-                        
-                        this.height = htEle.offsetHeight;
-                    });
-                    document.body.removeChild(htEle);
-                } else {
-                    this.width = htEle.offsetWidth;
-                    this.height = htEle.offsetHeight;
-                }
-            }
-        },
-        /**
-        * @param {number} index 
-        * @returns {HTMLElement}
-        */
-        getNode: (index) => {
-            return this.itemTemplate.extended.generateNode(this.source.rows[index]);
-        },
-        /**
-        * @param {number} index 
-        * @returns {HTMLElement}
-        */
-        prepend: (index) => {
-        },
-        /**
-        * @param {number} index 
-        * @param {boolean} replaceNode 
-        * @returns {HTMLElement}
-        */
-        append: (index, replaceNode = false) => {
-        },
-        /**
-           * @param {number} index 
-           * @returns {HTMLElement}
-           */
-        update: (index) => {
-            let nodes = this.nodes;
-            let ele = nodes.append(index, true);
-            this.setCurrentIndex(this.currentIndex);
-            return ele;
-        },
-        clear: () => {
-            this.Records.lstVWEle.innerHTML = '';
-            this.Events.onClearContainer.fire();
-        },
-        /** @param {HTMLElement} ele  @returns {number} */
-        indexOf: (ele) => {
-
-        },
-        fill: () => {
-            console.log('ds');
-        },
-        callToFill: () => {
-
-        },
-        loopVisibleRows: (callback = (ele) => { return true; }) => {
-
-        },
-        onRendar: () => {
-            this.nodes.loopVisibleRows((ele) => { return ele; });
-        },
-        /** @private  */
-        __doactualRendar: () => {
-            this.nodes.onRendar();
-            this.nodes.refreshHiddenCount();
-        },
-        render() {
-            this.__doactualRendar();
-        },
-        refreshHiddenCount: () => {
-        }
+    get currentRecord() {
+        return this.source.rows[this.currentIndex];
     }
-
-
-    Records = {
-
-        /**
-         * @param {number} index 
-         * @returns {HTMLElement}
-         */
-        itemAt(index) { return undefined; },
-        /** @type {HTMLElement}  */
-        lstVWEle: undefined,
-        /** @type {HTMLElement}  */
-        scrollerElement: undefined,
-        /**
-         * @param {HTMLElement} ele 
-         * @returns {HTMLElement}
-         */
-        getItemFromChild(ele) {
-            let _container = this.lstVWEle;
-            while (true) {
-                if (ele.parentElement == null) { return null; }
-                else if (_container.is(ele.parentElement)) {
-                    return ele;
-                } else {
-                    ele = ele.parentElement;
-                }
-            }
-        },
-        /**
-         * @param {number} index 
-         * @returns {HTMLElement}
-         */
-        getNode: (index) => {
-            //console.log(this.itemTemplate);
-            return this.itemTemplate.extended.generateNode(this.source.rows[index]);
-        },
-
-
+    get currentIndex() {
+        return this.OPTIONS.SESSION.currentIndex;
     }
-    Events = {
-        
-        /**
-         * @type {{on:(callback = (
-         *          count:number,
-         * ) =>{})} & commonEvent}
-         */
-        onSourceUpdate: new commonEvent(),
-        /**
-         * @type {{on:(callback = (
-         *          index:number,
-         *          evt:MouseEvent
-         * ) =>{})} & commonEvent}
-         */
-        itemDoubleClick: new commonEvent(),
-
-        /**
-         * @type {{on:(callback = (
-         *          index:number,
-         *          evt:MouseEvent
-         * ) =>{})} & commonEvent}
-         */
-        itemMouseDown: new commonEvent(),
-
-        /**
-         * 
-         * @type {{on:(callback = (
-         *          index:number,
-         *          evt:MouseEvent
-         * ) =>{})} & commonEvent}
-         */
-        itemMouseUp: new commonEvent(),
-
-        /**
-         * 
-         * @type {{on:(callback = (
-         * 
-         * ) =>{})} & commonEvent}
-         */
-        onClearContainer: new commonEvent(),
-
-
-
-        /**
-         * @type {{on:(callback = (
-         *          oldIndex:number,
-         *          newIndex:number,
-         *          evt:MouseEvent|KeyboardEvent,
-         *          eventType:"Other"|"Keyboard"|"Mouse" = "Other"
-         * ) =>{})} & commonEvent}
-         */
-        currentItemIndexChange: new commonEvent(),
-
-        /**
-         * @type {{on:(callback = (
-         *          itemnode:HTMLElement,
-         *          index:number
-         * ) =>{})} & commonEvent}
-         */
-        newItemGenerate: new commonEvent(),
-        /**
-         * @type {{on:(callback = (
-         *          rect:DOMRectReadOnly
-         * ) =>{})} & commonEvent}
-         */
-        onListUISizeChanged: new commonEvent(),
-
-
-        /**
-         * @type {{on:(callback = (
-         *          htEle:HTMLElement
-         * ) =>{})} & commonEvent}
-         */
-        beforeOldItemRemoved: new commonEvent(),
-
-
-
-        /**
-            * @param {(evt:KeyboardEvent,valToAddRemove:number)=>{}} callback mandetory to call
-            * @param {KeyboardEvent} event 
-            * @param {number} valToAddRemove 
-            */
-        onRowNavigationChanged: (callback = () => { }, event, valToAddRemove) => {
-            callback(event, valToAddRemove);
-        },
-
-        /**
-          * @returns `true` will moveto first record `false` will remain as it is
-          */
-        onReachLastRecord: () => { return false; },
-
-        /**
-         * @returns `true` will moveto last record `false` will remain as it is
-         */
-        onReachFirstRecord: () => { return false; },
-
-
-        /** @param {KeyboardEvent} e */
-        onkeydown: (e) => {
-            
-        }
-    };
-
-    get currentRecord() { return this.source.rows[this.currentIndex]; }
-    get currentIndex() { return this.OPTIONS.SESSION.currentIndex; }
     set currentIndex(val) {
         this.setCurrentIndex(val);
     }
-
     set scrollerElement(val) {
-        if (val == undefined) return;
+        if (val == undefined)
+            return;
         if (this.resizeObsrv != undefined)
             this.resizeObsrv.disconnect();
         this.resizeObsrv = new window.ResizeObserver((pera) => {
-            timeoutCall.start(() => {
+            timeoutCall_1.timeoutCall.start(() => {
                 this.OPTIONS.listSize = pera[0].contentRect;
-                this.Events.onListUISizeChanged.fire(pera[0].contentRect);
+                this.Events.onListUISizeChanged.fire([pera[0].contentRect]);
             });
         });
         this.Records.scrollerElement = val;
         this.resizeObsrv.observe(val);
     }
-    /**
-     * @param {HTMLElement} lstVw 
-     * @param {HTMLElement} scrollContainer 
-     */
-    init(lstVw, scrollerElement) {
+    init(lstVw, scrollerElement, uc) {
         this.Records.lstVWEle = lstVw;
+        this.source.onUpdate.on((cnt) => { this.Events.onSourceUpdate.fire([cnt]); });
         this.scrollerElement = scrollerElement;
         lstVw.addEventListener("dblclick", (e) => {
             let itm = this.Records.getItemFromChild(e.target);
             if (itm != null)
-                this.Events.itemDoubleClick.fire(this.currentIndex, e);
+                this.Events.itemDoubleClick.fire([this.currentIndex, e]);
         });
-
         scrollerElement.addEventListener("keydown", this.keydown_listner);
     }
-    /**
-    * @param {number} val 
-    * @param {MouseEvent|KeyboardEvent} evt 
-    * @param {"Other"|"Keyboard"|"Mouse"} eventType
-    */
-    setCurrentIndex(val, evt, eventType) { };
-    /** @param {KeyboardEvent} evt */
-    keydown_listner = (evt) => {  this.Events.onkeydown(evt); };
+    setCurrentIndex(val, evt, eventType = 'Other') { }
 }
-module.exports = { listUiHandler }
+exports.listUiHandler = listUiHandler;

@@ -1,14 +1,11 @@
 "use strict";
 var _a;
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DragHelper = exports.dragDataNode = void 0;
+exports.DragHelper = exports.DragRow = void 0;
 const common_1 = require("ucbuilder/build/common");
 const commonEvent_1 = require("ucbuilder/global/commonEvent");
-exports.dragDataNode = {
-    type: 'unknown',
-    unqKey: '',
-    data: undefined,
-};
+const transferation_1 = require("ucbuilder/global/drag/transferation");
+//type DragingEvent = <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any)=> void;
 class DragRow {
     constructor() {
         this.elements = [];
@@ -18,12 +15,14 @@ class DragRow {
         this.elements.length = 0;
     }
 }
+exports.DragRow = DragRow;
 class DragNode {
     constructor() {
         this.source = {};
         this.elementList = [];
         this.callback = undefined;
         this.hasBound = false;
+        this.main = undefined;
         this.eventName = "dragenter";
         this.eventCaller = undefined;
     }
@@ -99,7 +98,7 @@ class DragHelper {
             }
         };
         this.tagName = "";
-        this.dragNumber = -1;
+        this.dragNumber = 0;
         this.lastDragEvent = undefined;
         this.dragEnter = (callback, htEleAr) => {
             this.node.enter.generateEvent(htEleAr, callback);
@@ -120,21 +119,21 @@ class DragHelper {
         this.isEntered = false;
         this.RES = undefined;
         this.lastEnteredElement = undefined;
-        this._dragenter_EVENT = (ev) => {
+        this._dragenter_EVENT = (ele, ev) => {
             this.lastDragEvent = ev;
             this.node.enter.fireEvent(ev);
         };
-        this._dragover_EVENT = (ev) => {
+        this._dragover_EVENT = (ele, ev) => {
             ev.preventDefault();
             this.lastDragEvent = ev;
             this.node.over.fireEvent(ev);
             ev.dataTransfer.dropEffect = "move";
         };
-        this._dragleave_EVENT = (ev) => {
+        this._dragleave_EVENT = (ele, ev) => {
             this.lastDragEvent = ev;
             this.node.leave.fireEvent(ev);
         };
-        this._drop_EVENT = (ev) => {
+        this._drop_EVENT = (ele, ev) => {
             this.isEntered = false;
             this.lastDragEvent = ev;
             this.node.drop.fireEvent(ev);
@@ -144,6 +143,7 @@ class DragHelper {
         this.tagName = common_1.uniqOpt.guidAs_;
         this.node.init();
     }
+    //static dragEventCallback = (ev: DragEvent): void => { };
     pushElements(htEleAr, clearOldIfExists = true) {
         this.node.enter.reFill(htEleAr, clearOldIfExists, this.node.added);
         this.node.leave.reFill(htEleAr, clearOldIfExists, this.node.added);
@@ -156,6 +156,30 @@ class DragHelper {
     }
     stop() {
         this.node.removeEvent();
+    }
+    static DRAG_ME(elements, callOnDragStart = (evt) => {
+        return {
+            type: "unknown",
+            data: undefined,
+        };
+    }, callOnDragEnd = (evt) => { }) {
+        let dragstartEventListner = (ev) => {
+            //this.lastDragEvent = ev;
+            DragHelper.draggedData = callOnDragStart(ev);
+            DragHelper._dragstart.fire([ev.currentTarget, ev]);
+        };
+        // dragHelper._dragend.assign(callOnDragEnd);
+        let dragendEventListner = (ev) => {
+            //this.lastDragEvent = ev;
+            DragHelper._dragend.fire([ev.currentTarget, ev]);
+            callOnDragEnd(ev);
+            DragHelper.dragResult = false;
+        };
+        let ar = common_1.controlOpt.getArray(elements);
+        ar.forEach(element => {
+            element.addEventListener("dragstart", dragstartEventListner);
+            element.addEventListener("dragend", dragendEventListner);
+        });
     }
     getDTag(ele, eventName) {
         let dTAg = ele.data(ATTR.dragTag);
@@ -177,13 +201,12 @@ exports.DragHelper = DragHelper;
 _a = DragHelper;
 DragHelper.dragNumberCounter = 0;
 DragHelper.activeDragTag = "";
-DragHelper.dragEventCallback = (ev) => { };
 DragHelper.ON_START = (onStart, onEnd) => {
     _a._dragstart.on(onStart);
     _a._dragend.on(onEnd);
-    // return DragHelper;
+    // return this;
 };
 DragHelper._dragend = new commonEvent_1.CommonEvent();
 DragHelper._dragstart = new commonEvent_1.CommonEvent();
-DragHelper.draggedData = Object.assign({}, exports.dragDataNode);
+DragHelper.draggedData = common_1.objectOpt.clone(transferation_1.transferDataNode);
 DragHelper.dragResult = false;

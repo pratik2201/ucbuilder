@@ -190,12 +190,12 @@ export class DragHelper {
         let dragstartEventListner = (ev: DragEvent) => {
             //this.lastDragEvent = ev;
             DragHelper.draggedData = callOnDragStart(ev);
-            DragHelper._dragstart.fire(ev);
+            DragHelper._dragstart.fire([ev.currentTarget as HTMLElement,ev]);
         };
         // dragHelper._dragend.assign(callOnDragEnd);
         let dragendEventListner = (ev: DragEvent) => {
             //this.lastDragEvent = ev;
-            DragHelper._dragend.fire(ev);
+            DragHelper._dragend.fire([ev.currentTarget as HTMLElement,ev]);
             callOnDragEnd(ev);
             DragHelper.dragResult = false;
         };

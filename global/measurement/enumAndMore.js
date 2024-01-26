@@ -1,14 +1,8 @@
-/**  @typedef {'cm'|'mm'|'pc'|'in'}  unitType  */
-
-/** @type {unitType}  */  
-const unitOptions = undefined;
-module.exports = {  
-  /** @type {unitType}  */ 
-  unitType:undefined,
-  pageInfo: {
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.pageInfo = void 0;
+exports.pageInfo = {
     width: 210,
     height: 297,
-    /** @type {unitType}  */
-    unit: "mm",
-  },
+    unit: 'mm',
 };

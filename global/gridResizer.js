@@ -3,6 +3,10 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.GridResizer = exports.getConvertedNames = void 0;
 const shapes_1 = require("ucbuilder/global/drawing/shapes");
 const objectOpt_1 = require("ucbuilder/global/objectOpt");
+const gridResizerInitOptions = {
+    grid: undefined,
+    nodeName: ''
+};
 const namingConversion = {
     offsetSize: 'offsetWidth',
     splitterText: 'splitter-width',
@@ -38,11 +42,15 @@ const getConvertedNames = (gridTemplate = 'grid-template-columns') => {
 exports.getConvertedNames = getConvertedNames;
 class GridResizer {
     constructor() {
+        this.options = {
+            grid: undefined,
+            nodeName: ''
+        };
         this.dgvDomRect = new shapes_1.Rect();
         this.measurement = [];
         this.resizeMode = "unfill";
-        this.gridTemplate = 'grid-template-columns';
-        this.gridAuto = 'grid-template-rows';
+        this.gridTemplate = namingConversion.gridTemplate;
+        this.gridAuto = "grid-auto-rows";
     }
     get measureText() {
         return this.measurement.length <= 1 ? "auto" : this.measurement.map(s => s.size).slice(0, -1).join("px ") + "px auto";
@@ -54,5 +62,12 @@ class GridResizer {
         var _a, _b;
         return ((_b = (_a = this.options) === null || _a === void 0 ? void 0 : _a.grid) === null || _b === void 0 ? void 0 : _b.style[this.gridTemplate]) !== "";
     }
+    init(options) {
+        this.options = objectOpt_1.newObjectOpt.copyProps(options, gridResizerInitOptions);
+    }
+    static getConvertedNames(gridTemplate = "grid-template-columns") {
+        return (0, exports.getConvertedNames)(gridTemplate);
+    }
 }
 exports.GridResizer = GridResizer;
+GridResizer.boundContainers = [];

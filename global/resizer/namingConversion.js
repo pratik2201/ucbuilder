@@ -14,8 +14,9 @@ exports.namingConversion = {
     pagePoint: "pageX",
     client: "clientX",
     offsetPoint: "offsetX",
+    scrollPosition: "scrollLeft",
     OPPOSITE: {
-        scrollPoint: "scrollTop",
+        scrollPosition: "scrollTop",
         scrollSize: "scrollBarHeight",
     },
 };
@@ -33,8 +34,9 @@ const getConvertedNames = (gridTemplate = "grid-template-columns") => {
         _rtrn.pagePoint = "pageY";
         _rtrn.client = "clientY";
         _rtrn.offsetPoint = "offsetY";
+        _rtrn.scrollPosition = "scrollTop";
         _rtrn.OPPOSITE = {
-            scrollPoint: "scrollLeft",
+            scrollPosition: "scrollLeft",
             scrollSize: "scrollBarWidth",
         };
     }

@@ -1,103 +1,81 @@
-const { uniqOpt, objectOpt } = require("ucbuilder/build/common");
-
-module.exports = {
-    /** @type {"DISPLAYED"|"OUTSIDE"|"LAST"|"FIRST"}  */
-    PageNavigationResult: "DISPLAYED",
-    pagerATTR: Object.freeze({
-        itemIndex: "itmIndx" + uniqOpt.randomNo()
-    }),
-    scrollerUIElements: {
-        /** @type {HTMLElement}  */
-        sizer : `<sizer style="position: absolute; width: 100%; height: 100%; "></sizer>`,
-        /** @type {HTMLElement}  */
-        scrollbar: `<scrollbar></scrollbar>`,
-        /** @type {HTMLElement}  */
-        track: `<track></track>`,
-        /** @type {HTMLElement}  */
-        scroller: `<scroller></scroller>`,
-        /** @type {HTMLElement}  */
-        beginText: `<scroller-text role="begin"></scroller-text>`,
-        /** @type {HTMLElement}  */
-        endText: `<scroller-text role="end"></scroller-text>`,
-        /** @type {HTMLElement}  */
-        beginBtn: `<scroller-btn role="begin"></scroller-btn>`,
-        /** @type {HTMLElement}  */
-        endBtn: `<scroller-btn role="end"></scroller-btn>`,
-        doCommon() {
-            if (objectOpt.getClassName(this.scrollbar) == "String")
-                this.scrollbar = this.scrollbar.$();
-
-            if (objectOpt.getClassName(this.beginBtn) == "String") {
-                this.beginBtn = this.beginBtn.$();
-                this.scrollbar.appendChild(this.beginBtn);
-            } else if (this.beginBtn.parentElement == null) this.scrollbar.appendChild(this.beginBtn);
-
-
-            if (objectOpt.getClassName(this.track) == "String") {
-                this.track = this.track.$();
-                this.scrollbar.appendChild(this.track);
-            } else if (this.track.parentElement == null) this.scrollbar.appendChild(this.track);
-
-            if (objectOpt.getClassName(this.scroller) == "String") {
-                this.scroller = this.scroller.$();
-                this.track.appendChild(this.scroller);
-            } else if (this.scroller.parentElement == null) this.track.appendChild(this.scroller);
-
-
-
-            if (objectOpt.getClassName(this.endBtn) == "String") {
-                this.endBtn = this.endBtn.$();
-                this.scrollbar.appendChild(this.endBtn);
-            } else if (this.endBtn.parentElement == null) this.scrollbar.appendChild(this.endBtn);
-
-        },
-        /**
-         * @param {"pager"|"simple"} type 
-         */
-        initByType(type) {
-            this.doCommon();
-            switch (type) {
-                case 'pager':
-                    if (objectOpt.getClassName(this.beginText) == "String") {
-                        this.beginText = this.beginText.$();
-                        this.scroller.appendChild(this.beginText);
-                    } else if (this.beginText.parentElement == null) this.scroller.appendChild(this.beginText);
-
-                    if (objectOpt.getClassName(this.endText) == "String") {
-                        this.endText = this.endText.$();
-                        this.scroller.appendChild(this.endText);
-                    } else if (this.endText.parentElement == null) this.scroller.appendChild(this.endText);
-
-                    break;
-            }
+"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
+exports.SourceManage = exports.pagerATTR = exports.scrollerUIElements = void 0;
+const common_1 = require("ucbuilder/build/common");
+const commonEvent_1 = require("ucbuilder/global/commonEvent");
+exports.scrollerUIElements = {
+    sizer: `<sizer style="position: absolute; width: 100%; height: 100%; "></sizer>`.$(),
+    scrollbar: `<scrollbar></scrollbar>`.$(),
+    track: `<track></track>`.$(),
+    scroller: `<scroller></scroller>`.$(),
+    beginText: `<scroller-text role="begin"></scroller-text>`.$(),
+    endText: `<scroller-text role="end"></scroller-text>`.$(),
+    beginBtn: `<scroller-btn role="begin"></scroller-btn>`.$(),
+    endBtn: `<scroller-btn role="end"></scroller-btn>`.$(),
+    doCommon() {
+        let _this = exports.scrollerUIElements;
+        if (common_1.objectOpt.getClassName(_this.scrollbar) == "String")
+            _this.scrollbar = _this.scrollbar.$();
+        if (common_1.objectOpt.getClassName(_this.beginBtn) == "String") {
+            _this.beginBtn = _this.beginBtn.$();
+            _this.scrollbar.appendChild(_this.beginBtn);
         }
+        else if (_this.beginBtn.parentElement == null)
+            _this.scrollbar.appendChild(_this.beginBtn);
+        if (common_1.objectOpt.getClassName(_this.track) == "String") {
+            _this.track = _this.track.$();
+            _this.scrollbar.appendChild(_this.track);
+        }
+        else if (_this.track.parentElement == null)
+            _this.scrollbar.appendChild(_this.track);
+        if (common_1.objectOpt.getClassName(_this.scroller) == "String") {
+            _this.scroller = _this.scroller.$();
+            _this.track.appendChild(_this.scroller);
+        }
+        else if (_this.scroller.parentElement == null)
+            _this.track.appendChild(_this.scroller);
+        if (common_1.objectOpt.getClassName(_this.endBtn) == "String") {
+            _this.endBtn = _this.endBtn.$();
+            _this.scrollbar.appendChild(_this.endBtn);
+        }
+        else if (_this.endBtn.parentElement == null)
+            _this.scrollbar.appendChild(_this.endBtn);
     },
-    namingConversion: {
-        offsetPoint: "offsetY",
-        offsetSize: "offsetHeight",
-        scrollPosition: "scrollTop",
-        point: "y",
-        position: "top",
-        size: "height",
-        initByType(dir) {
-            switch (dir) {
-                case 'h':
-                    this.offsetPoint = "offsetX";
-                    this.offsetSize = "offsetWidth";
-                    this.scrollPosition = "scrollLeft";
-                    this.point = "x";
-                    this.position = "left";
-                    this.size = "width";
-                    break;
-                case 'v':
-                    this.offsetPoint = "offsetY";
-                    this.offsetSize = "offsetHeight";
-                    this.scrollPosition = "scrollTop";
-                    this.point = "y";
-                    this.position = "top";
-                    this.size = "height";
-                    break;
-            }
+    initByType(type) {
+        let _this = exports.scrollerUIElements;
+        _this.doCommon();
+        switch (type) {
+            case 'pager':
+                if (common_1.objectOpt.getClassName(_this.beginText) == "String") {
+                    _this.beginText = _this.beginText.$();
+                    _this.scroller.appendChild(_this.beginText);
+                }
+                else if (_this.beginText.parentElement == null)
+                    _this.scroller.appendChild(_this.beginText);
+                if (common_1.objectOpt.getClassName(_this.endText) == "String") {
+                    _this.endText = _this.endText.$();
+                    _this.scroller.appendChild(_this.endText);
+                }
+                else if (_this.endText.parentElement == null)
+                    _this.scroller.appendChild(_this.endText);
+                break;
         }
     }
+};
+exports.pagerATTR = Object.freeze({
+    itemIndex: "itmIndx" + common_1.uniqOpt.randomNo()
+});
+class SourceManage {
+    constructor() {
+        this.onUpdate = new commonEvent_1.CommonEvent();
+    }
+    get rows() {
+        return this._rows;
+    }
+    set rows(value) {
+        this._rows = value;
+        this.onUpdate.fire([value.length]);
+    }
 }
+exports.SourceManage = SourceManage;
+;
