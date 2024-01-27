@@ -7,7 +7,7 @@ const timeoutCall_1 = require("ucbuilder/global/timeoutCall");
 const enumAndMore_1 = require("ucbuilder/global/listUI/pager/enumAndMore");
 class pagerLV extends listUiHandler_1.listUiHandler {
     constructor() {
-        super(...arguments);
+        super();
         this.scroller = new scrollbarHandler_1.scrollbarHandler();
         this.pageInfo = {
             extended: {

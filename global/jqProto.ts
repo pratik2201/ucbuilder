@@ -1,4 +1,4 @@
-interface HTMLElement {
+interface EventTarget  {
     index(): number,
     selector(): string,
     find(selector: string, exclude?: string): HTMLElement[],
@@ -11,9 +11,9 @@ interface HTMLElement {
     on<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
     off<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
 }
-interface Element{
-    is(target: any): boolean,
-}
+interface HTMLElement extends EventTarget {}
+interface Element extends EventTarget { }
+
 interface SVGElement {
     data(key?: string, value?: any): any
 }

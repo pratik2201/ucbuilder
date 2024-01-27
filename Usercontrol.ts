@@ -181,7 +181,7 @@ export class Usercontrol {
         //stampRow: userControlStampRow,
         _windowstate: 'normal' as UcStates,
         get windowstate() { return this._windowstate; },
-        set windowstate(state: UcStates) { this._windowstate = state; this.Events.winStateChanged.fire(state); },
+        set windowstate(state: UcStates) { this._windowstate = state; this.Events.winStateChanged.fire([state]); },
 
         options: {
             ucExt: () => this.ucExtends,

@@ -158,7 +158,7 @@ export class DragHelper {
         return this;
     }
 
-    static ON_START = (onStart: DragEventCaller, onEnd: DragEventCaller): void => {
+    static ON_START = (onStart: DragEventCaller, onEnd?: DragEventCaller): void => {
         this._dragstart.on(onStart);
         this._dragend.on(onEnd);
         // return this;

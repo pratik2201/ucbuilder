@@ -74,7 +74,10 @@ class SourceManage {
     }
     set rows(value) {
         this._rows = value;
-        this.onUpdate.fire([value.length]);
+        this.update();
+    }
+    update() {
+        this.onUpdate.fire([this._rows.length]);
     }
 }
 exports.SourceManage = SourceManage;

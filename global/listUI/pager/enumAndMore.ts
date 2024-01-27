@@ -78,14 +78,17 @@ export const pagerATTR = Object.freeze({
   itemIndex: "itmIndx" + uniqOpt.randomNo()
 })
 
-export class SourceManage<T> {
-  _rows: T[];
-  get rows(): T[] {
+export class SourceManage {
+  _rows: any[];
+  get rows(): any[] {
     return this._rows;
   }
-  set rows(value: T[]) {
+  set rows(value: any[]) {
     this._rows = value;
-    this.onUpdate.fire([value.length])
+    this.update();
+  }
+  update() {
+    this.onUpdate.fire([this._rows.length]);
   }
   onUpdate = new CommonEvent<(arrayLen: number) => void>();
 };

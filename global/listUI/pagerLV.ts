@@ -6,7 +6,7 @@ import { pagerATTR, PageNavigationResult } from "ucbuilder/global/listUI/pager/e
 import { Usercontrol } from "ucbuilder/Usercontrol";
 type KeyboardNavigationCallback = (evt: KeyboardEvent, valToAddRemove: number) => void;
 
-export class pagerLV<T> extends listUiHandler<T> {
+export class pagerLV extends listUiHandler {
     constructor() {
         super();
     }
@@ -27,13 +27,13 @@ export class pagerLV<T> extends listUiHandler<T> {
             this.update();
         },
         update() {
-            this._this().Events.onSourceUpdate.fire(this._rows.length);
+            this._this().Events.onSourceUpdate.fire([this._rows.length]);
         }
     };*/
     allItemHT: NodeListOf<HTMLElement>;
     pageInfo: {
         extended: {
-            pgrLv: pagerLV<T>;
+            pgrLv: pagerLV;
             perPageRecord: number;
             length: number;
             _begin: number;
@@ -47,7 +47,7 @@ export class pagerLV<T> extends listUiHandler<T> {
         defaultIndex: number;
         selectedRow: any;
         top: number;
-        pagelv: pagerLV<T>;
+        pagelv: pagerLV;
         minBottomIndex: number;
     } = {
         extended: {

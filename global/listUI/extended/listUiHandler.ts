@@ -6,7 +6,7 @@ import { Usercontrol } from "ucbuilder/Usercontrol";
 import { SourceManage } from "../pager/enumAndMore";
 export type ItemIndexChangeBy = "Other" | "Keyboard" | "Mouse";
 
-export class listUiHandler<T> {
+export class listUiHandler {
     search: listUiSearch;
 
     OPTIONS: {
@@ -24,7 +24,7 @@ export class listUiHandler<T> {
         listSize: undefined,
         currentItem: undefined,
     };
-    source = new SourceManage<T>();
+    source = new SourceManage();
     /*source = {
         _rows: [],
         get rows(): any[] {
@@ -36,11 +36,11 @@ export class listUiHandler<T> {
             this.update();
         },
         update() {
-            this._this().Events.onSourceUpdate.fire(this._rows.length);
+            this._this().Events.onSourceUpdate.fire([this._rows.length]);
         },
     };*/
     
-    itemTemplate: TemplateNode | undefined;
+    itemTemplate: TemplateNode;
 
     get length(): number {
         return this.source.rows.length;

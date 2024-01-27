@@ -139,7 +139,7 @@ class Usercontrol {
             //stampRow: userControlStampRow,
             _windowstate: 'normal',
             get windowstate() { return this._windowstate; },
-            set windowstate(state) { this._windowstate = state; this.Events.winStateChanged.fire(state); },
+            set windowstate(state) { this._windowstate = state; this.Events.winStateChanged.fire([state]); },
             options: {
                 ucExt: () => this.ucExtends,
             },

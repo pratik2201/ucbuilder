@@ -179,14 +179,18 @@ class jqFeatures {
     static init() {
         if (jqFeatures.isInited)
             return;
-        HTMLElement.prototype.index = function () {
+        const commonPrototype = Object.assign({}, HTMLElement.prototype, Element.prototype, EventTarget.prototype);
+        HTMLElement.prototype = commonPrototype;
+        Element.prototype = commonPrototype;
+        EventTarget.prototype = commonPrototype;
+        commonPrototype.index = function () {
             var i = 0;
             let child = this;
             while ((child = child.previousElementSibling) != null)
                 i++;
             return i;
         };
-        HTMLElement.prototype.selector = function () {
+        commonPrototype.selector = function () {
             let elm = this;
             if (elm.tagName === "BODY")
                 return "BODY";
@@ -197,7 +201,7 @@ class jqFeatures {
             }
             return names.join(">");
         };
-        HTMLElement.prototype.find = function (selector, exclude) {
+        commonPrototype.find = function (selector, exclude) {
             let res = [];
             let trec = this.querySelectorAll(selector);
             if (exclude != undefined) {
@@ -212,19 +216,19 @@ class jqFeatures {
                 res = Array.from(trec);
             return res;
         };
-        HTMLElement.prototype.fireEvent = function (eventName, bubble = true, cancable = true) {
+        commonPrototype.fireEvent = function (eventName, bubble = true, cancable = true) {
             let evt = document.createEvent(jqFeatures.getEventType(eventName));
             evt.initEvent(eventName, bubble, bubble);
             this.dispatchEvent(evt);
         };
-        HTMLElement.prototype.delete = function () {
+        commonPrototype.delete = function () {
             jqFeatures.data.deleteObjectRef(this);
             this.remove();
         };
-        HTMLElement.prototype.stamp = function () {
+        commonPrototype.stamp = function () {
             return jqFeatures.data.getId(this).id;
         };
-        HTMLElement.prototype.data = function (key, value) {
+        commonPrototype.data = function (key, value) {
             switch (arguments.length) {
                 case 0:
                     return jqFeatures.data.getData(this);
@@ -240,25 +244,25 @@ class jqFeatures {
                     break;
             }
         };
-        HTMLElement.prototype.is = function (target) {
+        commonPrototype.is = function (target) {
             if (target == undefined || target == null)
                 return false;
             return jqFeatures.data.compareElements(this, target);
         };
-        Element.prototype.is = function (target) {
+        commonPrototype.is = function (target) {
             return this.is(target);
         };
-        HTMLElement.prototype.$ = function () {
+        commonPrototype.$ = function () {
             jqFeatures.data.initElement(this);
             return this;
         };
-        HTMLElement.prototype.on = function (eventList, handlerCallback) {
+        commonPrototype.on = function (eventList, handlerCallback) {
             let _tar = this;
             eventList.split(" ").forEach(function (e) {
                 jqFeatures.data.onHandler(_tar, e, handlerCallback);
             });
         };
-        HTMLElement.prototype.off = function (eventList, handlerCallback) {
+        commonPrototype.off = function (eventList, handlerCallback) {
             let _tar = this;
             eventList.split(" ").forEach(function (e) {
                 jqFeatures.data.offHandler(_tar, e, handlerCallback);

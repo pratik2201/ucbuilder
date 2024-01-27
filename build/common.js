@@ -148,10 +148,10 @@ exports.pathInfo = {
         ucCodeFile: "ucCodeFile",
         ucStyleFile: "ucStyleFile",
     }),
-    TYPE: Object.freeze({
+    /*TYPE: Object.freeze({
         directory: 'directory',
         file: "file"
-    }),
+    }),*/
     cleanPath(_pth = "") {
         return exports.strOpt.trim__(_pth.replace(/[\\/]{1,}/g, "/"), "\/ ");
     },
@@ -264,6 +264,26 @@ exports.controlOpt = {
     hasFocus($ele) {
         return $ele.is(":focus");
     },
+    hasClosingTag: (tagName) => {
+        try {
+            //console.log(typeof tagName);
+            switch (typeof tagName) {
+                case "string":
+                    tagName = tagName.toLowerCase();
+                    /** @type {HTMLElement}  */
+                    var element = document.createElement(tagName);
+                    return '<' + tagName + '>' !== element.outerHTML;
+                case "object":
+                    tagName = tagName.nodeName.toLowerCase();
+                    /** @type {HTMLElement}  */
+                    var element = document.createElement(tagName);
+                    return '<' + tagName + '>' !== element.outerHTML;
+            }
+        }
+        catch (ex) {
+            console.error(ex);
+        }
+    },
     /* getArray(elem: HTMLElement): NodeListOf<HTMLElement> {
          return elem.querySelectorAll("*");
      },*/
@@ -355,8 +375,8 @@ exports.controlOpt = {
     TextNodeToElement(textNode) {
         var spanNode = document.createElement('span');
         spanNode.setAttribute('class', 'red');
-        var newTextNode = document.createTextNode(textNode.textContent);
-        spanNode.appendChild(newTextNode);
+        //let newTextNode = document.createTextNode(textNode.textContent);
+        spanNode.append(textNode.textContent);
         textNode.parentNode.replaceChild(spanNode, textNode);
     },
     sizing: {

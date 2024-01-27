@@ -181,7 +181,7 @@ class resizeManage {
         isSettingSize = true;
         setTimeout(() => {
           this.options.setVarValue(this.varName, this.measureText);
-          this.Events.onResizing.fire(e, diff);
+          this.Events.onResizing.fire([e, diff]);
           isSettingSize = false;
         }, 1);
       },

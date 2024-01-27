@@ -254,8 +254,13 @@ class jqFeatures {
 
     static init(): void {
         if (jqFeatures.isInited) return;
+        const commonPrototype = Object.assign({}, HTMLElement.prototype, Element.prototype, EventTarget.prototype);
 
-        HTMLElement.prototype.index = function (): number {
+        HTMLElement.prototype = commonPrototype;
+        Element.prototype = commonPrototype;
+        EventTarget.prototype = commonPrototype;
+        
+        commonPrototype.index = function (): number {
             var i: number = 0;
             let child = this as Element;
             while ((child = child.previousElementSibling) != null)
@@ -263,7 +268,7 @@ class jqFeatures {
             return i;
         }
 
-        HTMLElement.prototype.selector = function (): string {
+        commonPrototype.selector = function (): string {
             let elm: HTMLElement = this;
             if (elm.tagName === "BODY") return "BODY";
             const names: string[] = [];
@@ -274,7 +279,7 @@ class jqFeatures {
             return names.join(">");
         }
 
-        HTMLElement.prototype.find = function (selector: string, exclude?: string): HTMLElement[] {
+        commonPrototype.find = function (selector: string, exclude?: string): HTMLElement[] {
             let res: HTMLElement[] = [];
             let trec: NodeListOf<HTMLElement> = (this as HTMLElement).querySelectorAll(selector);
             if (exclude != undefined) {
@@ -288,22 +293,22 @@ class jqFeatures {
             return res;
         }
 
-        HTMLElement.prototype.fireEvent = function (eventName: string, bubble: boolean = true, cancable: boolean = true): void {
+        commonPrototype.fireEvent = function (eventName: string, bubble: boolean = true, cancable: boolean = true): void {
             let evt: Event = document.createEvent(jqFeatures.getEventType(eventName));
             evt.initEvent(eventName, bubble, bubble);
             this.dispatchEvent(evt);
         }
 
-        HTMLElement.prototype.delete = function (): void {
+        commonPrototype.delete = function (): void {
             jqFeatures.data.deleteObjectRef(this);
             this.remove();
         }
 
-        HTMLElement.prototype.stamp = function (): string {
+        commonPrototype.stamp = function (): string {
             return jqFeatures.data.getId(this).id;
         }
 
-        HTMLElement.prototype.data = function (key?: string, value?: any): any {
+        commonPrototype.data = function (key?: string, value?: any): any {
             switch (arguments.length) {
                 case 0:
                     return jqFeatures.data.getData(this);
@@ -319,25 +324,25 @@ class jqFeatures {
                     break;
             }
         }
-        HTMLElement.prototype.is = function (target: HTMLElement): boolean {
+        commonPrototype.is = function (target: any): boolean {
             if (target == undefined || target == null) return false;
             return jqFeatures.data.compareElements(this, target);
         }
-        Element.prototype.is = function (target: any): boolean {
+        commonPrototype.is = function (target: any): boolean {
             return (this as HTMLElement).is(target);
         }
-        HTMLElement.prototype.$ = function (): HTMLElement {
+        commonPrototype.$ = function (): HTMLElement {
             jqFeatures.data.initElement(this);
             return this;
         }
-        HTMLElement.prototype.on = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+        commonPrototype.on = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
             let _tar: HTMLElement = this;
             eventList.split(" ").forEach(function (e) {
                 jqFeatures.data.onHandler(_tar, e as keyof HTMLElementEventMap, handlerCallback);
             });
         }
 
-        HTMLElement.prototype.off = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
+        commonPrototype.off = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
             let _tar: HTMLElement = this;
             eventList.split(" ").forEach(function (e) {
                 jqFeatures.data.offHandler(_tar, e as keyof HTMLElementEventMap, handlerCallback);
