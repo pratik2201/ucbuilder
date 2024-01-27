@@ -143,10 +143,10 @@ export const pathInfo = {
         ucCodeFile: "ucCodeFile",
         ucStyleFile: "ucStyleFile",
     }),
-    TYPE: Object.freeze({
+    /*TYPE: Object.freeze({
         directory: 'directory',
         file: "file"
-    }),
+    }),*/
     cleanPath(_pth: string = ""): string {
         return strOpt.trim__(_pth.replace(/[\\/]{1,}/g, "/"), "\/ ");
     },

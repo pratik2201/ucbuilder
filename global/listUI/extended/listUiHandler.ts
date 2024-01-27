@@ -6,7 +6,7 @@ import { Usercontrol } from "ucbuilder/Usercontrol";
 import { SourceManage } from "../pager/enumAndMore";
 export type ItemIndexChangeBy = "Other" | "Keyboard" | "Mouse";
 
-export class listUiHandler {
+export class listUiHandler<T> {
     search: listUiSearch;
 
     OPTIONS: {
@@ -24,7 +24,7 @@ export class listUiHandler {
         listSize: undefined,
         currentItem: undefined,
     };
-    source = new SourceManage();
+    source = new SourceManage<T>();
     /*source = {
         _rows: [],
         get rows(): any[] {
