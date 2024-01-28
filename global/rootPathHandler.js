@@ -147,11 +147,11 @@ rootPathHandler.addRoot = (projectName, replaceAlicesWith, pera) => {
             });
             return true;
         case "sameAlicesAlreadyExist":
-            document.write(`    
-                        ROOT ALICES ALREADY EXIST <br>
-                        YOU ARE TRING TO ADD '${projectName}' THAT ALREADY EXISTED LIST <br> SEE
-                        ${_a._source.map(s => s.originalFinderText).join("<br>")}                                
-                `);
+            /*document.write(`
+                    ROOT ALICES ALREADY EXIST <br>
+                    YOU ARE TRING TO ADD '${projectName}' THAT ALREADY EXISTED LIST <br> SEE
+                    ${this._source.map(s => s.originalFinderText).join("<br>")}
+            `);*/
             //this_is_for_break_execution = true;
             return false;
         case "alreadyRegistered": return true;

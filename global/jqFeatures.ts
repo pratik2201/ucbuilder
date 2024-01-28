@@ -251,14 +251,8 @@ class jqFeatures {
     }
 
     static regsMng: regsManage = new regsManage();
-
-    static init(): void {
-        if (jqFeatures.isInited) return;
-        const commonPrototype = Object.assign({}, HTMLElement.prototype, Element.prototype, EventTarget.prototype);
-
-        HTMLElement.prototype = commonPrototype;
-        Element.prototype = commonPrototype;
-        EventTarget.prototype = commonPrototype;
+    private static doCommonDomProto(commonPrototype: any): void {
+       
         
         commonPrototype.index = function (): number {
             var i: number = 0;
@@ -328,9 +322,9 @@ class jqFeatures {
             if (target == undefined || target == null) return false;
             return jqFeatures.data.compareElements(this, target);
         }
-        commonPrototype.is = function (target: any): boolean {
+       /* commonPrototype.is = function (target: any): boolean {
             return (this as HTMLElement).is(target);
-        }
+        }*/
         commonPrototype.$ = function (): HTMLElement {
             jqFeatures.data.initElement(this);
             return this;
@@ -348,6 +342,18 @@ class jqFeatures {
                 jqFeatures.data.offHandler(_tar, e as keyof HTMLElementEventMap, handlerCallback);
             });
         }
+    }
+    static init(): void {
+        if (jqFeatures.isInited) return;
+        //const commonPrototype = Object.assign({}, HTMLElement.prototype, Element.prototype, EventTarget.prototype);
+        this.doCommonDomProto(HTMLElement.prototype);
+        this.doCommonDomProto(Element.prototype);
+        this.doCommonDomProto(EventTarget.prototype);
+        /*HTMLElement.prototype = commonPrototype;
+        Element.prototype = commonPrototype;
+        EventTarget.prototype = commonPrototype;*/
+        
+       
 
         NodeList.prototype.on = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
             Array.from(this).on(eventList, handlerCallback);

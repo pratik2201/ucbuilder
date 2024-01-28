@@ -20,7 +20,8 @@ export class codefileHandler {
         if (index == -1) {
             let node = new row();
             node.codefileObj = codefileObj;
-            node.obj = Object.values(require(codefileObj.codeSrc.fullPath))[0];
+            let reqval = require(codefileObj.codeSrc.fullPath);
+            node.obj = reqval[codefileObj.name]; //Object.values(reqval)
             this.nodes.push(node);
             return node;
         } else {

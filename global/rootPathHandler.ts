@@ -84,11 +84,11 @@ export class rootPathHandler {
                 });
                 return true;
             case "sameAlicesAlreadyExist":
-                document.write(`    
+                /*document.write(`    
                         ROOT ALICES ALREADY EXIST <br>
                         YOU ARE TRING TO ADD '${projectName}' THAT ALREADY EXISTED LIST <br> SEE
                         ${this._source.map(s => s.originalFinderText).join("<br>")}                                
-                `);
+                `);*/
                 //this_is_for_break_execution = true;
                 return false;
             case "alreadyRegistered": return true;

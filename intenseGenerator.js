@@ -1,12 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.intenseGenerator = void 0;
+const objectOpt_1 = require("ucbuilder/global/objectOpt");
 const enumAndMore_1 = require("ucbuilder/enumAndMore");
 const ResourcesUC_1 = require("ucbuilder/ResourcesUC");
 const common_1 = require("ucbuilder/build/common");
+//import { createRequire, Module } from 'module';
 class intenseGenerator {
     static generateUC(path, pera, ...args) {
-        let param0 = Object.assign(pera, enumAndMore_1.ucOptions);
+        let param0 = objectOpt_1.newObjectOpt.copyProps(pera, enumAndMore_1.ucOptions);
         let row = ResourcesUC_1.ResourcesUC.codefilelist.getObj(path);
         param0.source.cfInfo = row.codefileObj;
         if (param0.wrapperHT == undefined) {

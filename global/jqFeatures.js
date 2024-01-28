@@ -176,13 +176,7 @@ class jqFeatures {
             };
         }
     }
-    static init() {
-        if (jqFeatures.isInited)
-            return;
-        const commonPrototype = Object.assign({}, HTMLElement.prototype, Element.prototype, EventTarget.prototype);
-        HTMLElement.prototype = commonPrototype;
-        Element.prototype = commonPrototype;
-        EventTarget.prototype = commonPrototype;
+    static doCommonDomProto(commonPrototype) {
         commonPrototype.index = function () {
             var i = 0;
             let child = this;
@@ -249,9 +243,9 @@ class jqFeatures {
                 return false;
             return jqFeatures.data.compareElements(this, target);
         };
-        commonPrototype.is = function (target) {
-            return this.is(target);
-        };
+        /* commonPrototype.is = function (target: any): boolean {
+             return (this as HTMLElement).is(target);
+         }*/
         commonPrototype.$ = function () {
             jqFeatures.data.initElement(this);
             return this;
@@ -268,6 +262,17 @@ class jqFeatures {
                 jqFeatures.data.offHandler(_tar, e, handlerCallback);
             });
         };
+    }
+    static init() {
+        if (jqFeatures.isInited)
+            return;
+        //const commonPrototype = Object.assign({}, HTMLElement.prototype, Element.prototype, EventTarget.prototype);
+        this.doCommonDomProto(HTMLElement.prototype);
+        this.doCommonDomProto(Element.prototype);
+        this.doCommonDomProto(EventTarget.prototype);
+        /*HTMLElement.prototype = commonPrototype;
+        Element.prototype = commonPrototype;
+        EventTarget.prototype = commonPrototype;*/
         NodeList.prototype.on = function (eventList, handlerCallback) {
             Array.from(this).on(eventList, handlerCallback);
         };

@@ -399,6 +399,7 @@ export class stylerRegs {
         (match: string, offset: any, input_string: string) => {
           changed = true;
           calltime++;
+          
           if (trimedVal == "[SELF_]") {
             return `${scopeSelectorText} ${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.stamp}"]`;
           } else {

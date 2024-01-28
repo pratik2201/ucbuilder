@@ -6,12 +6,12 @@ import { UcOptions,ucOptions, TptOptions,tptOptions, WrapperNodeNameAs } from 'u
 import { ResourcesUC } from 'ucbuilder/ResourcesUC';
 import { objectOpt, propOpt } from 'ucbuilder/build/common';
 import { UcRendarer } from 'ucbuilder/build/UcRendarer';
-import { createRequire, Module } from 'module';
+//import { createRequire, Module } from 'module';
 
 class intenseGenerator {
     static generateUC<T = string>(path: T, pera: UcOptions, ...args: any[]): Usercontrol {
         
-        let param0: UcOptions = Object.assign(pera, ucOptions);
+        let param0: UcOptions = newObjectOpt.copyProps(pera,ucOptions);
         
         let row = ResourcesUC.codefilelist.getObj(path as string);
         param0.source.cfInfo = row.codefileObj;
