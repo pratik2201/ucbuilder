@@ -15,9 +15,36 @@ import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import {  TransferDataNode  } from "ucbuilder/global/drag/transferation";
 
 export class Usercontrol {
+    static extractArgs = (args:IArguments) => newObjectOpt.extractArguments(args);
     static UcOptionsStc: UcOptions;
     static setChildValueByNameSpace(obj: {}, namespace: string, valToAssign: string): boolean {
         return objectOpt.setChildValueByNameSpace(obj, namespace, valToAssign);
+    }
+    static assignPropertiesFromDesigner(form: Usercontrol) {
+        let _self = form.ucExtends.self as HTMLElement;
+        let thisExp = /(^|\s)(this)(\W|$)/gim;
+        Array.from(_self.attributes)
+            .filter(s => s.nodeName.startsWith("x."))
+            .forEach(p => {
+                let atr = p.nodeName.slice(2);
+                console.log(atr+ ' = '+ p.value.slice(1));
+                objectOpt.setChildValueByNameSpace(form, atr,
+                    p.value.startsWith("=") ?
+                        p.value.slice(1)
+                :
+                    eval(p.value.replace(thisExp, (mch, fc, ths, lc) => fc + 'form.ucExtends.PARENT' + lc))
+                
+                );
+               /* let cv = this.setChildValueByNameSpace(form, atr,
+                    eval(
+                        p.value.startsWith("=") ?
+                            "'" + p.value.slice(1) + "'"
+                        :
+                            p.value.replace(thisExp, (mch, fc, ths, lc) => fc + 'this.ucExtends.PARENT' + lc)));
+                if(!cv)
+                    console.log("'"+ atr +"' property not set from designer");                
+                else _self.removeAttribute(p.nodeName)*/
+            });
     }
     static get giveMeHug(): string {
         let evalExp = /\(@([\w.]*?)\)/gim;

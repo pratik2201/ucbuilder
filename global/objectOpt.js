@@ -8,6 +8,14 @@ const getC = (c) => {
     return Object.getPrototypeOf(c).constructor.name;
 };
 class newObjectOpt {
+    static extractArguments(args) {
+        let cargs = args[0];
+        if (cargs.toString() === '[object Arguments]') {
+            return this.extractArguments(cargs);
+        }
+        else
+            return args;
+    }
     static copyProps(from, to) {
         let rtrn = this.clone(to);
         this.recursiveProp(from, rtrn);

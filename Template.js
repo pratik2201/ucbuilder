@@ -12,6 +12,7 @@ const userControlStamp_1 = require("ucbuilder/global/userControlStamp");
 const Usercontrol_1 = require("ucbuilder/Usercontrol");
 const enumAndMore_1 = require("ucbuilder/enumAndMore");
 const codeFileInfo_1 = require("ucbuilder/build/codeFileInfo");
+const objectOpt_1 = require("ucbuilder/global/objectOpt");
 const shapes_1 = require("ucbuilder/global/drawing/shapes");
 class Template {
     constructor() {
@@ -38,6 +39,7 @@ class Template {
     }
 }
 exports.Template = Template;
+Template.extractArgs = (args) => objectOpt_1.newObjectOpt.extractArguments(args);
 Template.getTemplates = {
     /**
      * @param  htmlContents content

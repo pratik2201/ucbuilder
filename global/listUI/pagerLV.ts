@@ -107,6 +107,8 @@ export class pagerLV extends listUiHandler {
     };
     uc: Usercontrol;
     init(lstVw: HTMLElement, scrollContainer: HTMLElement, uc: Usercontrol): void {
+        this.pageInfo.pagelv =
+            this.pageInfo.extended.pgrLv = this;
         super.init(lstVw, scrollContainer,uc);
         this.uc = uc;
         this.scroller.init(this);

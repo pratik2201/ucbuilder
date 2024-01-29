@@ -79,7 +79,7 @@ export const pagerATTR = Object.freeze({
 })
 
 export class SourceManage {
-  _rows: any[];
+  _rows: any[] = [];
   get rows(): any[] {
     return this._rows;
   }

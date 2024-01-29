@@ -219,6 +219,29 @@ class Usercontrol {
     static setChildValueByNameSpace(obj, namespace, valToAssign) {
         return common_1.objectOpt.setChildValueByNameSpace(obj, namespace, valToAssign);
     }
+    static assignPropertiesFromDesigner(form) {
+        let _self = form.ucExtends.self;
+        let thisExp = /(^|\s)(this)(\W|$)/gim;
+        Array.from(_self.attributes)
+            .filter(s => s.nodeName.startsWith("x."))
+            .forEach(p => {
+            let atr = p.nodeName.slice(2);
+            console.log(atr + ' = ' + p.value.slice(1));
+            common_1.objectOpt.setChildValueByNameSpace(form, atr, p.value.startsWith("=") ?
+                p.value.slice(1)
+                :
+                    eval(p.value.replace(thisExp, (mch, fc, ths, lc) => fc + 'form.ucExtends.PARENT' + lc)));
+            /* let cv = this.setChildValueByNameSpace(form, atr,
+                 eval(
+                     p.value.startsWith("=") ?
+                         "'" + p.value.slice(1) + "'"
+                     :
+                         p.value.replace(thisExp, (mch, fc, ths, lc) => fc + 'this.ucExtends.PARENT' + lc)));
+             if(!cv)
+                 console.log("'"+ atr +"' property not set from designer");
+             else _self.removeAttribute(p.nodeName)*/
+        });
+    }
     static get giveMeHug() {
         let evalExp = /\(@([\w.]*?)\)/gim;
         let thisExp = /(^|\s)(this)(\W|$)/gim;
@@ -247,4 +270,5 @@ class Usercontrol {
     }
 }
 exports.Usercontrol = Usercontrol;
+Usercontrol.extractArgs = (args) => objectOpt_1.newObjectOpt.extractArguments(args);
 Usercontrol._CSS_VAR_STAMP = 0;

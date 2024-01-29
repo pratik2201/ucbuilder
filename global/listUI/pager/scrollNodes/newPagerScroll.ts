@@ -28,6 +28,9 @@ export class newPagerScroll {
     Events: {
         onChangeHiddenCount: CommonEvent<(topHiddenCount:number,bottomHiddenCount:number)=>void>;
         onkeydown: (e: KeyboardEvent) => void;
+    } = {
+            onChangeHiddenCount: new CommonEvent<(topHiddenCount: number, bottomHiddenCount: number) => void>(),
+            onkeydown: (e: KeyboardEvent) => {}
     };
 
     constructor(dir: ScrollerType) {

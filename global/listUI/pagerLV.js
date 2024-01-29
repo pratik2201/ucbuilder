@@ -254,6 +254,8 @@ class pagerLV extends listUiHandler_1.listUiHandler {
         this.setCurrentIndex(val);
     }
     init(lstVw, scrollContainer, uc) {
+        this.pageInfo.pagelv =
+            this.pageInfo.extended.pgrLv = this;
         super.init(lstVw, scrollContainer, uc);
         this.uc = uc;
         this.scroller.init(this);

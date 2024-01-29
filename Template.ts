@@ -14,6 +14,7 @@ import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { Size } from "ucbuilder/global/drawing/shapes";
 
 export class Template {
+  static extractArgs = (args:any) => newObjectOpt.extractArguments(args);
   static getTemplates = {
     /**
      * @param  htmlContents content
@@ -194,7 +195,7 @@ export class TemplateNode {
         this.parentUc.ucExtends.self
       );
     },
-
+    
     getCSS_globalVar(key: string) {
       return document.body.style.getPropertyValue(
         stylerRegs.__VAR.getKeyName(key, ''+this.stampRow.styler.rootInfo.id, "g")
@@ -225,7 +226,7 @@ export class TemplateNode {
       this.Events.onGenerateNode(element, jsonRow);
       return element;
     },
-
+    
     initializecomponent: (
       _args: TptOptions,
       tptPathOpt: TemplatePathOptions,

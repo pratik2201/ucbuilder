@@ -67,6 +67,7 @@ exports.pagerATTR = Object.freeze({
 });
 class SourceManage {
     constructor() {
+        this._rows = [];
         this.onUpdate = new commonEvent_1.CommonEvent();
     }
     get rows() {

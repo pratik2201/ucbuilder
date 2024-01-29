@@ -1,6 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.newPagerScroll = void 0;
+const CommonEvent_1 = require("ucbuilder/global/CommonEvent");
 const keyboard_1 = require("ucbuilder/global/hardware/keyboard");
 const namingConversion_1 = require("ucbuilder/global/resizer/namingConversion");
 class newPagerScroll {
@@ -10,6 +11,10 @@ class newPagerScroll {
             sizer: `<sizer style="position: absolute; width: 100%; height: 100%; "></sizer>`.$(),
             beginText: `<scroller-text role="begin"></scroller-text>`.$(),
             endText: `<scroller-text role="end"></scroller-text>`.$(),
+        };
+        this.Events = {
+            onChangeHiddenCount: new CommonEvent_1.CommonEvent(),
+            onkeydown: (e) => { }
         };
         this.nameList = (0, namingConversion_1.getConvertedNames)(dir == 'Horizontal' ? 'grid-template-columns' : 'grid-template-rows');
         this.dir = dir;
