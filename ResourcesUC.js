@@ -1,7 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.ResourcesUC = void 0;
-const codeFileInfo_1 = require("ucbuilder/build/codeFileInfo");
+const codefileHandler_1 = require("ucbuilder/build/codefileHandler");
 const common_1 = require("ucbuilder/build/common");
 const stylerRegs_1 = require("ucbuilder/global/stylerRegs");
 const tabIndexManager_1 = require("ucbuilder/global/tabIndexManager");
@@ -29,5 +29,5 @@ ResourcesUC.rendrarCounter = 0;
 ResourcesUC.resources = {};
 ResourcesUC.contentHT = document.body;
 /** @type {codefileHandler}  */
-ResourcesUC.codefilelist = new codeFileInfo_1.codefileHandler();
+ResourcesUC.codefilelist = new codefileHandler_1.codefileHandler();
 ResourcesUC.isInitBefore = false;

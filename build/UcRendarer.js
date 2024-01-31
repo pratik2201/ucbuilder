@@ -25,7 +25,7 @@ class UcRendarer {
         this.tptParams = objectOpt_1.newObjectOpt.clone(enumAndMore_1.tptOptions);
         this.tptParams.source.cfInfo = this.fInfo;
         this.tptParams.parentUc = parentUc;
-        this.tptParams.elementHT = `<${tname}></${tname}>`.$();
+        this.tptParams.elementHT = tname.$();
         this.tptParams.source.reloadDesign = true;
         this.tptParams.source.reloadKey = "" + ResourcesUC_1.ResourcesUC.rendrarCounter;
     }

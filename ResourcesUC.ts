@@ -1,4 +1,4 @@
-import { codefileHandler } from "ucbuilder/build/codeFileInfo";
+import { codefileHandler } from "ucbuilder/build/codefileHandler";
 import { propOpt } from "ucbuilder/build/common";
 import { stylerRegs } from "ucbuilder/global/stylerRegs";
 import { TabIndexManager } from "ucbuilder/global/tabIndexManager";

@@ -1,37 +1,8 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.codeFileInfo = exports.FileNameInfo = exports.FileInfo = exports.codefileHandler = void 0;
+exports.codeFileInfo = exports.FileNameInfo = exports.FileInfo = void 0;
 const common_1 = require("ucbuilder/build/common");
 const rootPathHandler_1 = require("ucbuilder/global/rootPathHandler");
-class row {
-}
-class codefileHandler {
-    constructor() {
-        this.nodes = [];
-        this.usageCount = 0;
-    }
-    getObj(path) {
-        let codefileObj = new codeFileInfo(codeFileInfo.getExtType(path));
-        codefileObj.parseUrl(path);
-        let index = this.exist(codefileObj);
-        this.usageCount++;
-        if (index == -1) {
-            let node = new row();
-            node.codefileObj = codefileObj;
-            let reqval = require(codefileObj.codeSrc.fullPath);
-            node.obj = reqval[codefileObj.name]; //Object.values(reqval)
-            this.nodes.push(node);
-            return node;
-        }
-        else {
-            return this.nodes[index];
-        }
-    }
-    exist(codefileObj) {
-        return this.nodes.findIndex(s => s.codefileObj.code.rootPath == codefileObj.code.rootPath);
-    }
-}
-exports.codefileHandler = codefileHandler;
 class FileInfo {
     constructor() {
         this._path = "";
@@ -221,4 +192,3 @@ codeFileInfo.___DESIGNER_EXT = ".designer.ts";
 codeFileInfo.___DESIGNER_SRC_EXT = ".designer.js";
 codeFileInfo.___CODE_EXT = ".ts";
 codeFileInfo.___CODE_SRC_EXT = ".js";
-//export { codeFileInfo, FileInfo, codefileHandler };

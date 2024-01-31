@@ -1,6 +1,7 @@
 
 import { looping, uniqOpt } from "ucbuilder/build/common";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
 
 
 
@@ -252,8 +253,8 @@ class jqFeatures {
 
     static regsMng: regsManage = new regsManage();
     private static doCommonDomProto(commonPrototype: any): void {
-       
-        
+
+
         commonPrototype.index = function (): number {
             var i: number = 0;
             let child = this as Element;
@@ -322,9 +323,9 @@ class jqFeatures {
             if (target == undefined || target == null) return false;
             return jqFeatures.data.compareElements(this, target);
         }
-       /* commonPrototype.is = function (target: any): boolean {
-            return (this as HTMLElement).is(target);
-        }*/
+        /* commonPrototype.is = function (target: any): boolean {
+             return (this as HTMLElement).is(target);
+         }*/
         commonPrototype.$ = function (): HTMLElement {
             jqFeatures.data.initElement(this);
             return this;
@@ -352,8 +353,8 @@ class jqFeatures {
         /*HTMLElement.prototype = commonPrototype;
         Element.prototype = commonPrototype;
         EventTarget.prototype = commonPrototype;*/
-        
-       
+
+
 
         NodeList.prototype.on = function <K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
             Array.from(this).on(eventList, handlerCallback);
@@ -386,7 +387,7 @@ class jqFeatures {
         }
 
 
-        
+
         String.prototype.$ = function (): HTMLElement {
             var div = document.createElement('pre');
             div.innerHTML = this.trim();
@@ -404,15 +405,16 @@ class jqFeatures {
                 charlist = "\s";
             return this.replace(new RegExp("[" + charlist + "]+$"), "");
         }
-        String.prototype.__ = function (jsonRow: {}): Promise<string> {
-            //return new Promise((resolve, reject) => {
+        String.prototype.__ = function (jsonRow: {}): string {
             let rtrn = this;
             if (jsonRow != undefined)
                 rtrn = jqFeatures.regsMng.parse(jsonRow, rtrn);
-            return (async () => {
-                let { FileDataBank } = await import("ucbuilder/global/fileDataBank");
+            return FileDataBank.getReplacedContent(rtrn);
+           /* return (async () => {
+                //let { FileDataBank } = await import("ucbuilder/global/fileDataBank");
+                //FileDataBank
                 return FileDataBank.getReplacedContent(rtrn);
-            })();
+            })();*/
             //});
         }
         //console.log(`hello {=s}`.__({ s: 'd' }).then(s => s));

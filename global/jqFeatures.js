@@ -36,6 +36,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.jqFeatures = exports.dataManager = void 0;
 const common_1 = require("ucbuilder/build/common");
 const regsManage_1 = require("ucbuilder/build/regs/regsManage");
+const fileDataBank_1 = require("ucbuilder/global/fileDataBank");
 class rowInfo {
     constructor() {
         this.id = "";
@@ -317,14 +318,15 @@ class jqFeatures {
             return this.replace(new RegExp("[" + charlist + "]+$"), "");
         };
         String.prototype.__ = function (jsonRow) {
-            //return new Promise((resolve, reject) => {
             let rtrn = this;
             if (jsonRow != undefined)
                 rtrn = jqFeatures.regsMng.parse(jsonRow, rtrn);
-            return (() => __awaiter(this, void 0, void 0, function* () {
-                let { FileDataBank } = yield Promise.resolve().then(() => __importStar(require("ucbuilder/global/fileDataBank")));
-                return FileDataBank.getReplacedContent(rtrn);
-            }))();
+            return fileDataBank_1.FileDataBank.getReplacedContent(rtrn);
+            /* return (async () => {
+                 //let { FileDataBank } = await import("ucbuilder/global/fileDataBank");
+                 //FileDataBank
+                 return FileDataBank.getReplacedContent(rtrn);
+             })();*/
             //});
         };
         //console.log(`hello {=s}`.__({ s: 'd' }).then(s => s));
