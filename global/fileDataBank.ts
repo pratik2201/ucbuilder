@@ -71,6 +71,8 @@ class FileDataBank {
         if (!existsSync(fullPath)) return undefined;
 
         let data = this.source.find(s => s.path == fullPath);
+        
+        
         if (data != undefined) {
             if (!reloadData)
                 return replaceContentWithKeys ? data.content : data.originalContent;

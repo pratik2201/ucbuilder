@@ -19,11 +19,9 @@ export class MeasureManage {
     return linfo.valueInSpecifiedUnits;
   }
 
-  static ptFromParse(val: string): UnitValueNode {
+  static ptFromParse(val: string): UnitValueNode {    
     if (val == undefined) return undefined;
-
     let rtrn: UnitValueNode;
-
     val.replace(
       /([\d\.]+) *([a-z]+)/gim,
       (m, oriz_val, unit) => {
