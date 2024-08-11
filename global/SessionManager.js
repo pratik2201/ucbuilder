@@ -3,6 +3,7 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.SessionManager = void 0;
 const common_1 = require("ucbuilder/build/common");
 const fileDataBank_1 = require("ucbuilder/global/fileDataBank");
+const rootPathHandler_1 = require("./rootPathHandler");
 class SessionManager {
     constructor() {
         this.varName = "SESSION_DATA";
@@ -94,8 +95,9 @@ class SessionManager {
         }
     }
     readfile(fPath = "") {
-        if (fPath != "")
-            this.dataPath = fPath;
+        if (fPath != "") {
+            this.dataPath = rootPathHandler_1.rootPathHandler.fullPath(fPath);
+        }
         if (common_1.pathInfo.existFile(this.dataPath)) {
             let data = fileDataBank_1.FileDataBank.readFile(this.dataPath, {
                 reloadData: true,

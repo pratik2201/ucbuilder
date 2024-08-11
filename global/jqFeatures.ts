@@ -399,7 +399,12 @@ class jqFeatures {
                 charlist = "\s";
             return this.replace(new RegExp("^[" + charlist + "]+"), "");
         }
-
+        String.prototype.startsWithI = function(s){
+           return this.match(new RegExp('^'+s, 'i'))!=null;
+        }
+        String.prototype.endsWithI = function(s){
+            return this.match(new RegExp(s+'$', 'i'))!=null;
+         }
         String.prototype.trim_ = function (charlist?: string): string {
             if (charlist === undefined)
                 charlist = "\s";

@@ -22,7 +22,11 @@ interface String {
     _trim(charlist?: string): string,
     trim_(charlist?: string): string,
     __(jsonRow: {}): string,
+    startsWithI (s: string): boolean,
+    endsWithI (s: string): boolean,
 }
+
+
 interface NodeList {
     on<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
 }

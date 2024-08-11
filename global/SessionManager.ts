@@ -2,6 +2,7 @@ import { pathInfo, objectOpt } from "ucbuilder/build/common";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { sessionOptions,SessionOptions } from "ucbuilder/enumAndMore";
+import { rootPathHandler } from "./rootPathHandler";
 
 class SessionManager {
     varName: string = "SESSION_DATA";
@@ -106,7 +107,9 @@ class SessionManager {
 
 
     readfile(fPath: string = ""): boolean {
-        if (fPath != "") this.dataPath = fPath;
+        if (fPath != "") {
+            this.dataPath = rootPathHandler.fullPath(fPath);
+        }
         if (pathInfo.existFile(this.dataPath)) {
             let data = FileDataBank.readFile(this.dataPath, {
                 reloadData: true,

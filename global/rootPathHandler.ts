@@ -99,7 +99,7 @@ export class rootPathHandler {
     static path = "";
     static fullPath(_pth = ""): string {
         let src = _pth.toLowerCase().trim();
-        let node = this.source.find(s => src.startsWith(s.originalLowerCaseText));
+        let node = this.source.find(s => src.startsWithI(s.originalLowerCaseText));
         if (node == undefined) return _pth;
         else return pathInfo.cleanPath(`${node.replaceWith}${strOpt._trim(_pth, node.textToFind)}`);
     }
@@ -107,10 +107,12 @@ export class rootPathHandler {
     static getInfo(_pth = ""): RootPathRow | undefined {
         let src = _pth.toLowerCase().trim();
         let isAlreadyFullPath = false;
+        
         let findex = this.source.findIndex(s => {
-            if (src.startsWith(s.originalLowerCaseText)) return true;
+            
+            if (src.startsWithI(s.originalLowerCaseText)) return true;
             else {
-                isAlreadyFullPath = src.startsWith(s.replaceLowerCaseText);
+                isAlreadyFullPath = src.startsWithI(s.replaceLowerCaseText);
                 return isAlreadyFullPath;
             }
         });

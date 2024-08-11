@@ -65,7 +65,7 @@ class rootPathHandler {
     }
     static fullPath(_pth = "") {
         let src = _pth.toLowerCase().trim();
-        let node = this.source.find(s => src.startsWith(s.originalLowerCaseText));
+        let node = this.source.find(s => src.startsWithI(s.originalLowerCaseText));
         if (node == undefined)
             return _pth;
         else
@@ -75,10 +75,10 @@ class rootPathHandler {
         let src = _pth.toLowerCase().trim();
         let isAlreadyFullPath = false;
         let findex = this.source.findIndex(s => {
-            if (src.startsWith(s.originalLowerCaseText))
+            if (src.startsWithI(s.originalLowerCaseText))
                 return true;
             else {
-                isAlreadyFullPath = src.startsWith(s.replaceLowerCaseText);
+                isAlreadyFullPath = src.startsWithI(s.replaceLowerCaseText);
                 return isAlreadyFullPath;
             }
         });
