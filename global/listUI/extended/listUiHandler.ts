@@ -8,7 +8,9 @@ export type ItemIndexChangeBy = "Other" | "Keyboard" | "Mouse";
 
 export class listUiHandler {
     search: listUiSearch;
-
+    constructor() {
+        this.search = new listUiSearch(this);
+    }
     OPTIONS: {
         SESSION: {
             currentIndex: number;
@@ -17,13 +19,13 @@ export class listUiHandler {
         listSize: DOMRectReadOnly | undefined;
         currentItem: HTMLElement | undefined;
     } = {
-        SESSION: {
-            currentIndex: -1,
-            scrollTop: 0,
-        },
-        listSize: undefined,
-        currentItem: undefined,
-    };
+            SESSION: {
+                currentIndex: -1,
+                scrollTop: 0,
+            },
+            listSize: undefined,
+            currentItem: undefined,
+        };
     source = new SourceManage();
     /*source = {
         _rows: [],
@@ -39,7 +41,7 @@ export class listUiHandler {
             this._this().Events.onSourceUpdate.fire([this._rows.length]);
         },
     };*/
-    
+
     itemTemplate: TemplateNode;
 
     get length(): number {
@@ -71,7 +73,7 @@ export class listUiHandler {
             return this.itemTemplate.extended.generateNode(this.source.rows[index]);
         },
         prepend: (index: number): HTMLElement => { debugger; return undefined; },
-        append: (index: number, replaceNode = false): HTMLElement => { debugger; return undefined;},
+        append: (index: number, replaceNode = false): HTMLElement => { debugger; return undefined; },
         update: (index: number): HTMLElement => {
             let nodes = this.nodes;
             let ele = nodes.append(index, true);
@@ -81,16 +83,16 @@ export class listUiHandler {
         clear: (): void => {
             this.Records.lstVWEle.innerHTML = "";
             this.Events.onClearContainer.fire();
-            
+
         },
         indexOf: (ele: HTMLElement): number => { return -1; },
         fill: (): void => {
             console.log("ds");
         },
-        callToFill: (): void => {},
+        callToFill: (): void => { },
         loopVisibleRows: (callback = (ele: HTMLElement) => {
             return true;
-        }): void => {},
+        }): void => { },
         onRendar: (): void => {
             this.nodes.loopVisibleRows((ele) => {
                 return true;
@@ -103,7 +105,7 @@ export class listUiHandler {
         render(): void {
             this.__doactualRendar();
         },
-        refreshHiddenCount: (): void => {},
+        refreshHiddenCount: (): void => { },
     };
 
     Records = {
@@ -130,20 +132,20 @@ export class listUiHandler {
     };
 
     Events = {
-        onSourceUpdate: new CommonEvent<(counter:number)=>void>(),
-        itemDoubleClick: new CommonEvent<(index: number, evt: MouseEvent)=>void>(),
-        itemMouseDown: new CommonEvent<(index: number, evt: MouseEvent)=>void>(),
-        itemMouseUp: new CommonEvent<(index: number, evt: MouseEvent)=>void>(),
-        onClearContainer: new CommonEvent<()=>void>(),
+        onSourceUpdate: new CommonEvent<(counter: number) => void>(),
+        itemDoubleClick: new CommonEvent<(index: number, evt: MouseEvent) => void>(),
+        itemMouseDown: new CommonEvent<(index: number, evt: MouseEvent) => void>(),
+        itemMouseUp: new CommonEvent<(index: number, evt: MouseEvent) => void>(),
+        onClearContainer: new CommonEvent<() => void>(),
         currentItemIndexChange: new CommonEvent<(
             oldIndex: number,
             newIndex: number,
             evt: MouseEvent | KeyboardEvent,
             eventType: ItemIndexChangeBy
-        )=>void>(),
-        newItemGenerate: new CommonEvent<(itemnode: HTMLElement, index: number)=>void>(),
-        onListUISizeChanged: new CommonEvent<(rect:DOMRectReadOnly)=>void>(),
-        beforeOldItemRemoved: new CommonEvent<(itemHT:HTMLElement)=>void>(),
+        ) => void>(),
+        newItemGenerate: new CommonEvent<(itemnode: HTMLElement, index: number) => void>(),
+        onListUISizeChanged: new CommonEvent<(rect: DOMRectReadOnly) => void>(),
+        beforeOldItemRemoved: new CommonEvent<(itemHT: HTMLElement) => void>(),
         onRowNavigationChanged: (
             callback: (evt: KeyboardEvent, valToAddRemove: number) => void,
             event: KeyboardEvent,
@@ -157,7 +159,7 @@ export class listUiHandler {
         onReachFirstRecord: (): boolean => {
             return false;
         },
-        onkeydown: (e: KeyboardEvent): void => {},
+        onkeydown: (e: KeyboardEvent): void => { },
     };
 
     get currentRecord(): any {
@@ -187,7 +189,7 @@ export class listUiHandler {
 
     resizeObsrv: ResizeObserver;
 
-    init(lstVw: HTMLElement, scrollerElement: HTMLElement,uc:Usercontrol): void {
+    init(lstVw: HTMLElement, scrollerElement: HTMLElement, uc: Usercontrol): void {
         this.Records.lstVWEle = lstVw;
         this.source.onUpdate.on((cnt) => { this.Events.onSourceUpdate.fire([cnt]); });
         this.scrollerElement = scrollerElement;
@@ -199,7 +201,7 @@ export class listUiHandler {
         scrollerElement.addEventListener("keydown", this.keydown_listner);
     }
 
-    setCurrentIndex(val: number, evt?: MouseEvent | KeyboardEvent, eventType:ItemIndexChangeBy= 'Other'): void {}
+    setCurrentIndex(val: number, evt?: MouseEvent | KeyboardEvent, eventType: ItemIndexChangeBy = 'Other'): void { }
     keydown_listner = (evt: KeyboardEvent): void => {
         this.Events.onkeydown(evt);
     };

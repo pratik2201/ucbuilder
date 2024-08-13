@@ -7,7 +7,7 @@
     "explorer.fileNesting.patterns": {
         "*.tpt.ts": "${capture}.tpt.*",
         "*.uc.ts": "${capture}.uc.*",
-        "*.ts": "${capture}.js,${capture}.js.map",
-        
-    }
+        "*.ts": "${capture}.js,${capture}.js.map",        
+    },
+    
 }

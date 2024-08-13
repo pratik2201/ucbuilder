@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.listUiHandler = void 0;
 const CommonEvent_1 = require("ucbuilder/global/CommonEvent");
+const listUiSearch_1 = require("ucbuilder/global/listUiSearch");
 const timeoutCall_1 = require("ucbuilder/global/timeoutCall");
 const enumAndMore_1 = require("../pager/enumAndMore");
 class listUiHandler {
@@ -121,6 +122,7 @@ class listUiHandler {
         this.keydown_listner = (evt) => {
             this.Events.onkeydown(evt);
         };
+        this.search = new listUiSearch_1.listUiSearch(this);
     }
     get length() {
         return this.source.rows.length;
