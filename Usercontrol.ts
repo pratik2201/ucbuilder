@@ -90,7 +90,7 @@ export class Usercontrol {
         stageHT:undefined as HTMLElement,
         isForm: false,
         get formExtends() { return this.form.ucExtends; },
-        get self() { return this.wrapperHT; },
+        get self() : HTMLElement { return this.wrapperHT; },
         set caption(text: string) {
             this.designer.setCaption(text);
         },
