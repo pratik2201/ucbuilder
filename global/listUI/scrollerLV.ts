@@ -71,14 +71,15 @@ export class ScrollerLV extends listUiHandler {
         lstVw.addEventListener("mousedown", (e: MouseEvent): void => {
             let itm = this.Records.getItemFromChild(e.target as HTMLElement);
             if (itm != null) {
-                this.setCurrentIndex(itm.index(), e, "Mouse");
-                this.Events.itemMouseDown.fire([this.currentIndex, e]);
+                this.Events.itemMouseDown.fire([itm.index(), e]);
             }
         });
         lstVw.addEventListener("mouseup", (e: MouseEvent): void => {
             let itm = this.Records.getItemFromChild(e.target as HTMLElement);
             if (itm != null) {
-                this.Events.itemMouseUp.fire([this.currentIndex, e]);
+                this.setCurrentIndex(itm.index(), e, "Mouse");
+                
+                this.Events.itemMouseUp.fire([itm.index(), e]);
             }
         });
     }

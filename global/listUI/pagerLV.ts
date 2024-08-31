@@ -133,7 +133,8 @@ export class pagerLV extends listUiHandler {
         this.initNodes();
         let _itemSize = this.nodes.itemSize;
         let s = this.itemTemplate.extended.size;
-        setInterval(() => {
+
+        setTimeout(() => {
             _itemSize.height = s.height;
             _itemSize.width = s.width;
         }, 1);
