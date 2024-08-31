@@ -16,6 +16,7 @@ class regsManage {
         this.proceeFindRegs = new patternMatcher(
             /`[ \n\r]*{(\w*)=([\.\w]+?)}[ \n\r]*`/,
             /([^]*?)/,
+            // @ts-ignore
             /`[ \n\r]*{\/\1}[ \n\r]*`/g
         );
         this.tableColCellPattern = new patternMatcher(/{=/, /([\.\w]+?)/, /}/g);

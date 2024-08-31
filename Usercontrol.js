@@ -145,6 +145,7 @@ class Usercontrol {
             },
             Events: {
                 afterInitlize: new commonEvent_1.CommonEvent(),
+                // @ts-ignore
                 beforeClose: new commonEvent_1.CommonEvent(),
                 afterClose: new commonEvent_1.CommonEvent(),
                 captionChanged: new commonEvent_1.CommonEvent(),

@@ -9,7 +9,9 @@ class regsManage {
     constructor() {
         this.switchRgx = new switchRegs_1.switchRegs();
         this.loopRgx = new loopRegs_1.loopRegs();
-        this.proceeFindRegs = new patternMatcher_1.patternMatcher(/`[ \n\r]*{(\w*)=([\.\w]+?)}[ \n\r]*`/, /([^]*?)/, /`[ \n\r]*{\/\1}[ \n\r]*`/g);
+        this.proceeFindRegs = new patternMatcher_1.patternMatcher(/`[ \n\r]*{(\w*)=([\.\w]+?)}[ \n\r]*`/, /([^]*?)/, 
+        // @ts-ignore
+        /`[ \n\r]*{\/\1}[ \n\r]*`/g);
         this.tableColCellPattern = new patternMatcher_1.patternMatcher(/{=/, /([\.\w]+?)/, /}/g);
     }
     /**

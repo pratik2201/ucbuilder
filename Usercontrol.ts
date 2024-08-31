@@ -214,7 +214,8 @@ export class Usercontrol {
             ucExt: () => this.ucExtends,
         },
         Events: {
-            afterInitlize: new CommonEvent<() =>void>(),
+            afterInitlize: new CommonEvent<() => void>(),
+            // @ts-ignore
             beforeClose: new CommonEvent<({prevent=false})=>void>(),
             afterClose: new CommonEvent<() =>void>(),           
             captionChanged: new CommonEvent<(newCaptionText:string) =>void>(),

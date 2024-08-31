@@ -6,7 +6,9 @@ const patternMatcher_1 = require("ucbuilder/build/regs/patternMatcher");
 const loopEachItemCallback = (obj = {}, content, nameSpace, loopCode) => { return content; };
 class loopRegs {
     constructor() {
-        this.loopPattern = new patternMatcher_1.patternMatcher(/`[ \n\r]*{(loop\w*)=([\.\w]+?)}[ \n\r]*`/, /([^]*?)/, /`[ \n\r]*{\/\1}[ \n\r]*`/g);
+        this.loopPattern = new patternMatcher_1.patternMatcher(/`[ \n\r]*{(loop\w*)=([\.\w]+?)}[ \n\r]*`/, /([^]*?)/, 
+        // @ts-ignore
+        /`[ \n\r]*{\/\1}[ \n\r]*`/g);
     }
     parse(content, nodes, eachItemcallback = loopEachItemCallback) {
         let _this = this;

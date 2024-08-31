@@ -11,6 +11,8 @@ class loopRegs {
         this.loopPattern = new patternMatcher(
             /`[ \n\r]*{(loop\w*)=([\.\w]+?)}[ \n\r]*`/,
             /([^]*?)/,
+            
+            // @ts-ignore
             /`[ \n\r]*{\/\1}[ \n\r]*`/g
         );
     }
