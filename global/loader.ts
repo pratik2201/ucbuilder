@@ -8,6 +8,7 @@ const getCaller = (level: number = 1): string => {
   };
   stack = (new Error()).stack;
   Error.prepareStackTrace = traceFn;
+  
   return ((stack as unknown as NodeJS.CallSite[])[level]).getFileName();
 };
 

@@ -21,8 +21,10 @@ rootPathHandler_1.rootPathHandler.originalPath = _clientPath;
 rootPathHandler_1.rootPathHandler.path = rootPathHandler_1.rootPathHandler.originalPath.toLowerCase().trim_('/');
 const enumAndMore_1 = require("ucbuilder/enumAndMore");
 const loader_1 = require("ucbuilder/global/loader");
+const path_1 = __importDefault(require("path"));
 class register {
     static getprojectname(dirpath) {
+        console.log(process.cwd() + "\n" + dirpath);
         let fpath = `${dirpath}/package.json`;
         //let s = await (async () => {let {X} = await import('./roles/x'); return X;})()
         let pjson = require(fpath);
@@ -37,6 +39,8 @@ class register {
         let rpp = Object.assign({}, enumAndMore_1.rootPathParam);
         let pera = Object.assign(rpp, param2);
         //let pera = newObjectOpt.copyProps(param2, rootPathParam);
+        const nestedProjectRoot = path_1.default.resolve(__dirname, './');
+        console.log(nestedProjectRoot);
         let dirpath = (0, loader_1.getbasedir)(pera.level);
         let pname = this.getprojectname(dirpath);
         if (pname != undefined || pname != "")

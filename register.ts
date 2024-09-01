@@ -21,6 +21,7 @@ rootPathHandler.path = rootPathHandler.originalPath.toLowerCase().trim_('/');
 
 import { RootPathParam, rootPathParam } from 'ucbuilder/enumAndMore';
 import {getbasedir} from 'ucbuilder/global/loader';
+import path from 'path';
 
 class register {
     static ucSTAMP: string = uniqOpt.guidAs_;
@@ -35,6 +36,8 @@ class register {
     }
 
     static getprojectname(dirpath: string): string | undefined {
+       console.log( process.cwd()+"\n"+dirpath);
+       
         let fpath: string = `${dirpath}/package.json`;
         //let s = await (async () => {let {X} = await import('./roles/x'); return X;})()
         let pjson = require(fpath);
@@ -50,7 +53,9 @@ class register {
         let rpp = Object.assign({},rootPathParam)
         let pera = Object.assign(rpp,param2);
         //let pera = newObjectOpt.copyProps(param2, rootPathParam);
-
+        
+        
+        
         let dirpath = getbasedir(pera.level);
         let pname = this.getprojectname(dirpath);
         if (pname != undefined || pname != "")
