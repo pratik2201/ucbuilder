@@ -7,7 +7,53 @@ export interface ReplaceTextRow {
     replaceLowerCaseText: string;
     cssVars?: { key: string, value: string }[];
 }
+export interface RootDirectoryOf {
+    /*html: string,
+    style: string,
+    perameters: string,
+    designer: string,
+    designerSrc: string,
+    code: string,
+    codeSrc: string, */
 
+    outDir: string,
+    srcDir: string,
+    /**  @private */
+    lowerCase?: {
+    /*    html: string,
+        style: string,
+        perameters: string,
+        designer: string,
+        designerSrc: string,
+        code: string,
+        codeSrc: string, */
+
+        outDir: string,
+        srcDir: string
+    }
+}
+export const rootDirectoryOf: RootDirectoryOf = {
+    /*html: "",
+    style: "",
+    perameters: "",
+    designer: "",
+    designerSrc: "",
+    code: "",
+    codeSrc: "",*/
+    outDir: "",
+    srcDir: "",
+    lowerCase: {
+        /*html: "",
+        style: "",
+        perameters: "",
+        designer: "",
+        designerSrc: "",
+        code: "",
+        codeSrc: "",*/
+        outDir: "",
+        srcDir: "",
+    }
+};
 export const replaceTextRow: ReplaceTextRow = {
     id: 0,
     originalFinderText: "",
@@ -17,3 +63,34 @@ export const replaceTextRow: ReplaceTextRow = {
     replaceLowerCaseText: "",
     cssVars: [],
 };
+
+export interface RootPathRow {
+    id: number,
+    path: string,
+    alices: string,
+    index: number,
+    isAlreadyFullPath: boolean,
+    outputDirectory: string,
+    tInfo: ReplaceTextRow,
+
+    cssVars: { key: string, value: string }[],
+}
+
+export const rootPathRow: RootPathRow = {
+    id: -1,
+    path: '',
+    alices: '',
+    index: -1,
+    outputDirectory: '',
+    isAlreadyFullPath: false,
+    tInfo: {
+        id: 0,
+        originalFinderText: "",
+        originalLowerCaseText: "",
+        textToFind: "",
+        replaceWith: "",
+        replaceLowerCaseText: "",
+        // cssVars: [],
+    },
+    cssVars: [],
+}

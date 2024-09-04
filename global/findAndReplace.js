@@ -1,6 +1,28 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.replaceTextRow = void 0;
+exports.rootPathRow = exports.replaceTextRow = exports.rootDirectoryOf = void 0;
+exports.rootDirectoryOf = {
+    /*html: "",
+    style: "",
+    perameters: "",
+    designer: "",
+    designerSrc: "",
+    code: "",
+    codeSrc: "",*/
+    outDir: "",
+    srcDir: "",
+    lowerCase: {
+        /*html: "",
+        style: "",
+        perameters: "",
+        designer: "",
+        designerSrc: "",
+        code: "",
+        codeSrc: "",*/
+        outDir: "",
+        srcDir: "",
+    }
+};
 exports.replaceTextRow = {
     id: 0,
     originalFinderText: "",
@@ -8,5 +30,23 @@ exports.replaceTextRow = {
     textToFind: "",
     replaceWith: "",
     replaceLowerCaseText: "",
+    cssVars: [],
+};
+exports.rootPathRow = {
+    id: -1,
+    path: '',
+    alices: '',
+    index: -1,
+    outputDirectory: '',
+    isAlreadyFullPath: false,
+    tInfo: {
+        id: 0,
+        originalFinderText: "",
+        originalLowerCaseText: "",
+        textToFind: "",
+        replaceWith: "",
+        replaceLowerCaseText: "",
+        // cssVars: [],
+    },
     cssVars: [],
 };

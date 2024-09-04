@@ -1,5 +1,6 @@
 import { pathInfo, strOpt, buildOptions, FilePartlyInfo, ExtensionType } from "ucbuilder/build/common";
-import {  RootPathRow } from "ucbuilder/enumAndMore";
+import { RootPathRow } from "ucbuilder/global/findAndReplace";
+//import {  RootPathRow } from "ucbuilder/enumAndMore";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 
 

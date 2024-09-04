@@ -1,15 +1,7 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.tptOptions = exports.templatePathOptions = exports.ucOptions = exports.sourceOptions = exports.sessionOptions = exports.rootPathParam = exports.rootPathRow = void 0;
+exports.tptOptions = exports.templatePathOptions = exports.ucOptions = exports.sourceOptions = exports.sessionOptions = exports.rootPathParam = void 0;
 const objectOpt_1 = require("ucbuilder/global/objectOpt");
-exports.rootPathRow = {
-    id: -1,
-    path: '',
-    alices: '',
-    index: -1,
-    isAlreadyFullPath: false,
-    cssVars: [],
-};
 exports.rootPathParam = {
     level: 4,
     addIntoFileDataBankAlso: true,

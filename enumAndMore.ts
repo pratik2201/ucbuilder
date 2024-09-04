@@ -6,7 +6,7 @@ import { newObjectOpt } from 'ucbuilder/global/objectOpt';
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
 
-export interface RootPathRow {
+/*export interface RootPathRow {
     id: number,
     path: string,
     alices: string, 
@@ -21,7 +21,7 @@ export const rootPathRow: RootPathRow = {
     index: -1,
     isAlreadyFullPath: false,
     cssVars: [],
-}
+}*/
 
 
 

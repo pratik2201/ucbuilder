@@ -21,10 +21,9 @@ rootPathHandler_1.rootPathHandler.originalPath = _clientPath;
 rootPathHandler_1.rootPathHandler.path = rootPathHandler_1.rootPathHandler.originalPath.toLowerCase().trim_('/');
 const enumAndMore_1 = require("ucbuilder/enumAndMore");
 const loader_1 = require("ucbuilder/global/loader");
-const path_1 = __importDefault(require("path"));
 class register {
     static getprojectname(dirpath) {
-        console.log(process.cwd() + "\n" + dirpath);
+        console.log(/* process.cwd()+"\n"+*/ dirpath);
         let fpath = `${dirpath}/package.json`;
         //let s = await (async () => {let {X} = await import('./roles/x'); return X;})()
         let pjson = require(fpath);
@@ -34,14 +33,13 @@ class register {
         return undefined;
     }
     ;
-    static registarMe(param2) {
+    static registarMe(rootDirectoryOf, param2) {
         //import { newObjectOpt }  from 'ucbuilder/global/newObjectOpt';
         let rpp = Object.assign({}, enumAndMore_1.rootPathParam);
         let pera = Object.assign(rpp, param2);
         //let pera = newObjectOpt.copyProps(param2, rootPathParam);
-        const nestedProjectRoot = path_1.default.resolve(__dirname, './');
-        console.log(nestedProjectRoot);
         let dirpath = (0, loader_1.getbasedir)(pera.level);
+        //console.log('=======<<<<   '+dirpath+'  >>>>');
         let pname = this.getprojectname(dirpath);
         if (pname != undefined || pname != "")
             pname = `${pname}`;
@@ -56,7 +54,7 @@ class register {
                 return rootPathHandler_1.rootPathHandler.addRoot(pathAlices, dirpath, pera);
             }
             else {
-                return ACTIVE_USER_CONTROL.registarMe(param2);
+                return ACTIVE_USER_CONTROL.registarMe(rootDirectoryOf, param2);
             }
         }
     }
@@ -73,13 +71,23 @@ register.Events = {
 let ACTIVE_USER_CONTROL = undefined;
 //let ACTIVE_USER_CONTROL:register = undefined;
 let res = register.registarMe({
+    srcDir: __dirname,
+    outDir: __dirname,
+    /*html: __dirname,
+    style: __dirname,
+    perameters: __dirname,
+    designer:__dirname,
+    designerSrc:__dirname,
+    code: __dirname,
+    codeSrc: __dirname,*/
+}, {
     level: 2,
     addModule: false
 });
 module.exports = {
     getprojectname: register.getprojectname,
     get Events() { return register.Events; },
-    registar: (pera) => {
-        return register.registarMe(pera);
+    registar: (rootDirectoryOf, pera) => {
+        return register.registarMe(rootDirectoryOf, pera);
     }
 };

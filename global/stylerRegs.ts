@@ -4,10 +4,9 @@ import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { openCloser } from "ucbuilder/global/openCloser";
-import { rootPathHandler, RootPathRow, } from "ucbuilder/global/rootPathHandler";
+import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { ReplaceTextRow } from "ucbuilder/global/findAndReplace";
-import { rootPathRow } from "ucbuilder/enumAndMore";
+import { ReplaceTextRow,RootPathRow,rootPathRow } from "ucbuilder/global/findAndReplace";
 
 interface PatternList {
   globalFinderPathPattern: RegExp;
@@ -55,9 +54,10 @@ const styleSeperatorOptions: StyleSeperatorOptions = {
 export class stylerRegs {
   static pushPublicStyles(): void {
     import("ucbuilder/ResourcesUC").then(({ResourcesUC}) => {
-      rootPathHandler.source.forEach((row: ReplaceTextRow) => {
-        let _stylepath: string = row.replaceLowerCaseText + "/styles.scss";
-        let node: RootPathRow = rootPathHandler.convertToRow(row, true);
+      rootPathHandler.source.forEach((row: RootPathRow) => {
+        let _stylepath: string = row.tInfo.replaceLowerCaseText + "/styles.scss";
+        let node: RootPathRow = row;//rootPathHandler.convertToRow(row, true);
+        node.isAlreadyFullPath = true;
         let styler: stylerRegs = new stylerRegs(node, true);
         ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
         let _data: string = FileDataBank.readFile(_stylepath, {

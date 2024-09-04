@@ -22,6 +22,7 @@ rootPathHandler.path = rootPathHandler.originalPath.toLowerCase().trim_('/');
 import { RootPathParam, rootPathParam } from 'ucbuilder/enumAndMore';
 import {getbasedir} from 'ucbuilder/global/loader';
 import path from 'path';
+import { RootDirectoryOf } from './global/findAndReplace';
 
 class register {
     static ucSTAMP: string = uniqOpt.guidAs_;
@@ -36,7 +37,7 @@ class register {
     }
 
     static getprojectname(dirpath: string): string | undefined {
-       console.log( process.cwd()+"\n"+dirpath);
+       console.log(/* process.cwd()+"\n"+*/dirpath);
        
         let fpath: string = `${dirpath}/package.json`;
         //let s = await (async () => {let {X} = await import('./roles/x'); return X;})()
@@ -47,7 +48,7 @@ class register {
         return undefined;
     };
 
-    static registarMe(param2: RootPathParam):boolean {
+    static registarMe(rootDirectoryOf:RootDirectoryOf,param2: RootPathParam):boolean {
         //import { newObjectOpt }  from 'ucbuilder/global/newObjectOpt';
         
         let rpp = Object.assign({},rootPathParam)
@@ -57,6 +58,9 @@ class register {
         
         
         let dirpath = getbasedir(pera.level);
+
+        //console.log('=======<<<<   '+dirpath+'  >>>>');
+        
         let pname = this.getprojectname(dirpath);
         if (pname != undefined || pname != "")
             pname = `${pname}`;
@@ -70,7 +74,7 @@ class register {
                 ACTIVE_USER_CONTROL = this;
                 return rootPathHandler.addRoot(pathAlices, dirpath, pera);
             } else {
-                return ACTIVE_USER_CONTROL.registarMe(param2);
+                return ACTIVE_USER_CONTROL.registarMe(rootDirectoryOf,param2);
             }
         }
     }
@@ -78,6 +82,16 @@ class register {
 let ACTIVE_USER_CONTROL: typeof register = undefined;
 //let ACTIVE_USER_CONTROL:register = undefined;
 let res = register.registarMe({
+    srcDir: __dirname,
+    outDir: __dirname,
+    /*html: __dirname,
+    style: __dirname,
+    perameters: __dirname,
+    designer:__dirname,
+    designerSrc:__dirname,
+    code: __dirname,
+    codeSrc: __dirname,*/
+},{
     level: 2,
     addModule: false
 });
@@ -85,7 +99,10 @@ let res = register.registarMe({
  export = {
     getprojectname: register.getprojectname,
     get Events() { return register.Events; },
-    registar: (pera?: RootPathParam) => {
-        return register.registarMe(pera);
+    registar: (
+        rootDirectoryOf:RootDirectoryOf,
+        pera?: RootPathParam
+    ) => {
+        return register.registarMe(rootDirectoryOf,pera);
     }
 }

@@ -2,6 +2,7 @@
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.codeFileInfo = exports.FileNameInfo = exports.FileInfo = void 0;
 const common_1 = require("ucbuilder/build/common");
+//import {  RootPathRow } from "ucbuilder/enumAndMore";
 const rootPathHandler_1 = require("ucbuilder/global/rootPathHandler");
 class FileInfo {
     constructor() {

@@ -31,7 +31,7 @@ const fileDataBank_1 = require("ucbuilder/global/fileDataBank");
 const openCloser_1 = require("ucbuilder/global/openCloser");
 const rootPathHandler_1 = require("ucbuilder/global/rootPathHandler");
 const runtimeOpt_1 = require("ucbuilder/global/runtimeOpt");
-const enumAndMore_1 = require("ucbuilder/enumAndMore");
+const findAndReplace_1 = require("ucbuilder/global/findAndReplace");
 const patternList = {
     globalFinderPathPattern: /path=(["'`])([\s\S]*?)\1/gim,
     globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
@@ -49,7 +49,7 @@ const styleSeperatorOptions = {
     scopeSelectorText: "",
     callCounter: 0,
     isForRoot: false,
-    _rootinfo: Object.assign({}, enumAndMore_1.rootPathRow),
+    _rootinfo: Object.assign({}, findAndReplace_1.rootPathRow),
     localNodeElement: undefined,
     cssVarStampKey: "",
 };
@@ -76,8 +76,9 @@ class stylerRegs {
     static pushPublicStyles() {
         Promise.resolve().then(() => __importStar(require("ucbuilder/ResourcesUC"))).then(({ ResourcesUC }) => {
             rootPathHandler_1.rootPathHandler.source.forEach((row) => {
-                let _stylepath = row.replaceLowerCaseText + "/styles.scss";
-                let node = rootPathHandler_1.rootPathHandler.convertToRow(row, true);
+                let _stylepath = row.tInfo.replaceLowerCaseText + "/styles.scss";
+                let node = row; //rootPathHandler.convertToRow(row, true);
+                node.isAlreadyFullPath = true;
                 let styler = new stylerRegs(node, true);
                 ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
                 let _data = fileDataBank_1.FileDataBank.readFile(_stylepath, {
