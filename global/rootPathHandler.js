@@ -44,6 +44,7 @@ class rootPathHandler {
         let findex = this.source.findIndex(s => s.tInfo.originalLowerCaseText.includes(textToFindLower)
             ||
                 textToFindLower.includes(s.tInfo.originalLowerCaseText));
+        console.log('<<< ' + findex + " >>>>");
         if (findex == -1) {
             return "newRegister";
         }
@@ -100,33 +101,33 @@ class rootPathHandler {
 exports.rootPathHandler = rootPathHandler;
 _a = rootPathHandler;
 rootPathHandler._source = [];
-rootPathHandler.addRoot = (projectName, replaceAlicesWith, pera) => {
+rootPathHandler.addRoot = (projectName, rootDirectoryOf /*replaceAlicesWith: string*/, pera) => {
     let param2 = objectOpt_1.newObjectOpt.copyProps(pera, enumAndMore_1.rootPathParam);
     let pathAlicesLower = projectName.toLowerCase();
-    let result = _a.checkStatus(pathAlicesLower, replaceAlicesWith);
+    let result = _a.checkStatus(pathAlicesLower, rootDirectoryOf.rootDir);
     switch (result) {
         case "newRegister":
-            replaceAlicesWith = common_1.strOpt.trim__(replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase(), '/');
+            //replaceAlicesWith = strOpt.trim__(replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase(), '/');
             if (param2.addIntoFileDataBankAlso) {
                 (() => __awaiter(void 0, void 0, void 0, function* () {
                     let { FileDataBank } = yield Promise.resolve().then(() => __importStar(require('ucbuilder/global/fileDataBank')));
-                    FileDataBank.pushReplacableText(projectName, replaceAlicesWith);
+                    FileDataBank.pushReplacableText(projectName, rootDirectoryOf.rootDir); // replaceAlicesWith
                 }))();
             }
             if (param2.buildOption.addPathInProjectBuild) {
-                builder_1.builder.addThisDirectories(replaceAlicesWith);
+                builder_1.builder.addThisDirectories(rootDirectoryOf.rootDir);
             }
             if (param2.buildOption.removeSomeSpecialPathFromProjectBuild) {
-                builder_1.builder.ignoreThisDirectories(replaceAlicesWith + '/node_modules', replaceAlicesWith + '/.git', replaceAlicesWith + '/.vscode');
+                builder_1.builder.ignoreThisDirectories(rootDirectoryOf.rootDir + '/node_modules', rootDirectoryOf.rootDir + '/.git', rootDirectoryOf.rootDir + '/.vscode');
             }
             if (param2.addModule) {
                 require('module-alias')
-                    .addAlias(projectName, replaceAlicesWith);
+                    .addAlias(projectName, rootDirectoryOf.rootDir);
             }
             let rnode;
             rnode = {
                 id: _a.source.length,
-                path: replaceAlicesWith,
+                path: rootDirectoryOf.rootDir,
                 alices: projectName,
                 isAlreadyFullPath: false,
                 cssVars: [],
@@ -137,8 +138,8 @@ rootPathHandler.addRoot = (projectName, replaceAlicesWith, pera) => {
                     originalFinderText: projectName,
                     originalLowerCaseText: pathAlicesLower,
                     textToFind: common_1.strOpt.cleanTextForRegs(projectName),
-                    replaceWith: replaceAlicesWith,
-                    replaceLowerCaseText: replaceAlicesWith.toLowerCase().trim(),
+                    replaceWith: rootDirectoryOf.rootDir,
+                    replaceLowerCaseText: rootDirectoryOf.rootDir.toLowerCase().trim(),
                     cssVars: [],
                 }
             };

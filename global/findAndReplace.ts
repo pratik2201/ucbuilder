@@ -17,7 +17,8 @@ export interface RootDirectoryOf {
     codeSrc: string, */
 
     outDir: string,
-    srcDir: string,
+    //srcDir: string,
+    rootDir : string,
     /**  @private */
     lowerCase?: {
     /*    html: string,
@@ -29,7 +30,8 @@ export interface RootDirectoryOf {
         codeSrc: string, */
 
         outDir: string,
-        srcDir: string
+        //srcDir: string,
+        rootDir : string,
     }
 }
 export const rootDirectoryOf: RootDirectoryOf = {
@@ -41,7 +43,8 @@ export const rootDirectoryOf: RootDirectoryOf = {
     code: "",
     codeSrc: "",*/
     outDir: "",
-    srcDir: "",
+    //srcDir: "",
+    rootDir: "",
     lowerCase: {
         /*html: "",
         style: "",
@@ -51,7 +54,8 @@ export const rootDirectoryOf: RootDirectoryOf = {
         code: "",
         codeSrc: "",*/
         outDir: "",
-        srcDir: "",
+        //srcDir: "",
+        rootDir: "",
     }
 };
 export const replaceTextRow: ReplaceTextRow = {

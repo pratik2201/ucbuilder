@@ -10,7 +10,8 @@ exports.rootDirectoryOf = {
     code: "",
     codeSrc: "",*/
     outDir: "",
-    srcDir: "",
+    //srcDir: "",
+    rootDir: "",
     lowerCase: {
         /*html: "",
         style: "",
@@ -20,7 +21,8 @@ exports.rootDirectoryOf = {
         code: "",
         codeSrc: "",*/
         outDir: "",
-        srcDir: "",
+        //srcDir: "",
+        rootDir: "",
     }
 };
 exports.replaceTextRow = {

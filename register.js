@@ -21,6 +21,8 @@ rootPathHandler_1.rootPathHandler.originalPath = _clientPath;
 rootPathHandler_1.rootPathHandler.path = rootPathHandler_1.rootPathHandler.originalPath.toLowerCase().trim_('/');
 const enumAndMore_1 = require("ucbuilder/enumAndMore");
 const loader_1 = require("ucbuilder/global/loader");
+const findAndReplace_1 = require("./global/findAndReplace");
+const objectOpt_1 = require("./global/objectOpt");
 class register {
     static getprojectname(dirpath) {
         console.log(/* process.cwd()+"\n"+*/ dirpath);
@@ -33,28 +35,38 @@ class register {
         return undefined;
     }
     ;
-    static registarMe(rootDirectoryOf, param2) {
+    static registarMe(rootDirOf, param2) {
         //import { newObjectOpt }  from 'ucbuilder/global/newObjectOpt';
+        rootDirOf.rootDir = rootDirOf.rootDir.replace(/\\+/gi, "/").trim_('/');
+        rootDirOf.outDir = rootDirOf.outDir.replace(/\\+/gi, "/").trim_('/');
+        rootDirOf = objectOpt_1.newObjectOpt.copyProps(rootDirOf, findAndReplace_1.rootDirectoryOf);
+        // rootDirectoryOf.srcDir = rootDirectoryOf.srcDir.replace(/\\+/gi, "/");
+        let lwr = rootDirOf.lowerCase;
+        lwr.rootDir = rootDirOf.rootDir.toLowerCase().trim_('/');
+        ;
+        lwr.outDir = rootDirOf.outDir.toLowerCase().trim_('/');
+        //lwr.srcDir = rootDirectoryOf.srcDir.toLowerCase();
         let rpp = Object.assign({}, enumAndMore_1.rootPathParam);
         let pera = Object.assign(rpp, param2);
         //let pera = newObjectOpt.copyProps(param2, rootPathParam);
         let dirpath = (0, loader_1.getbasedir)(pera.level);
         //console.log('=======<<<<   '+dirpath+'  >>>>');
-        let pname = this.getprojectname(dirpath);
-        if (pname != undefined || pname != "")
-            pname = `${pname}`;
+        let pname = this.getprojectname(rootDirOf.rootDir); // dirpath
+        //  if (pname != undefined || pname != "")
+        //      pname = `${pname}`;
+        console.log(pname + " is a project");
         let pathAlices = pname;
         if (ACTIVE_USER_CONTROL == undefined) {
             ACTIVE_USER_CONTROL = this;
-            return rootPathHandler_1.rootPathHandler.addRoot(pathAlices, dirpath, pera);
+            return rootPathHandler_1.rootPathHandler.addRoot(pathAlices, rootDirOf, pera); // dirpath
         }
         else {
             if (ACTIVE_USER_CONTROL.ucSTAMP === this.ucSTAMP) {
                 ACTIVE_USER_CONTROL = this;
-                return rootPathHandler_1.rootPathHandler.addRoot(pathAlices, dirpath, pera);
+                return rootPathHandler_1.rootPathHandler.addRoot(pathAlices, rootDirOf, pera); // dirpath
             }
             else {
-                return ACTIVE_USER_CONTROL.registarMe(rootDirectoryOf, param2);
+                return ACTIVE_USER_CONTROL.registarMe(rootDirOf, param2);
             }
         }
     }
@@ -71,8 +83,9 @@ register.Events = {
 let ACTIVE_USER_CONTROL = undefined;
 //let ACTIVE_USER_CONTROL:register = undefined;
 let res = register.registarMe({
-    srcDir: __dirname,
+    //srcDir: __dirname,
     outDir: __dirname,
+    rootDir: __dirname,
     /*html: __dirname,
     style: __dirname,
     perameters: __dirname,

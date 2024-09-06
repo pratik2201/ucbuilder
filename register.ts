@@ -6,7 +6,7 @@ alc.addAlias("ucbuilder", _clientPath);
 import "ucbuilder/global/jqProto";
 import { jqFeatures } from "ucbuilder/global/jqFeatures";
 jqFeatures.init();
-import { uniqOpt } from "ucbuilder/build/common";
+import { objectOpt, uniqOpt } from "ucbuilder/build/common";
 
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 jqFeatures.onReady(() => {
@@ -22,7 +22,8 @@ rootPathHandler.path = rootPathHandler.originalPath.toLowerCase().trim_('/');
 import { RootPathParam, rootPathParam } from 'ucbuilder/enumAndMore';
 import {getbasedir} from 'ucbuilder/global/loader';
 import path from 'path';
-import { RootDirectoryOf } from './global/findAndReplace';
+import { rootDirectoryOf, RootDirectoryOf } from './global/findAndReplace';
+import { newObjectOpt } from './global/objectOpt';
 
 class register {
     static ucSTAMP: string = uniqOpt.guidAs_;
@@ -48,8 +49,19 @@ class register {
         return undefined;
     };
 
-    static registarMe(rootDirectoryOf:RootDirectoryOf,param2: RootPathParam):boolean {
+    static registarMe(rootDirOf:RootDirectoryOf,param2: RootPathParam):boolean {
         //import { newObjectOpt }  from 'ucbuilder/global/newObjectOpt';
+        
+        rootDirOf.rootDir = rootDirOf.rootDir.replace(/\\+/gi, "/").trim_('/');
+        rootDirOf.outDir = rootDirOf.outDir.replace(/\\+/gi, "/").trim_('/');
+        rootDirOf = newObjectOpt.copyProps(rootDirOf, rootDirectoryOf);
+
+       // rootDirectoryOf.srcDir = rootDirectoryOf.srcDir.replace(/\\+/gi, "/");
+        let lwr = rootDirOf.lowerCase;
+        lwr.rootDir = rootDirOf.rootDir.toLowerCase().trim_('/');;
+        lwr.outDir = rootDirOf.outDir.toLowerCase().trim_('/');
+
+        //lwr.srcDir = rootDirectoryOf.srcDir.toLowerCase();
         
         let rpp = Object.assign({},rootPathParam)
         let pera = Object.assign(rpp,param2);
@@ -61,20 +73,22 @@ class register {
 
         //console.log('=======<<<<   '+dirpath+'  >>>>');
         
-        let pname = this.getprojectname(dirpath);
-        if (pname != undefined || pname != "")
-            pname = `${pname}`;
+        let pname = this.getprojectname(rootDirOf.rootDir); // dirpath
+      //  if (pname != undefined || pname != "")
+      //      pname = `${pname}`;
+        console.log(pname+" is a project");
+        
         let pathAlices = pname;
 
         if (ACTIVE_USER_CONTROL == undefined) {
             ACTIVE_USER_CONTROL = this;
-            return rootPathHandler.addRoot(pathAlices, dirpath, pera);
+            return rootPathHandler.addRoot(pathAlices, rootDirOf, pera); // dirpath
         } else {
             if (ACTIVE_USER_CONTROL.ucSTAMP === this.ucSTAMP) {
                 ACTIVE_USER_CONTROL = this;
-                return rootPathHandler.addRoot(pathAlices, dirpath, pera);
+                return rootPathHandler.addRoot(pathAlices, rootDirOf, pera);  // dirpath
             } else {
-                return ACTIVE_USER_CONTROL.registarMe(rootDirectoryOf,param2);
+                return ACTIVE_USER_CONTROL.registarMe(rootDirOf,param2);
             }
         }
     }
@@ -82,8 +96,9 @@ class register {
 let ACTIVE_USER_CONTROL: typeof register = undefined;
 //let ACTIVE_USER_CONTROL:register = undefined;
 let res = register.registarMe({
-    srcDir: __dirname,
+    //srcDir: __dirname,
     outDir: __dirname,
+    rootDir: __dirname,
     /*html: __dirname,
     style: __dirname,
     perameters: __dirname,

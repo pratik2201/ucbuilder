@@ -1,5 +1,5 @@
 import { pathInfo, strOpt } from "ucbuilder/build/common";
-import { replaceTextRow, ReplaceTextRow, RootPathRow } from "ucbuilder/global/findAndReplace";
+import { replaceTextRow, ReplaceTextRow, RootDirectoryOf, RootPathRow } from "ucbuilder/global/findAndReplace";
 import { rootPathParam, RootPathParam } from 'ucbuilder/enumAndMore';
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { builder } from "ucbuilder/build/builder";
@@ -14,6 +14,8 @@ export class rootPathHandler {
             ||
             textToFindLower.includes(s.tInfo.originalLowerCaseText)
         );
+        console.log('<<< '+ findex+" >>>>");
+        
         if (findex == -1) {
             return "newRegister";
         } else {
@@ -26,43 +28,44 @@ export class rootPathHandler {
         }
     }
 
-    static addRoot = (projectName: string, replaceAlicesWith: string, pera: RootPathParam): boolean => {
+    static addRoot = (projectName: string,rootDirectoryOf:RootDirectoryOf /*replaceAlicesWith: string*/, pera: RootPathParam): boolean => {
         let param2 = newObjectOpt.copyProps(pera, rootPathParam);
         let pathAlicesLower = projectName.toLowerCase();
-        let result = this.checkStatus(pathAlicesLower, replaceAlicesWith);
+        let result = this.checkStatus(pathAlicesLower, rootDirectoryOf.rootDir);
         switch (result) {
             case "newRegister":
-                replaceAlicesWith = strOpt.trim__(replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase(), '/');
+                //replaceAlicesWith = strOpt.trim__(replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase(), '/');
+               
                 if (param2.addIntoFileDataBankAlso) {
                     (async () => {
                         let { FileDataBank } = await import('ucbuilder/global/fileDataBank');
-                        FileDataBank.pushReplacableText(projectName, replaceAlicesWith);
+                        FileDataBank.pushReplacableText(projectName, rootDirectoryOf.rootDir);// replaceAlicesWith
                     })();
                 }
 
 
 
                 if (param2.buildOption.addPathInProjectBuild) {
-                    builder.addThisDirectories(replaceAlicesWith);
+                    builder.addThisDirectories(rootDirectoryOf.rootDir);
                 }
 
                 if (param2.buildOption.removeSomeSpecialPathFromProjectBuild) {
                     builder.ignoreThisDirectories(
-                        replaceAlicesWith + '/node_modules',
-                        replaceAlicesWith + '/.git',
-                        replaceAlicesWith + '/.vscode'
+                        rootDirectoryOf.rootDir + '/node_modules',
+                        rootDirectoryOf.rootDir + '/.git',
+                        rootDirectoryOf.rootDir + '/.vscode'
                     );
                 }
                 if (param2.addModule) {
                     require('module-alias')
-                        .addAlias(projectName, replaceAlicesWith);
+                        .addAlias(projectName, rootDirectoryOf.rootDir);
 
                 }
 
                 let rnode: RootPathRow;
                 rnode = {
                     id: this.source.length,
-                    path: replaceAlicesWith,
+                    path: rootDirectoryOf.rootDir,
                     alices: projectName,
                     isAlreadyFullPath: false,
                     cssVars: [],
@@ -73,8 +76,8 @@ export class rootPathHandler {
                         originalFinderText: projectName,
                         originalLowerCaseText: pathAlicesLower,
                         textToFind: strOpt.cleanTextForRegs(projectName),
-                        replaceWith: replaceAlicesWith,
-                        replaceLowerCaseText: replaceAlicesWith.toLowerCase().trim(),
+                        replaceWith: rootDirectoryOf.rootDir,
+                        replaceLowerCaseText: rootDirectoryOf.rootDir.toLowerCase().trim(),
                         cssVars: [],
                     }
                 }
