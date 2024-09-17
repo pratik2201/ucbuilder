@@ -17,7 +17,7 @@ jqFeatures.onReady(() => {
 import { rootPathHandler } from 'ucbuilder/global/rootPathHandler';
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 rootPathHandler.originalPath = _clientPath;
-console.log(_clientPath);
+//console.log(_clientPath);
 
 rootPathHandler.path = rootPathHandler.originalPath/*.toLowerCase()*/.trim_('/');
 
@@ -53,16 +53,15 @@ class register {
 
     static registarMe(rootDirOf:LocationOf,param2: RootPathParam):boolean {
         //import { newObjectOpt }  from 'ucbuilder/global/newObjectOpt';
-        
+        if (rootDirOf.outDir == '') rootDirOf.outDir = '/';
         rootDirOf.rootDir = rootDirOf.rootDir.replace(/\\+/gi, "/").trim_('/');
-        rootDirOf.outDir = rootDirOf.outDir.replace(/\\+/gi, "/").trim_('/');
+        rootDirOf.outDir = rootDirOf.outDir;//.replace(/\\+/gi, "/").trim_('/');
+        
         rootDirOf = newObjectOpt.copyProps(rootDirOf, rootDirectoryOf);
-
+      //  console.log(rootDirOf.rootDir);
+        
        // rootDirectoryOf.srcDir = rootDirectoryOf.srcDir.replace(/\\+/gi, "/");
-        let lwr = rootDirOf.lowerCase;
-        lwr.rootDir = rootDirOf.rootDir/*.toLowerCase()*/.trim_('/');;
-        lwr.outDir = rootDirOf.outDir/*.toLowerCase()*/.trim_('/');
-
+      
         //lwr.srcDir = rootDirectoryOf.srcDir.toLowerCase();
         
         let rpp = Object.assign({},rootPathParam)
@@ -99,7 +98,7 @@ let ACTIVE_USER_CONTROL: typeof register = undefined;
 //let ACTIVE_USER_CONTROL:register = undefined;
 let res = register.registarMe({
     //srcDir: __dirname,
-    outDir: __dirname,
+    outDir: '',
     rootDir: __dirname,
     /*html: __dirname,
     style: __dirname,

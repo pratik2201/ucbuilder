@@ -18,7 +18,7 @@ jqFeatures_1.jqFeatures.onReady(() => {
 const rootPathHandler_1 = require("ucbuilder/global/rootPathHandler");
 const commonEvent_1 = require("ucbuilder/global/commonEvent");
 rootPathHandler_1.rootPathHandler.originalPath = _clientPath;
-console.log(_clientPath);
+//console.log(_clientPath);
 rootPathHandler_1.rootPathHandler.path = rootPathHandler_1.rootPathHandler.originalPath /*.toLowerCase()*/.trim_('/');
 const enumAndMore_1 = require("ucbuilder/enumAndMore");
 const loader_1 = require("ucbuilder/global/loader");
@@ -38,14 +38,13 @@ class register {
     ;
     static registarMe(rootDirOf, param2) {
         //import { newObjectOpt }  from 'ucbuilder/global/newObjectOpt';
+        if (rootDirOf.outDir == '')
+            rootDirOf.outDir = '/';
         rootDirOf.rootDir = rootDirOf.rootDir.replace(/\\+/gi, "/").trim_('/');
-        rootDirOf.outDir = rootDirOf.outDir.replace(/\\+/gi, "/").trim_('/');
+        rootDirOf.outDir = rootDirOf.outDir; //.replace(/\\+/gi, "/").trim_('/');
         rootDirOf = objectOpt_1.newObjectOpt.copyProps(rootDirOf, findAndReplace_1.rootDirectoryOf);
+        //  console.log(rootDirOf.rootDir);
         // rootDirectoryOf.srcDir = rootDirectoryOf.srcDir.replace(/\\+/gi, "/");
-        let lwr = rootDirOf.lowerCase;
-        lwr.rootDir = rootDirOf.rootDir /*.toLowerCase()*/.trim_('/');
-        ;
-        lwr.outDir = rootDirOf.outDir /*.toLowerCase()*/.trim_('/');
         //lwr.srcDir = rootDirectoryOf.srcDir.toLowerCase();
         let rpp = Object.assign({}, enumAndMore_1.rootPathParam);
         let pera = Object.assign(rpp, param2);
@@ -85,7 +84,7 @@ let ACTIVE_USER_CONTROL = undefined;
 //let ACTIVE_USER_CONTROL:register = undefined;
 let res = register.registarMe({
     //srcDir: __dirname,
-    outDir: __dirname,
+    outDir: '',
     rootDir: __dirname,
     /*html: __dirname,
     style: __dirname,

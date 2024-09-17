@@ -7,6 +7,7 @@ export interface ReplaceTextRow {
     //replaceLowerCaseText: string;
     cssVars?: { key: string, value: string }[];
 }
+export type LocationType = "root" | "out";
 export interface LocationOf {
     /*html: string,
     style: string,
@@ -19,20 +20,7 @@ export interface LocationOf {
     outDir: string,
     //srcDir: string,
     rootDir: string,
-    /**  @private */
-    lowerCase?: {
-        /*    html: string,
-            style: string,
-            perameters: string,
-            designer: string,
-            designerSrc: string,
-            code: string,
-            codeSrc: string, */
-
-        outDir: string,
-        //srcDir: string,
-        rootDir: string,
-    }
+   
 }
 export const rootDirectoryOf: LocationOf = {
     /*html: "",
@@ -42,21 +30,10 @@ export const rootDirectoryOf: LocationOf = {
     designerSrc: "",
     code: "",
     codeSrc: "",*/
-    outDir: "",
+    outDir: "/",
     //srcDir: "",
     rootDir: "",
-    lowerCase: {
-        /*html: "",
-        style: "",
-        perameters: "",
-        designer: "",
-        designerSrc: "",
-        code: "",
-        codeSrc: "",*/
-        outDir: "",
-        //srcDir: "",
-        rootDir: "",
-    }
+   
 };
 export const replaceTextRow: ReplaceTextRow = {
     id: 0,
@@ -67,6 +44,8 @@ export const replaceTextRow: ReplaceTextRow = {
     //replaceLowerCaseText: "",
     cssVars: [],
 };
+
+
 
 export interface RootPathRow {
     id: number,
@@ -89,12 +68,9 @@ export const rootPathRow: RootPathRow = {
     outputDirectory: '',
     isAlreadyFullPath: false,
     location: {
-        outDir: "",
+        outDir: "/",
         rootDir: "",
-        lowerCase: {
-            outDir: "",
-            rootDir: ""
-        }
+        
     },
     tInfo: {
         id: 0,

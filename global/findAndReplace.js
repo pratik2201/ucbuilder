@@ -9,21 +9,9 @@ exports.rootDirectoryOf = {
     designerSrc: "",
     code: "",
     codeSrc: "",*/
-    outDir: "",
+    outDir: "/",
     //srcDir: "",
     rootDir: "",
-    lowerCase: {
-        /*html: "",
-        style: "",
-        perameters: "",
-        designer: "",
-        designerSrc: "",
-        code: "",
-        codeSrc: "",*/
-        outDir: "",
-        //srcDir: "",
-        rootDir: "",
-    }
 };
 exports.replaceTextRow = {
     id: 0,
@@ -42,12 +30,8 @@ exports.rootPathRow = {
     outputDirectory: '',
     isAlreadyFullPath: false,
     location: {
-        outDir: "",
+        outDir: "/",
         rootDir: "",
-        lowerCase: {
-            outDir: "",
-            rootDir: ""
-        }
     },
     tInfo: {
         id: 0,
