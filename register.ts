@@ -17,12 +17,14 @@ jqFeatures.onReady(() => {
 import { rootPathHandler } from 'ucbuilder/global/rootPathHandler';
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 rootPathHandler.originalPath = _clientPath;
-rootPathHandler.path = rootPathHandler.originalPath.toLowerCase().trim_('/');
+console.log(_clientPath);
+
+rootPathHandler.path = rootPathHandler.originalPath/*.toLowerCase()*/.trim_('/');
 
 import { RootPathParam, rootPathParam } from 'ucbuilder/enumAndMore';
 import {getbasedir} from 'ucbuilder/global/loader';
 import path from 'path';
-import { rootDirectoryOf, RootDirectoryOf } from './global/findAndReplace';
+import { rootDirectoryOf, LocationOf } from './global/findAndReplace';
 import { newObjectOpt } from './global/objectOpt';
 
 class register {
@@ -38,7 +40,7 @@ class register {
     }
 
     static getprojectname(dirpath: string): string | undefined {
-       console.log(/* process.cwd()+"\n"+*/dirpath);
+       //console.log(/* process.cwd()+"\n"+*/dirpath);
        
         let fpath: string = `${dirpath}/package.json`;
         //let s = await (async () => {let {X} = await import('./roles/x'); return X;})()
@@ -49,7 +51,7 @@ class register {
         return undefined;
     };
 
-    static registarMe(rootDirOf:RootDirectoryOf,param2: RootPathParam):boolean {
+    static registarMe(rootDirOf:LocationOf,param2: RootPathParam):boolean {
         //import { newObjectOpt }  from 'ucbuilder/global/newObjectOpt';
         
         rootDirOf.rootDir = rootDirOf.rootDir.replace(/\\+/gi, "/").trim_('/');
@@ -58,8 +60,8 @@ class register {
 
        // rootDirectoryOf.srcDir = rootDirectoryOf.srcDir.replace(/\\+/gi, "/");
         let lwr = rootDirOf.lowerCase;
-        lwr.rootDir = rootDirOf.rootDir.toLowerCase().trim_('/');;
-        lwr.outDir = rootDirOf.outDir.toLowerCase().trim_('/');
+        lwr.rootDir = rootDirOf.rootDir/*.toLowerCase()*/.trim_('/');;
+        lwr.outDir = rootDirOf.outDir/*.toLowerCase()*/.trim_('/');
 
         //lwr.srcDir = rootDirectoryOf.srcDir.toLowerCase();
         
@@ -76,7 +78,7 @@ class register {
         let pname = this.getprojectname(rootDirOf.rootDir); // dirpath
       //  if (pname != undefined || pname != "")
       //      pname = `${pname}`;
-        console.log(pname+" is a project");
+        //console.log(pname+" is a project");
         
         let pathAlices = pname;
 
@@ -115,7 +117,7 @@ let res = register.registarMe({
     getprojectname: register.getprojectname,
     get Events() { return register.Events; },
     registar: (
-        rootDirectoryOf:RootDirectoryOf,
+        rootDirectoryOf:LocationOf,
         pera?: RootPathParam
     ) => {
         return register.registarMe(rootDirectoryOf,pera);

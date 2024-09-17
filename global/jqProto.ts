@@ -21,9 +21,11 @@ interface String {
     $(): HTMLElement,
     _trim(charlist?: string): string,
     trim_(charlist?: string): string,
-    __(jsonRow: {}): string,
+    __(jsonRow: {}): string,    
     startsWithI (s: string): boolean,
-    endsWithI (s: string): boolean,
+    endsWithI(s: string): boolean,
+    includesI(s: string): boolean,
+    equalIgnoreCase(s: string): boolean,
 }
 
 

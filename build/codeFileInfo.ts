@@ -1,4 +1,4 @@
-import { pathInfo, strOpt, buildOptions, FilePartlyInfo, ExtensionType } from "ucbuilder/build/common";
+import { pathInfo, strOpt, buildOptions, FilePartlyInfo, SpecialExtType, getSpecialExtTypeValue } from "ucbuilder/build/common";
 import { RootPathRow } from "ucbuilder/global/findAndReplace";
 //import {  RootPathRow } from "ucbuilder/enumAndMore";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
@@ -8,7 +8,7 @@ export class FileInfo {
     private _path = "";
     rootPath = "";
     rootInfo: RootPathRow;
-    constructor() {}
+    constructor() { }
 
     parse(val: string, parseRoot = true) {
         this._path = val;
@@ -17,11 +17,12 @@ export class FileInfo {
             if (!this.rootInfo.isAlreadyFullPath) {
                 this.sortPath = strOpt._trim(this._path, `${this.rootInfo.alices}/`);
                 this.fullPath = `${this.rootInfo.path}/${this.sortPath}`;
+                
                 this.rootPath = `${this.rootInfo.alices}/${this.sortPath}`;
             } else {
                 this.fullPath = this._path;
                 this.sortPath = strOpt._trim(this.fullPath, `${this.rootInfo.path}/`);
-                
+
                 this.rootPath = `${this.rootInfo.alices}/${this.sortPath}`;
             }
         } else {
@@ -57,11 +58,69 @@ export class FileInfo {
         return pathInfo.getFileNameWithoutExtFromPath(this.rootPath);
     }
 }
+export class partlyInfo {
+    filePath: string = undefined;
+    dirPath: string = undefined;
+    filefullname: string = undefined;
+    fileNameParts: string[] = [];
+    specialType: SpecialExtType = 'none';
+    fileName: string = "";
+    fileType: string = "";
 
+    constructor(filepath: string, init: boolean = true) {
+        this.filePath = filepath;
+        if (init) this.refresh();
+
+    }
+    refresh() {
+        let pathAr = Array.from(this.filePath.matchAll(/(^.*[\\\/])(.*)/gmi))[0];
+        if (pathAr != undefined) {
+            this.dirPath = pathAr[1];
+            this.filefullname = pathAr[2];
+            this.fileNameParts = this.filefullname.split(".");
+            let len = this.fileNameParts.length;
+            this.fileName = this.fileNameParts[0];
+            switch (len) {
+                case 1:
+                    break;
+                case 2:
+                    this.fileType = this.fileNameParts[1];
+                    break;
+                case 3:
+                    this.specialType = getSpecialExtTypeValue(this.fileNameParts[1]);
+                    this.fileType = ('.' + this.fileNameParts[2]);
+                    break;
+                default:
+                    this.specialType = getSpecialExtTypeValue(this.fileNameParts[len - 2]);
+                    this.fileType = ('.' + this.fileNameParts[len - 1]);
+                    break;
+            }
+
+            /*let index = this.filefullname.indexOf(".");
+            //this.fullPath = filepath;
+            if (index != -1) {
+
+                rtrn.fileName = filename.substring(0, index);
+                let flen = filename.length;
+                rtrn.extension = filename.substring(index, flen) as SpecialExtType;
+                console.log(fullPath);
+                console.log("@@@@@@@@@@@@@@@@@@@@@@@");
+
+                console.log(rtrn.fileName);
+                console.log(rtrn.extension);
+                let lindex = filename.lastIndexOf(".");
+
+                rtrn.type = (lindex == index) ? rtrn.extension : filename.substring(lindex, flen);
+                console.log(rtrn.type);
+                console.log("@@@@@@@@@@@@@@@@@@@@@@@");
+            }*/
+        }
+    }
+}
 class htmlFileNode {
     static ___HTML_EXT = ".html";
     static ___STYLE_EXT = ".scss";
-    rootInfo:  RootPathRow | undefined;
+    rootInfo: RootPathRow | undefined;
     html = new FileInfo();
     style = new FileInfo();
     name: string = '';
@@ -96,12 +155,12 @@ class htmlFileNode {
         //this.style.parse(sortPath + this.styleExt, false);
     }
 }
-export class FileNameInfo{
-    private extensionType: ExtensionType = 'none';
+export class FileNameInfo {
+    private extensionType: SpecialExtType = 'none';
     private name: string = '';
     private filetype: '';
     private length = 4;
-    init(name: string = '',extensionType: ExtensionType = 'none',filetype: '') {
+    init(name: string = '', extensionType: SpecialExtType = 'none', filetype: '') {
         this.name = name;
         this.extensionType = extensionType;
         this.filetype = filetype;
@@ -109,6 +168,17 @@ export class FileNameInfo{
     get ext() { return this.extensionType + '' + this.filetype; }
     get filename() { return this.name + '' + this.ext; }
 }
+export type Exts =
+       ".uc.rowperameters.json"
+    |  ".uc.designer.ts"
+    |  ".uc.designer.js"
+    |  ".uc.ts"
+    |  ".uc.js"
+    |  ".tpt.rowperameters.json"
+    |  ".tpt.designer.ts"
+    |  ".tpt.designer.js"
+    |  ".tpt.ts"
+    |  ".tpt.js";
 export class codeFileInfo {
     html = new FileInfo();
     style = new FileInfo();
@@ -118,14 +188,14 @@ export class codeFileInfo {
     code = new FileInfo();
     codeSrc = new FileInfo();
     name = "";
-    extCode : ExtensionType;
+    extCode: SpecialExtType;
     fullPathWithoutExt = "";
     mainFilePath = "";
     mainFileRootPath = "";
-    constructor(extCode:ExtensionType) {
+    constructor(extCode: SpecialExtType) {
         this.extCode = extCode;
     }
-    
+
     get existHtmlFile() { return pathInfo.existFile(this.html.fullPath); }
     get existStyleFile() { return pathInfo.existFile(this.style.fullPath); }
     get existDeignerFile() { return pathInfo.existFile(this.designer.fullPath); }
@@ -141,9 +211,9 @@ export class codeFileInfo {
     static ___CODE_SRC_EXT = ".js";
 
     get htmlExt(): string { return this.extCode + htmlFileNode.___HTML_EXT; }
-    get styleExt(): string {  return this.extCode + htmlFileNode.___STYLE_EXT; }
-    get deignerExt(): string {  return this.extCode + codeFileInfo.___DESIGNER_EXT; }
-    get deignerSrcExt(): string {  return this.extCode + codeFileInfo.___DESIGNER_SRC_EXT; }
+    get styleExt(): string { return this.extCode + htmlFileNode.___STYLE_EXT; }
+    get deignerExt(): string { return this.extCode + codeFileInfo.___DESIGNER_EXT; }
+    get deignerSrcExt(): string { return this.extCode + codeFileInfo.___DESIGNER_SRC_EXT; }
     get perametersExt(): string { return this.extCode + codeFileInfo.___PERAMETERS_EXT; }
     get codeExt(): string { return this.extCode + codeFileInfo.___CODE_EXT; }
     get codeSrcExt(): string { return this.extCode + codeFileInfo.___CODE_SRC_EXT; }
@@ -152,12 +222,12 @@ export class codeFileInfo {
 
     get htmlFileName(): string { return this.name + this.extCode + htmlFileNode.___HTML_EXT; }
     get styleFileName(): string { return this.name + this.extCode + htmlFileNode.___STYLE_EXT; }
-    get deignerFileName(): string {  return this.name + this.extCode + codeFileInfo.___DESIGNER_EXT; }
-    get deignerSrcFileName(): string {  return this.name + this.extCode + codeFileInfo.___DESIGNER_SRC_EXT; }
+    get deignerFileName(): string { return this.name + this.extCode + codeFileInfo.___DESIGNER_EXT; }
+    get deignerSrcFileName(): string { return this.name + this.extCode + codeFileInfo.___DESIGNER_SRC_EXT; }
     get perametersFileName(): string { return this.name + this.extCode + codeFileInfo.___PERAMETERS_EXT; }
     get codeFileName(): string { return this.name + this.extCode + codeFileInfo.___CODE_EXT; }
     get codeFileSrcName(): string { return this.name + this.extCode + codeFileInfo.___CODE_SRC_EXT; }
-   
+
 
     get htmlExtLen(): number { return this.htmlExt.length; }
     get styleExtLen(): number { return this.styleExt.length; }
@@ -166,20 +236,24 @@ export class codeFileInfo {
     get perametersExtLen(): number { return this.perametersExt.length; }
     get codeExtLen(): number { return this.codeExt.length; }
     get codeExtSrcLen(): number { return this.codeSrcExt.length; }
-   
-    static getExtType(path: string): ExtensionType {
-        let partly = pathInfo.getFileInfoPartly(path);       
+
+    static getExtType(path: string): SpecialExtType {
+        let partly = pathInfo.getFileInfoPartly(path);
         if (partly.extension.includes('.tpt')) return '.tpt';
         if (partly.extension.includes('.uc')) return '.uc';
         return 'none';
     }
-    
+
     partInfo: FilePartlyInfo = { dirPath: "", sortDirPath: "", fileName: "", extension: 'none', type: "" };
     rootInfo: RootPathRow | undefined;
 
-    parseUrl(_url: string):boolean {
+    parseUrl(_url: string): boolean {
+        
         let url = pathInfo.cleanPath(_url);
         this.rootInfo = rootPathHandler.getInfo(url);
+        //console.log(_url);
+
+        
         if (this.rootInfo == undefined) {
             //debugger;
             console.log(`"${_url}" at codeFileInfo`);
@@ -189,17 +263,24 @@ export class codeFileInfo {
         this.html.rootInfo = this.style.rootInfo = this.designer.rootInfo = this.perameters.rootInfo = this.code.rootInfo =
             this.codeSrc.rootInfo =
             this.designerSrc.rootInfo = this.rootInfo;
-        let fullPath = !this.rootInfo.isAlreadyFullPath ? (this.rootInfo.path + "" + url) : url;
-        this.partInfo = pathInfo.getFileInfoPartly(fullPath);
-       
-    //    console.log(_url);
-       
-    //     console.log(this);
+       // console.log(this.rootInfo.isAlreadyFullPath+"\n"+url);
         
-        let s = (this.partInfo.dirPath.toLowerCase() + "" + this.partInfo.fileName);
+        let fullPath = !this.rootInfo.isAlreadyFullPath ? (this.rootInfo.path + "" + url) : url;
+        
+        this.partInfo = pathInfo.getFileInfoPartly(fullPath);
+       // console.log(_url);
+       // console.log(this.partInfo);
+
+        //    console.log(_url);
+
+        //     console.log(this);
+
+        let s = (this.partInfo.dirPath/*.toLowerCase()*/ + "" + this.partInfo.fileName);
         this.fullPathWithoutExt = s;
         let sortPath = strOpt._trim(s, this.rootInfo.path + "/");
-        this.partInfo.sortDirPath = strOpt._trim(s, this.html.rootInfo.path + "/");
+       console.log(s+"\n"+this.codeSrc.rootInfo.path);
+        
+        this.partInfo.sortDirPath = strOpt._trim(s, this.codeSrc.rootInfo.path + "/");
         this.rootInfo.isAlreadyFullPath = false;
         this.html.parse(sortPath + this.htmlExt, false);
         this.style.parse(sortPath + this.styleExt, false);
@@ -210,7 +291,9 @@ export class codeFileInfo {
         this.codeSrc.parse(sortPath + this.codeSrcExt, false);
         this.name = this.partInfo.fileName;
         this.mainFilePath = s + this.extCode;
-        this.mainFileRootPath =this.rootInfo.alices+'/'+ sortPath + this.extCode;
+        this.mainFileRootPath = this.rootInfo.alices + '/' + sortPath + this.extCode;
+        // console.log(_url);
+        // console.log(this);
         return true;
     }
 }

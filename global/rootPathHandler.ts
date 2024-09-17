@@ -1,5 +1,5 @@
 import { pathInfo, strOpt } from "ucbuilder/build/common";
-import { replaceTextRow, ReplaceTextRow, RootDirectoryOf, RootPathRow } from "ucbuilder/global/findAndReplace";
+import { replaceTextRow, ReplaceTextRow, LocationOf, RootPathRow } from "ucbuilder/global/findAndReplace";
 import { rootPathParam, RootPathParam } from 'ucbuilder/enumAndMore';
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { builder } from "ucbuilder/build/builder";
@@ -10,27 +10,33 @@ export class rootPathHandler {
 
     static checkStatus(textToFindLower: string, textToReplaceLower: string): "newRegister" | "alreadyRegistered" | "sameAlicesAlreadyExist" {
         let findex = this.source.findIndex(s =>
-            s.tInfo.originalLowerCaseText.includes(textToFindLower)
+            // s.tInfo.originalLowerCaseText.includes(textToFindLower)
+            s.tInfo.originalFinderText.includesI(textToFindLower)
+
             ||
-            textToFindLower.includes(s.tInfo.originalLowerCaseText)
+            //textToFindLower.includes(s.tInfo.originalLowerCaseText)
+            textToFindLower.includesI(s.tInfo.originalFinderText)
         );
-        console.log('<<< '+ findex+" >>>>");
+       // console.log('<<< '+ findex+" >>>>");
         
         if (findex == -1) {
             return "newRegister";
         } else {
             let row = this.source[findex];
 
-            return (row.tInfo.replaceLowerCaseText === textToReplaceLower.toLowerCase()) ?
+            return
+              /*(row.tInfo.replaceLowerCaseText === textToReplaceLower.toLowerCase())*/
+                (row.tInfo.replaceWith.equalIgnoreCase(textToReplaceLower))
+                    ?
                 "alreadyRegistered"
                 :
                 "sameAlicesAlreadyExist";
         }
     }
 
-    static addRoot = (projectName: string,rootDirectoryOf:RootDirectoryOf /*replaceAlicesWith: string*/, pera: RootPathParam): boolean => {
+    static addRoot = (projectName: string,rootDirectoryOf:LocationOf /*replaceAlicesWith: string*/, pera: RootPathParam): boolean => {
         let param2 = newObjectOpt.copyProps(pera, rootPathParam);
-        let pathAlicesLower = projectName.toLowerCase();
+        let pathAlicesLower = projectName/*.toLowerCase()*/;
         let result = this.checkStatus(pathAlicesLower, rootDirectoryOf.rootDir);
         switch (result) {
             case "newRegister":
@@ -71,13 +77,14 @@ export class rootPathHandler {
                     cssVars: [],
                     outputDirectory:'',
                     index: -1,
+                    location : rootDirectoryOf,
                     tInfo: {
                         id: this.source.length,
                         originalFinderText: projectName,
-                        originalLowerCaseText: pathAlicesLower,
+                        //originalLowerCaseText: pathAlicesLower,
                         textToFind: strOpt.cleanTextForRegs(projectName),
                         replaceWith: rootDirectoryOf.rootDir,
-                        replaceLowerCaseText: rootDirectoryOf.rootDir.toLowerCase().trim(),
+                        //replaceLowerCaseText: rootDirectoryOf.rootDir.toLowerCase().trim(),
                         cssVars: [],
                     }
                 }
@@ -96,11 +103,12 @@ export class rootPathHandler {
 
 
                 this.source.sort((a, b) => {
-                    return b.tInfo.replaceLowerCaseText.length - a.tInfo.replaceLowerCaseText.length
+                    return b.tInfo.replaceWith.length - a.tInfo.replaceWith.length
+                    //return b.tInfo.replaceLowerCaseText.length - a.tInfo.replaceLowerCaseText.length
                 });
 
 
-                console.log(this.source);
+               // console.log(this.source);
                 
                 return true;
             case "sameAlicesAlreadyExist":
@@ -118,22 +126,22 @@ export class rootPathHandler {
     static originalPath = "";
     static path = "";
     static fullPath(_pth = ""): string {
-        let src = _pth.toLowerCase().trim();
-        let node = this.source.find(s => src.startsWithI(s.tInfo.originalLowerCaseText));
+        let src = _pth;//.toLowerCase().trim();
+        let node = this.source.find(s => src.startsWithI(s.tInfo.originalFinderText));
         if (node == undefined) return _pth;
         else return pathInfo.cleanPath(`${node.tInfo.replaceWith}${strOpt._trim(_pth, node.tInfo.textToFind)}`);
     }
 
     static getInfo(_pth = ""): RootPathRow | undefined {
-        let src = _pth.toLowerCase().trim();
+        let src = _pth;//.toLowerCase().trim();
         let isAlreadyFullPath = false;
         //console.clear();
         let findex = this.source.findIndex(s => {
            // console.log("=====>  "+s.tInfo.replaceLowerCaseText);
             
-            if (src.startsWithI(s.tInfo.originalLowerCaseText)) return true;
+            if (src.startsWithI(s.tInfo.originalFinderText)) return true;
             else {
-                isAlreadyFullPath = src.startsWithI(s.tInfo.replaceLowerCaseText);
+                isAlreadyFullPath = src.startsWithI(s.tInfo.replaceWith);
                 return isAlreadyFullPath;
             }
         });
@@ -148,8 +156,8 @@ export class rootPathHandler {
     }
 
     static getInfoByAlices(alices: string): RootPathRow | undefined {
-        alices = alices.toLowerCase();
-        let findex = this.source.findIndex(s => alices == s.tInfo.originalLowerCaseText);
+        //alices = alices.toLowerCase();
+        let findex = this.source.findIndex(s => alices.equalIgnoreCase(s.tInfo.originalFinderText));
         if (findex == -1) return undefined;
         let node = this.source[findex];
         let rtrn = node;//rootPathHandler.convertToRow(node, false);

@@ -13,33 +13,40 @@ class FileDataBank {
     static source: FileDataRow[] = [];
     static replacableText: ReplaceTextRow[] = [];
 
+    // var filterstrings = ['firststring', 'secondstring', 'thirdstring'];
+    // var regex = new RegExp(filterstrings.join("|"), "i");
+    // var isAvailable = regex.test(passedinstring);
+
     static checkIfValidReplacable(textToFind: string): boolean {
-        let textToFindLower = textToFind.toLowerCase();
+        let textToFindLower = textToFind/*.toLowerCase()*/;
         return this.replacableText.findIndex(s =>
-            s.originalLowerCaseText.includes(textToFindLower)
+            //s.originalLowerCaseText.includes(textToFindLower)
+            s.originalFinderText.includesI(textToFindLower)
             ||
-            textToFindLower.includes(s.originalLowerCaseText)
+            //textToFindLower.includes(s.originalLowerCaseText)
+            textToFindLower.includesI(s.originalFinderText)
         ) == -1;
     }
 
     static pushReplacableText(textToFind: string, replaceWith: string): void {
-        let textToFindLower = textToFind.toLowerCase();
-        let fval = this.replacableText.find(s => s.originalLowerCaseText == textToFindLower);
+        //let textToFindLower = textToFind.toLowerCase();
+        let textToFindLower = textToFind;
+        let fval = this.replacableText.find(s => s.originalFinderText.equalIgnoreCase(textToFindLower)); // s => s.originalLowerCaseText == textToFindLower
         if (fval == undefined) {
             this.replacableText.push({
                 originalFinderText: textToFind,
-                originalLowerCaseText: textToFindLower,
+                //originalLowerCaseText: textToFindLower,
                 textToFind: strOpt.cleanTextForRegs(textToFind),
                 replaceWith: replaceWith,
-                replaceLowerCaseText: replaceWith.toLowerCase(),
+                //replaceLowerCaseText: replaceWith.toLowerCase(),
 
             });
         } else {
             fval.originalFinderText = textToFind;
-            fval.originalLowerCaseText = textToFindLower;
+            //fval.originalLowerCaseText = textToFindLower;
             fval.textToFind = strOpt.cleanTextForRegs(textToFind);
             fval.replaceWith = replaceWith;
-            fval.replaceLowerCaseText = replaceWith.toLowerCase();
+            //fval.replaceLowerCaseText = replaceWith.toLowerCase();
         }
     }
 
@@ -61,7 +68,7 @@ class FileDataBank {
         replaceContentWithKeys = true,
         isFullPath = false,
     } = {}): string {
-        let fullPath = path.toLowerCase().trim();
+        let fullPath = path/*.toLowerCase()*/.trim();
         if (!isFullPath) {
             let fing = new FileInfo();
             fing.parse(path, true);
@@ -71,8 +78,8 @@ class FileDataBank {
         if (!existsSync(fullPath)) return undefined;
 
         let data = this.source.find(s => s.path == fullPath);
-        
-        
+
+
         if (data != undefined) {
             if (!reloadData)
                 return replaceContentWithKeys ? data.content : data.originalContent;

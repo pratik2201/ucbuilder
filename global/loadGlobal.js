@@ -25,8 +25,8 @@ class LoadGlobal {
             return false;
         if (!common_1.pathInfo.existFile(finfo.fullPath))
             return false;
-        let pathtoFind = finfo.rootPath.toLowerCase();
-        let sindex = this.source.findIndex(s => s.fUniq == pathtoFind);
+        let pathtoFind = finfo.rootPath /*.toLowerCase()*/;
+        let sindex = this.source.findIndex(s => s.fUniq.equalIgnoreCase(pathtoFind));
         return (sindex == -1);
     }
     /**

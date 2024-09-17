@@ -18,14 +18,15 @@ jqFeatures_1.jqFeatures.onReady(() => {
 const rootPathHandler_1 = require("ucbuilder/global/rootPathHandler");
 const commonEvent_1 = require("ucbuilder/global/commonEvent");
 rootPathHandler_1.rootPathHandler.originalPath = _clientPath;
-rootPathHandler_1.rootPathHandler.path = rootPathHandler_1.rootPathHandler.originalPath.toLowerCase().trim_('/');
+console.log(_clientPath);
+rootPathHandler_1.rootPathHandler.path = rootPathHandler_1.rootPathHandler.originalPath /*.toLowerCase()*/.trim_('/');
 const enumAndMore_1 = require("ucbuilder/enumAndMore");
 const loader_1 = require("ucbuilder/global/loader");
 const findAndReplace_1 = require("./global/findAndReplace");
 const objectOpt_1 = require("./global/objectOpt");
 class register {
     static getprojectname(dirpath) {
-        console.log(/* process.cwd()+"\n"+*/ dirpath);
+        //console.log(/* process.cwd()+"\n"+*/dirpath);
         let fpath = `${dirpath}/package.json`;
         //let s = await (async () => {let {X} = await import('./roles/x'); return X;})()
         let pjson = require(fpath);
@@ -42,9 +43,9 @@ class register {
         rootDirOf = objectOpt_1.newObjectOpt.copyProps(rootDirOf, findAndReplace_1.rootDirectoryOf);
         // rootDirectoryOf.srcDir = rootDirectoryOf.srcDir.replace(/\\+/gi, "/");
         let lwr = rootDirOf.lowerCase;
-        lwr.rootDir = rootDirOf.rootDir.toLowerCase().trim_('/');
+        lwr.rootDir = rootDirOf.rootDir /*.toLowerCase()*/.trim_('/');
         ;
-        lwr.outDir = rootDirOf.outDir.toLowerCase().trim_('/');
+        lwr.outDir = rootDirOf.outDir /*.toLowerCase()*/.trim_('/');
         //lwr.srcDir = rootDirectoryOf.srcDir.toLowerCase();
         let rpp = Object.assign({}, enumAndMore_1.rootPathParam);
         let pera = Object.assign(rpp, param2);
@@ -54,7 +55,7 @@ class register {
         let pname = this.getprojectname(rootDirOf.rootDir); // dirpath
         //  if (pname != undefined || pname != "")
         //      pname = `${pname}`;
-        console.log(pname + " is a project");
+        //console.log(pname+" is a project");
         let pathAlices = pname;
         if (ACTIVE_USER_CONTROL == undefined) {
             ACTIVE_USER_CONTROL = this;

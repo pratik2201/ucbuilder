@@ -3,7 +3,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.buildOptions = exports.ExtensionEnum = exports.uniqOpt = exports.objectOpt = exports.controlOpt = exports.propOpt = exports.looping = exports.pathInfo = exports.arrayOpt = exports.strOpt = exports.numOpt = void 0;
+exports.buildOptions = exports.SpecialExtEnum = exports.getSpecialExtTypeValue = exports.uniqOpt = exports.objectOpt = exports.controlOpt = exports.propOpt = exports.looping = exports.pathInfo = exports.arrayOpt = exports.strOpt = exports.numOpt = void 0;
 const fs_1 = require("fs");
 const crypto_1 = __importDefault(require("crypto"));
 exports.numOpt = {
@@ -77,7 +77,7 @@ exports.strOpt = {
         return decodeURIComponent(escape(s));
     },
     _trim(source, charlist = "\s") {
-        return source.replace(new RegExp("^(" + charlist + ")+"), "");
+        return source.replace(new RegExp("^(" + charlist + ")+", "ig"), "");
     },
     trim_(source, ...charlist) {
         if (charlist === undefined)
@@ -85,19 +85,19 @@ exports.strOpt = {
         let src = source;
         Array.from(charlist).forEach((nd) => {
             nd = nd.replace('.', "\.");
-            src = src.replace(new RegExp("(" + nd + ")+$"), "");
+            src = src.replace(new RegExp("(" + nd + ")+$", "ig"), "");
         });
         return src;
     },
     __trim(source, charlist) {
         if (charlist === undefined)
             charlist = "s";
-        return source.replace(new RegExp("^[" + charlist + "]+"), "");
+        return source.replace(new RegExp("^[" + charlist + "]+", "ig"), "");
     },
     trim__(source, charlist) {
         if (charlist === undefined)
             charlist = "s";
-        return source.replace(new RegExp("[" + charlist + "]+$"), "");
+        return source.replace(new RegExp("[" + charlist + "]+$", "ig"), "");
     },
 };
 exports.arrayOpt = {
@@ -153,7 +153,7 @@ exports.pathInfo = {
         file: "file"
     }),*/
     cleanPath(_pth = "") {
-        return exports.strOpt.trim__(_pth.replace(/[\\/]{1,}/g, "/"), "\/ ");
+        return exports.strOpt.trim__(_pth.replace(/[\\/]+/g, "/"), "\/ ");
     },
     existFile(_path) {
         return (0, fs_1.existsSync)(_path);
@@ -186,13 +186,20 @@ exports.pathInfo = {
             let filename = array[2];
             let index = filename.indexOf(".");
             rtrn.dirPath = dirPath;
-            rtrn.fullPath = fullPath;
+            // rtrn.fullPath = fullPath;
             if (index != -1) {
                 rtrn.fileName = filename.substring(0, index);
                 let flen = filename.length;
                 rtrn.extension = filename.substring(index, flen);
+                /* console.log(fullPath);
+                 console.log("@@@@@@@@@@@@@@@@@@@@@@@");
+                 
+                 console.log(rtrn.fileName);
+                 console.log(rtrn.extension);*/
                 let lindex = filename.lastIndexOf(".");
                 rtrn.type = (lindex == index) ? rtrn.extension : filename.substring(lindex, flen);
+                /*                console.log(rtrn.type);
+                                console.log("@@@@@@@@@@@@@@@@@@@@@@@");*/
             }
         }
         return rtrn;
@@ -491,12 +498,20 @@ exports.uniqOpt = {
         return rand;
     },
 };
-var ExtensionEnum;
-(function (ExtensionEnum) {
-    ExtensionEnum["none"] = "none";
-    ExtensionEnum["uc"] = ".uc";
-    ExtensionEnum["tpt"] = ".tpt";
-})(ExtensionEnum = exports.ExtensionEnum || (exports.ExtensionEnum = {}));
+function getSpecialExtTypeValue(_val) {
+    switch (_val) {
+        case SpecialExtEnum.uc: return '.uc';
+        case SpecialExtEnum.tpt: return '.tpt';
+        default: return 'none';
+    }
+}
+exports.getSpecialExtTypeValue = getSpecialExtTypeValue;
+var SpecialExtEnum;
+(function (SpecialExtEnum) {
+    SpecialExtEnum["none"] = "none";
+    SpecialExtEnum["uc"] = ".uc";
+    SpecialExtEnum["tpt"] = ".tpt";
+})(SpecialExtEnum = exports.SpecialExtEnum || (exports.SpecialExtEnum = {}));
 exports.buildOptions = {
     extType: {
         none: "none",

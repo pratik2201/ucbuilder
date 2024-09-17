@@ -39,8 +39,8 @@ export class LoadGlobal {
         finfo.parse(url);
         if (finfo.rootInfo == undefined) return false;
         if (!pathInfo.existFile(finfo.fullPath)) return false;
-        let pathtoFind: string = finfo.rootPath.toLowerCase();
-        let sindex: number = this.source.findIndex(s => s.fUniq == pathtoFind);
+        let pathtoFind: string = finfo.rootPath/*.toLowerCase()*/;
+        let sindex: number = this.source.findIndex(s => s.fUniq.equalIgnoreCase(pathtoFind));
         return (sindex == -1);
     }
 /**

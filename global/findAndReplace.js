@@ -28,10 +28,10 @@ exports.rootDirectoryOf = {
 exports.replaceTextRow = {
     id: 0,
     originalFinderText: "",
-    originalLowerCaseText: "",
+    //originalLowerCaseText: "",
     textToFind: "",
     replaceWith: "",
-    replaceLowerCaseText: "",
+    //replaceLowerCaseText: "",
     cssVars: [],
 };
 exports.rootPathRow = {
@@ -41,14 +41,22 @@ exports.rootPathRow = {
     index: -1,
     outputDirectory: '',
     isAlreadyFullPath: false,
+    location: {
+        outDir: "",
+        rootDir: "",
+        lowerCase: {
+            outDir: "",
+            rootDir: ""
+        }
+    },
     tInfo: {
         id: 0,
         originalFinderText: "",
-        originalLowerCaseText: "",
+        //originalLowerCaseText: "",
         textToFind: "",
         replaceWith: "",
-        replaceLowerCaseText: "",
-        // cssVars: [],
+        //replaceLowerCaseText: "",
+        cssVars: [],
     },
     cssVars: [],
 };

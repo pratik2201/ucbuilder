@@ -55,7 +55,7 @@ export class stylerRegs {
   static pushPublicStyles(): void {
     import("ucbuilder/ResourcesUC").then(({ResourcesUC}) => {
       rootPathHandler.source.forEach((row: RootPathRow) => {
-        let _stylepath: string = row.tInfo.replaceLowerCaseText + "/styles.scss";
+        let _stylepath: string = row.tInfo.replaceWith + "/styles.scss"; //row.tInfo.replaceLowerCaseText + "/styles.scss";
         let node: RootPathRow = row;//rootPathHandler.convertToRow(row, true);
         node.isAlreadyFullPath = true;
         let styler: stylerRegs = new stylerRegs(node, true);

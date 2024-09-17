@@ -5,30 +5,37 @@ const codeFileInfo_1 = require("ucbuilder/build/codeFileInfo");
 const common_1 = require("ucbuilder/build/common");
 const fs_1 = require("fs");
 class FileDataBank {
+    // var filterstrings = ['firststring', 'secondstring', 'thirdstring'];
+    // var regex = new RegExp(filterstrings.join("|"), "i");
+    // var isAvailable = regex.test(passedinstring);
     static checkIfValidReplacable(textToFind) {
-        let textToFindLower = textToFind.toLowerCase();
-        return this.replacableText.findIndex(s => s.originalLowerCaseText.includes(textToFindLower)
+        let textToFindLower = textToFind /*.toLowerCase()*/;
+        return this.replacableText.findIndex(s => 
+        //s.originalLowerCaseText.includes(textToFindLower)
+        s.originalFinderText.includesI(textToFindLower)
             ||
-                textToFindLower.includes(s.originalLowerCaseText)) == -1;
+                //textToFindLower.includes(s.originalLowerCaseText)
+                textToFindLower.includesI(s.originalFinderText)) == -1;
     }
     static pushReplacableText(textToFind, replaceWith) {
-        let textToFindLower = textToFind.toLowerCase();
-        let fval = this.replacableText.find(s => s.originalLowerCaseText == textToFindLower);
+        //let textToFindLower = textToFind.toLowerCase();
+        let textToFindLower = textToFind;
+        let fval = this.replacableText.find(s => s.originalFinderText.equalIgnoreCase(textToFindLower)); // s => s.originalLowerCaseText == textToFindLower
         if (fval == undefined) {
             this.replacableText.push({
                 originalFinderText: textToFind,
-                originalLowerCaseText: textToFindLower,
+                //originalLowerCaseText: textToFindLower,
                 textToFind: common_1.strOpt.cleanTextForRegs(textToFind),
                 replaceWith: replaceWith,
-                replaceLowerCaseText: replaceWith.toLowerCase(),
+                //replaceLowerCaseText: replaceWith.toLowerCase(),
             });
         }
         else {
             fval.originalFinderText = textToFind;
-            fval.originalLowerCaseText = textToFindLower;
+            //fval.originalLowerCaseText = textToFindLower;
             fval.textToFind = common_1.strOpt.cleanTextForRegs(textToFind);
             fval.replaceWith = replaceWith;
-            fval.replaceLowerCaseText = replaceWith.toLowerCase();
+            //fval.replaceLowerCaseText = replaceWith.toLowerCase();
         }
     }
     static getReplacedContent(content) {
@@ -38,7 +45,7 @@ class FileDataBank {
         return content;
     }
     static readFile(path, { reloadData = false, replaceContentWithKeys = true, isFullPath = false, } = {}) {
-        let fullPath = path.toLowerCase().trim();
+        let fullPath = path /*.toLowerCase()*/.trim();
         if (!isFullPath) {
             let fing = new codeFileInfo_1.FileInfo();
             fing.parse(path, true);

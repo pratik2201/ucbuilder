@@ -73,7 +73,7 @@ export const strOpt = {
         return decodeURIComponent(escape(s));
     },
     _trim(source: string, charlist: string = "\s"): string {
-        return source.replace(new RegExp("^(" + charlist + ")+"), "");
+        return source.replace(new RegExp("^(" + charlist + ")+","ig"), "");
     },
 
     trim_(source: string, ...charlist: string[]): string {
@@ -83,17 +83,17 @@ export const strOpt = {
         let src = source;
         Array.from(charlist).forEach((nd) => {
             nd = nd.replace('.', "\.");
-            src = src.replace(new RegExp("(" + nd + ")+$"), "");
+            src = src.replace(new RegExp("(" + nd + ")+$","ig"), "");
         });
         return src;
     },
     __trim(source: string, charlist?: string): string {
         if (charlist === undefined) charlist = "s";
-        return source.replace(new RegExp("^[" + charlist + "]+"), "");
+        return source.replace(new RegExp("^[" + charlist + "]+","ig"), "");
     },
     trim__(source: string, charlist?: string): string {
         if (charlist === undefined) charlist = "s";
-        return source.replace(new RegExp("[" + charlist + "]+$"), "");
+        return source.replace(new RegExp("[" + charlist + "]+$","ig"), "");
     },
 }
 export const arrayOpt = {
@@ -148,7 +148,7 @@ export const pathInfo = {
         file: "file"
     }),*/
     cleanPath(_pth: string = ""): string {
-        return strOpt.trim__(_pth.replace(/[\\/]{1,}/g, "/"), "\/ ");
+        return strOpt.trim__(_pth.replace(/[\\/]+/g, "/"), "\/ ");
     },
     existFile(_path: string): boolean {
         return existsSync(_path);
@@ -182,14 +182,22 @@ export const pathInfo = {
             let filename = array[2];
             let index = filename.indexOf(".");
             rtrn.dirPath = dirPath;
-            rtrn.fullPath = fullPath;
+           // rtrn.fullPath = fullPath;
             if (index != -1) {
+                
                 rtrn.fileName = filename.substring(0, index);
                 let flen = filename.length;
-                rtrn.extension = filename.substring(index, flen) as ExtensionType;
+                rtrn.extension = filename.substring(index, flen) as SpecialExtType;
+               /* console.log(fullPath);
+                console.log("@@@@@@@@@@@@@@@@@@@@@@@");
+                
+                console.log(rtrn.fileName);
+                console.log(rtrn.extension);*/
                 let lindex = filename.lastIndexOf(".");
 
                 rtrn.type = (lindex == index) ? rtrn.extension : filename.substring(lindex, flen);
+/*                console.log(rtrn.type);
+                console.log("@@@@@@@@@@@@@@@@@@@@@@@");*/
             }
         }
         return rtrn;
@@ -481,8 +489,15 @@ export const uniqOpt = {
     Usercontrol = ".uc",
     template = ".tpt",
 }*/
-export type ExtensionType = "none" | ".uc" | ".tpt";
-export enum ExtensionEnum {
+export type SpecialExtType = "none" | ".uc" | ".tpt";
+export function getSpecialExtTypeValue(_val:  string):SpecialExtType {
+    switch (_val) {
+        case SpecialExtEnum.uc: return '.uc';
+        case SpecialExtEnum.tpt: return '.tpt';
+        default: return 'none';
+    }
+}
+export enum SpecialExtEnum {
     none = "none",
     uc = ".uc",
     tpt = ".tpt",
@@ -508,7 +523,7 @@ export interface FilePartlyInfo {
     dirPath: string;
     sortDirPath: string,
     fileName: string;
-    extension: ExtensionType;
+    extension: SpecialExtType;
     type: string;
-    fullPath?: string;
+   // fullPath?: string;
 }

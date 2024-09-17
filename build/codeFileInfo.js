@@ -1,6 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.codeFileInfo = exports.FileNameInfo = exports.FileInfo = void 0;
+exports.codeFileInfo = exports.FileNameInfo = exports.partlyInfo = exports.FileInfo = void 0;
 const common_1 = require("ucbuilder/build/common");
 //import {  RootPathRow } from "ucbuilder/enumAndMore";
 const rootPathHandler_1 = require("ucbuilder/global/rootPathHandler");
@@ -52,6 +52,64 @@ class FileInfo {
     }
 }
 exports.FileInfo = FileInfo;
+class partlyInfo {
+    constructor(filepath, init = true) {
+        this.filePath = undefined;
+        this.dirPath = undefined;
+        this.filefullname = undefined;
+        this.fileNameParts = [];
+        this.specialType = 'none';
+        this.fileName = "";
+        this.fileType = "";
+        this.filePath = filepath;
+        if (init)
+            this.refresh();
+    }
+    refresh() {
+        let pathAr = Array.from(this.filePath.matchAll(/(^.*[\\\/])(.*)/gmi))[0];
+        if (pathAr != undefined) {
+            this.dirPath = pathAr[1];
+            this.filefullname = pathAr[2];
+            this.fileNameParts = this.filefullname.split(".");
+            let len = this.fileNameParts.length;
+            this.fileName = this.fileNameParts[0];
+            switch (len) {
+                case 1:
+                    break;
+                case 2:
+                    this.fileType = this.fileNameParts[1];
+                    break;
+                case 3:
+                    this.specialType = (0, common_1.getSpecialExtTypeValue)(this.fileNameParts[1]);
+                    this.fileType = ('.' + this.fileNameParts[2]);
+                    break;
+                default:
+                    this.specialType = (0, common_1.getSpecialExtTypeValue)(this.fileNameParts[len - 2]);
+                    this.fileType = ('.' + this.fileNameParts[len - 1]);
+                    break;
+            }
+            /*let index = this.filefullname.indexOf(".");
+            //this.fullPath = filepath;
+            if (index != -1) {
+
+                rtrn.fileName = filename.substring(0, index);
+                let flen = filename.length;
+                rtrn.extension = filename.substring(index, flen) as SpecialExtType;
+                console.log(fullPath);
+                console.log("@@@@@@@@@@@@@@@@@@@@@@@");
+
+                console.log(rtrn.fileName);
+                console.log(rtrn.extension);
+                let lindex = filename.lastIndexOf(".");
+
+                rtrn.type = (lindex == index) ? rtrn.extension : filename.substring(lindex, flen);
+                console.log(rtrn.type);
+                console.log("@@@@@@@@@@@@@@@@@@@@@@@");
+            }*/
+        }
+    }
+}
+exports.partlyInfo = partlyInfo;
 class htmlFileNode {
     constructor() {
         this.html = new FileInfo();
@@ -155,6 +213,7 @@ class codeFileInfo {
     parseUrl(_url) {
         let url = common_1.pathInfo.cleanPath(_url);
         this.rootInfo = rootPathHandler_1.rootPathHandler.getInfo(url);
+        //console.log(_url);
         if (this.rootInfo == undefined) {
             //debugger;
             console.log(`"${_url}" at codeFileInfo`);
@@ -165,14 +224,18 @@ class codeFileInfo {
         this.html.rootInfo = this.style.rootInfo = this.designer.rootInfo = this.perameters.rootInfo = this.code.rootInfo =
             this.codeSrc.rootInfo =
                 this.designerSrc.rootInfo = this.rootInfo;
+        // console.log(this.rootInfo.isAlreadyFullPath+"\n"+url);
         let fullPath = !this.rootInfo.isAlreadyFullPath ? (this.rootInfo.path + "" + url) : url;
         this.partInfo = common_1.pathInfo.getFileInfoPartly(fullPath);
+        // console.log(_url);
+        // console.log(this.partInfo);
         //    console.log(_url);
         //     console.log(this);
-        let s = (this.partInfo.dirPath.toLowerCase() + "" + this.partInfo.fileName);
+        let s = (this.partInfo.dirPath /*.toLowerCase()*/ + "" + this.partInfo.fileName);
         this.fullPathWithoutExt = s;
         let sortPath = common_1.strOpt._trim(s, this.rootInfo.path + "/");
-        this.partInfo.sortDirPath = common_1.strOpt._trim(s, this.html.rootInfo.path + "/");
+        console.log(s + "\n" + this.codeSrc.rootInfo.path);
+        this.partInfo.sortDirPath = common_1.strOpt._trim(s, this.codeSrc.rootInfo.path + "/");
         this.rootInfo.isAlreadyFullPath = false;
         this.html.parse(sortPath + this.htmlExt, false);
         this.style.parse(sortPath + this.styleExt, false);
@@ -184,6 +247,8 @@ class codeFileInfo {
         this.name = this.partInfo.fileName;
         this.mainFilePath = s + this.extCode;
         this.mainFileRootPath = this.rootInfo.alices + '/' + sortPath + this.extCode;
+        // console.log(_url);
+        // console.log(this);
         return true;
     }
 }

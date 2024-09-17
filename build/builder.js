@@ -78,10 +78,10 @@ class builder {
         };
     }
     checkFileState(filePath, htmlContents = undefined) {
-        if (filePath.endsWith(common_1.ExtensionEnum.uc + '.html')) { //  IF USER CONTROL
+        if (filePath.endsWith(common_1.SpecialExtEnum.uc + '.html')) { //  IF USER CONTROL
             this.commonMng.init(filePath, htmlContents);
         }
-        else if (filePath.endsWith(common_1.ExtensionEnum.tpt + '.html')) { //  IF TEMPLATE
+        else if (filePath.endsWith(common_1.SpecialExtEnum.tpt + '.html')) { //  IF TEMPLATE
             this.commonMng.init(filePath, htmlContents);
         }
     }

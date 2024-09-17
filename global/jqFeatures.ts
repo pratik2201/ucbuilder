@@ -397,29 +397,37 @@ class jqFeatures {
         String.prototype._trim = function (charlist?: string): string {
             if (charlist === undefined)
                 charlist = "\s";
-            return this.replace(new RegExp("^[" + charlist + "]+"), "");
+            return this.replace(new RegExp("^[" + charlist + "]+", 'ig'), "");
         }
-        String.prototype.startsWithI = function(s){
-           return this.match(new RegExp('^'+s, 'i'))!=null;
+        String.prototype.startsWithI = function (s) {
+            return this.match(new RegExp('^' + s, 'ig')) != null;
         }
-        String.prototype.endsWithI = function(s){
-            return this.match(new RegExp(s+'$', 'i'))!=null;
-         }
+        String.prototype.endsWithI = function (s) {
+            return this.match(new RegExp(s + '$', 'ig')) != null;
+        }
+        String.prototype.includesI = function (s) {
+            return this.match(new RegExp(s, 'ig')) != null;
+        }
+        String.prototype.equalIgnoreCase = function (s) {
+            return this.match(new RegExp('^' + s + '$', 'ig')) != null;
+            //return this.toUpperCase() === s.toUpperCase();
+        }
+
         String.prototype.trim_ = function (charlist?: string): string {
             if (charlist === undefined)
                 charlist = "\s";
-            return this.replace(new RegExp("[" + charlist + "]+$"), "");
+            return this.replace(new RegExp("[" + charlist + "]+$", 'ig'), "");
         }
         String.prototype.__ = function (jsonRow: {}): string {
             let rtrn = this;
             if (jsonRow != undefined)
                 rtrn = jqFeatures.regsMng.parse(jsonRow, rtrn);
             return FileDataBank.getReplacedContent(rtrn);
-           /* return (async () => {
-                //let { FileDataBank } = await import("ucbuilder/global/fileDataBank");
-                //FileDataBank
-                return FileDataBank.getReplacedContent(rtrn);
-            })();*/
+            /* return (async () => {
+                 //let { FileDataBank } = await import("ucbuilder/global/fileDataBank");
+                 //FileDataBank
+                 return FileDataBank.getReplacedContent(rtrn);
+             })();*/
             //});
         }
         //console.log(`hello {=s}`.__({ s: 'd' }).then(s => s));

@@ -41,39 +41,45 @@ const builder_1 = require("ucbuilder/build/builder");
 class rootPathHandler {
     static get source() { return this._source; }
     static checkStatus(textToFindLower, textToReplaceLower) {
-        let findex = this.source.findIndex(s => s.tInfo.originalLowerCaseText.includes(textToFindLower)
+        let findex = this.source.findIndex(s => 
+        // s.tInfo.originalLowerCaseText.includes(textToFindLower)
+        s.tInfo.originalFinderText.includesI(textToFindLower)
             ||
-                textToFindLower.includes(s.tInfo.originalLowerCaseText));
-        console.log('<<< ' + findex + " >>>>");
+                //textToFindLower.includes(s.tInfo.originalLowerCaseText)
+                textToFindLower.includesI(s.tInfo.originalFinderText));
+        // console.log('<<< '+ findex+" >>>>");
         if (findex == -1) {
             return "newRegister";
         }
         else {
             let row = this.source[findex];
-            return (row.tInfo.replaceLowerCaseText === textToReplaceLower.toLowerCase()) ?
-                "alreadyRegistered"
+            return;
+            /*(row.tInfo.replaceLowerCaseText === textToReplaceLower.toLowerCase())*/
+            (row.tInfo.replaceWith.equalIgnoreCase(textToReplaceLower))
+                ?
+                    "alreadyRegistered"
                 :
                     "sameAlicesAlreadyExist";
         }
     }
     static fullPath(_pth = "") {
-        let src = _pth.toLowerCase().trim();
-        let node = this.source.find(s => src.startsWithI(s.tInfo.originalLowerCaseText));
+        let src = _pth; //.toLowerCase().trim();
+        let node = this.source.find(s => src.startsWithI(s.tInfo.originalFinderText));
         if (node == undefined)
             return _pth;
         else
             return common_1.pathInfo.cleanPath(`${node.tInfo.replaceWith}${common_1.strOpt._trim(_pth, node.tInfo.textToFind)}`);
     }
     static getInfo(_pth = "") {
-        let src = _pth.toLowerCase().trim();
+        let src = _pth; //.toLowerCase().trim();
         let isAlreadyFullPath = false;
         //console.clear();
         let findex = this.source.findIndex(s => {
             // console.log("=====>  "+s.tInfo.replaceLowerCaseText);
-            if (src.startsWithI(s.tInfo.originalLowerCaseText))
+            if (src.startsWithI(s.tInfo.originalFinderText))
                 return true;
             else {
-                isAlreadyFullPath = src.startsWithI(s.tInfo.replaceLowerCaseText);
+                isAlreadyFullPath = src.startsWithI(s.tInfo.replaceWith);
                 return isAlreadyFullPath;
             }
         });
@@ -88,8 +94,8 @@ class rootPathHandler {
         return rtrn;*/
     }
     static getInfoByAlices(alices) {
-        alices = alices.toLowerCase();
-        let findex = this.source.findIndex(s => alices == s.tInfo.originalLowerCaseText);
+        //alices = alices.toLowerCase();
+        let findex = this.source.findIndex(s => alices.equalIgnoreCase(s.tInfo.originalFinderText));
         if (findex == -1)
             return undefined;
         let node = this.source[findex];
@@ -103,7 +109,7 @@ _a = rootPathHandler;
 rootPathHandler._source = [];
 rootPathHandler.addRoot = (projectName, rootDirectoryOf /*replaceAlicesWith: string*/, pera) => {
     let param2 = objectOpt_1.newObjectOpt.copyProps(pera, enumAndMore_1.rootPathParam);
-    let pathAlicesLower = projectName.toLowerCase();
+    let pathAlicesLower = projectName /*.toLowerCase()*/;
     let result = _a.checkStatus(pathAlicesLower, rootDirectoryOf.rootDir);
     switch (result) {
         case "newRegister":
@@ -133,13 +139,14 @@ rootPathHandler.addRoot = (projectName, rootDirectoryOf /*replaceAlicesWith: str
                 cssVars: [],
                 outputDirectory: '',
                 index: -1,
+                location: rootDirectoryOf,
                 tInfo: {
                     id: _a.source.length,
                     originalFinderText: projectName,
-                    originalLowerCaseText: pathAlicesLower,
+                    //originalLowerCaseText: pathAlicesLower,
                     textToFind: common_1.strOpt.cleanTextForRegs(projectName),
                     replaceWith: rootDirectoryOf.rootDir,
-                    replaceLowerCaseText: rootDirectoryOf.rootDir.toLowerCase().trim(),
+                    //replaceLowerCaseText: rootDirectoryOf.rootDir.toLowerCase().trim(),
                     cssVars: [],
                 }
             };
@@ -155,9 +162,10 @@ rootPathHandler.addRoot = (projectName, rootDirectoryOf /*replaceAlicesWith: str
              }*/
             _a.source.push(rnode);
             _a.source.sort((a, b) => {
-                return b.tInfo.replaceLowerCaseText.length - a.tInfo.replaceLowerCaseText.length;
+                return b.tInfo.replaceWith.length - a.tInfo.replaceWith.length;
+                //return b.tInfo.replaceLowerCaseText.length - a.tInfo.replaceLowerCaseText.length
             });
-            console.log(_a.source);
+            // console.log(this.source);
             return true;
         case "sameAlicesAlreadyExist":
             /*document.write(`

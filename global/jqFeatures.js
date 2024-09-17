@@ -310,18 +310,25 @@ class jqFeatures {
         String.prototype._trim = function (charlist) {
             if (charlist === undefined)
                 charlist = "\s";
-            return this.replace(new RegExp("^[" + charlist + "]+"), "");
+            return this.replace(new RegExp("^[" + charlist + "]+", 'ig'), "");
         };
         String.prototype.startsWithI = function (s) {
-            return this.match(new RegExp('^' + s, 'i')) != null;
+            return this.match(new RegExp('^' + s, 'ig')) != null;
         };
         String.prototype.endsWithI = function (s) {
-            return this.match(new RegExp(s + '$', 'i')) != null;
+            return this.match(new RegExp(s + '$', 'ig')) != null;
+        };
+        String.prototype.includesI = function (s) {
+            return this.match(new RegExp(s, 'ig')) != null;
+        };
+        String.prototype.equalIgnoreCase = function (s) {
+            return this.match(new RegExp('^' + s + '$', 'ig')) != null;
+            //return this.toUpperCase() === s.toUpperCase();
         };
         String.prototype.trim_ = function (charlist) {
             if (charlist === undefined)
                 charlist = "\s";
-            return this.replace(new RegExp("[" + charlist + "]+$"), "");
+            return this.replace(new RegExp("[" + charlist + "]+$", 'ig'), "");
         };
         String.prototype.__ = function (jsonRow) {
             let rtrn = this;
