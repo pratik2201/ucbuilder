@@ -394,11 +394,7 @@ class jqFeatures {
             jqFeatures.data.initElement(div.firstChild as HTMLElement);
             return div.firstChild as HTMLElement;
         }
-        String.prototype._trim = function (charlist?: string): string {
-            if (charlist === undefined)
-                charlist = "\s";
-            return this.replace(new RegExp("^[" + charlist + "]+", 'ig'), "");
-        }
+
         String.prototype.startsWithI = function (s) {
             return this.match(new RegExp('^' + s, 'ig')) != null;
         }
@@ -412,7 +408,19 @@ class jqFeatures {
             return this.match(new RegExp('^' + s + '$', 'ig')) != null;
             //return this.toUpperCase() === s.toUpperCase();
         }
-
+        String.prototype._trim_ = function (charlist?: string): string {
+            if (charlist === undefined)
+                charlist = "\s";
+            return this.replace(new RegExp("^[" + charlist + "]+$", 'ig'), "");
+        }
+        String.prototype._trim = function (charlist?: string): string {
+            if (charlist === undefined)
+                charlist = "\s";
+            return this.replace(new RegExp("^[" + charlist + "]+", 'ig'), "");
+        }
+        String.prototype.toFilePath = function (): string {
+            return this.replace(/[\\\/]+/gi, "/")._trim_("/");
+        }
         String.prototype.trim_ = function (charlist?: string): string {
             if (charlist === undefined)
                 charlist = "\s";

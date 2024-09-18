@@ -57,6 +57,7 @@ class register {
         rootDirOf.rootDir = rootDirOf.rootDir.replace(/\\+/gi, "/").trim_('/');
         rootDirOf.outDir = rootDirOf.outDir;//.replace(/\\+/gi, "/").trim_('/');
         
+        
         rootDirOf = newObjectOpt.copyProps(rootDirOf, rootDirectoryOf);
       //  console.log(rootDirOf.rootDir);
         

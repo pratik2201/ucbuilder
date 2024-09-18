@@ -15,23 +15,28 @@ class FileInfo {
         this._path = val;
         if (parseRoot)
             this.rootInfo = rootPathHandler_1.rootPathHandler.getInfo(this._path);
-        let before = this._path;
+        //let before = this._path;
         //let outLc = locationType == 'out' ? this.rootInfo.location.outDir : '/';
         //console.log("-------------------parse----------------");
         //console.log(this.rootInfo.isAlreadyFullPath+"\n"+this._path);
+        let spath = '';
+        let odText = '';
+        console.log(val + "\n\n" + this.rootInfo.pathType);
         if (this.rootInfo != undefined) {
             switch (this.rootInfo.pathType) {
                 case 'alice':
-                    let odText = (locationType == 'out' ? this.rootInfo.location.outDir : '');
-                    this.sortPath = "/" + odText + (common_1.strOpt._trim(this._path, this.rootInfo.alices /*+outLc*/)._trim('/'));
-                    this.fullPath = this.rootInfo.path + /*outLc+*/ this.sortPath;
-                    this.rootPath = this.rootInfo.alices + /*outLc+*/ this.sortPath;
+                    odText = (locationType == 'out' ? this.rootInfo.location.outDir : '');
+                    spath = common_1.strOpt._trim(this._path, this.rootInfo.alices);
+                    this.sortPath = (odText + "/" + spath).toFilePath(); ///(odText+(spath._trim('/'))._trim('/'));
+                    this.fullPath = (this.rootInfo.path + "/" + this.sortPath).toFilePath();
+                    this.rootPath = (this.rootInfo.alices + "/" + this.sortPath).toFilePath();
                     break;
                 case 'full':
-                    this._path = (locationType == 'out' ? this.rootInfo.location.outDir : '/') + this._path;
-                    this.sortPath = "/" + odText + common_1.strOpt._trim(this.fullPath, this.rootInfo.path /*+outLc*/);
-                    this.fullPath = this._path;
-                    this.rootPath = `${this.rootInfo.alices}${this.sortPath}`;
+                    odText = (locationType == 'out' ? this.rootInfo.location.outDir : '/');
+                    spath = common_1.strOpt._trim(this._path, this.rootInfo.path);
+                    this.sortPath = (odText + "/" + spath).toFilePath();
+                    this.fullPath = (this.rootInfo.path + this.sortPath).toFilePath();
+                    this.rootPath = (this.rootInfo.alices + "/" + this.sortPath).toFilePath();
                     break;
             }
         }
@@ -39,7 +44,7 @@ class FileInfo {
             console.log(`"${this._path}" not good path `);
             // this.fullPath = this._path;
         }
-        console.log(before + "\n" + this.rootInfo.pathType + "\n" + this.sortPath);
+        //console.log(before + "\n" + this.rootInfo.pathType + "\n" + this.sortPath);
     }
     /*get path(): string {
         return this._path;
@@ -244,7 +249,7 @@ class codeFileInfo {
         //console.log('xxxxxx : '+this.fullPathWithoutExt);
         let sortPath = this.rootInfo.alices + '/' + common_1.strOpt._trim(this.fullPathWithoutExt, this.rootInfo.path + "/");
         //console.log(s + "\n" + this.codeSrc.rootInfo.path);
-        console.log('sort L === >< ' + sortPath);
+        //console.log('sort L === >< ' + sortPath);
         this.partInfo.sortDirPath = common_1.strOpt._trim(this.fullPathWithoutExt, this.codeSrc.rootInfo.path + "/");
         this.rootInfo.isAlreadyFullPath = false;
         this.html.parse(sortPath + this.htmlExt, false);

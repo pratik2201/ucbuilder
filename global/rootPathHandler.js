@@ -74,7 +74,9 @@ class rootPathHandler {
         let src = _pth; //.toLowerCase().trim();
         let isAlreadyFullPath = false;
         let pathtype = 'none';
-        console.log('######################' + _pth);
+        //console.log('sharepnl//\//\///lffib\\mainForm.uc.js');        
+        //console.log("sharepnl//\//\///lffib\\mainForm.uc.js".toFilePath());        
+        // console.log('######################'+_pth);
         //console.clear();
         let findex = this.source.findIndex(s => {
             // console.log("=====>  "+s.tInfo.replaceLowerCaseText);
@@ -134,8 +136,9 @@ rootPathHandler.addRoot = (projectName, rootDirectoryOf /*replaceAlicesWith: str
                 builder_1.builder.ignoreThisDirectories(rootDirectoryOf.rootDir + '/node_modules', rootDirectoryOf.rootDir + '/.git', rootDirectoryOf.rootDir + '/.vscode');
             }
             if (param2.addModule) {
+                //console.log( (rootDirectoryOf.rootDir + "/" + rootDirectoryOf.outDir).toFilePath());
                 require('module-alias')
-                    .addAlias(projectName, rootDirectoryOf.rootDir);
+                    .addAlias(projectName, (rootDirectoryOf.rootDir + "/" + rootDirectoryOf.outDir).toFilePath());
             }
             let rnode;
             rnode = {
@@ -174,6 +177,7 @@ rootPathHandler.addRoot = (projectName, rootDirectoryOf /*replaceAlicesWith: str
                 //return b.tInfo.replaceLowerCaseText.length - a.tInfo.replaceLowerCaseText.length
             });
             // console.log(this.source);
+            console.log(_a.source);
             return true;
         case "sameAlicesAlreadyExist":
             /*document.write(`

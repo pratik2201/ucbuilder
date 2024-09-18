@@ -17,31 +17,31 @@ export class rootPathHandler {
             //textToFindLower.includes(s.tInfo.originalLowerCaseText)
             textToFindLower.includesI(s.tInfo.originalFinderText)
         );
-       // console.log('<<< '+ findex+" >>>>");
-        
+        // console.log('<<< '+ findex+" >>>>");
+
         if (findex == -1) {
             return "newRegister";
         } else {
             let row = this.source[findex];
 
             return
-              /*(row.tInfo.replaceLowerCaseText === textToReplaceLower.toLowerCase())*/
-                (row.tInfo.replaceWith.equalIgnoreCase(textToReplaceLower))
-                    ?
+            /*(row.tInfo.replaceLowerCaseText === textToReplaceLower.toLowerCase())*/
+            (row.tInfo.replaceWith.equalIgnoreCase(textToReplaceLower))
+                ?
                 "alreadyRegistered"
                 :
                 "sameAlicesAlreadyExist";
         }
     }
 
-    static addRoot = (projectName: string,rootDirectoryOf:LocationOf /*replaceAlicesWith: string*/, pera: RootPathParam): boolean => {
+    static addRoot = (projectName: string, rootDirectoryOf: LocationOf /*replaceAlicesWith: string*/, pera: RootPathParam): boolean => {
         let param2 = newObjectOpt.copyProps(pera, rootPathParam);
         let pathAlicesLower = projectName/*.toLowerCase()*/;
         let result = this.checkStatus(pathAlicesLower, rootDirectoryOf.rootDir);
         switch (result) {
             case "newRegister":
                 //replaceAlicesWith = strOpt.trim__(replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase(), '/');
-               
+
                 if (param2.addIntoFileDataBankAlso) {
                     (async () => {
                         let { FileDataBank } = await import('ucbuilder/global/fileDataBank');
@@ -63,8 +63,10 @@ export class rootPathHandler {
                     );
                 }
                 if (param2.addModule) {
+                    //console.log( (rootDirectoryOf.rootDir + "/" + rootDirectoryOf.outDir).toFilePath());
+                    
                     require('module-alias')
-                        .addAlias(projectName, rootDirectoryOf.rootDir);
+                        .addAlias(projectName, (rootDirectoryOf.rootDir + "/" + rootDirectoryOf.outDir).toFilePath());
 
                 }
 
@@ -74,11 +76,11 @@ export class rootPathHandler {
                     path: rootDirectoryOf.rootDir,
                     alices: projectName,
                     isAlreadyFullPath: false,
-                    pathType:"none",
+                    pathType: "none",
                     cssVars: [],
-                    outputDirectory:'',
+                    outputDirectory: '',
                     index: -1,
-                    location : rootDirectoryOf,
+                    location: rootDirectoryOf,
                     tInfo: {
                         id: this.source.length,
                         originalFinderText: projectName,
@@ -89,16 +91,16 @@ export class rootPathHandler {
                         cssVars: [],
                     }
                 }
-               /* let record: ReplaceTextRow;
-                record = {
-                    id: this.source.length,
-                    originalFinderText: projectName,
-                    originalLowerCaseText: pathAlicesLower,
-                    textToFind: strOpt.cleanTextForRegs(projectName),
-                    replaceWith: replaceAlicesWith,
-                    replaceLowerCaseText: replaceAlicesWith.toLowerCase(),
-                    cssVars: [],
-                }*/
+                /* let record: ReplaceTextRow;
+                 record = {
+                     id: this.source.length,
+                     originalFinderText: projectName,
+                     originalLowerCaseText: pathAlicesLower,
+                     textToFind: strOpt.cleanTextForRegs(projectName),
+                     replaceWith: replaceAlicesWith,
+                     replaceLowerCaseText: replaceAlicesWith.toLowerCase(),
+                     cssVars: [],
+                 }*/
 
                 this.source.push(rnode);
 
@@ -109,8 +111,9 @@ export class rootPathHandler {
                 });
 
 
-               // console.log(this.source);
-                
+                // console.log(this.source);
+                console.log(this.source);
+
                 return true;
             case "sameAlicesAlreadyExist":
                 /*document.write(`    
@@ -137,11 +140,13 @@ export class rootPathHandler {
         let src = _pth;//.toLowerCase().trim();
         let isAlreadyFullPath = false;
         let pathtype: PathType = 'none';
-       console.log('######################'+_pth);
-        
+        //console.log('sharepnl//\//\///lffib\\mainForm.uc.js');        
+        //console.log("sharepnl//\//\///lffib\\mainForm.uc.js".toFilePath());        
+        // console.log('######################'+_pth);
+
         //console.clear();
         let findex = this.source.findIndex(s => {
-           // console.log("=====>  "+s.tInfo.replaceLowerCaseText);
+            // console.log("=====>  "+s.tInfo.replaceLowerCaseText);
             if (src.startsWithI(s.tInfo.originalFinderText)) {
                 pathtype = 'alice';
                 return true;

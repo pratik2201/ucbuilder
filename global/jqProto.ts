@@ -19,8 +19,10 @@ interface SVGElement {
 }
 interface String {
     $(): HTMLElement,
+    toFilePath():string,
     _trim(charlist?: string): string,
     trim_(charlist?: string): string,
+    _trim_(charlist?: string): string,
     __(jsonRow: {}): string,    
     startsWithI (s: string): boolean,
     endsWithI(s: string): boolean,

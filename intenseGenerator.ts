@@ -11,6 +11,7 @@ import { UcRendarer } from 'ucbuilder/build/UcRendarer';
 class intenseGenerator {
     static generateUC<T = string>(path: T, pera: UcOptions, ...args: any[]): Usercontrol {
         
+        
         let param0: UcOptions = newObjectOpt.copyProps(pera,ucOptions);
         
         let row = ResourcesUC.codefilelist.getObj(path as string);
