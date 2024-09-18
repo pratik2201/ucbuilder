@@ -28,6 +28,7 @@ exports.rootPathRow = {
     alices: '',
     index: -1,
     outputDirectory: '',
+    pathType: "none",
     isAlreadyFullPath: false,
     location: {
         outDir: "/",

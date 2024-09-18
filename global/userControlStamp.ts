@@ -81,7 +81,7 @@ export class userControlStamp {
         } else {
             if (param0.reloadDesign) {
                 rtrn = this.source[sindex];
-                rtrn.content = param0.htmlContents != undefined ? param0.htmlContents : pathInfo.readFile(rtrn.cInfo.html.path);
+                rtrn.content = param0.htmlContents != undefined ? param0.htmlContents : pathInfo.readFile(rtrn.cInfo.html.fullPath);
                 this.reload(rtrn, param0.beforeContentAssign, param0);
             } else {
                 rtrn = this.source[sindex];

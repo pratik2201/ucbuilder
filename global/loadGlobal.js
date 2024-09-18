@@ -83,14 +83,14 @@ class LoadGlobal {
                 rw.elementHT = document.createElement("style");
                 rw.elementHT.type = "text/css";
                 rw.elementHT.setAttribute("rel", 'stylesheet');
-                rw.elementHT.setAttribute("path", rw.finfo.path);
+                rw.elementHT.setAttribute("path", rw.finfo.fullPath);
                 rw.elementHT.setAttribute("fUniq", rw.fUniq);
                 rw.elementHT.setAttribute("stamp", stamp);
                 rw.elementHT.innerHTML = cssContents;
                 this.resourcesHT.appendChild(rw.elementHT);
                 break;
             case ".js":
-                require(rw.finfo.path);
+                require(rw.finfo.fullPath);
                 break;
         }
     }

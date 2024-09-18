@@ -62,7 +62,7 @@ class builder {
     }
     /** @param {codeFileInfo} fInfo */
     buildFile(fInfo) {
-        if (fs.existsSync(fInfo.html.path)) {
+        if (fs.existsSync(fInfo.html.fullPath)) {
             this.commonMng.rows = [];
             this.checkFileState(fInfo.html.rootPath);
             this.commonMng.gen.generateFiles(this.commonMng.rows);

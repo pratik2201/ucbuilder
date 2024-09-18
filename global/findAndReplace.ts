@@ -47,12 +47,14 @@ export const replaceTextRow: ReplaceTextRow = {
 
 
 
+export type PathType = "full" | "alice" | "sort" |  "none";
 export interface RootPathRow {
     id: number,
     path: string,
     alices: string,
     index: number,
     isAlreadyFullPath: boolean,
+    pathType : PathType,
     outputDirectory: string,
     location: LocationOf,
     tInfo: ReplaceTextRow,
@@ -66,6 +68,7 @@ export const rootPathRow: RootPathRow = {
     alices: '',
     index: -1,
     outputDirectory: '',
+    pathType:"none",
     isAlreadyFullPath: false,
     location: {
         outDir: "/",

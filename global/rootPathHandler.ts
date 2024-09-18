@@ -1,5 +1,5 @@
 import { pathInfo, strOpt } from "ucbuilder/build/common";
-import { replaceTextRow, ReplaceTextRow, LocationOf, RootPathRow } from "ucbuilder/global/findAndReplace";
+import { replaceTextRow, ReplaceTextRow, LocationOf, RootPathRow, PathType } from "ucbuilder/global/findAndReplace";
 import { rootPathParam, RootPathParam } from 'ucbuilder/enumAndMore';
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { builder } from "ucbuilder/build/builder";
@@ -74,6 +74,7 @@ export class rootPathHandler {
                     path: rootDirectoryOf.rootDir,
                     alices: projectName,
                     isAlreadyFullPath: false,
+                    pathType:"none",
                     cssVars: [],
                     outputDirectory:'',
                     index: -1,
@@ -135,12 +136,17 @@ export class rootPathHandler {
     static getInfo(_pth = ""): RootPathRow | undefined {
         let src = _pth;//.toLowerCase().trim();
         let isAlreadyFullPath = false;
+        let pathtype: PathType = 'none';
+       console.log('######################'+_pth);
+        
         //console.clear();
         let findex = this.source.findIndex(s => {
            // console.log("=====>  "+s.tInfo.replaceLowerCaseText);
-            
-            if (src.startsWithI(s.tInfo.originalFinderText)) return true;
-            else {
+            if (src.startsWithI(s.tInfo.originalFinderText)) {
+                pathtype = 'alice';
+                return true;
+            } else {
+                pathtype = 'full';
                 isAlreadyFullPath = src.startsWithI(s.tInfo.replaceWith);
                 return isAlreadyFullPath;
             }
@@ -148,7 +154,9 @@ export class rootPathHandler {
         if (findex == -1) return undefined;
         let node = this.source[findex];
         node.index = findex;
+        node.pathType = pathtype;
         node.isAlreadyFullPath = isAlreadyFullPath;
+        //console.log(node.pathType);
         return node;
         /*let rtrn = rootPathHandler.convertToRow(node, isAlreadyFullPath);
         rtrn.index = findex;

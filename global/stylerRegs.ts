@@ -56,6 +56,8 @@ export class stylerRegs {
     import("ucbuilder/ResourcesUC").then(({ResourcesUC}) => {
       rootPathHandler.source.forEach((row: RootPathRow) => {
         let _stylepath: string = row.tInfo.replaceWith + "/styles.scss"; //row.tInfo.replaceLowerCaseText + "/styles.scss";
+        //console.log('==>'+_stylepath);
+        
         let node: RootPathRow = row;//rootPathHandler.convertToRow(row, true);
         node.isAlreadyFullPath = true;
         let styler: stylerRegs = new stylerRegs(node, true);

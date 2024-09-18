@@ -77,6 +77,7 @@ class stylerRegs {
         Promise.resolve().then(() => __importStar(require("ucbuilder/ResourcesUC"))).then(({ ResourcesUC }) => {
             rootPathHandler_1.rootPathHandler.source.forEach((row) => {
                 let _stylepath = row.tInfo.replaceWith + "/styles.scss"; //row.tInfo.replaceLowerCaseText + "/styles.scss";
+                //console.log('==>'+_stylepath);
                 let node = row; //rootPathHandler.convertToRow(row, true);
                 node.isAlreadyFullPath = true;
                 let styler = new stylerRegs(node, true);

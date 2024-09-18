@@ -73,12 +73,17 @@ class rootPathHandler {
     static getInfo(_pth = "") {
         let src = _pth; //.toLowerCase().trim();
         let isAlreadyFullPath = false;
+        let pathtype = 'none';
+        console.log('######################' + _pth);
         //console.clear();
         let findex = this.source.findIndex(s => {
             // console.log("=====>  "+s.tInfo.replaceLowerCaseText);
-            if (src.startsWithI(s.tInfo.originalFinderText))
+            if (src.startsWithI(s.tInfo.originalFinderText)) {
+                pathtype = 'alice';
                 return true;
+            }
             else {
+                pathtype = 'full';
                 isAlreadyFullPath = src.startsWithI(s.tInfo.replaceWith);
                 return isAlreadyFullPath;
             }
@@ -87,7 +92,9 @@ class rootPathHandler {
             return undefined;
         let node = this.source[findex];
         node.index = findex;
+        node.pathType = pathtype;
         node.isAlreadyFullPath = isAlreadyFullPath;
+        //console.log(node.pathType);
         return node;
         /*let rtrn = rootPathHandler.convertToRow(node, isAlreadyFullPath);
         rtrn.index = findex;
@@ -136,6 +143,7 @@ rootPathHandler.addRoot = (projectName, rootDirectoryOf /*replaceAlicesWith: str
                 path: rootDirectoryOf.rootDir,
                 alices: projectName,
                 isAlreadyFullPath: false,
+                pathType: "none",
                 cssVars: [],
                 outputDirectory: '',
                 index: -1,

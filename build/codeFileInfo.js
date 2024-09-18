@@ -15,41 +15,46 @@ class FileInfo {
         this._path = val;
         if (parseRoot)
             this.rootInfo = rootPathHandler_1.rootPathHandler.getInfo(this._path);
+        let before = this._path;
         //let outLc = locationType == 'out' ? this.rootInfo.location.outDir : '/';
-        this._path = (locationType == 'out' ? this.rootInfo.location.outDir : '/') + this._path;
-        console.log(this._path);
+        //console.log("-------------------parse----------------");
+        //console.log(this.rootInfo.isAlreadyFullPath+"\n"+this._path);
         if (this.rootInfo != undefined) {
-            if (!this.rootInfo.isAlreadyFullPath) {
-                this.sortPath = common_1.strOpt._trim(this._path, '/' + this.rootInfo.alices /*+outLc*/);
-                this.fullPath = this.rootInfo.path + /*outLc+*/ this.sortPath;
-                this.rootPath = this.rootInfo.alices + /*outLc+*/ this.sortPath;
-            }
-            else {
-                this.fullPath = this._path;
-                this.sortPath = common_1.strOpt._trim(this.fullPath, this.rootInfo.path /*+outLc*/);
-                this.rootPath = `${this.rootInfo.alices}${this.sortPath}`;
+            switch (this.rootInfo.pathType) {
+                case 'alice':
+                    let odText = (locationType == 'out' ? this.rootInfo.location.outDir : '');
+                    this.sortPath = "/" + odText + (common_1.strOpt._trim(this._path, this.rootInfo.alices /*+outLc*/)._trim('/'));
+                    this.fullPath = this.rootInfo.path + /*outLc+*/ this.sortPath;
+                    this.rootPath = this.rootInfo.alices + /*outLc+*/ this.sortPath;
+                    break;
+                case 'full':
+                    this._path = (locationType == 'out' ? this.rootInfo.location.outDir : '/') + this._path;
+                    this.sortPath = "/" + odText + common_1.strOpt._trim(this.fullPath, this.rootInfo.path /*+outLc*/);
+                    this.fullPath = this._path;
+                    this.rootPath = `${this.rootInfo.alices}${this.sortPath}`;
+                    break;
             }
         }
         else {
             console.log(`"${this._path}" not good path `);
-            this.fullPath = this._path;
+            // this.fullPath = this._path;
         }
-        console.log(this);
+        console.log(before + "\n" + this.rootInfo.pathType + "\n" + this.sortPath);
     }
-    get path() {
+    /*get path(): string {
         return this._path;
-    }
+    }*/
     get exist() {
         return common_1.pathInfo.existFile(this.fullPath);
     }
     get fileName() {
-        return common_1.pathInfo.getFileNameFromPath(this.path);
+        return common_1.pathInfo.getFileNameFromPath(this.fullPath);
     }
     get partlyInfo() {
-        return common_1.pathInfo.getFileInfoPartly(this.path);
+        return common_1.pathInfo.getFileInfoPartly(this.fullPath);
     }
     get pathWithoutFileExt() {
-        return common_1.pathInfo.getFileNameWithoutExtFromPath(this.path);
+        return common_1.pathInfo.getFileNameWithoutExtFromPath(this.fullPath);
     }
     get rootWithoutFileExt() {
         return common_1.pathInfo.getFileNameWithoutExtFromPath(this.rootPath);
@@ -235,11 +240,12 @@ class codeFileInfo {
         // console.log(this.partInfo);
         //    console.log(_url);
         //     console.log(this);
-        let s = (this.partInfo.dirPath /*.toLowerCase()*/ + "" + this.partInfo.fileName);
-        this.fullPathWithoutExt = s;
-        let sortPath = common_1.strOpt._trim(s, this.rootInfo.path + "/");
-        console.log(s + "\n" + this.codeSrc.rootInfo.path);
-        this.partInfo.sortDirPath = common_1.strOpt._trim(s, this.codeSrc.rootInfo.path + "/");
+        this.fullPathWithoutExt = (this.partInfo.dirPath /*.toLowerCase()*/ + "" + this.partInfo.fileName);
+        //console.log('xxxxxx : '+this.fullPathWithoutExt);
+        let sortPath = this.rootInfo.alices + '/' + common_1.strOpt._trim(this.fullPathWithoutExt, this.rootInfo.path + "/");
+        //console.log(s + "\n" + this.codeSrc.rootInfo.path);
+        console.log('sort L === >< ' + sortPath);
+        this.partInfo.sortDirPath = common_1.strOpt._trim(this.fullPathWithoutExt, this.codeSrc.rootInfo.path + "/");
         this.rootInfo.isAlreadyFullPath = false;
         this.html.parse(sortPath + this.htmlExt, false);
         this.style.parse(sortPath + this.styleExt, false);
@@ -249,7 +255,7 @@ class codeFileInfo {
         this.code.parse(sortPath + this.codeExt, false);
         this.codeSrc.parse(sortPath + this.codeSrcExt, false, 'out');
         this.name = this.partInfo.fileName;
-        this.mainFilePath = s + this.extCode;
+        this.mainFilePath = this.fullPathWithoutExt + this.extCode;
         this.mainFileRootPath = this.rootInfo.alices + '/' + sortPath + this.extCode;
         // console.log(_url);
         // console.log(this);
