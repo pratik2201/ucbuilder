@@ -3,3 +3,4 @@
 **/package-lock.json
 **/*.uc.designer.js
 **/*.tpt.designer.js
+out

@@ -7,7 +7,7 @@ const tableParam = {
   /** @type {string} */
   tdTagName: undefined
 };
-class tableSplitter {
+export class tableSplitter {
   constructor() {
 
   }
@@ -38,4 +38,3 @@ class tableSplitter {
   }
 
 }
-module.exports = { tableSplitter };

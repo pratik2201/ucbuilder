@@ -19,7 +19,7 @@ export class FileInfo {
         //console.log(this.rootInfo.isAlreadyFullPath+"\n"+this._path);
         let spath = '';
         let odText = '';
-        console.log(val+"\n\n"+this.rootInfo.pathType);
+        //console.log(val+"\n\n"+this.rootInfo.pathType);
         
         if (this.rootInfo != undefined) {
             
@@ -302,6 +302,7 @@ export class codeFileInfo {
 
         this.partInfo.sortDirPath = strOpt._trim(this.fullPathWithoutExt, this.codeSrc.rootInfo.path + "/");
         this.rootInfo.isAlreadyFullPath = false;
+        this.rootInfo.pathType = 'alice';
         this.html.parse(sortPath + this.htmlExt, false);
         this.style.parse(sortPath + this.styleExt, false);
         this.perameters.parse(sortPath + this.perametersExt, false);

@@ -62,8 +62,9 @@ class DragNode {
     }
 
     fireEvent(ev: DragEvent): void {
-        if (this.hasBound)
+        if (this.hasBound) {
             this.callback(ev);
+        }
     }
 
     main: DragHelper = undefined;

@@ -99,8 +99,8 @@ let ACTIVE_USER_CONTROL: typeof register = undefined;
 //let ACTIVE_USER_CONTROL:register = undefined;
 let res = register.registarMe({
     //srcDir: __dirname,
-    outDir: '',
-    rootDir: __dirname,
+    outDir: "/out/",
+    rootDir: path.dirname(__dirname),
     /*html: __dirname,
     style: __dirname,
     perameters: __dirname,

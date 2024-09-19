@@ -2,9 +2,12 @@
   "exclude": [
     "node_modules"
   ],
+  "include": [
+    ".",
+    "./package.json",
+  ],
   "compileOnSave": true,
   "compilerOptions": {
-   
     "target": "es2016",
     "module": "CommonJS",
     "moduleResolution": "Node",
@@ -17,14 +20,13 @@
     // "suppressImplicitAnyIndexErrors": true,  
     "esModuleInterop": true,
     "skipLibCheck": true,
-    
-
     "typeRoots": [
       "./node_modules/@types"
     ],
     "baseUrl": ".",
-    "paths": {      
-      "ucbuilder/*":["./*"]
-    } 
+    "outDir": "out",
+    "paths": {
+      "ucbuilder/*": [  "./*" ]
+    }
   }
 }
