@@ -3,6 +3,7 @@ import { CommonRow } from 'ucbuilder/build/buildRow.js';
 import { regsManage } from 'ucbuilder/build/regs/regsManage.js';
 import { buildOptions, pathInfo } from 'ucbuilder/build/common';
 import {  FileDataBank } from 'ucbuilder/global/fileDataBank';
+import { rfileGenerator } from './rfileGenerator';
 
 export class commonGenerator {
     rows: CommonRow[] = [];
@@ -29,8 +30,7 @@ export class commonGenerator {
         this.rows = rows;
         let _data = "";
         this.rows.forEach(row => {
-            
-            
+
             _data = _this.generateNew(row, _this.designerTMPLT[row.src.extCode]);
             fs.writeFileSync(`${row.src.designer.fullPath}`, _data);
             
@@ -46,6 +46,8 @@ export class commonGenerator {
                 fs.writeFileSync(`${row.src.style.fullPath}`, _data);
             }
         });
+        let rfileFrm = new rfileGenerator();
+        rfileFrm.fill(rows);
     }
 
     getDesignerCode(rw: CommonRow) {

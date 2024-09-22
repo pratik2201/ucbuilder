@@ -466,7 +466,8 @@ export const objectOpt = {
         return Object.getPrototypeOf(obj).constructor.name;
     },
     has(key: string, obj: object): boolean {
-        return key in obj;
+        return obj[key]!=undefined;
+        //return key in obj;
     }
 }
 export const uniqOpt = {

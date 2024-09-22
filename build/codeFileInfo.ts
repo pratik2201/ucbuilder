@@ -312,7 +312,7 @@ export class codeFileInfo {
         this.codeSrc.parse(sortPath + this.codeSrcExt, false, 'out');
         this.name = this.partInfo.fileName;
         this.mainFilePath = this.fullPathWithoutExt + this.extCode;
-        this.mainFileRootPath = this.rootInfo.alices + '/' + sortPath + this.extCode;
+        this.mainFileRootPath = /*this.rootInfo.alices + '/' + */sortPath + this.extCode;
         // console.log(_url);
         // console.log(this);
         return true;

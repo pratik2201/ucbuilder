@@ -32,11 +32,14 @@ class commonParser {
         let _row = objectOpt.clone(commonRow);
         _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
         if (!_row.src.parseUrl(filePath)) return undefined;
+        
         let code = (htmlContents == undefined) ? FileDataBank.readFile(_row.src.html.rootPath, {
             replaceContentWithKeys: false
         }) : htmlContents;
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
        
+       
+        
         
         this.formHT = code.$() as HTMLElement;
         
@@ -92,9 +95,9 @@ class commonParser {
                     let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath));
 
                     uFInf.parseUrl(_subpath);
-                    console.log(filePath);
+                    //console.log(_subpath);
+                    //console.log(uFInf.mainFileRootPath);
                     
-                    console.log(uFInf);
 
                     if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {
                         _row.designer.controls.push({
