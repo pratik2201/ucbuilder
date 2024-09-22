@@ -78,7 +78,7 @@ export class Usercontrol {
         this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
     }
 
-    ucExtends = {
+    public ucExtends  = {
 
         mode: 'client' as UCGenerateMode,
         fileInfo: undefined as codeFileInfo,
