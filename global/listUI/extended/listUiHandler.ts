@@ -1,5 +1,5 @@
 import { TemplateNode } from "ucbuilder/Template";
-import { CommonEvent } from "ucbuilder/global/CommonEvent";
+import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { listUiSearch } from "ucbuilder/global/listUiSearch";
 import { timeoutCall } from "ucbuilder/global/timeoutCall";
 import { Usercontrol } from "ucbuilder/Usercontrol";
@@ -42,7 +42,21 @@ export class listUiHandler {
         },
     };*/
 
-    itemTemplate: TemplateNode;
+    private _itemTemplate: TemplateNode;
+    public get itemTemplate(): TemplateNode {
+        return this._itemTemplate;
+    }
+    public set itemTemplate(value: TemplateNode) {
+        this._itemTemplate = value;
+        let _itemSize = this.nodes.itemSize;        
+        let s = value.extended.size;
+        setTimeout(() => {
+            _itemSize.height = s.height;
+            _itemSize.width = s.width;
+        }, 1);
+    }
+
+    
 
     get length(): number {
         return this.source.rows.length;

@@ -11,7 +11,7 @@ const eventRecord: EventRecord = {
 type ResultCallback = (returnedValue: any) => boolean;
 const resultCallback: ResultCallback = (returnedValue: any) => false;
 type Parameter<T> = T extends (...arg: infer T) => any ? T : never;
-class CommonEvent<F extends (...arg: any) => any> {
+export class CommonEvent<F extends (...arg: any) => any> {
     isSingleEvent: boolean = false;
    
     Events = {
@@ -85,5 +85,3 @@ class CommonEvent<F extends (...arg: any) => any> {
         this.Events.onChangeEventList();
     }
 }
-
-export { CommonEvent };

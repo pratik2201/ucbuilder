@@ -175,7 +175,7 @@ class TabIndexManager {
 
         let elements: HTMLElement[] = [];
         if (!giveMeLastElement) {
-            elements = Array.from(container.querySelectorAll(`[x-tabindex="${index}"], [x-tabindex] *`));
+            elements = Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`)); /*   , [x-tabindex] *     */
 
             for (let i = 0; i < elements.length; i++) {
                 let ele = elements[i];

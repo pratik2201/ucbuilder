@@ -1,5 +1,7 @@
 import { Template, TemplateNode } from '\ucbuilder/Template.js';
 import { TptOptions, templatePathOptions } from '\ucbuilder/enumAndMore';
+import { R } from '{=src.rootInfo.alices}/R';
+
 `{loopcls=designer.templetes}` 
 
 type {=name}_ELEMENT_MAP = {`{loopctr=controls}`{=name} : {=proto},`{/loopctr}`}

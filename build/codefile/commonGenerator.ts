@@ -30,7 +30,8 @@ export class commonGenerator {
         this.rows = rows;
         let _data = "";
         this.rows.forEach(row => {
-
+           // console.log(row.src);
+            
             _data = _this.generateNew(row, _this.designerTMPLT[row.src.extCode]);
             fs.writeFileSync(`${row.src.designer.fullPath}`, _data);
             

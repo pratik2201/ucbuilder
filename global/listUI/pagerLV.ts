@@ -131,13 +131,14 @@ export class pagerLV extends listUiHandler {
             }
         });
         this.initNodes();
-        let _itemSize = this.nodes.itemSize;
+        /*
+        let _itemSize = this.nodes.itemSize;        
         let s = this.itemTemplate.extended.size;
-
         setTimeout(() => {
             _itemSize.height = s.height;
             _itemSize.width = s.width;
         }, 1);
+        */
     }
     initkeyEvents(): void {
     }
