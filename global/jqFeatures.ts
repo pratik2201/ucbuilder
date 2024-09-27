@@ -421,6 +421,10 @@ class jqFeatures {
         String.prototype.toFilePath = function (): string {
             return this.replace(/[\\\/]+/gi, "/")._trim_("/");
         }
+        String.prototype.getDriveFromPath = function (): string|undefined {
+            let r = this.match(/^[\w]+?:+/gi);
+            return r.length > 0 ? r[0] : undefined;
+        }
         String.prototype.trim_ = function (charlist?: string): string {
             if (charlist === undefined)
                 charlist = "\s";

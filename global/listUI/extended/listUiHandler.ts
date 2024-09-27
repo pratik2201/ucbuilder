@@ -50,10 +50,11 @@ export class listUiHandler {
         this._itemTemplate = value;
         let _itemSize = this.nodes.itemSize;        
         let s = value.extended.size;
+        
         setTimeout(() => {
             _itemSize.height = s.height;
             _itemSize.width = s.width;
-        }, 1);
+        });
     }
 
     

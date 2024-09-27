@@ -84,7 +84,10 @@ export class SourceManage {
     return this._rows;
   }
   set rows(value: any[]) {
-    this._rows = value;
+    this._rows.length = 0;
+    this._rows.push(...value);
+    //console.log(this._rows.length+":"+value.length);
+    
     this.update();
   }
   update() {

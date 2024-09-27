@@ -20,6 +20,7 @@ interface SVGElement {
 interface String {
     $(): HTMLElement,
     toFilePath():string,
+    getDriveFromPath():string|undefined,
     _trim(charlist?: string): string,
     trim_(charlist?: string): string,
     _trim_(charlist?: string): string,

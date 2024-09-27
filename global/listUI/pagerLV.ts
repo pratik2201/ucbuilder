@@ -182,6 +182,7 @@ export class pagerLV extends listUiHandler {
         };
         this.nodes.fill = (): void => {
             let _records = this.pageInfo;
+             
             this.nodes.clear();
             for (let index = _records.top, len = _records.minBottomIndex; index <= len; index++)
                 this.nodes.append(index);

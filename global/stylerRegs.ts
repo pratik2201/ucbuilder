@@ -18,7 +18,7 @@ interface PatternList {
   stylesFilterPattern: RegExp;
   varValuePrinterPattern: RegExp;
   scopeSelector: RegExp;
-  rootExcludePattern: RegExp;
+   rootExcludePattern: RegExp;
 }
 
 const patternList: PatternList = {
@@ -214,22 +214,29 @@ export class stylerRegs {
                 switch (nmode) {
                   case ":root":
                     changed = true;
-                    if (rootAlices == undefined) {
+                    if (rootAlices == undefined || rootAlices == '') {
                       externalStyles.push(
                         _this.parseStyleSeperator_sub({
                           data: _params.scopeSelectorText + styleContent,
                           callCounter: _params.callCounter,
                           isForRoot: true,
+                          _rootinfo:undefined
                         })
                       );
-                    } else {
+                    } else  {
+                      /*console.log('-----');
+                      console.log(rootAlices);
+                      console.log(nmode);
+                      console.log(rootPathHandler.getInfoByAlices(
+                        rootAlices  // `@${rootAlices}:`
+                      ));*/
                       externalStyles.push(
                         _this.parseStyleSeperator_sub({
                           data: _params.scopeSelectorText + styleContent,
                           callCounter: _params.callCounter,
                           isForRoot: true,
                           _rootinfo: rootPathHandler.getInfoByAlices(
-                            `@${rootAlices}:`
+                            rootAlices  // `@${rootAlices}:`
                           ),
                         })
                       );
