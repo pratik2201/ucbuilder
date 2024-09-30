@@ -193,7 +193,7 @@ export class listUiHandler {
         if (val == undefined) return;
         if (this.resizeObsrv != undefined) this.resizeObsrv.disconnect();
         this.resizeObsrv = new window.ResizeObserver((pera) => {
-            timeoutCall.start(() => {
+            setTimeout(() => { //timeoutCall.start(() => {
                 this.OPTIONS.listSize = pera[0].contentRect;
                 this.Events.onListUISizeChanged.fire([pera[0].contentRect]);
             });

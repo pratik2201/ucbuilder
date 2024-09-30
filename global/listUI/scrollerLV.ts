@@ -9,7 +9,8 @@ export class ScrollerLV extends listUiHandler {
     }
     
     init(lstVw: HTMLElement, scrollContainer: HTMLElement): void {
-        super.init(lstVw, scrollContainer,undefined);
+        super.init(lstVw, scrollContainer, undefined);
+        
         this.allItemHT = Array.from(lstVw.childNodes) as HTMLElement[];
         this.Records.itemAt = (index: number): HTMLElement => {
             return this.allItemHT[index];
@@ -44,6 +45,7 @@ export class ScrollerLV extends listUiHandler {
         };
         
         this.Events.onkeydown = (e: KeyboardEvent): void => {
+            
             switch (e.keyCode) {
                 case keyBoard.keys.up: // up key
                     this.setCurrentIndex(this.currentIndex - 1, e,'Keyboard');

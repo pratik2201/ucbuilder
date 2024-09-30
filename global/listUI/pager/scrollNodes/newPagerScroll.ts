@@ -96,6 +96,7 @@ export class newPagerScroll {
                 this.navigatePages.moveTo.prevSide.Go(e);
                 break;
             case keyBoard.keys.down: // down key
+                
                 this.navigatePages.moveTo.nextSide.Go(e);
                 break;
             case keyBoard.keys.pageUp: // page up key

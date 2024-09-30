@@ -219,7 +219,7 @@ export class TemplateNode {
       return dta;
     },
 
-    generateNode(jsonRow: {}) {
+    generateNode(jsonRow: {}):HTMLElement {
       let dta = this.generateContent(jsonRow);
       let element = dta.$();
       this.stampRow.passElement(element);
@@ -251,7 +251,7 @@ export class TemplateNode {
 
       tptExt.stampRow = userControlStamp.getStamp(param0.source);
       let htEle = tptExt.stampRow.dataHT;
-
+     
       Array.from(tptExt.stampRow.dataHT.attributes)
         .filter((s) => s.nodeName.toLowerCase().startsWith("x.temp-"))
         .forEach((s) => htEle.removeAttribute(s.nodeName));
@@ -290,10 +290,11 @@ export class TemplateNode {
       tptExt.main.extended.wholeCSS += tptPathOpt.cssContents;
       tptExt.Events.onDataExport = (data) =>
         param0.parentUc.ucExtends.Events.onDataExport(data);
-
+      //htEle.remove();
+      htEle = this.extended.generateNode({});
       document.body.appendChild(htEle);
       this.extended.size.setBy.HTMLEle(htEle);
-      htEle.remove();
+     // htEle.remove();
     },
     Events: {
       beforeGenerateContent: (content: string, jsonRow: {}) => content,

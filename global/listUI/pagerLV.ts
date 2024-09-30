@@ -50,33 +50,34 @@ export class pagerLV extends listUiHandler {
         pagelv: pagerLV;
         minBottomIndex: number;
     } = {
-        extended: {
-            pgrLv: undefined,
-            perPageRecord: 20,
-            get length() { return this.pgrLv.length; },
-            _begin: 0,
-            _currentIndex: 0,
-            get bottomIndex() { return (this._begin + this.perPageRecord) - 1; },
-            get topHiddenRowCount() {
-                return ((this.bottomIndex - this.perPageRecord) + 1);
+            extended: {
+                pgrLv: undefined,
+                perPageRecord: 20,
+                get length() { return this.pgrLv.length; },
+                _begin: 0,
+                _currentIndex: 0,
+                get bottomIndex() { return (this._begin + this.perPageRecord) - 1; },
+                get topHiddenRowCount() {
+                    return ((this.bottomIndex - this.perPageRecord) + 1);
+                },
+                get bottomHiddenRowCount() {
+                    return Math.max(0, (this.length - (this._begin + this.perPageRecord)));
+                },
+                get lastSideTopIndex() { return Math.max(0, this.length - this.perPageRecord); },
+                get isLastSideTopIndex() { return this.lastSideTopIndex == this._begin; },
             },
-            get bottomHiddenRowCount() {
-                return Math.max(0, (this.length - (this._begin + this.perPageRecord)));
-            },
-            get lastSideTopIndex() { return Math.max(0, this.length - this.perPageRecord); },
-            get isLastSideTopIndex() { return this.lastSideTopIndex == this._begin; },
-        },
-        defaultIndex: 0,
-        selectedRow: undefined,
-        top: 0,
-        pagelv: undefined,
-        get minBottomIndex() { return Math.min(this.extended.bottomIndex, this.extended.length - 1); },
-    };
+            defaultIndex: 0,
+            selectedRow: undefined,
+            top: 0,
+            pagelv: undefined,
+            get minBottomIndex() { return Math.min(this.extended.bottomIndex, this.extended.length - 1); },
+        };
     get currentIndex(): number { return this.OPTIONS.SESSION.currentIndex; }
     set currentIndex(val: number) {
         this.setCurrentIndex(val);
     }
-    setCurrentIndex = (val: number, evt: MouseEvent | KeyboardEvent = undefined, eventType: ItemIndexChangeBy='Other'): void => {
+    setCurrentIndex = (val: number, evt: MouseEvent | KeyboardEvent = undefined, eventType: ItemIndexChangeBy = 'Other'): void => {
+
         let oldIndex = this.currentIndex;
         let changed = (val !== oldIndex);
         let currentItem = this.OPTIONS.currentItem;
@@ -109,7 +110,7 @@ export class pagerLV extends listUiHandler {
     init(lstVw: HTMLElement, scrollContainer: HTMLElement, uc: Usercontrol): void {
         this.pageInfo.pagelv =
             this.pageInfo.extended.pgrLv = this;
-        super.init(lstVw, scrollContainer,uc);
+        super.init(lstVw, scrollContainer, uc);
         this.uc = uc;
         this.scroller.init(this);
         this.allItemHT = lstVw.childNodes as NodeListOf<HTMLElement>;
@@ -182,7 +183,7 @@ export class pagerLV extends listUiHandler {
         };
         this.nodes.fill = (): void => {
             let _records = this.pageInfo;
-             
+
             this.nodes.clear();
             for (let index = _records.top, len = _records.minBottomIndex; index <= len; index++)
                 this.nodes.append(index);
@@ -226,7 +227,7 @@ export class pagerLV extends listUiHandler {
         return ele;
     };
     navigatePages = {
-        callNavigate: (callback: KeyboardNavigationCallback = (evt,vltr) => { }, event: KeyboardEvent, valToAddRemove?: number): void => {
+        callNavigate: (callback: KeyboardNavigationCallback = (evt, vltr) => { }, event: KeyboardEvent, valToAddRemove?: number): void => {
             this.Events.onRowNavigationChanged(callback, event, valToAddRemove);
         },
         pageTo: {
@@ -303,13 +304,22 @@ export class pagerLV extends listUiHandler {
         moveTo: {
             prevSide: {
                 check: (): PageNavigationResult => {
-                    return (this.currentIndex > this.pageInfo.top) ?
+                    if (this.currentIndex > this.pageInfo.top)
+                        return "DISPLAYED";
+                    else {
+                        if (this.pageInfo.top > this.pageInfo.defaultIndex) {
+                            return "OUTSIDE";
+                        } else {
+                            return "FIRST"
+                        }
+                    }
+                    /*return (this.currentIndex > this.pageInfo.top) ?
                         "DISPLAYED"
                         :
                         (this.pageInfo.top > this.pageInfo.defaultIndex) ?
                             "OUTSIDE"
                             :
-                            "FIRST";
+                            "FIRST";*/
                 },
                 Advance: {
                     dispayed: (evt: KeyboardEvent, valToCount: number = 1): void => {
@@ -350,13 +360,21 @@ export class pagerLV extends listUiHandler {
             },
             nextSide: {
                 check: (valToCount: number = 1): PageNavigationResult => {
-                    return (this.currentIndex < this.pageInfo.minBottomIndex) ?
+                    if (this.currentIndex < this.pageInfo.minBottomIndex)
+                        return "DISPLAYED";
+                    else {
+                        if (this.pageInfo.extended.bottomIndex < this.length - 1)
+                            return "OUTSIDE";
+                        else return "LAST";
+                    }
+
+                    /*return (this.currentIndex < this.pageInfo.minBottomIndex) ?
                         "DISPLAYED"
                         :
                         (this.pageInfo.extended.bottomIndex < this.length - 1) ?
                             "OUTSIDE"
                             :
-                            "LAST";
+                            "LAST";*/
                 },
                 Advance: {
                     dispayed: (evt: KeyboardEvent, valToCount: number = 1): void => {
