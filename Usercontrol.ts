@@ -246,7 +246,7 @@ export class Usercontrol {
             
             return false;
         },
-        passElement: (ele: HTMLElement | HTMLElement[], applySubTree: boolean = true) => {
+        passElement: (ele: HTMLElement | HTMLElement[], applySubTree: boolean = true):HTMLElement|HTMLElement[] => {
             let uExt = this.ucExtends;
             uExt.stampRow.passElement(ele, applySubTree);
             return ele;
