@@ -17,6 +17,9 @@ interface Element extends EventTarget { }
 interface SVGElement {
     data(key?: string, value?: any): any
 }
+interface Number{
+    toAlphabate():string
+}
 interface String {
     $(): HTMLElement,
     toFilePath():string,

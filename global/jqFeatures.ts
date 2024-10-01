@@ -18,16 +18,20 @@ class dataManager {
         DM_DATA: "dm" + uniqOpt.randomNo(),
     }
     eventIncrementId: number = 0;
-    elementIncrementId: number = 0;
+    elementIncrementId: number = 1;
 
     getId = (element: HTMLElement): rowInfo => {
         let row: rowInfo = element[dataManager.ATTR.DM_DATA];
         if (row == undefined) {
-            let _id = "id_" + this.elementIncrementId++;
+            this.elementIncrementId++;
+            let _id = "id_" + this.elementIncrementId;
             row = new rowInfo();
             row.id = _id;
+            //console.log(this.source);
+           // console.log(this.elementIncrementId.toAlphabate()+"  ("+this.elementIncrementId+")");
+            
             element[dataManager.ATTR.DM_DATA] = row;
-            this.source[_id] = element;
+            //this.source[_id] = element;
         }
         return row;
     }
@@ -42,6 +46,8 @@ class dataManager {
     }
 
     deleteObjectRef(targetObject: HTMLElement): void {
+        //console.log('deleting.,');
+
         let keylist: string[] = [];
         this.fillObjectRef(targetObject, keylist);
         keylist.forEach(e => delete this.source[e]);
@@ -386,7 +392,15 @@ class jqFeatures {
             }
         }
 
-
+        Number.prototype.toAlphabate = function (): string {
+            var arr = [];
+            let count = this;
+            while (count >> 0 > 0) {
+                arr.unshift(String.fromCharCode(65 + --count % 26));
+                count /= 26
+            }
+            return arr.join("")
+        }
 
         String.prototype.$ = function (): HTMLElement {
             var div = document.createElement('pre');
@@ -421,7 +435,7 @@ class jqFeatures {
         String.prototype.toFilePath = function (): string {
             return this.replace(/[\\\/]+/gi, "/")._trim_("/");
         }
-        String.prototype.getDriveFromPath = function (): string|undefined {
+        String.prototype.getDriveFromPath = function (): string | undefined {
             let r = this.match(/^[\w]+?:+/gi);
             return r.length > 0 ? r[0] : undefined;
         }
