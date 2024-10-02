@@ -293,8 +293,10 @@ export class TemplateNode {
       //htEle.remove();
       htEle = this.extended.generateNode({});
       document.body.appendChild(htEle);
-      this.extended.size.setBy.HTMLEle(htEle);
-     // htEle.remove();
+      this.extended.size.setBy.style(window.getComputedStyle(htEle));
+     //console.log(this.extended.size);
+      
+      htEle.remove();
     },
     Events: {
       beforeGenerateContent: (content: string, jsonRow: {}) => content,

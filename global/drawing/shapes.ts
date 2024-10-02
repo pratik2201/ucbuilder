@@ -231,6 +231,8 @@ export class Size {
         },
         HTMLEle: (ele: HTMLElement): void => {
             this.height = ele.offsetHeight;
+            //console.log(ele.offsetHeight);
+            
             this.width = ele.offsetWidth;
         },
         JqEle: (ele: JQuery): void => {
