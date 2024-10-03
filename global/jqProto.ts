@@ -30,7 +30,7 @@ interface String {
     __(jsonRow: {}): string,    
     startsWithI (s: string): boolean,
     endsWithI(s: string): boolean,
-    includesI(s: string): boolean,
+    includesI(s: string): { result:boolean,log:RegExpExecArray },
     equalIgnoreCase(s: string): boolean,
 }
 

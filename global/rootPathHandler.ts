@@ -11,11 +11,11 @@ export class rootPathHandler {
     static checkStatus(textToFindLower: string, textToReplaceLower: string): "newRegister" | "alreadyRegistered" | "sameAlicesAlreadyExist" {
         let findex = this.source.findIndex(s =>
             // s.tInfo.originalLowerCaseText.includes(textToFindLower)
-            s.tInfo.originalFinderText.includesI(textToFindLower)
+            s.tInfo.originalFinderText.includesI(textToFindLower).result
 
             ||
             //textToFindLower.includes(s.tInfo.originalLowerCaseText)
-            textToFindLower.includesI(s.tInfo.originalFinderText)
+            textToFindLower.includesI(s.tInfo.originalFinderText).result
         );
         // console.log('<<< '+ findex+" >>>>");
 

@@ -28,8 +28,8 @@ class dataManager {
             row = new rowInfo();
             row.id = _id;
             //console.log(this.source);
-           // console.log(this.elementIncrementId.toAlphabate()+"  ("+this.elementIncrementId+")");
-            
+            // console.log(this.elementIncrementId.toAlphabate()+"  ("+this.elementIncrementId+")");
+
             element[dataManager.ATTR.DM_DATA] = row;
             //this.source[_id] = element;
         }
@@ -416,7 +416,12 @@ class jqFeatures {
             return this.match(new RegExp(s + '$', 'ig')) != null;
         }
         String.prototype.includesI = function (s) {
-            return this.match(new RegExp(s, 'ig')) != null;
+            let res = new RegExp(s, 'ig').exec(this);
+            return {
+                result: res != null,
+                log: res
+            }
+            //return this.match(new RegExp(s, 'ig')) != null;
         }
         String.prototype.equalIgnoreCase = function (s) {
             return this.match(new RegExp('^' + s + '$', 'ig')) != null;

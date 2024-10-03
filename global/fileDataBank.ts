@@ -21,10 +21,10 @@ class FileDataBank {
         let textToFindLower = textToFind/*.toLowerCase()*/;
         return this.replacableText.findIndex(s =>
             //s.originalLowerCaseText.includes(textToFindLower)
-            s.originalFinderText.includesI(textToFindLower)
+            s.originalFinderText.includesI(textToFindLower).result
             ||
             //textToFindLower.includes(s.originalLowerCaseText)
-            textToFindLower.includesI(s.originalFinderText)
+            textToFindLower.includesI(s.originalFinderText).result
         ) == -1;
     }
 
