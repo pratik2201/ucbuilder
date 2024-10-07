@@ -9,11 +9,11 @@ class loopRegs {
 
     constructor() {
         this.loopPattern = new patternMatcher(
-            /`[ \n\r]*{(loop\w*)=([\.\w]+?)}[ \n\r]*`/,
+            /`[ \n\r]*{(loop\w*)=([\.\w]+?)}[ \n\r]*`\W*/,
             /([^]*?)/,
             
             // @ts-ignore
-            /`[ \n\r]*{\/\1}[ \n\r]*`/g
+            /\W*`[ \n\r]*{\/\1}[ \n\r]*`/g
         );
     }
     

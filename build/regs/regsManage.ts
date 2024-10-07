@@ -19,7 +19,7 @@ class regsManage {
             // @ts-ignore
             /`[ \n\r]*{\/\1}[ \n\r]*`/g
         );
-        this.tableColCellPattern = new patternMatcher(/{=/, /([\.\w]+?)/, /}/g);
+        this.tableColCellPattern = new patternMatcher(/{=/, /([\.\w]+?)/, / *}/g);
     }
 
     /**
