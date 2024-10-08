@@ -1,21 +1,12 @@
 import { objectOpt } from "ucbuilder/build/common";
 import { patternMatcher } from "ucbuilder/build/regs/patternMatcher";
 
-class switchRegs {
-    switchPattern: patternMatcher;
-    casePattern: patternMatcher;
-
+export class switchRegs {
+    switchPattern= new RegExp(/`\s*{(switch\w*)=([\.\w]+?)}\s*`([^]*?)`\s*{\/\1}\s*`/g);
+    casePattern= new RegExp(/`\s*\[(case\w*)=([\.\|\w]+?)\]\s*`([^]*?)`\s*\[\/\1\]\s*`/g);
+    
     constructor() {
-        this.switchPattern = new patternMatcher(
-            /`[ \n\r]*{(switch\w*)=([\.\w]+?)}[ \n\r]*`/,
-            /([^]*?)/,
-            /`[ \n\r]*{\/\1}[ \n\r]*`/g
-        );
-        this.casePattern = new patternMatcher(
-            /`[ \n\r]*\[(case\w*)=([\.\|\w]+?)\][ \n\r]*`/,
-            /([^]*?)/,
-            /`[ \n\r]*\[\/\1\][ \n\r]*`/g
-        );
+      
     }
 
     /**
@@ -27,7 +18,7 @@ class switchRegs {
      */
     parse(content: string, node: {}, caseText: Function = (val: any) => { return val; }): string {
         let _this = this;
-        return content.replace(this.switchPattern.pattern, function (
+        return content.replace(this.switchPattern, function (
             match: string,
             switchCode: string,
             valtoFind: string,
@@ -50,7 +41,7 @@ class switchRegs {
      * @returns 
      */
     parseCase(content: string, valtoMatch: string): string {
-        return content.replace(this.casePattern.pattern, function (
+        return content.replace(this.casePattern, function (
             match: string,
             caseCode: string,
             valInCase: string,
@@ -65,5 +56,3 @@ class switchRegs {
         }).trimEnd();
     }
 }
-
-export { switchRegs };
