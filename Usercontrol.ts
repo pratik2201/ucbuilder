@@ -191,13 +191,15 @@ export class Usercontrol {
                     localNodeElement: ext.self,
                     cssVarStampKey: ext.cssVarStampKey
                 });
-            LoadGlobal.pushRow({
-                url: ext.fileInfo.style.rootPath,
-                stamp: ext.stampRow.stamp,
-                reloadDesign: param0.source.reloadDesign,
-                reloadKey: param0.source.reloadKey,
-                cssContents: param0.source.cssContents
-            });
+            setTimeout(() => {
+                LoadGlobal.pushRow({
+                    url: ext.fileInfo.style.rootPath,
+                    stamp: ext.stampRow.stamp,
+                    reloadDesign: param0.source.reloadDesign,
+                    reloadKey: param0.source.reloadKey,
+                    cssContents: param0.source.cssContents
+                });
+            }, 1);
             ext.Events.afterInitlize.fire();
         },
         queryElements(selector: string, callback: (element: HTMLElement) => void): void {
