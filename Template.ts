@@ -295,9 +295,10 @@ export class TemplateNode {
       document.body.appendChild(htEle);
       this.extended.size.setBy.style(window.getComputedStyle(htEle));
      //console.log(this.extended.size);
-      
+      this.extended.sampleNode = htEle;
       htEle.remove();
     },
+    sampleNode:undefined as HTMLElement,
     Events: {
       beforeGenerateContent: (content: string, jsonRow: {}) => content,
       onGenerateContent: (content: string, jsonRow: {}) => content,
