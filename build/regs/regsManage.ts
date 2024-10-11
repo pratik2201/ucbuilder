@@ -49,7 +49,7 @@ class regsManage {
                 let cnt = _this.switchRgx.parseDirect(node, valtoFind, subcontent);
                 prcRes += _this.parse(node, cnt);
             } else return subcontent;
-            console.log(prcRes);
+          //  console.log(prcRes);
             
             return prcRes;
         });
