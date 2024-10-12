@@ -20,7 +20,7 @@ class TabIndexManager {
         document.addEventListener('keydown', (ev: KeyboardEvent) => {
             switch (ev.keyCode) {
                 case keyBoard.keys.tab:
-                    
+                    case keyBoard.keys.enter:
                     if (!ev.shiftKey) this.keymoveNext(ev.target as HTMLElement);
                     else this.keymovePrev(ev.target as HTMLElement);
                     ev.preventDefault();
