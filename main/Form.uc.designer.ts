@@ -16,9 +16,6 @@ export class Designer extends Usercontrol {
     
     constructor(){ super(); }
     initializecomponent(argsLst: IArguments, form: Form) {
-         //let fargs = argsLst[0];
-        //let args = fargs[fargs.length - 1];
-        //let args = argsLst[argsLst.length - 1] as UcOptions;
         let fargs = Usercontrol.extractArgs(arguments);
         let args = fargs[fargs.length-1] as UcOptions;
         let ucExt = this.ucExtends;

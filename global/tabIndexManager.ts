@@ -20,7 +20,17 @@ class TabIndexManager {
         document.addEventListener('keydown', (ev: KeyboardEvent) => {
             switch (ev.keyCode) {
                 case keyBoard.keys.tab:
-                    case keyBoard.keys.enter:
+                case keyBoard.keys.enter:
+                    console.log(Object.getPrototypeOf(ev.target).constructor.name);
+                    if (Object.getPrototypeOf(ev.target).constructor.name == 'HTMLTextAreaElement') {
+                        let ele = ev.target as HTMLTextAreaElement;
+                        let _val = ele.value;
+                        if (_val != '' && _val == ele.getSelectedValue()) {
+                        } else{
+                            if (!_val.endsWith('\n')) return;
+                            else ele.value = _val.slice(0, -1);
+                        } 
+                    }
                     if (!ev.shiftKey) this.keymoveNext(ev.target as HTMLElement);
                     else this.keymovePrev(ev.target as HTMLElement);
                     ev.preventDefault();

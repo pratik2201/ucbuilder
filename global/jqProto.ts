@@ -5,6 +5,7 @@ interface EventTarget  {
     fireEvent<K extends keyof HTMLElementEventMap>(eventName: K, bubble?: boolean, cancable?: boolean): void,
     delete(): void,
     stamp(): string,
+    getSelectedValue():string,
     data(key?: string, value?: any): any
     is(target: any): boolean,    
     $(): HTMLElement,

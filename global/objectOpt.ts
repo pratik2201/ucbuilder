@@ -5,6 +5,7 @@ const getC = (c: any): string | undefined => {
 }
 
 export class newObjectOpt {
+  
   static extractArguments(args: IArguments): IArguments {
     let cargs = args[0];
     if (cargs.toString() === '[object Arguments]') {

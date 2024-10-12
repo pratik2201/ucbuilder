@@ -260,7 +260,15 @@ class jqFeatures {
     static regsMng: regsManage = new regsManage();
     private static doCommonDomProto(commonPrototype: any): void {
 
-
+        commonPrototype.getSelectedValue = function (): string {
+            let child = this as HTMLInputElement;
+            
+            if (child.tagName === "TEXTAREA" ||
+                (child.tagName === "INPUT" && child.type === "text")) {
+                    return child.value.substring(child.selectionStart,child.selectionEnd);
+                // or return the return value of Tim Down's selection code here
+            }else return child.innerText.substring(child.selectionStart,child.selectionEnd);
+        };
         commonPrototype.index = function (): number {
             var i: number = 0;
             let child = this as Element;
