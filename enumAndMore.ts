@@ -99,6 +99,7 @@ export const ucOptions: UcOptions = {
     mode:  'client',
     session: newObjectOpt.clone<SessionOptions>(sessionOptions),
     source: newObjectOpt.clone<SourceOptions>(sourceOptions),
+    //loadAt: document.body,
     events: {
         beforeInitlize: (uc) => {
 

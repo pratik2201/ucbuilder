@@ -38,6 +38,10 @@ export class newObjectOpt {
     }
   }
   static clone<T>(obj: T): T {
+    /*let cloned = Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj));
+    console.log(obj);
+    console.log(cloned);
+    return cloned;*/
     return JSON.parse(JSON.stringify(obj));
   }
   static copyAttr(from: HTMLElement, to: HTMLElement): void {

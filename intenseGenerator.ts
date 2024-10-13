@@ -37,7 +37,7 @@ class intenseGenerator {
         let uc: Usercontrol = (new (classObj)(...args));
         let ext = uc.ucExtends;
         ext.session.prepareForAutoLoadIfExist();
-        if (pera.loadAt != undefined) pera.loadAt.appendChild(uc.ucExtends.wrapperHT);
+        if (pera.loadAt) pera.loadAt.appendChild(uc.ucExtends.wrapperHT);
         ext.Events.loaded.fire();
         return uc;
     }
