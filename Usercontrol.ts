@@ -12,10 +12,10 @@ import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { stylerRegs } from "ucbuilder/global/stylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
-import {  TransferDataNode  } from "ucbuilder/global/drag/transferation";
+import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 
 export class Usercontrol {
-    static extractArgs = (args:IArguments) => newObjectOpt.extractArguments(args);
+    static extractArgs = (args: IArguments) => newObjectOpt.extractArguments(args);
     static UcOptionsStc: UcOptions;
     static setChildValueByNameSpace(obj: {}, namespace: string, valToAssign: string): boolean {
         return objectOpt.setChildValueByNameSpace(obj, namespace, valToAssign);
@@ -27,23 +27,23 @@ export class Usercontrol {
             .filter(s => s.nodeName.startsWith("x."))
             .forEach(p => {
                 let atr = p.nodeName.slice(2);
-                console.log(atr+ ' = '+ p.value.slice(1));
+                console.log(atr + ' = ' + p.value.slice(1));
                 objectOpt.setChildValueByNameSpace(form, atr,
                     p.value.startsWith("=") ?
                         p.value.slice(1)
-                :
-                    eval(p.value.replace(thisExp, (mch, fc, ths, lc) => fc + 'form.ucExtends.PARENT' + lc))
-                
-                );
-               /* let cv = this.setChildValueByNameSpace(form, atr,
-                    eval(
-                        p.value.startsWith("=") ?
-                            "'" + p.value.slice(1) + "'"
                         :
-                            p.value.replace(thisExp, (mch, fc, ths, lc) => fc + 'this.ucExtends.PARENT' + lc)));
-                if(!cv)
-                    console.log("'"+ atr +"' property not set from designer");                
-                else _self.removeAttribute(p.nodeName)*/
+                        eval(p.value.replace(thisExp, (mch, fc, ths, lc) => fc + 'form.ucExtends.PARENT' + lc))
+
+                );
+                /* let cv = this.setChildValueByNameSpace(form, atr,
+                     eval(
+                         p.value.startsWith("=") ?
+                             "'" + p.value.slice(1) + "'"
+                         :
+                             p.value.replace(thisExp, (mch, fc, ths, lc) => fc + 'this.ucExtends.PARENT' + lc)));
+                 if(!cv)
+                     console.log("'"+ atr +"' property not set from designer");                
+                 else _self.removeAttribute(p.nodeName)*/
             });
     }
     static get giveMeHug(): string {
@@ -78,7 +78,7 @@ export class Usercontrol {
         this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
     }
 
-    public ucExtends  = {
+    public ucExtends = {
 
         mode: 'client' as UCGenerateMode,
         fileInfo: undefined as codeFileInfo,
@@ -87,10 +87,13 @@ export class Usercontrol {
         session: new SessionManager(),
         stampRow: undefined as userControlStampRow,
         wrapperHT: undefined as HTMLElement,
-        stageHT:undefined as HTMLElement,
+        stageHT: undefined as HTMLElement,
+        isDialogBox: false as boolean,
+        parentDependantIndex: -1 as number,
+        dependant: [] as Usercontrol[],
         isForm: false,
         get formExtends() { return this.form.ucExtends; },
-        get self() : HTMLElement { return this.wrapperHT; },
+        get self(): HTMLElement { return this.wrapperHT; },
         set caption(text: string) {
             this.designer.setCaption(text);
         },
@@ -129,7 +132,7 @@ export class Usercontrol {
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
             ucExt.fileInfo = param0.source.cfInfo;
-            
+
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             ucExt.stampRow = userControlStamp.getStamp(param0.source);
             ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true) as HTMLElement;
@@ -153,7 +156,12 @@ export class Usercontrol {
                 param0.wrapperHT.after(ucExt.wrapperHT);
                 param0.wrapperHT.remove();
             }
+            let pucExt = ucExt.PARENT.ucExtends;
             ucExt.wrapperHT.data(propOpt.ATTR.BASE_OBJECT, this);
+            if (!ucExt.isForm) {
+                ucExt.parentDependantIndex = pucExt.dependant.length;
+                pucExt.dependant.push(this);
+            }
             ucExt.passElement(controlOpt.getArray(ucExt.wrapperHT.children));
             let sizeChangeEvt = ucExt.Events.sizeChanged;
             sizeChangeEvt.Events.onChangeEventList = () => {
@@ -176,8 +184,14 @@ export class Usercontrol {
                     });
                 }
             }
+            ucExt.Events.beforeClose.on(({ prevent }) => {
+                for (let i = ucExt.dependant.length - 1; i > 0; i--) {
+                    ucExt.dependant[i]?.ucExtends.destruct();
+                }
+                pucExt.dependant[ucExt.parentDependantIndex]  = undefined;             
+            })
             ucExt.Events.onDataExport = (data) =>
-                ucExt.PARENT.ucExtends.Events.onDataExport(data);
+                pucExt.Events.onDataExport(data);
         },
         resizerObserver: undefined as ResizeObserver,
         finalizeInit: (param0: UcOptions): void => {
@@ -218,18 +232,18 @@ export class Usercontrol {
         Events: {
             afterInitlize: new CommonEvent<() => void>(),
             // @ts-ignore
-            beforeClose: new CommonEvent<({prevent=false})=>void>(),
-            afterClose: new CommonEvent<() =>void>(),           
-            captionChanged: new CommonEvent<(newCaptionText:string) =>void>(),
-            winStateChanged: new CommonEvent<(state:UcStates)=>void>(),
-            activate: new CommonEvent<() =>void>(),
-            loaded: new CommonEvent<() =>void>(),
-            loadLastSession: new CommonEvent<() =>void>(),
-            _newSessionGenerate: new CommonEvent<() =>void>(),
+            beforeClose: new CommonEvent<({ prevent = false }) => void>(),
+            afterClose: new CommonEvent<() => void>(),
+            captionChanged: new CommonEvent<(newCaptionText: string) => void>(),
+            winStateChanged: new CommonEvent<(state: UcStates) => void>(),
+            activate: new CommonEvent<() => void>(),
+            loaded: new CommonEvent<() => void>(),
+            loadLastSession: new CommonEvent<() => void>(),
+            _newSessionGenerate: new CommonEvent<() => void>(),
             get newSessionGenerate() { return this.winExt().Events._newSessionGenerate; },
-            _completeSessionLoad: new CommonEvent<() =>void>(),
+            _completeSessionLoad: new CommonEvent<() => void>(),
             get completeSessionLoad() { return this.winExt().Events._completeSessionLoad; },
-            sizeChanged: new CommonEvent<(size:ResizeObserverEntry[]) =>void>(),
+            sizeChanged: new CommonEvent<(size: ResizeObserverEntry[]) => void>(),
             winExt: () => this.ucExtends.form.ucExtends,
             onDataExport: (_data: TransferDataNode) => { return false; },
             onDataImport: (_data: TransferDataNode) => { return false; },
@@ -245,10 +259,9 @@ export class Usercontrol {
                 }
                 return true;
             }
-            
             return false;
         },
-        passElement: (ele: HTMLElement | HTMLElement[], applySubTree: boolean = true):HTMLElement|HTMLElement[] => {
+        passElement: (ele: HTMLElement | HTMLElement[], applySubTree: boolean = true): HTMLElement | HTMLElement[] => {
             let uExt = this.ucExtends;
             uExt.stampRow.passElement(ele, applySubTree);
             return ele;
