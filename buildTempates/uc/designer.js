@@ -63,13 +63,16 @@ export class {=designer.className} extends Usercontrol {
                                 uniqueIdentity:"{=name}" , 
                                 addNodeToParentSession:true,
                             },                           
-                            wrapperHT : CONTROLS.{=name} 
+                            replaceWrapperWith : CONTROLS.{=name} 
                         }) as any;
         ` 
              [/case]`    
         `{/switch}``{/loop}`
 
         ucExt.finalizeInit(args);
+        ucExt.session.prepareForAutoLoadIfExist();
+        if (args.loadAt) args.loadAt.appendChild(ucExt.wrapperHT);
+        ucExt.Events.loaded.fire();
         Usercontrol.assignPropertiesFromDesigner(form);
     }
 }

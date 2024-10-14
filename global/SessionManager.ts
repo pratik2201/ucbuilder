@@ -100,6 +100,7 @@ class SessionManager {
 
     onModify(): void {
         let parent = this.main.ucExtends.PARENT;
+        if (parent.ucExtends == undefined) return;
         if (!parent.ucExtends.self.is(this.main.ucExtends.self))
             parent.ucExtends.session.onModify();
         else { this.writeFile(); }

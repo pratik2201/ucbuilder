@@ -16,29 +16,27 @@ class intenseGenerator {
         
         let row = ResourcesUC.codefilelist.getObj(path as string);
         param0.source.cfInfo = row.codefileObj;
-        if (param0.wrapperHT == undefined) {
+        if (param0.replaceWrapperWith == undefined) {
             let tname = row.codefileObj.name;
-            param0.wrapperHT = (param0.parentUc == undefined) ?
+            param0.replaceWrapperWith = (param0.parentUc == undefined) ?
                 ResourcesUC.contentHT
                 :                    
                 param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$()) as HTMLElement;
         } else {
-            if (param0.wrapperHT.hasAttribute("x-nodeName")) {
-                param0.source.nodeNameAs = param0.wrapperHT.getAttribute("x-nodeName") as WrapperNodeNameAs;
+            if (param0.replaceWrapperWith.hasAttribute("x-nodeName")) {
+                param0.source.nodeNameAs = param0.replaceWrapperWith.getAttribute("x-nodeName") as WrapperNodeNameAs;
                 switch (param0.source.nodeNameAs) {
-                    case 'targetElement': param0.source.targetElementNodeName = param0.wrapperHT.nodeName; break;
+                    case 'targetElement': param0.source.targetElementNodeName = param0.replaceWrapperWith.nodeName; break;
                     case 'random': break;
                     default: param0.source.nodeNameAs = 'wrapper'; break;
                 }
             }
         }
+        
         args.push(param0);
         let classObj = row.obj; //Object.values(row.obj)[0] as any;
         let uc: Usercontrol = (new (classObj)(...args));
-        let ext = uc.ucExtends;
-        ext.session.prepareForAutoLoadIfExist();
-        if (pera.loadAt) pera.loadAt.appendChild(uc.ucExtends.wrapperHT);
-        ext.Events.loaded.fire();
+       /* */
         return uc;
     }
 

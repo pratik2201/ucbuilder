@@ -89,11 +89,11 @@ export interface UcOptions {
     session?: SessionOptions;
     source?: SourceOptions;
     parentUc?: Usercontrol;
-    loadAt?: HTMLElement;
     events?: {
         beforeInitlize: (uc: Usercontrol) => void;
     };
-    wrapperHT?: HTMLElement;
+    replaceWrapperWith?: HTMLElement;
+    loadAt?: HTMLElement;
 }
 export const ucOptions: UcOptions = {
     mode:  'client',
