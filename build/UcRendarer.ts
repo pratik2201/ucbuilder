@@ -25,7 +25,7 @@ export class UcRendarer {
     this.ucParams.source.cfInfo = this.fInfo;
     this.ucParams.parentUc = parentUc;
    
-    this.ucParams.replaceWrapperWith = tname.$() as HTMLElement;
+    this.ucParams.targetElement = tname.$() as HTMLElement;
     this.ucParams.source.reloadDesign = true;
     this.ucParams.source.reloadKey = "" + ResourcesUC.rendrarCounter;
 

@@ -5,6 +5,7 @@ export interface Control {
     type?: SpecialExtType;
     scope: ScopeType;
     proto: string;
+    importedClass?: ImportClassNode;
     src?: codeFileInfo;
     nodeName: string;
 }
@@ -13,6 +14,7 @@ export const control: Control = {
     type: 'none',
     scope: "public",
     proto: "",
+    importedClass:undefined,
     src: undefined,
     nodeName: "",
 };
@@ -26,6 +28,13 @@ export const templete: Template = {
     scope: 'public',
     controls: [],
 };
+
+export interface ImportClassNode {
+    name: string;
+    alice: string;
+    url: string;
+    get nameText():string;
+}
 export interface CommonRow {
     src: codeFileInfo;
     htmlFile: {
@@ -38,6 +47,7 @@ export interface CommonRow {
         className: string;
         templetes: Template[];
         controls: Control[];
+        importClasses: ImportClassNode[];
     };
     codefile: {
         baseClassName: string;
@@ -56,6 +66,7 @@ export const commonRow: CommonRow = {
         className: "",
         templetes: [],
         controls: [],
+        importClasses:[],
     },
     codefile: {
         baseClassName: "",

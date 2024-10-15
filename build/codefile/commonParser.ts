@@ -1,6 +1,6 @@
 import { commonGenerator } from 'ucbuilder/build/codefile/commonGenerator';
 import { codeFileInfo } from 'ucbuilder/build/codeFileInfo';
-import { commonRow,CommonRow,Control } from 'ucbuilder/build/buildRow.js';
+import { commonRow, CommonRow, Control, ImportClassNode } from 'ucbuilder/build/buildRow.js';
 import { buildOptions, objectOpt, propOpt, ScopeType } from 'ucbuilder/build/common';
 import { FilterContent } from 'ucbuilder/global/filterContent';
 import { FileDataBank } from 'ucbuilder/global/fileDataBank';
@@ -9,7 +9,7 @@ import { Template } from 'ucbuilder/Template';
 import { builder } from 'ucbuilder/build/builder';
 import { TemplatePathOptions } from 'ucbuilder/enumAndMore';
 
-class commonParser {
+export class commonParser {
 
     rows: CommonRow[] = [];
     bldr: builder;
@@ -21,7 +21,7 @@ class commonParser {
 
     init(filePath: string, htmlContents: string | undefined = undefined) {
         let row = this.fill(filePath, htmlContents);
-        if(row!=undefined)
+        if (row != undefined)
             this.rows.push(row);
     }
 
@@ -30,26 +30,27 @@ class commonParser {
     formHT: HTMLElement;
     fill(filePath: string, htmlContents: string | undefined = undefined): CommonRow {
         let _row = objectOpt.clone(commonRow);
+        let _this = this;
         _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
         if (!_row.src.parseUrl(filePath)) return undefined;
-        
+
         let code = (htmlContents == undefined) ? FileDataBank.readFile(_row.src.html.rootPath, {
             replaceContentWithKeys: false
         }) : htmlContents;
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
-       
-       
-        
-        
+
+
+
+
         this.formHT = code.$() as HTMLElement;
-        
+
         this.aliceMng.fillAlices(this.formHT);
         _row.designer.className =
             _row.codefile.baseClassName = "Designer";
         _row.codefile.className = _row.src.name;
         if (!isUserControl) {
-           
-            
+
+
             _row.designer.baseClassName = "Template";
             let tptbyCntnt = Template.getTemplates.byDirectory(filePath) as TemplatePathOptions[];
             let tpts = _row.designer.templetes;
@@ -79,6 +80,11 @@ class commonParser {
         } else {
             _row.designer.baseClassName = "Usercontrol";
             let elem = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
+            let im = _row.designer.importClasses;
+            let aliceNumber = 0;
+            aliceNumber = this.fillDefImports('Usercontrol', 'ucbuilder/Usercontrol', aliceNumber, im);
+            aliceNumber = this.fillDefImports('intenseGenerator', 'ucbuilder/intenseGenerator', aliceNumber, im);
+            aliceNumber = this.fillDefImports('UcOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
             elem.forEach((ele) => {
                 let nameAttr = ele.getAttribute(propOpt.ATTR.ACCESS_KEY);
                 let nodeName = ele.nodeName;
@@ -86,10 +92,10 @@ class commonParser {
                 if (scope == undefined)
                     scope = 'public';
                 let proto = Object.getPrototypeOf(ele).constructor.name;
-              
-                
+
+
                 if (ele.hasAttribute("x-from")) {
-                   
+
                     let _subpath = ele.getAttribute("x-from");
 
                     let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath));
@@ -97,17 +103,17 @@ class commonParser {
                     uFInf.parseUrl(_subpath);
                     //console.log(_subpath);
                     //console.log(uFInf.mainFileRootPath);
-                    
-
                     if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {
-                        _row.designer.controls.push({
+                        let ctrlNode: Control = {
                             name: nameAttr,
                             proto: proto,
                             scope: scope,
                             type: uFInf.extCode,
                             nodeName: uFInf.name,
                             src: uFInf,
-                        });
+                        }
+                        aliceNumber = _this.fillDefImports(uFInf.name, uFInf.mainFileRootPath, aliceNumber, im,ctrlNode);
+                        _row.designer.controls.push(ctrlNode);
                     }
                 } else {
                     _row.designer.controls.push({
@@ -119,10 +125,29 @@ class commonParser {
                     });
                 }
             });
+            console.log(_row.src.codeSrc.rootPath);
+            console.log(im);
+
         }
 
         return _row;
     }
-}
+    fillDefImports(name: string, url: string, aliceNumber: number, classList: ImportClassNode[],ctrlNode?: Control): number {
+        let _found = classList.find(s => s.name.equalIgnoreCase(name))
+        let aliceTxt = (_found) ? 'a' + aliceNumber++ : '';
+        let obj: ImportClassNode = {
+            name: name,
+            alice: aliceTxt,
+            url: url,
+            get nameText() {
+                if (this.alice == '')
+                    return this.name;
+                else return `${this.name} as ${this.alice}`;
+            }
+        };
+        if (ctrlNode != undefined) ctrlNode.importedClass = obj;
+        classList.push(obj);
+        return aliceNumber;
+    }
 
-export { commonParser };
+}

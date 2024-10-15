@@ -2,7 +2,7 @@ import { Usercontrol } from 'ucbuilder/Usercontrol';
 import { Template } from 'ucbuilder/Template';
 import { TemplateNode } from 'ucbuilder/Template';
 import { newObjectOpt } from 'ucbuilder/global/objectOpt';
-import { UcOptions,ucOptions, TptOptions,tptOptions, WrapperNodeNameAs } from 'ucbuilder/enumAndMore';
+import { UcOptions, ucOptions, TptOptions, tptOptions, WrapperNodeNameAs } from 'ucbuilder/enumAndMore';
 import { ResourcesUC } from 'ucbuilder/ResourcesUC';
 import { objectOpt, propOpt } from 'ucbuilder/build/common';
 import { UcRendarer } from 'ucbuilder/build/UcRendarer';
@@ -10,38 +10,53 @@ import { UcRendarer } from 'ucbuilder/build/UcRendarer';
 
 class intenseGenerator {
     static generateUC<T = string>(path: T, pera: UcOptions, ...args: any[]): Usercontrol {
-        
-        
-        let param0: UcOptions = newObjectOpt.copyProps(pera,ucOptions);
-        
+        let param0: UcOptions = newObjectOpt.copyProps(pera, ucOptions);
         let row = ResourcesUC.codefilelist.getObj(path as string);
         param0.source.cfInfo = row.codefileObj;
-        if (param0.replaceWrapperWith == undefined) {
+        
+        
+       /* if (param0.targetElement == undefined) {
             let tname = row.codefileObj.name;
-            param0.replaceWrapperWith = (param0.parentUc == undefined) ?
+            param0.targetElement = (param0.parentUc == undefined) ?
+                ResourcesUC.contentHT
+                :
+                param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$()) as HTMLElement;
+        }
+        console.log(param0.targetElement);*/
+        
+
+        /*if (param0.targetElement == undefined) {
+            let tname = row.codefileObj.name;
+            param0.targetElement = (param0.parentUc == undefined) ?
                 ResourcesUC.contentHT
                 :                    
                 param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$()) as HTMLElement;
         } else {
-            if (param0.replaceWrapperWith.hasAttribute("x-nodeName")) {
-                param0.source.nodeNameAs = param0.replaceWrapperWith.getAttribute("x-nodeName") as WrapperNodeNameAs;
+            if (param0.targetElement.hasAttribute("x-nodeName")) {
+                param0.source.nodeNameAs = param0.targetElement.getAttribute("x-nodeName") as WrapperNodeNameAs;
                 switch (param0.source.nodeNameAs) {
-                    case 'targetElement': param0.source.targetElementNodeName = param0.replaceWrapperWith.nodeName; break;
+                    case 'targetElement': param0.source.targetElementNodeName = param0.targetElement.nodeName; break;
                     case 'random': break;
                     default: param0.source.nodeNameAs = 'wrapper'; break;
                 }
             }
-        }
-        
-        args.push(param0);
+        }*/
+
+
+        let toSend = [];
+        toSend.push(...args, param0);
+       console.log(args);
+       
+        //args.push(param0);
         let classObj = row.obj; //Object.values(row.obj)[0] as any;
-        let uc: Usercontrol = (new (classObj)(...args));
-       /* */
+        let uc: Usercontrol = (new (classObj)(...toSend));
+        if (uc[0]) uc[0](args);
+        uc.ucExtends.Events.loaded.fire();
         return uc;
     }
 
     static getCnt(cInfo: UcRendarer) {
-        
+
     }
 
     static generateTPT(path: string, pera: TptOptions, ...args: any[]): Template {
@@ -67,8 +82,8 @@ class intenseGenerator {
         } else if (objectOpt.parse(val as object, 'TemplateNode')) {
             return val as TemplateNode;
         } else if (objectOpt.parse(val, 'String')) {
-            let splval: string[] = (''+val).split(";");
-            let tpt = intenseGenerator.generateTPT((''+val), { parentUc: parentUc });
+            let splval: string[] = ('' + val).split(";");
+            let tpt = intenseGenerator.generateTPT(('' + val), { parentUc: parentUc });
             let res = (splval.length === 1) ?
                 tpt[propOpt.ATTR.TEMPLETE_DEFAULT]
                 :

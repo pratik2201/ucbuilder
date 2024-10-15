@@ -14,8 +14,9 @@ import { stylerRegs } from "ucbuilder/global/stylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 
-
 export class Usercontrol {
+    static HiddenSpace: HTMLElement = document.createElement('spc');
+
     static extractArgs = (args: IArguments) => newObjectOpt.extractArguments(args);
     static UcOptionsStc: UcOptions;
     static setChildValueByNameSpace(obj: {}, namespace: string, valToAssign: string): boolean {
@@ -137,30 +138,46 @@ export class Usercontrol {
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             ucExt.stampRow = userControlStamp.getStamp(param0.source);
             ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true) as HTMLElement;
-           
+            //console.log(param0.targetElement.nodeName);
+
             if (ucExt.isForm) {
                 ucExt.PARENT = this;
                 ucExt.form = this;
                 ResourcesUC.styler
                     .pushChild(
                         ucExt.fileInfo.mainFilePath,
-                        ucExt.stampRow.styler, param0.replaceWrapperWith.nodeName);
-               // param0.wrapperHT.appendChild(ucExt.wrapperHT);
+                        ucExt.stampRow.styler, 'WRAPPER'); // param0.targetElement.nodeName
+                // param0.wrapperHT.appendChild(ucExt.wrapperHT);
             } else {
                 ucExt.form = param0.parentUc.ucExtends.form;
                 ucExt.PARENT = param0.parentUc;
-                newObjectOpt.copyAttr(param0.replaceWrapperWith, ucExt.wrapperHT);
                 ucExt.PARENT.ucExtends.stampRow.styler
                     .pushChild(
                         ucExt.fileInfo.mainFilePath,
-                        ucExt.stampRow.styler, param0.replaceWrapperWith.nodeName);
-                ucExt.garbageElementsHT = param0.replaceWrapperWith.children;
+                        ucExt.stampRow.styler, 'WRAPPER');  // param0.targetElement.nodeName
+
+                //console.log(param0.targetElement.isConnected+":"+ucExt.wrapperHT.isConnected);
+                //console.log(ucExt.wrapperHT);
+                console.log(ucExt.fileInfo.mainFilePath);
                 
-                console.log(param0.replaceWrapperWith.isConnected+":"+ucExt.wrapperHT.isConnected);
-                console.log(ucExt.wrapperHT);
-                
-                param0.replaceWrapperWith.after(ucExt.wrapperHT);
-                param0.replaceWrapperWith.remove();
+                console.log(param0.targetElement);                
+                if (param0.targetElement) {
+                    newObjectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
+                    ucExt.garbageElementsHT = param0.targetElement.children;
+                    switch (param0.decisionForTargerElement) {
+                        case 'replace':
+                            param0.targetElement.after(ucExt.wrapperHT);
+                            param0.targetElement.remove();
+                            break;
+                        case 'append': param0.targetElement.append(ucExt.wrapperHT); break;
+                        case 'prepend': param0.targetElement.prepend(ucExt.wrapperHT); break;
+                        case 'waitForDecision':
+                            Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
+                            break;
+                    }
+                } else {
+                    Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
+                }
             }
             let pucExt = ucExt.PARENT.ucExtends;
             ucExt.wrapperHT.data(propOpt.ATTR.BASE_OBJECT, this);
@@ -194,7 +211,7 @@ export class Usercontrol {
                 for (let i = ucExt.dependant.length - 1; i > 0; i--) {
                     ucExt.dependant[i]?.ucExtends.destruct();
                 }
-                pucExt.dependant[ucExt.parentDependantIndex]  = undefined;             
+                pucExt.dependant[ucExt.parentDependantIndex] = undefined;
             })
             ucExt.Events.onDataExport = (data) =>
                 pucExt.Events.onDataExport(data);
@@ -212,13 +229,13 @@ export class Usercontrol {
                     cssVarStampKey: ext.cssVarStampKey
                 });
             //setTimeout(() => {
-                LoadGlobal.pushRow({
-                    url: ext.fileInfo.style.rootPath,
-                    stamp: ext.stampRow.stamp,
-                    reloadDesign: param0.source.reloadDesign,
-                    reloadKey: param0.source.reloadKey,
-                    cssContents: param0.source.cssContents
-                });
+            LoadGlobal.pushRow({
+                url: ext.fileInfo.style.rootPath,
+                stamp: ext.stampRow.stamp,
+                reloadDesign: param0.source.reloadDesign,
+                reloadKey: param0.source.reloadKey,
+                cssContents: param0.source.cssContents
+            });
             //}, 1);
             ext.Events.afterInitlize.fire();
         },

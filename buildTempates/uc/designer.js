@@ -1,6 +1,5 @@
-import { Usercontrol } from '\ucbuilder/Usercontrol';
-import { intenseGenerator } from '\ucbuilder/intenseGenerator';
-import { UcOptions } from '\ucbuilder/enumAndMore';
+`{loop=designer.importClasses}`import { {=nameText } } from '{=url}';
+`{/loop}`
 /**
  *  code filename must same and case sensitive with classname 
  */
@@ -62,8 +61,9 @@ export class {=designer.className} extends Usercontrol {
                                 loadBySession:args.session.loadBySession,
                                 uniqueIdentity:"{=name}" , 
                                 addNodeToParentSession:true,
-                            },                           
-                            replaceWrapperWith : CONTROLS.{=name} 
+                            },   
+                            decisionForTargerElement:'replace',
+                            targetElement : CONTROLS.{=name} 
                         }) as any;
         ` 
              [/case]`    
@@ -72,7 +72,7 @@ export class {=designer.className} extends Usercontrol {
         ucExt.finalizeInit(args);
         ucExt.session.prepareForAutoLoadIfExist();
         if (args.loadAt) args.loadAt.appendChild(ucExt.wrapperHT);
-        ucExt.Events.loaded.fire();
+       
         Usercontrol.assignPropertiesFromDesigner(form);
     }
 }

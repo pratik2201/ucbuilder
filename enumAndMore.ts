@@ -62,7 +62,7 @@ export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
 export type StringExchangerCallback = (content: string) => string;
 export interface SourceOptions {
     cfInfo?: codeFileInfo;
-    nodeNameAs: WrapperNodeNameAs;
+    //nodeNameAs: WrapperNodeNameAs;
     targetElementNodeName: string;
     templateName: string;
     reloadKey: string;
@@ -72,7 +72,7 @@ export interface SourceOptions {
     beforeContentAssign: StringExchangerCallback;
 }
 export const sourceOptions: SourceOptions = {
-    nodeNameAs: 'wrapper',
+    //nodeNameAs: 'wrapper',
     targetElementNodeName: "as",
     templateName: "",
     reloadKey: "",
@@ -82,7 +82,7 @@ export const sourceOptions: SourceOptions = {
     },
 };
 
-
+export type WhatToDoWithTargetElement = "waitForDecision" | "replace" | "append" | "prepend";
 
 export interface UcOptions {
     mode?: UCGenerateMode;
@@ -92,7 +92,9 @@ export interface UcOptions {
     events?: {
         beforeInitlize: (uc: Usercontrol) => void;
     };
-    replaceWrapperWith?: HTMLElement;
+
+    decisionForTargerElement?: WhatToDoWithTargetElement;
+    targetElement?: HTMLElement;
     loadAt?: HTMLElement;
 }
 export const ucOptions: UcOptions = {
@@ -100,6 +102,7 @@ export const ucOptions: UcOptions = {
     session: newObjectOpt.clone<SessionOptions>(sessionOptions),
     source: newObjectOpt.clone<SourceOptions>(sourceOptions),
     //loadAt: document.body,
+    decisionForTargerElement:'waitForDecision',
     events: {
         beforeInitlize: (uc) => {
 

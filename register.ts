@@ -26,7 +26,7 @@ import {getbasedir} from 'ucbuilder/global/loader';
 import path from 'path';
 import { rootDirectoryOf, LocationOf } from './global/findAndReplace';
 import { newObjectOpt } from './global/objectOpt';
-
+import { Usercontrol } from './Usercontrol';
 class register {
     static ucSTAMP: string = uniqOpt.guidAs_;
 
@@ -95,6 +95,15 @@ class register {
         }
     }
 }
+register.Events.ready(() => {
+    Usercontrol.HiddenSpace.setAttribute('style', `position:  fixed;
+                                                    top: -20000000px;
+                                                    left: -20000000000px;
+                                                    display: block;
+                                                    width: auto;
+                                                    height: auto;`);
+    document.body.prepend(Usercontrol.HiddenSpace);
+})
 let ACTIVE_USER_CONTROL: typeof register = undefined;
 //let ACTIVE_USER_CONTROL:register = undefined;
 let res = register.registarMe({

@@ -11,6 +11,7 @@ const eventRecord: EventRecord = {
 type ResultCallback = (returnedValue: any) => boolean;
 const resultCallback: ResultCallback = (returnedValue: any) => false;
 type Parameter<T> = T extends (...arg: infer T) => any ? T : never;
+type CtorType<T> = { new (): T;  };  // GET CLASS REFERENCE OF GIVEN CLASS    
 export class CommonEvent<F extends (...arg: any) => any> {
     isSingleEvent: boolean = false;
    
@@ -62,7 +63,7 @@ export class CommonEvent<F extends (...arg: any) => any> {
         return this._eventList.length;
     }
 
-    fire<S = Parameter<F>>(args:Parameter<F>|void): void {
+    fire(args:Parameter<F>|void): void {
         this._eventList.forEach(s => {
             s.callback.apply(this, args);
         });

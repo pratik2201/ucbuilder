@@ -97,10 +97,11 @@ export class userControlStamp {
     static reload(rtrn: userControlStampRow, callback: StringExchangerCallback, param0: SourceOptions) {
         rtrn.content = rtrn.content.replace(/^\s*<([\w\.:-]*?)([\S\s]*?)<\/\1>\s*$/g,
             (match: string, otag: string, contents: string, ctag: string) => {
-                switch (param0.nodeNameAs) {
+                /*switch (param0.nodeNameAs) {
                     case 'targetElement': rtrn.styler.nodeName = param0.targetElementNodeName; break;
                     case 'wrapper': rtrn.styler.nodeName = otag; break;
-                }
+                }*/
+                rtrn.styler.nodeName = otag;
                 let newNodeName: string = rtrn.styler.nodeName;
                 return `<${newNodeName} ${ATTR_OF.UC.UC_STAMP}="${rtrn.stamp}" x-tabindex="-1" ${contents}</${newNodeName}>`;
             });
