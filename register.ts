@@ -27,6 +27,7 @@ import path from 'path';
 import { rootDirectoryOf, LocationOf } from './global/findAndReplace';
 import { newObjectOpt } from './global/objectOpt';
 import { Usercontrol } from './Usercontrol';
+import { winManager } from './global/winManager';
 class register {
     static ucSTAMP: string = uniqOpt.guidAs_;
 
@@ -97,8 +98,8 @@ class register {
 }
 register.Events.ready(() => {
     Usercontrol.HiddenSpace.setAttribute('style', `position:  fixed;
-                                                    top: -20000000px;
-                                                    left: -20000000000px;
+                                                    top: -0px;
+                                                    left: -0px;
                                                     display: block;
                                                     width: auto;
                                                     height: auto;`);

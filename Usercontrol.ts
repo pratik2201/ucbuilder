@@ -2,7 +2,7 @@
 import { propOpt, objectOpt, controlOpt } from "ucbuilder/build/common";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
-import { UCGenerateMode, UcOptions, UcStates } from 'ucbuilder/enumAndMore';
+import { UCGenerateMode, UcOptions, UcStates, WhatToDoWithTargetElement } from 'ucbuilder/enumAndMore';
 import { userControlStamp, userControlStampRow } from "ucbuilder/global/userControlStamp";
 import { SessionManager } from "ucbuilder/global/SessionManager";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
@@ -13,6 +13,7 @@ import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { stylerRegs } from "ucbuilder/global/stylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
+import { winManager } from "ucbuilder/global/winManager";
 
 export class Usercontrol {
     static HiddenSpace: HTMLElement = document.createElement('spc');
@@ -158,27 +159,17 @@ export class Usercontrol {
 
                 //console.log(param0.targetElement.isConnected+":"+ucExt.wrapperHT.isConnected);
                 //console.log(ucExt.wrapperHT);
-                console.log(ucExt.fileInfo.mainFilePath);
-                
-                console.log(param0.targetElement);                
+                //console.log(ucExt.fileInfo.mainFilePath);                
+                //console.log(param0.targetElement);                
                 if (param0.targetElement) {
                     newObjectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
                     ucExt.garbageElementsHT = param0.targetElement.children;
-                    switch (param0.decisionForTargerElement) {
-                        case 'replace':
-                            param0.targetElement.after(ucExt.wrapperHT);
-                            param0.targetElement.remove();
-                            break;
-                        case 'append': param0.targetElement.append(ucExt.wrapperHT); break;
-                        case 'prepend': param0.targetElement.prepend(ucExt.wrapperHT); break;
-                        case 'waitForDecision':
-                            Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
-                            break;
-                    }
+                    Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
                 } else {
                     Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
                 }
             }
+            ucExt.loadAt.setValue(param0.decisionForTargerElement, param0.targetElement);
             let pucExt = ucExt.PARENT.ucExtends;
             ucExt.wrapperHT.data(propOpt.ATTR.BASE_OBJECT, this);
             if (!ucExt.isForm) {
@@ -239,6 +230,51 @@ export class Usercontrol {
             //}, 1);
             ext.Events.afterInitlize.fire();
         },
+        loadAt: {
+            decision: "waitForDecision" as WhatToDoWithTargetElement,
+            element: undefined as HTMLElement,
+            setValue(decision: WhatToDoWithTargetElement, element: HTMLElement) {
+                this.decision = decision;
+                this.element = element;
+            }
+        },
+        show({ at = undefined, decision = undefined }: { at?: HTMLElement, decision?: WhatToDoWithTargetElement }={}) {
+            let dec = decision ? decision : this.loadAt.decision as WhatToDoWithTargetElement;
+            let ele = at ? at : this.loadAt.element as HTMLElement;
+            if (ele) {
+                switch (dec) {
+                    case 'replace':
+                        ele.after(this.wrapperHT);
+                        ele.remove();
+                        break;
+                    case 'append': ele.append(this.wrapperHT); break;
+                    case 'prepend': ele.prepend(this.wrapperHT); break;
+                    case 'waitForDecision':
+                        Usercontrol.HiddenSpace.append(this.wrapperHT);
+                        break;
+                }
+            }
+            this.Events.loaded.fire();
+        },
+        showDialog: ({ defaultFocusAt = undefined }: { at?: HTMLElement, decision?: WhatToDoWithTargetElement, defaultFocusAt?: HTMLElement } = {}): void => {
+
+            this.ucExtends.passElement(winManager.transperency);
+            this.ucExtends.isDialogBox = true;
+            winManager.push(this);
+            ResourcesUC.contentHT.append(this.ucExtends.wrapperHT);
+            this.ucExtends.wrapperHT.before(winManager.transperency)
+            if (!defaultFocusAt) {
+                ResourcesUC.tabMng.moveNext(this.ucExtends.self);
+            } else {
+                ResourcesUC.tabMng.focusTo(defaultFocusAt);
+            }
+            
+            this.ucExtends.Events.loaded.fire();
+            // });
+        },
+        close() {
+            this.destruct();
+        },
         queryElements(selector: string, callback: (element: HTMLElement) => void): void {
             let elements = document.querySelectorAll(selector);
             elements.forEach(element => callback(element as HTMLElement));
@@ -275,6 +311,9 @@ export class Usercontrol {
             let res = { prevent: false };
             this.ucExtends.Events.beforeClose.fire([res]);
             if (!res.prevent) {
+                if (this.ucExtends.isDialogBox) {
+                    winManager.pop();
+                }
                 this.ucExtends.wrapperHT.delete();
                 this.ucExtends.Events.afterClose.fire();
                 for (const key in this) {

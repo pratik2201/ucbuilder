@@ -45,13 +45,15 @@ class intenseGenerator {
 
         let toSend = [];
         toSend.push(...args, param0);
-       console.log(args);
+       //console.log(args);
        
         //args.push(param0);
         let classObj = row.obj; //Object.values(row.obj)[0] as any;
+       // console.log(toSend);
+        
         let uc: Usercontrol = (new (classObj)(...toSend));
         if (uc[0]) uc[0](args);
-        uc.ucExtends.Events.loaded.fire();
+        //uc.ucExtends.Events.loaded.fire();
         return uc;
     }
 

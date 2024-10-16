@@ -41,7 +41,7 @@ export class {=designer.className} extends Usercontrol {
         {switch=type}`
             `[case=none]
         `
-          this.{=name} = CONTROLS.{=name} as {=proto};`
+        this.{=name} = CONTROLS.{=name} as {=proto};`
         [/case]`
         `[case=.tpt]`
         
@@ -65,6 +65,7 @@ export class {=designer.className} extends Usercontrol {
                             decisionForTargerElement:'replace',
                             targetElement : CONTROLS.{=name} 
                         }) as any;
+        this.{=name }.ucExtends.show();
         ` 
              [/case]`    
         `{/switch}``{/loop}`
