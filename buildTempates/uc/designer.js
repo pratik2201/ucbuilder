@@ -1,4 +1,4 @@
-`{loop=designer.importClasses}`import { {=nameText } } from '{=url}';
+`{loop=designer.importClasses}`import { {=importText } } from '{=url}';
 `{/loop}`
 /**
  *  code filename must same and case sensitive with classname 
@@ -9,6 +9,10 @@ import { {=src.name} } from './{=src.name}.uc';
 export class {=designer.className} extends Usercontrol {    
     static get giveMeHug(): string {
         return Usercontrol.giveMeHug;
+    }
+    static Create(pera: UcOptions, ...args: any[]): {=src.name } { 
+        /** {=src.mainFileRootPath} */
+        return intenseGenerator.generateUC('{=src.mainFileRootPath}',pera,...args) as {=src.name};
     }
     `{loop=designer.controls}``
         {switch=type}`
@@ -54,7 +58,7 @@ export class {=designer.className} extends Usercontrol {
         `[case=.uc]
         `
        
-        this.{=name} = intenseGenerator.generateUC('{=src.code.rootPath}',{ 
+        this.{=name} = {=importedClass.objText}.Create({ 
                             parentUc : this, 
                             mode:args.mode,
                             session:{
@@ -64,8 +68,8 @@ export class {=designer.className} extends Usercontrol {
                             },   
                             decisionForTargerElement:'replace',
                             targetElement : CONTROLS.{=name} 
-                        }) as any;
-        this.{=name }.ucExtends.show();
+                        });
+        this.{=name}.ucExtends.show();
         ` 
              [/case]`    
         `{/switch}``{/loop}`

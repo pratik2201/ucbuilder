@@ -2,7 +2,7 @@
 import { propOpt, objectOpt, controlOpt } from "ucbuilder/build/common";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
-import { UCGenerateMode, UcOptions, UcStates, WhatToDoWithTargetElement } from 'ucbuilder/enumAndMore';
+import { UCGenerateMode, ucOptions, UcOptions, UcStates, WhatToDoWithTargetElement } from 'ucbuilder/enumAndMore';
 import { userControlStamp, userControlStampRow } from "ucbuilder/global/userControlStamp";
 import { SessionManager } from "ucbuilder/global/SessionManager";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
@@ -16,6 +16,9 @@ import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { winManager } from "ucbuilder/global/winManager";
 
 export class Usercontrol {
+   
+
+
     static HiddenSpace: HTMLElement = document.createElement('spc');
 
     static extractArgs = (args: IArguments) => newObjectOpt.extractArguments(args);
@@ -255,14 +258,23 @@ export class Usercontrol {
                 }
             }
             this.Events.loaded.fire();
+            //return undefined as Usercontrol
         },
-        showDialog: ({ defaultFocusAt = undefined }: { at?: HTMLElement, decision?: WhatToDoWithTargetElement, defaultFocusAt?: HTMLElement } = {}): void => {
-
+        showDialog: ({ defaultFocusAt = undefined,afterClose = undefined }: {
+            at?: HTMLElement,
+            decision?: WhatToDoWithTargetElement,
+            defaultFocusAt?: HTMLElement,
+            afterClose?:() => void,
+        } = {}): void => {
+            
             this.ucExtends.passElement(winManager.transperency);
             this.ucExtends.isDialogBox = true;
+            
             winManager.push(this);
             ResourcesUC.contentHT.append(this.ucExtends.wrapperHT);
-            this.ucExtends.wrapperHT.before(winManager.transperency)
+            this.ucExtends.wrapperHT.before(winManager.transperency);
+            if(afterClose)
+                this.ucExtends.Events.afterClose.on(afterClose);
             if (!defaultFocusAt) {
                 ResourcesUC.tabMng.moveNext(this.ucExtends.self);
             } else {
@@ -311,10 +323,10 @@ export class Usercontrol {
             let res = { prevent: false };
             this.ucExtends.Events.beforeClose.fire([res]);
             if (!res.prevent) {
+                this.ucExtends.wrapperHT.delete();
                 if (this.ucExtends.isDialogBox) {
                     winManager.pop();
                 }
-                this.ucExtends.wrapperHT.delete();
                 this.ucExtends.Events.afterClose.fire();
                 for (const key in this) {
                     this[key] = null;

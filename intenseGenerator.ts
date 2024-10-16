@@ -9,45 +9,13 @@ import { UcRendarer } from 'ucbuilder/build/UcRendarer';
 //import { createRequire, Module } from 'module';
 
 class intenseGenerator {
+   
     static generateUC<T = string>(path: T, pera: UcOptions, ...args: any[]): Usercontrol {
         let param0: UcOptions = newObjectOpt.copyProps(pera, ucOptions);
         let row = ResourcesUC.codefilelist.getObj(path as string);
         param0.source.cfInfo = row.codefileObj;
-        
-        
-       /* if (param0.targetElement == undefined) {
-            let tname = row.codefileObj.name;
-            param0.targetElement = (param0.parentUc == undefined) ?
-                ResourcesUC.contentHT
-                :
-                param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$()) as HTMLElement;
-        }
-        console.log(param0.targetElement);*/
-        
-
-        /*if (param0.targetElement == undefined) {
-            let tname = row.codefileObj.name;
-            param0.targetElement = (param0.parentUc == undefined) ?
-                ResourcesUC.contentHT
-                :                    
-                param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$()) as HTMLElement;
-        } else {
-            if (param0.targetElement.hasAttribute("x-nodeName")) {
-                param0.source.nodeNameAs = param0.targetElement.getAttribute("x-nodeName") as WrapperNodeNameAs;
-                switch (param0.source.nodeNameAs) {
-                    case 'targetElement': param0.source.targetElementNodeName = param0.targetElement.nodeName; break;
-                    case 'random': break;
-                    default: param0.source.nodeNameAs = 'wrapper'; break;
-                }
-            }
-        }*/
-
-
         let toSend = [];
         toSend.push(...args, param0);
-       //console.log(args);
-       
-        //args.push(param0);
         let classObj = row.obj; //Object.values(row.obj)[0] as any;
        // console.log(toSend);
         

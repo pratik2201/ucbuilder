@@ -16,7 +16,8 @@ export class CommonEvent<F extends (...arg: any) => any> {
     isSingleEvent: boolean = false;
    
     Events = {
-        onChangeEventList: () => { }
+        onChangeEventList: () => { },
+        afterFireCallbacks: () => { }
     };
     private _eventList: EventRecord[] = [];
     private _onCounter: number = 0;
@@ -67,6 +68,7 @@ export class CommonEvent<F extends (...arg: any) => any> {
         this._eventList.forEach(s => {
             s.callback.apply(this, args);
         });
+        this.Events.afterFireCallbacks();
     }
 
     fireWithResult(

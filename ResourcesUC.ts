@@ -22,14 +22,14 @@ export class ResourcesUC {
      /** @type {codefileHandler}  */
     static codefilelist: codefileHandler = new codefileHandler();
     static isInitBefore = false;
-    static init() {
+    static init(callback:()=>void) {
         if (!this.isInitBefore) {
             this.contentHT = document.body;
             
             
             ResourcesUC.tabMng.init(this.contentHT);
-            stylerRegs.pushPublicStyles();
             LoadGlobal.init();
+            stylerRegs.pushPublicStyles(callback);
             this.isInitBefore = true;
         }
     }

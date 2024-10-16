@@ -260,15 +260,23 @@ class jqFeatures {
     static regsMng: regsManage = new regsManage();
     private static doCommonDomProto(commonPrototype: any): void {
 
-        commonPrototype.getSelectedValue = function (): string {
-            let child = this as HTMLInputElement;
-            
-            if (child.tagName === "TEXTAREA" ||
-                (child.tagName === "INPUT" && child.type === "text")) {
-                    return child.value.substring(child.selectionStart,child.selectionEnd);
-                // or return the return value of Tim Down's selection code here
-            }else return child.innerText.substring(child.selectionStart,child.selectionEnd);
-        };
+        commonPrototype.contain = function ( child:HTMLElement) {
+            let node = child.parentNode;
+            while (node != null) {
+              if (node === this) {
+                return true;
+              }
+              node = node.parentNode;
+            }
+            return false;
+        }
+        commonPrototype.index = function (): number {
+            var i: number = 0;
+            let child = this as Element;
+            while ((child = child.previousElementSibling) != null)
+                i++;
+            return i;
+        }
         commonPrototype.index = function (): number {
             var i: number = 0;
             let child = this as Element;
@@ -364,9 +372,31 @@ class jqFeatures {
         this.doCommonDomProto(HTMLElement.prototype);
         this.doCommonDomProto(Element.prototype);
         this.doCommonDomProto(EventTarget.prototype);
-        /*HTMLElement.prototype = commonPrototype;
-        Element.prototype = commonPrototype;
-        EventTarget.prototype = commonPrototype;*/
+
+        const _capitalizeHandle = function () {
+            let child = this as HTMLTextAreaElement;
+            child.addEventListener('keyup', () => {
+                var textBox = event.target as HTMLInputElement;
+                var start = textBox.selectionStart;
+                var end = textBox.selectionEnd;
+                textBox.value = textBox.value.toCamelCase();
+                textBox.setSelectionRange(start, end);
+            });
+        }
+        HTMLInputElement.prototype.capitalizeHandle = _capitalizeHandle;
+        HTMLTextAreaElement.prototype.capitalizeHandle = _capitalizeHandle;
+
+        const _getSelectedValuee = function (): string {
+            let child = this as HTMLInputElement;
+
+            if (child.tagName === "TEXTAREA" ||
+                (child.tagName === "INPUT" && child.type === "text")) {
+                return child.value.substring(child.selectionStart, child.selectionEnd);
+                // or return the return value of Tim Down's selection code here
+            } else return child.innerText.substring(child.selectionStart, child.selectionEnd);
+        };
+        HTMLInputElement.prototype.getSelectedValue =
+            HTMLTextAreaElement.prototype.getSelectedValue = _getSelectedValuee;
 
 
 
@@ -416,7 +446,18 @@ class jqFeatures {
             jqFeatures.data.initElement(div.firstChild as HTMLElement);
             return div.firstChild as HTMLElement;
         }
+        String.prototype.toCamelCase = function () {
+            let str = this;
+            return str
+                .replace(/\s(.)/g, function (a) {
+                    return a.toUpperCase();
+                })
+                // .replace(/\s/g, '')
+                .replace(/^(.)/, function (b) {
+                    return b.toUpperCase();
+                });
 
+        }
         String.prototype.startsWithI = function (s) {
             return this.match(new RegExp('^' + s, 'ig')) != null;
         }

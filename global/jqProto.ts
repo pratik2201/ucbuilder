@@ -5,7 +5,8 @@ interface EventTarget  {
     fireEvent<K extends keyof HTMLElementEventMap>(eventName: K, bubble?: boolean, cancable?: boolean): void,
     delete(): void,
     stamp(): string,
-    getSelectedValue():string,
+    contain(child:EventTarget):boolean,
+    
     data(key?: string, value?: any): any
     is(target: any): boolean,    
     $(): HTMLElement,
@@ -14,7 +15,12 @@ interface EventTarget  {
 }
 interface HTMLElement extends EventTarget {}
 interface Element extends EventTarget { }
-
+interface HTMLInputElement {
+    capitalizeHandle():void,
+    getSelectedValue(): string,
+}
+interface HTMLTextAreaElement extends HTMLInputElement {
+}
 interface SVGElement {
     data(key?: string, value?: any): any
 }
@@ -29,6 +35,7 @@ interface String {
     trim_(charlist?: string): string,
     _trim_(charlist?: string): string,
     __(jsonRow: {}): string,    
+    toCamelCase():string,
     startsWithI (s: string): boolean,
     endsWithI(s: string): boolean,
     includesI(s: string): { result:boolean,log:RegExpExecArray },

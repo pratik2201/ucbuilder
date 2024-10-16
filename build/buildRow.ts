@@ -33,7 +33,8 @@ export interface ImportClassNode {
     name: string;
     alice: string;
     url: string;
-    get nameText():string;
+    get importText():string;
+    get objText():string;
 }
 export interface CommonRow {
     src: codeFileInfo;

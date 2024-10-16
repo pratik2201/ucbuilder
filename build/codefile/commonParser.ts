@@ -125,8 +125,8 @@ export class commonParser {
                     });
                 }
             });
-            console.log(_row.src.codeSrc.rootPath);
-            console.log(im);
+          //  console.log(_row.src.codeSrc.rootPath);
+          //  console.log(im);
 
         }
 
@@ -139,10 +139,13 @@ export class commonParser {
             name: name,
             alice: aliceTxt,
             url: url,
-            get nameText() {
+            get importText() {
                 if (this.alice == '')
                     return this.name;
                 else return `${this.name} as ${this.alice}`;
+            },
+            get objText() {
+                return (this.alice == '')?this.name: this.alice;
             }
         };
         if (ctrlNode != undefined) ctrlNode.importedClass = obj;

@@ -98,7 +98,7 @@ export class winManager {
                     else e.removeAttribute('disabled');
                     // e.removeAttribute('disabled', winManager.ATTR.DISABLE.NEW_VALUE);
                 });
-            this.focusMng.focus();
+            this.focusMng.focus(element);
         }
     }
 }

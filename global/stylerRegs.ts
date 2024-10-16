@@ -52,7 +52,7 @@ const styleSeperatorOptions: StyleSeperatorOptions = {
   cssVarStampKey: "",
 };
 export class stylerRegs {
-  static pushPublicStyles(): void {
+  static pushPublicStyles(callback:()=>void): void {
     import("ucbuilder/ResourcesUC").then(({ResourcesUC}) => {
       rootPathHandler.source.forEach((row: RootPathRow) => {
         let _stylepath: string = row.tInfo.replaceWith + "/styles.scss"; //row.tInfo.replaceLowerCaseText + "/styles.scss";
@@ -62,11 +62,12 @@ export class stylerRegs {
         node.isAlreadyFullPath = true;
         let styler: stylerRegs = new stylerRegs(node, true);
         ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
+
         let _data: string = FileDataBank.readFile(_stylepath, {
           isFullPath: true,
           replaceContentWithKeys: true,
         });
-  
+        
         if (_data != undefined) {
           LoadGlobal.pushRow({
             url: _stylepath,
@@ -75,6 +76,7 @@ export class stylerRegs {
           });
         }
       });
+      callback();
     });
   }
   stamp: string = "";
