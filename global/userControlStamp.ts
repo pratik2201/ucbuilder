@@ -18,7 +18,7 @@ export class userControlStampRow {
         return ele.getAttribute(ATTR_OF.UC.UNIQUE_STAMP) == this.uniqStamp;
     }
 
-    passElement = (ele: HTMLElement|HTMLElement[], applySubTree: boolean = true): string[] => {
+    passElement = <A = HTMLElement|HTMLElement[]>(ele: A, applySubTree: boolean = true): string[] => {
         let stamplist: string[] = [];
         let stmpTxt: string = this.stamp;
         let stmpUnq: string = this.uniqStamp;

@@ -17,22 +17,12 @@
     }
     body * {
         font-size: inherit;
-        outline: 0;
+        outline: 0;         
     }
     /**/
     .disabled,
     [disabled="true"] {
         pointer-events: none;
         /*opacity: 0.4;*/
-    }
-    
-    transperencyBack {
-        position: absolute; 
-        background-color: rgba(45, 51, 48, 0.616);
-        left: 0px;
-        top: 0px;
-        right: 0px;
-        bottom: 0px;
-        filter: blur(100%);
     }
 }

@@ -2,6 +2,7 @@
 import { looping, uniqOpt } from "ucbuilder/build/common";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { Usercontrol } from "ucbuilder/Usercontrol";
 
 
 
@@ -259,14 +260,19 @@ class jqFeatures {
 
     static regsMng: regsManage = new regsManage();
     private static doCommonDomProto(commonPrototype: any): void {
-
-        commonPrototype.contain = function ( child:HTMLElement) {
+        commonPrototype.parseUc = function (val: Usercontrol) {
+            if (val) {
+                return val.ucExtends.passElement(this);
+            }
+            return this;
+        }
+        commonPrototype.contain = function (child: HTMLElement) {
             let node = child.parentNode;
             while (node != null) {
-              if (node === this) {
-                return true;
-              }
-              node = node.parentNode;
+                if (node === this) {
+                    return true;
+                }
+                node = node.parentNode;
             }
             return false;
         }
@@ -445,6 +451,14 @@ class jqFeatures {
             div.innerHTML = this.trim();
             jqFeatures.data.initElement(div.firstChild as HTMLElement);
             return div.firstChild as HTMLElement;
+        }
+
+        String.prototype.parseUc = function <T = Usercontrol>(val: T): string {
+            var div = document.createElement('pre');
+            div.innerHTML = this;
+            if (val) {
+                return (val as Usercontrol).ucExtends.passElement(div).innerHTML;
+            } return this;
         }
         String.prototype.toCamelCase = function () {
             let str = this;

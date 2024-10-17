@@ -99,13 +99,8 @@ class register {
     }
 }
 register.Events.ready(() => {
-    Usercontrol.HiddenSpace.setAttribute('style', `position:  fixed;
-                                                    top: -2000000000px;
-                                                    left: -2000000000px; pointer-events: none;
-                                                   visibility: hidden; 
-                                                    display: block;
-                                                    width: auto;
-                                                    height: auto;`);
+    Usercontrol.HiddenSpace.setAttribute('style', `position:  fixed;top: -2000000000px;left: -2000000000px; pointer-events: none;visibility: hidden; display: block; width: auto; height: auto;`);
+    winManager.transperency.setAttribute('style', `position: absolute; background-color: rgba(45, 51, 48, 0.616); left: 0px;  top: 0px; right: 0px; bottom: 0px; filter: blur(100%);`);
     document.body.prepend(Usercontrol.HiddenSpace);
 })
 let ACTIVE_USER_CONTROL: typeof register = undefined;

@@ -1,3 +1,5 @@
+
+
 interface EventTarget  {
     index(): number,
     selector(): string,
@@ -6,7 +8,7 @@ interface EventTarget  {
     delete(): void,
     stamp(): string,
     contain(child:EventTarget):boolean,
-    
+    parseUc(uc:any):HTMLElement|HTMLElement[],
     data(key?: string, value?: any): any
     is(target: any): boolean,    
     $(): HTMLElement,
@@ -29,6 +31,7 @@ interface Number{
 }
 interface String {
     $(): HTMLElement,
+    parseUc<T=import ("ucbuilder/Usercontrol").Usercontrol>(uc:T):string,
     toFilePath():string,
     getDriveFromPath():string|undefined,
     _trim(charlist?: string): string,

@@ -24,7 +24,7 @@ export class winManager {
     static pages: Usercontrol[] = [];
     static focusMng: FocusManager = new FocusManager();
 
-    static transperency: HTMLElement = document.createElement("transperencyBack"); //undefined;
+    static transperency: HTMLElement = document.createElement("tbck"+uniqOpt.randomNo()); //undefined;
     // constructor(/*mainNode: HTMLElement, */frame: winFrame) {
     //    // this.mainNode = mainNode;
     //     frame.ucExtends.passElement(this.transperency);

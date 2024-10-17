@@ -1,5 +1,5 @@
 
-import { propOpt, objectOpt, controlOpt } from "ucbuilder/build/common";
+import { propOpt, objectOpt, controlOpt, uniqOpt } from "ucbuilder/build/common";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { UCGenerateMode, ucOptions, UcOptions, UcStates, WhatToDoWithTargetElement } from 'ucbuilder/enumAndMore';
@@ -19,7 +19,7 @@ export class Usercontrol {
    
 
 
-    static HiddenSpace: HTMLElement = document.createElement('spc');
+    static HiddenSpace: HTMLElement = document.createElement('hspc'+uniqOpt.randomNo());
 
     static extractArgs = (args: IArguments) => newObjectOpt.extractArguments(args);
     static UcOptionsStc: UcOptions;
@@ -335,7 +335,7 @@ export class Usercontrol {
             }
             return false;
         },
-        passElement: (ele: HTMLElement | HTMLElement[], applySubTree: boolean = true): HTMLElement | HTMLElement[] => {
+        passElement: <A = HTMLElement|HTMLElement[]>(ele: A, applySubTree: boolean = true): A => {
             let uExt = this.ucExtends;
             uExt.stampRow.passElement(ele, applySubTree);
             return ele;
