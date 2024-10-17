@@ -24,6 +24,7 @@
       "./node_modules/@types"
     ],
     "baseUrl": ".",
+    "rootDir": ".",
     "outDir": "out",
     "paths": {
       "ucbuilder/*": [  "./*" ]
