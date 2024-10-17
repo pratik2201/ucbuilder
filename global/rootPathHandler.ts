@@ -127,8 +127,8 @@ export class rootPathHandler {
         }
     }
 
-    static originalPath = "";
-    static path = "";
+   // static originalPath = "";
+   // static path = "";
     static fullPath(_pth = ""): string {
         let src = _pth;//.toLowerCase().trim();
         let node = this.source.find(s => src.startsWithI(s.tInfo.originalFinderText));

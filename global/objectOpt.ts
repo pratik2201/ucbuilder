@@ -5,7 +5,19 @@ const getC = (c: any): string | undefined => {
 }
 
 export class newObjectOpt {
-  
+  /**
+   * this will read `package.json` file from project's root directory and return project name
+   * @param dirpath pass project's root directory path
+   * @returns 
+   */
+  static getProjectname(dirpath: string): string | undefined {
+    let fpath: string = `${dirpath}/package.json`;
+    let pjson = require(fpath);
+    if (pjson != undefined) {
+      return pjson.name;
+    }
+    return undefined;
+  };
   static extractArguments(args: IArguments): IArguments {
     let cargs = args[0];
     if (cargs.toString() === '[object Arguments]') {
@@ -13,7 +25,7 @@ export class newObjectOpt {
     } else return args;
   }
   static copyProps<T = Object>(from: T, to: T): T {
-   // if (to == undefined) to = {} as T;
+    // if (to == undefined) to = {} as T;
     let rtrn = this.clone(to);
     this.recursiveProp(from, rtrn);
     return rtrn;

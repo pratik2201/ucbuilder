@@ -139,7 +139,7 @@ export const pathInfo = {
     CODEFILE_TYPE: Object.freeze({
         ucHtmlFile: "ucHtmlFile",
         ucTemplateFile: "ucTemplateFile",
-        ucDesignerFile: "ucDesignerFile",
+        //uc_DesignerFile: "u_cDesignerFile",
         ucCodeFile: "ucCodeFile",
         ucStyleFile: "ucStyleFile",
     }),

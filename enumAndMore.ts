@@ -26,7 +26,6 @@ export const rootPathRow: RootPathRow = {
 
 
 export interface RootPathParam {
-    level?: number,
     addIntoFileDataBankAlso?: boolean,
     addModule?: boolean,
     buildOption?: {
@@ -35,7 +34,6 @@ export interface RootPathParam {
     },
 }
 export const rootPathParam: RootPathParam = {
-    level: 4,
     addIntoFileDataBankAlso: true,
     addModule: true,
     buildOption: {
