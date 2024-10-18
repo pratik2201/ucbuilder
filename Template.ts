@@ -4,7 +4,7 @@ import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { stylerRegs } from "ucbuilder/global/stylerRegs";
+import { stylerRegs, VariableList } from "ucbuilder/global/stylerRegs";
 import { userControlStampRow, userControlStamp, } from "ucbuilder/global/userControlStamp";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { tptOptions, TemplatePathOptions, templatePathOptions, TptOptions } from "ucbuilder/enumAndMore";
@@ -131,7 +131,8 @@ export class Template {
   static _CSS_VAR_STAMP = 0;
   constructor() {
     Template._CSS_VAR_STAMP++;
-    this.extended.cssVarStampKey = "t" + Usercontrol._CSS_VAR_STAMP;
+    stylerRegs.stampNo++;
+    this.extended.cssVarStampKey = "t" + Template._CSS_VAR_STAMP;
   }
   extended = {
     wholeCSS: "",
@@ -157,41 +158,49 @@ export class Template {
 export class TemplateNode {
   constructor(main: Template) {
     this.extended.main = main;
+    Template._CSS_VAR_STAMP++;
+    this.extended.cssVarStampKey = "t" + Template._CSS_VAR_STAMP;
   }
   static _CSS_VAR_STAMP = 0;
   extended = {
     fileStamp: "",
+    cssVarStampKey: "0",
     main: undefined as Template,
     stampRow: undefined as userControlStampRow,
     parentUc: undefined as Usercontrol,
     wrapper:undefined as HTMLElement,
     size: new Size(),
     regsMng: new regsManage(),
-    setCSS_globalVar(key: string, value: string) {
+    setCSS_globalVar(varList:VariableList/*,key: string, value: string*/) {
+      
       stylerRegs.__VAR.SETVALUE(
-        key,
+        varList,
         ''+this.stampRow.styler.rootInfo.id,
-        "g",
-        value
+        "g"
       );
     },
-    setCSS_localVar(key: string, value: string) {
-      let _ext = this.main.extended;
+    setCSS_templateVar:(varList:VariableList/*,key: string, value: string*/)=> {
       stylerRegs.__VAR.SETVALUE(
-        key,
-        _ext.cssVarStampKey,
+        varList,
+        this.extended.stampRow.styler.stamp,
+        "t",
+        this.extended.parentUc.ucExtends.self
+      );
+    },
+    setCSS_localVar:(varList:VariableList/*,key: string, value: string*/)=> {
+      stylerRegs.__VAR.SETVALUE(
+        varList,
+        this.extended.stampRow.styler.uniqStamp,
         "l",
-        value,
-        this.parentUc.ucExtends.self
+        this.extended.parentUc.ucExtends.self
       );
     },
-    setCSS_internalVar(key: string, value: string) {
+    setCSS_internalVar(varList:VariableList/*,key: string, value: string*/) {
       let _ext = this.main.extended;
       stylerRegs.__VAR.SETVALUE(
-        key,
+        varList,
         stylerRegs.internalKey,
         "i",
-        value,
         this.parentUc.ucExtends.self
       );
     },
@@ -219,11 +228,14 @@ export class TemplateNode {
       return dta;
     },
 
-    generateNode(jsonRow: {}):HTMLElement {
-      let dta = this.generateContent(jsonRow);
+    generateNode: (jsonRow: {}): HTMLElement => {
+      let _this = this.extended;
+      let dta = _this.generateContent(jsonRow);
       let element = dta.$();
-      this.stampRow.passElement(element);
-      this.Events.onGenerateNode(element, jsonRow);
+      //console.log(_this.stampRow);
+      
+      _this.stampRow.passElement(element);
+      _this.Events.onGenerateNode(element, jsonRow);
       return element;
     },
     
@@ -237,9 +249,9 @@ export class TemplateNode {
       let toj = Object.assign({}, tptOptions);
       let param0 = Object.assign(toj, _args);
       // let param0 = newObjectOpt.copyProps(_args, tptOptions);
-
       _args.source.cfInfo.parseUrl(tptPathOpt.mainFilePath);
-
+     // console.log(ATTR_OF.UC.UNIQUE_STAMP);
+      
       if (tptname !== propOpt.ATTR.TEMPLETE_DEFAULT) {
         let fpath = param0.source.cfInfo.html.rootPath;
         fpath = strOpt.trim_(fpath, ".html", ".scss");
@@ -248,8 +260,7 @@ export class TemplateNode {
         param0.source.cfInfo.style.parse(fpath + ".scss", false);
       }
       param0.source.templateName = tptPathOpt.name;
-
-      tptExt.stampRow = userControlStamp.getStamp(param0.source);
+      tptExt.stampRow = userControlStamp.getStamp(param0.source,false);
       let htEle = tptExt.stampRow.dataHT;
      
       Array.from(tptExt.stampRow.dataHT.attributes)

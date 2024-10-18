@@ -10,7 +10,7 @@ import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
-import { stylerRegs } from "ucbuilder/global/stylerRegs";
+import { stylerRegs, VariableList } from "ucbuilder/global/stylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { winManager } from "ucbuilder/global/winManager";
@@ -113,17 +113,17 @@ export class Usercontrol {
             return Array.from(this.self.querySelectorAll(ar.join(",")));
         },
         garbageElementsHT: undefined as HTMLCollection,
-        setCSS_globalVar: (key: string, value: string): void => {
+        setCSS_globalVar: (varList:VariableList /*key: string, value: string*/): void => {
             let _this = this.ucExtends;
-            stylerRegs.__VAR.SETVALUE(key, '' + _this.stampRow.styler.rootInfo.id, 'g', value);
+            stylerRegs.__VAR.SETVALUE(varList, '' + _this.stampRow.styler.rootInfo.id, 'g');
         },
-        setCSS_localVar: (key: string, value: string): void => {
+        setCSS_localVar: (varList:VariableList /*key: string, value: string*/): void => {
             let _this = this.ucExtends;
-            stylerRegs.__VAR.SETVALUE(key, _this.cssVarStampKey, 'l', value, _this.self);
+            stylerRegs.__VAR.SETVALUE(varList, _this.stampRow.styler.uniqStamp, 'l', _this.self);
         },
-        setCSS_internalVar: (key: string, value: string): void => {
+        setCSS_internalVar: (varList:VariableList/*key: string, value: string*/): void => {
             let _this = this.ucExtends;
-            stylerRegs.__VAR.SETVALUE(key, stylerRegs.internalKey, 'i', value, _this.self);
+            stylerRegs.__VAR.SETVALUE(varList, stylerRegs.internalKey, 'i', _this.self);
         },
         getCSS_globalVar:(key: string): string => {
             let _this = this.ucExtends;

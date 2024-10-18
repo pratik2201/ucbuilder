@@ -85,6 +85,7 @@ export class commonParser {
             aliceNumber = this.fillDefImports('Usercontrol', 'ucbuilder/Usercontrol', aliceNumber, im);
             aliceNumber = this.fillDefImports('intenseGenerator', 'ucbuilder/intenseGenerator', aliceNumber, im);
             aliceNumber = this.fillDefImports('UcOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
+            aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/global/stylerRegs', aliceNumber, im);
             elem.forEach((ele) => {
                 let nameAttr = ele.getAttribute(propOpt.ATTR.ACCESS_KEY);
                 let nodeName = ele.nodeName;

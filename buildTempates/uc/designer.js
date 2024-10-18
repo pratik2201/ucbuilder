@@ -10,8 +10,8 @@ export class {=designer.className} extends Usercontrol {
     static get giveMeHug(): string {
         return Usercontrol.giveMeHug;
     }
-    static setCSS_globalVar (key: string, value: string): void  {
-        intenseGenerator.setCSS_globalVar(key, value,`{=src.mainFileRootPath}`);
+    static setCSS_globalVar (varList:VariableList /*key: string, value: string*/): void  {
+        intenseGenerator.setCSS_globalVar(varList,`{=src.mainFileRootPath}`);
     }
     static Create(pera: UcOptions, ...args: any[]): {=src.name } { 
         /** {=src.mainFileRootPath} */

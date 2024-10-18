@@ -57,7 +57,7 @@ export class userControlStamp {
         callmeBeforeContentAssign:StringExchangerCallback,
     }*/
 
-    static getStamp(param0: SourceOptions): userControlStampRow {
+    static getStamp(param0: SourceOptions, generateStamp = true): userControlStampRow {
         this.stampCallTimes++;
         let rtrn: userControlStampRow | undefined = undefined;
         let lwrName: string = param0.cfInfo.html.rootPath.toLowerCase();
@@ -67,7 +67,7 @@ export class userControlStamp {
         if (sindex == -1) {
             this.stampNo++;
             rtrn = new userControlStampRow();
-            rtrn.styler = new stylerRegs(param0.cfInfo.rootInfo, true);
+            rtrn.styler = new stylerRegs(param0.cfInfo.rootInfo, generateStamp);
             rtrn.fUniq = pathtofind;
             rtrn.cInfo = param0.cfInfo;
             if (param0.htmlContents != undefined) {
@@ -103,7 +103,7 @@ export class userControlStamp {
                 }*/
                 rtrn.styler.nodeName = otag;
                 let newNodeName: string = rtrn.styler.nodeName;
-                return `<${newNodeName} ${ATTR_OF.UC.UC_STAMP}="${rtrn.stamp}" x-tabindex="-1" ${contents}</${newNodeName}>`;
+                return `<${newNodeName} ${ATTR_OF.UC.UC_STAMP}="${rtrn.uniqStamp}" x-tabindex="-1" ${contents}</${newNodeName}>`;
             });
 
         rtrn.content = rtrn.styler.parseStyle(rtrn.content);

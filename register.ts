@@ -50,7 +50,7 @@ class register {
     
 
     static registarMe(rootDirOf: LocationOf, param2: RootPathParam): boolean {
-        console.log(rootDirOf);
+       // console.log(rootDirOf);
         
         rootDirOf = newObjectOpt.copyProps(rootDirOf, rootDirectoryOf);   
         if (rootDirOf.outDir == '') rootDirOf.outDir = '/';
