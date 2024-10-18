@@ -29,7 +29,7 @@ const patternList: PatternList = {
   subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gim,
   themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   stylesFilterPattern: /(animation-name|\$[lgi]-\w+)\s*:\s*(.*?)\s*;/gim,
-  varValuePrinterPattern: /var\s*\(\s*(\$[lgi]-\w+)\s*\)/gim,
+  varValuePrinterPattern: /var\s*\(\s*(\$[lgi]-\w+)\s*(.*?)\)\s*\;/gim,
   scopeSelector: /\[SELF_]/gm,
   rootExcludePattern: /(.*?)(:root|:exclude)/gi,
 };
@@ -298,10 +298,11 @@ export class stylerRegs {
     );
     rtrn = rtrn.replace(
       patternList.varValuePrinterPattern,
-      (match: string, varName: string) => {
-        let ky: string = varName.toLowerCase();
+      (match: string, varName: string,defaultVal:string) => {
+        let ky: string = varName;//.toLowerCase();
         let scope: string = ky.charAt(1);
         let uniqId: string = stylerRegs.internalKey;
+        
         switch (scope) {
           case "g":
             uniqId = ''+this.rootInfo.id;
@@ -310,11 +311,13 @@ export class stylerRegs {
             uniqId = this.uniqStamp;
             break;
         }
+        
         return stylerRegs.__VAR.GETVALUE(
           ky.substring(3).trim(),
           uniqId,
-          scope
-        );
+          scope,
+          defaultVal
+        )+';';
       }
     );
     rtrn = rtrn.replace(
@@ -372,17 +375,17 @@ export class stylerRegs {
   }*/
 
   static __VAR = {
-    getKeyName(key: string, uniqId: string, code: string): string {
+    getKeyName:(key: string, uniqId: string, code: string): string =>{
       return `--${key}${uniqId}${code}`;
     },
 
-    SETVALUE(key: string, uniqId: string, code: string, value: string, tarEle: HTMLElement = document.body): void {
-      tarEle.style.setProperty(this.getKeyName(key, uniqId, code), value);
+    SETVALUE:(key: string, uniqId: string, code: string, value: string, tarEle: HTMLElement = document.body): void => {
+      tarEle.style.setProperty(this.__VAR.getKeyName(key, uniqId, code), value);
       return;
     },
 
-    GETVALUE(key: string, uniqId: string, code: string): string {
-      return ` var(${this.getKeyName(key, uniqId, code)}) `;
+    GETVALUE:(key: string, uniqId: string, code: string, defaultVal:string): string => {
+      return ` var(${this.__VAR.getKeyName(key, uniqId, code)},${defaultVal}) `;
     },
   };
 

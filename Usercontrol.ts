@@ -113,23 +113,29 @@ export class Usercontrol {
             return Array.from(this.self.querySelectorAll(ar.join(",")));
         },
         garbageElementsHT: undefined as HTMLCollection,
-        setCSS_globalVar(key: string, value: string): void {
-            stylerRegs.__VAR.SETVALUE(key, '' + this.stampRow.styler.rootInfo.id, 'g', value);
+        setCSS_globalVar: (key: string, value: string): void => {
+            let _this = this.ucExtends;
+            stylerRegs.__VAR.SETVALUE(key, '' + _this.stampRow.styler.rootInfo.id, 'g', value);
         },
-        setCSS_localVar(key: string, value: string): void {
-            stylerRegs.__VAR.SETVALUE(key, this.cssVarStampKey, 'l', value, this.self);
+        setCSS_localVar: (key: string, value: string): void => {
+            let _this = this.ucExtends;
+            stylerRegs.__VAR.SETVALUE(key, _this.cssVarStampKey, 'l', value, _this.self);
         },
-        setCSS_internalVar(key: string, value: string): void {
-            stylerRegs.__VAR.SETVALUE(key, stylerRegs.internalKey, 'i', value, this.self);
+        setCSS_internalVar: (key: string, value: string): void => {
+            let _this = this.ucExtends;
+            stylerRegs.__VAR.SETVALUE(key, stylerRegs.internalKey, 'i', value, _this.self);
         },
-        getCSS_globalVar(key: string): string {
-            return document.body.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, '' + this.stampRow.styler.rootInfo.id, 'g'));
+        getCSS_globalVar:(key: string): string => {
+            let _this = this.ucExtends;
+            return document.body.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, '' + _this.stampRow.styler.rootInfo.id, 'g'));
         },
-        getCSS_localVar(key: string, localEle: HTMLElement): string {
-            return this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, this.cssVarStampKey, 'l'));
+        getCSS_localVar:(key: string, localEle: HTMLElement): string => {
+            let _this = this.ucExtends;
+            return _this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, _this.cssVarStampKey, 'l'));
         },
-        getCSS_internalVar(key: string, value: string): string {
-            return this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, stylerRegs.internalKey, 'i'));
+        getCSS_internalVar:(key: string, value: string): string => {
+            let _this = this.ucExtends;
+            return _this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, stylerRegs.internalKey, 'i'));
         },
         cssVarStampKey: '0',
         initializecomponent: (param0: UcOptions): void => {
@@ -267,12 +273,27 @@ export class Usercontrol {
             afterClose?:() => void,
         } = {}): void => {
             
-            this.ucExtends.passElement(winManager.transperency);
             this.ucExtends.isDialogBox = true;
             
             winManager.push(this);
-            ResourcesUC.contentHT.append(this.ucExtends.wrapperHT);
+            let loadAt = this.ucExtends.loadAt;// as WhatToDoWithTargetElement;
+            if (loadAt.element) {
+                switch (loadAt.decision) {
+                    case 'replace':
+                        loadAt.element.after(this.ucExtends.wrapperHT);
+                        loadAt.element.remove();
+                        break;
+                    case 'append': loadAt.element.append(this.ucExtends.wrapperHT); break;
+                    case 'prepend': loadAt.element.prepend(this.ucExtends.wrapperHT); break;
+                    case 'waitForDecision':
+                        ResourcesUC.contentHT.append(this.ucExtends.wrapperHT);
+                        break;
+                }
+            }
+            this.ucExtends.passElement(winManager.transperency);
             this.ucExtends.wrapperHT.before(winManager.transperency);
+
+           
             if(afterClose)
                 this.ucExtends.Events.afterClose.on(afterClose);
             if (!defaultFocusAt) {
