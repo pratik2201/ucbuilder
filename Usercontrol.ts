@@ -313,8 +313,8 @@ export class Usercontrol {
 
             // });
         },
-        close() {
-            this.destruct();
+        close:()=> {
+            this.ucExtends.destruct();
         },
         queryElements(selector: string, callback: (element: HTMLElement) => void): void {
             let elements = document.querySelectorAll(selector);
