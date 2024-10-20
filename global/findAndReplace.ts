@@ -32,6 +32,7 @@ export interface RootPathRow {
     alices: string,
     index: number,
     isAlreadyFullPath: boolean,
+    defaultLoadAt?:HTMLElement,
     pathType : PathType,
     outputDirectory: string,
     location: LocationOf,
@@ -45,7 +46,7 @@ export const rootPathRow: RootPathRow = {
     path: '',
     alices: '',
     index: -1,
-    outputDirectory: '',
+    outputDirectory: '',    
     pathType:"none",
     isAlreadyFullPath: false,
     location: {

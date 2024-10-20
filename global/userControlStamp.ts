@@ -30,13 +30,13 @@ export class userControlStampRow {
         let ar = controlOpt.getArray(ele);
         for (let index = 0; index < ar.length; index++) {
             let element: HTMLElement = ar[index];
-            element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpTxt);
+            element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
             element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
             element.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
             if (applySubTree) {
                 element.querySelectorAll("*")
                     .forEach((s) => {
-                        s.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpTxt);
+                        s.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
                         s.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
                         s.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
                     });

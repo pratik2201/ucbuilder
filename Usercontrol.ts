@@ -14,12 +14,12 @@ import { stylerRegs, VariableList } from "ucbuilder/global/stylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { winManager } from "ucbuilder/global/winManager";
+import { rootPathHandler } from "./global/rootPathHandler";
 
 export class Usercontrol {
-   
 
 
-    static HiddenSpace: HTMLElement = document.createElement('hspc'+uniqOpt.randomNo());
+    static HiddenSpace: HTMLElement = document.createElement('hspc' + uniqOpt.randomNo());
 
     static extractArgs = (args: IArguments) => newObjectOpt.extractArguments(args);
     static UcOptionsStc: UcOptions;
@@ -113,27 +113,27 @@ export class Usercontrol {
             return Array.from(this.self.querySelectorAll(ar.join(",")));
         },
         garbageElementsHT: undefined as HTMLCollection,
-        setCSS_globalVar: (varList:VariableList /*key: string, value: string*/): void => {
+        setCSS_globalVar: (varList: VariableList /*key: string, value: string*/): void => {
             let _this = this.ucExtends;
             stylerRegs.__VAR.SETVALUE(varList, '' + _this.stampRow.styler.rootInfo.id, 'g');
         },
-        setCSS_localVar: (varList:VariableList /*key: string, value: string*/): void => {
+        setCSS_localVar: (varList: VariableList /*key: string, value: string*/): void => {
             let _this = this.ucExtends;
             stylerRegs.__VAR.SETVALUE(varList, _this.stampRow.styler.uniqStamp, 'l', _this.self);
         },
-        setCSS_internalVar: (varList:VariableList/*key: string, value: string*/): void => {
+        setCSS_internalVar: (varList: VariableList/*key: string, value: string*/): void => {
             let _this = this.ucExtends;
             stylerRegs.__VAR.SETVALUE(varList, stylerRegs.internalKey, 'i', _this.self);
         },
-        getCSS_globalVar:(key: string): string => {
+        getCSS_globalVar: (key: string): string => {
             let _this = this.ucExtends;
             return document.body.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, '' + _this.stampRow.styler.rootInfo.id, 'g'));
         },
-        getCSS_localVar:(key: string, localEle: HTMLElement): string => {
+        getCSS_localVar: (key: string, localEle: HTMLElement): string => {
             let _this = this.ucExtends;
             return _this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, _this.cssVarStampKey, 'l'));
         },
-        getCSS_internalVar:(key: string, value: string): string => {
+        getCSS_internalVar: (key: string, value: string): string => {
             let _this = this.ucExtends;
             return _this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, stylerRegs.internalKey, 'i'));
         },
@@ -166,10 +166,6 @@ export class Usercontrol {
                         ucExt.fileInfo.mainFilePath,
                         ucExt.stampRow.styler, 'WRAPPER');  // param0.targetElement.nodeName
 
-                //console.log(param0.targetElement.isConnected+":"+ucExt.wrapperHT.isConnected);
-                //console.log(ucExt.wrapperHT);
-                //console.log(ucExt.fileInfo.mainFilePath);                
-                //console.log(param0.targetElement);                
                 if (param0.targetElement) {
                     newObjectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
                     ucExt.garbageElementsHT = param0.targetElement.children;
@@ -247,36 +243,42 @@ export class Usercontrol {
                 this.element = element;
             }
         },
-        show({ at = undefined, decision = undefined }: { at?: HTMLElement, decision?: WhatToDoWithTargetElement }={}) {
-            let dec = decision ? decision : this.loadAt.decision as WhatToDoWithTargetElement;
-            let ele = at ? at : this.loadAt.element as HTMLElement;
+        show: ({ at = undefined, decision = undefined }: { at?: HTMLElement, decision?: WhatToDoWithTargetElement } = {}) => {
+            let _extend = this.ucExtends;
+            let dec = decision ? decision : _extend.loadAt.decision as WhatToDoWithTargetElement;
+            let ele = at ? at : _extend.loadAt.element as HTMLElement;
+            if (ele == undefined) {
+                ele = _extend.fileInfo.rootInfo.defaultLoadAt;
+            }
             if (ele) {
                 switch (dec) {
                     case 'replace':
-                        ele.after(this.wrapperHT);
+                        ele.after(_extend.wrapperHT);
                         ele.remove();
                         break;
-                    case 'append': ele.append(this.wrapperHT); break;
-                    case 'prepend': ele.prepend(this.wrapperHT); break;
+                    case 'append': ele.append(_extend.wrapperHT); break;
+                    case 'prepend': ele.prepend(_extend.wrapperHT); break;
                     case 'waitForDecision':
-                        Usercontrol.HiddenSpace.append(this.wrapperHT);
+                        ele.append(_extend.wrapperHT);
                         break;
                 }
             }
-            this.Events.loaded.fire();
+            _extend.Events.loaded.fire();
             //return undefined as Usercontrol
         },
-        showDialog: ({ defaultFocusAt = undefined,afterClose = undefined }: {
+        showDialog: ({ defaultFocusAt = undefined, afterClose = undefined }: {
             at?: HTMLElement,
             decision?: WhatToDoWithTargetElement,
             defaultFocusAt?: HTMLElement,
-            afterClose?:() => void,
+            afterClose?: () => void,
         } = {}): void => {
-            
+
             this.ucExtends.isDialogBox = true;
-            
-            winManager.push(this);
             let loadAt = this.ucExtends.loadAt;// as WhatToDoWithTargetElement;
+            if (loadAt.element == undefined) {
+                loadAt.element = this.ucExtends.fileInfo.rootInfo.defaultLoadAt;
+            }
+            winManager.push(this);
             if (loadAt.element) {
                 switch (loadAt.decision) {
                     case 'replace':
@@ -286,23 +288,27 @@ export class Usercontrol {
                     case 'append': loadAt.element.append(this.ucExtends.wrapperHT); break;
                     case 'prepend': loadAt.element.prepend(this.ucExtends.wrapperHT); break;
                     case 'waitForDecision':
-                        ResourcesUC.contentHT.append(this.ucExtends.wrapperHT);
+                        loadAt.element.append(this.ucExtends.wrapperHT);
                         break;
                 }
             }
             this.ucExtends.passElement(winManager.transperency);
             this.ucExtends.wrapperHT.before(winManager.transperency);
 
-           
-            if(afterClose)
+
+            if (afterClose)
                 this.ucExtends.Events.afterClose.on(afterClose);
-            if (!defaultFocusAt) {
-                ResourcesUC.tabMng.moveNext(this.ucExtends.self);
-            } else {
-                ResourcesUC.tabMng.focusTo(defaultFocusAt);
-            }
-            
+           // setTimeout(() => {
+                if (!defaultFocusAt) {
+                    ResourcesUC.tabMng.moveNext(this.ucExtends.self);
+                } else {
+
+                    ResourcesUC.tabMng.focusTo(defaultFocusAt);
+
+                }
+            //}, 1);
             this.ucExtends.Events.loaded.fire();
+
             // });
         },
         close() {
@@ -356,7 +362,7 @@ export class Usercontrol {
             }
             return false;
         },
-        passElement: <A = HTMLElement|HTMLElement[]>(ele: A, applySubTree: boolean = true): A => {
+        passElement: <A = HTMLElement | HTMLElement[]>(ele: A, applySubTree: boolean = true): A => {
             let uExt = this.ucExtends;
             uExt.stampRow.passElement(ele, applySubTree);
             return ele;

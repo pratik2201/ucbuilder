@@ -12,7 +12,10 @@ import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { FileInfo, codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { Size } from "ucbuilder/global/drawing/shapes";
-
+interface TptTextObjectNode<K>{
+  content: string,
+  row:K
+}
 export class Template {
   static extractArgs = (args:any) => newObjectOpt.extractArguments(args);
   static getTemplates = {
@@ -133,8 +136,10 @@ export class Template {
     Template._CSS_VAR_STAMP++;
     stylerRegs.stampNo++;
     this.extended.cssVarStampKey = "t" + Template._CSS_VAR_STAMP;
-  }
+  } 
+  
   extended = {
+    
     wholeCSS: "",
     fileStamp: "",
     _templeteNode: undefined,
@@ -195,42 +200,47 @@ export class TemplateNode {
         this.extended.parentUc.ucExtends.self
       );
     },
-    setCSS_internalVar(varList:VariableList/*,key: string, value: string*/) {
-      let _ext = this.main.extended;
+    setCSS_internalVar:(varList:VariableList/*,key: string, value: string*/)=>  {
+     
       stylerRegs.__VAR.SETVALUE(
         varList,
         stylerRegs.internalKey,
         "i",
-        this.parentUc.ucExtends.self
+        this.extended.parentUc.ucExtends.self
       );
     },
     
-    getCSS_globalVar(key: string) {
+    getCSS_globalVar:(key: string)=> {
       return document.body.style.getPropertyValue(
-        stylerRegs.__VAR.getKeyName(key, ''+this.stampRow.styler.rootInfo.id, "g")
+        stylerRegs.__VAR.getKeyName(key, ''+this.extended.stampRow.styler.rootInfo.id, "g")
       );
     },
-    getCSS_localVar(key: string) {
-      return this.parentUc.ucExtends.self.style.getPropertyValue(
-        stylerRegs.__VAR.getKeyName(key, this.main.extended.cssVarStampKey, "l")
+    getCSS_templateVar:(key: string)=> {
+      return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
+        stylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.stamp, "t")
+      );
+    }, getCSS_localVar:(key: string)=> {
+      return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
+        stylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.uniqStamp, "l")
       );
     },
-    getCSS_internalVar(key: string) {
-      return this.parentUc.ucExtends.self.style.getPropertyValue(
+    getCSS_internalVar:(key: string)=> {
+      return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
         stylerRegs.__VAR.getKeyName(key, stylerRegs.internalKey, "i")
       );
     },
-    generateContent(jsonRow: {}) {
-      let dta = this.stampRow.content;
-      dta = this.Events.beforeGenerateContent(dta, jsonRow);
-      dta = this.regsMng.parse(jsonRow, dta);
-      dta = this.Events.onGenerateContent(dta, jsonRow);
+    generateContent: (jsonRow: {}): string => {
+      let _this = this.extended;
+      let dta = _this.stampRow.content;
+      dta = _this.Events.beforeGenerateContent(dta, jsonRow);
+      dta = _this.regsMng.parse(jsonRow, dta);
+      dta = _this.Events.onGenerateContent(dta, jsonRow);
       return dta;
     },
 
     generateNode: (jsonRow: {}): HTMLElement => {
       let _this = this.extended;
-      let dta = _this.generateContent(jsonRow);
+      let dta = _this.generateContent(jsonRow) as string;
       let element = dta.$();
       //console.log(_this.stampRow);
       
@@ -269,7 +279,7 @@ export class TemplateNode {
 
       let eleHT = param0.elementHT;
       tptExt.parentUc = param0.parentUc;
-
+      tptExt.stampRow.styler.wrapperHT = tptExt.parentUc.ucExtends.wrapperHT;
       if (tptExt.parentUc != undefined)
         tptExt.parentUc.ucExtends.stampRow.styler.pushChild(
           param0.source.cfInfo.mainFilePath +
@@ -311,9 +321,9 @@ export class TemplateNode {
     },
     sampleNode:undefined as HTMLElement,
     Events: {
-      beforeGenerateContent: (content: string, jsonRow: {}) => content,
-      onGenerateContent: (content: string, jsonRow: {}) => content,
-      onGenerateNode: (mainNode: HTMLElement, jsonRow: {}) => {},
+      beforeGenerateContent:(content: string, jsonRow: any)=>content,
+      onGenerateContent:(content: string, jsonRow: any)=>content,
+      onGenerateNode: (mainNode: HTMLElement, jsonRow: any) => {},
 
       onDataExport: (data: TransferDataNode) => {
         return false;

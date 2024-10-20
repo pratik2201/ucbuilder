@@ -5,9 +5,19 @@ import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { builder } from "ucbuilder/build/builder";
 
 export class rootPathHandler {
+
     private static _source: RootPathRow[] = [];
     static get source(): RootPathRow[] { return this._source; }
-
+    static contentHT = document.body;
+    static setDefaultLoadElement(path: string, ele: HTMLElement) {
+        let rInfo = this.getInfo(path);
+        if (rInfo != undefined)
+            rInfo.defaultLoadAt = ele;
+    }
+    static getDefaultLoadElement(path: string): HTMLElement {
+        let rInfo = this.getInfo(path);
+        if (rInfo != undefined) return rInfo.defaultLoadAt;
+    }
     static checkStatus(textToFindLower: string, textToReplaceLower: string): "newRegister" | "alreadyRegistered" | "sameAlicesAlreadyExist" {
         let findex = this.source.findIndex(s =>
             // s.tInfo.originalLowerCaseText.includes(textToFindLower)
@@ -64,7 +74,7 @@ export class rootPathHandler {
                 }
                 if (param2.addModule) {
                     //console.log( (rootDirectoryOf.rootDir + "/" + rootDirectoryOf.outDir).toFilePath());
-                    
+
                     require('module-alias')
                         .addAlias(projectName, (rootDirectoryOf.rootDir + "/" + rootDirectoryOf.outDir).toFilePath());
 
@@ -81,6 +91,7 @@ export class rootPathHandler {
                     outputDirectory: '',
                     index: -1,
                     location: rootDirectoryOf,
+                    defaultLoadAt:document.body,
                     tInfo: {
                         id: this.source.length,
                         originalFinderText: projectName,
@@ -112,7 +123,7 @@ export class rootPathHandler {
 
 
                 // console.log(this.source);
-               // console.log(this.source);
+                // console.log(this.source);
 
                 return true;
             case "sameAlicesAlreadyExist":
@@ -127,8 +138,8 @@ export class rootPathHandler {
         }
     }
 
-   // static originalPath = "";
-   // static path = "";
+    // static originalPath = "";
+    // static path = "";
     static fullPath(_pth = ""): string {
         let src = _pth;//.toLowerCase().trim();
         let node = this.source.find(s => src.startsWithI(s.tInfo.originalFinderText));

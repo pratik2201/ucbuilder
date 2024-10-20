@@ -6,16 +6,17 @@
 import { {=src.name} } from './{=src.name}.uc';
 
 
-export class {=designer.className} extends Usercontrol {    
+export class {=designer.className } extends Usercontrol {    
+    static FILE_PATH = `{=src.mainFileRootPath}`;
     static get giveMeHug(): string {
         return Usercontrol.giveMeHug;
     }
     static setCSS_globalVar (varList:VariableList /*key: string, value: string*/): void  {
-        intenseGenerator.setCSS_globalVar(varList,`{=src.mainFileRootPath}`);
+        intenseGenerator.setCSS_globalVar(varList,this.FILE_PATH);
     }
     static Create(pera: UcOptions, ...args: any[]): {=src.name } { 
         /** {=src.mainFileRootPath} */
-        return intenseGenerator.generateUC('{=src.mainFileRootPath}',pera,...args) as {=src.name};
+        return intenseGenerator.generateUC(this.FILE_PATH,pera,...args) as {=src.name};
     }
     `{loop=designer.controls}``
         {switch=type}`

@@ -18,6 +18,7 @@ interface PatternList {
   themeCSSLoader: RegExp;
   stylesFilterPattern: RegExp;
   varValuePrinterPattern: RegExp;
+  varValueGetterPattern: RegExp;
   scopeSelector: RegExp;
   rootExcludePattern: RegExp;
 }
@@ -31,6 +32,7 @@ const patternList: PatternList = {
   themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   stylesFilterPattern: /(animation-name|\$[lgi]-\w+)\s*:\s*(.*?)\s*;/gim,
   varValuePrinterPattern: /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\)\s*\;/gim,
+  varValueGetterPattern:/(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
   scopeSelector: /\[SELF_]/gm,
   rootExcludePattern: /(.*?)(:root|:exclude)/gi,
 };
@@ -91,7 +93,8 @@ export class stylerRegs {
   children: stylerRegs[] = [];
   alices: string = "";
   path: string = "";
-
+  wrapperHT: HTMLElement = undefined;
+  templateHT: HTMLElement = undefined;
   constructor(rootInfo?: RootPathRow, generateStamp: boolean = true) {
     this.rootInfo = rootInfo;
 
@@ -304,7 +307,6 @@ export class stylerRegs {
         let ky: string = varName;//.toLowerCase();
         let scope: string = ky.charAt(1);
         let uniqId: string = stylerRegs.internalKey;
-
         switch (scope) {
           case "g":
             uniqId = '' + this.rootInfo.id;
@@ -316,13 +318,39 @@ export class stylerRegs {
             uniqId = this.uniqStamp;
             break;
         }
-
         return stylerRegs.__VAR.GETVALUE(
           ky.substring(3).trim(),
           uniqId,
           scope,
           defaultVal
         ) + ';';
+      }
+    );
+    rtrn = rtrn.replace(
+      patternList.varValueGetterPattern,
+      (match: string, varName: string, value: string) => {
+        
+        let ky: string = varName;//.toLowerCase();
+        let scope: string = ky.charAt(1);
+        let uniqId: string = stylerRegs.internalKey;
+        let tarEle: HTMLElement = undefined;
+        switch (scope) {
+          case "g":
+            uniqId = '' + _this.rootInfo.id;
+            break;
+          case "t":
+            uniqId = this.stamp;
+            tarEle = _this.wrapperHT;
+            break;
+          case "l":
+            uniqId = this.uniqStamp;
+            tarEle = _this.wrapperHT;
+            break;
+          default: return match;
+        }
+        let key = ky.substring(3).trim();
+        stylerRegs.__VAR.SETVALUE({ [key] : value }, uniqId, scope,tarEle );
+        return ';';
       }
     );
     rtrn = rtrn.replace(

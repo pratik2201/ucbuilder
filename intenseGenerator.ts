@@ -42,7 +42,7 @@ class intenseGenerator {
             let tname = row.codefileObj.name;
             param0.elementHT =
                 (param0.parentUc == undefined) ?
-                    ResourcesUC.contentHT :
+                        rootPathHandler.contentHT :
                     param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$()) as HTMLElement;
         }
         args.push(param0);
