@@ -1,4 +1,5 @@
 import { arrayOpt, uniqOpt, objectOpt } from "ucbuilder/build/common";
+import { Usercontrol } from "ucbuilder/Usercontrol";
 
 interface EventRecord {
     callback: Function;
@@ -6,7 +7,7 @@ interface EventRecord {
 }
 const eventRecord: EventRecord = {
     callback: () => { },
-    stamp: ''
+    stamp: '',
 }
 type ResultCallback = (returnedValue: any) => boolean;
 const resultCallback: ResultCallback = (returnedValue: any) => false;
@@ -32,14 +33,27 @@ export class CommonEvent<F extends (...arg: any) => any> {
         this.isSingleEvent = isSingleEvent;
     }
 
-    on(callback: F, stamp: string = uniqOpt.guid): string {
+    /**
+     * 
+     * @param callback 
+     * @param uc give usercontrol reference if want to remove event from event caller list when given `Usercontrol` close
+     * @param stamp 
+     * @returns 
+     */
+    on(callback: F,uc?:Usercontrol, stamp: string = uniqOpt.guid): string {
         if (this.isSingleEvent) this._eventList = [];
         this.onCounter++;
-        //let row: EventRecord = objectOpt.clone(eventRecord);
+        let index = this._eventList.length;
+        let _this = this;
         this._eventList.push({
             callback: callback as Function,
             stamp: stamp
         });
+        if (uc != undefined) {
+            uc.ucExtends.Events.afterClose.on(() => { 
+                _this._eventList.splice(index, 1);
+            },undefined);
+        }
         this.Events.onChangeEventList();
         return stamp;
     }

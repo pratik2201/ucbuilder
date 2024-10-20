@@ -30,7 +30,7 @@ const patternList: PatternList = {
   styleCommentRegs: /\/\*([\s\S]*?)\*\//gi,
   subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gim,
   themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
-  stylesFilterPattern: /(animation-name|\$[lgi]-\w+)\s*:\s*(.*?)\s*;/gim,
+  stylesFilterPattern: /(animation-name|\$[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
   varValuePrinterPattern: /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\)\s*\;/gim,
   varValueGetterPattern:/(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
   scopeSelector: /\[SELF_]/gm,
@@ -199,21 +199,37 @@ export class stylerRegs {
     );
 
     rtrn = rtrn.trim().replace(/(;|,|{|})[\n\r ]*/gi, "$1 ");
-
+    let extraTextAtBegining = "";
     rtrn = this.opnClsr.doTask(
       "{",
       "}",
       rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
         if (count == 1) {
+          let sel = '';
+          //console.log("<==================== ");
+          selectorText = selectorText.replace(/(.*?)([^;]*?)$/gim, (m,extraText, slctr) => {
+            extraTextAtBegining += " " + extraText;
+          //  console.log([m,extraText, slctr]);
+          //  console.log(slctr);
+            sel += slctr;
+            return '';
+          });
+          sel = sel.trim();
+          //console.log("=======>  "+_params.scopeSelectorText);
+          
+         // console.log(sel);
+         // console.log(styleContent);
           return `${_this.parseScopeSeperator({
-            selectorText: selectorText,
+            selectorText: sel,
             scopeSelectorText: _params.scopeSelectorText,
             parent_stamp: pstamp_key,
             parent_stamp_value: pstamp_val,
           })}{${styleContent}} `;
         } else {
           let changed: boolean = false;
+         
+          
           selectorText.split(",").forEach((pselctor: string) => {
             pselctor.trim().replace(
               patternList.rootExcludePattern,
@@ -222,6 +238,7 @@ export class stylerRegs {
                   case ":root":
                     changed = true;
                     if (rootAlices == undefined || rootAlices == '') {
+                     
                       externalStyles.push(
                         _this.parseStyleSeperator_sub({
                           data: _params.scopeSelectorText + styleContent,
@@ -301,6 +318,9 @@ export class stylerRegs {
         }
       }
     );
+  /// console.log(extraTextAtBegining);
+    rtrn = extraTextAtBegining + '' + rtrn;
+    //debugger;
     rtrn = rtrn.replace(
       patternList.varValuePrinterPattern,
       (match: string, varName: string, defaultVal: string) => {
@@ -334,6 +354,7 @@ export class stylerRegs {
         let scope: string = ky.charAt(1);
         let uniqId: string = stylerRegs.internalKey;
         let tarEle: HTMLElement = undefined;
+       // debugger;
         switch (scope) {
           case "g":
             uniqId = '' + _this.rootInfo.id;
@@ -350,7 +371,7 @@ export class stylerRegs {
         }
         let key = ky.substring(3).trim();
         stylerRegs.__VAR.SETVALUE({ [key] : value }, uniqId, scope,tarEle );
-        return ';';
+        return '';
       }
     );
     rtrn = rtrn.replace(

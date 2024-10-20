@@ -103,14 +103,16 @@ export class Usercontrol {
         set caption(text: string) {
             this.designer.setCaption(text);
         },
-        find(skey: string): HTMLElement[] {
+        find:(skey: string): HTMLElement[] =>{
             let ar = skey.split(',');
-            let uniqStamp = this.stampRow.uniqStamp;
+            let _this = this.ucExtends;
+            let uniqStamp = _this.stampRow.uniqStamp;
             ar = ar.map((s) => {
                 s = FilterContent.select_inline_filter(s, uniqStamp);
                 return s;
             });
-            return Array.from(this.self.querySelectorAll(ar.join(",")));
+            let nodeList = _this.self.querySelectorAll(ar.join(","));
+            return Array.from(nodeList) as HTMLElement[];
         },
         garbageElementsHT: undefined as HTMLCollection,
         setCSS_globalVar: (varList: VariableList /*key: string, value: string*/): void => {

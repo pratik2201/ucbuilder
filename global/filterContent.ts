@@ -1,4 +1,4 @@
-import { attrOfUC } from "ucbuilder/global/runtimeOpt";
+import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 
 class FilterContent {
     static select_inline_Pattern: RegExp = /(["=> \w\[\]-^|#~$*.+]*)(::|:)([-\w\(\)]+)/g;
@@ -15,10 +15,11 @@ class FilterContent {
             input_string: string
         ): string {
             isReplaced = true;
-            return `${selector.trim()}[${attrOfUC.UNIQUE_STAMP}='${_guid}']${seperator}${pseudo}`;
+            //runtimeOpt_1.ATTR_OF.UC.UNIQUE_STAMP
+            return `${selector.trim()}[${ATTR_OF.UC.UNIQUE_STAMP}='${_guid}']${seperator}${pseudo}`;
         });
         if (isReplaced) return rtrn;
-        return data.trim() + `[${attrOfUC.UNIQUE_STAMP}='${_guid}']`;
+        return data.trim() + `[${ATTR_OF.UC.UNIQUE_STAMP}='${_guid}']`;
     }
 }
 
