@@ -192,7 +192,12 @@ export class Size {
             elementJQ.css({ "height": this.height, });
         }
     }
-
+    static getFullSize = (elestyle: CSSStyleDeclaration) => {
+        return {
+            width: this.getFullWidth(elestyle),
+            height: this.getFullHeight(elestyle),
+        }
+    }
     static getFullHeight = (elestyle: CSSStyleDeclaration): number => {
         return (parseFloat(elestyle.height)
             + parseFloat(elestyle.paddingBottom)
@@ -232,7 +237,7 @@ export class Size {
         HTMLEle: (ele: HTMLElement): void => {
             this.height = ele.offsetHeight;
             //console.log(ele.offsetHeight);
-            
+
             this.width = ele.offsetWidth;
         },
         JqEle: (ele: JQuery): void => {
