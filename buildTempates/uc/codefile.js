@@ -1,8 +1,15 @@
 import { R } from '{=src.rootInfo.alices}/R';
 import { {=designer.className} } from './{=codefile.className}.uc.designer';
 export class {=codefile.className} extends {=designer.className}{
-    constructor() { super();  this.initializecomponent(arguments,this);
-        
+    constructor() { super(); this.initializecomponent(arguments, this); }
+    /**
+     * USE 
+     * $(params){     
+     *      //...
+     * } METHOD TO DECLARE YOUR `constructor` 
+     * THIS METHOD CALLED AFTER COMPLETE INITIALIZATION WITH ARGUMENTS PASSED in static `Create` Method
+     */
+    $(){
         
     }
 }

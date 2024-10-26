@@ -82,6 +82,7 @@ export class Usercontrol {
     constructor() {
         Usercontrol._CSS_VAR_STAMP++;
         this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
+      
     }
 
     public ucExtends = {
@@ -206,7 +207,7 @@ export class Usercontrol {
                 }
             }
             ucExt.Events.beforeClose.on(({ prevent }) => {
-                for (let i = ucExt.dependant.length - 1; i > 0; i--) {
+                for (let i = ucExt.dependant.length - 1; i >= 0; i--) {
                     ucExt.dependant[i]?.ucExtends.destruct();
                 }
                 pucExt.dependant[ucExt.parentDependantIndex] = undefined;
@@ -244,6 +245,9 @@ export class Usercontrol {
                 this.decision = decision;
                 this.element = element;
             }
+        },
+        hide: ()=>{
+            Usercontrol.HiddenSpace.appendChild(this.ucExtends.wrapperHT);
         },
         show: ({ at = undefined, decision = undefined }: { at?: HTMLElement, decision?: WhatToDoWithTargetElement } = {}) => {
             let _extend = this.ucExtends;
@@ -358,6 +362,8 @@ export class Usercontrol {
                 }
                 this.ucExtends.Events.afterClose.fire();
                 for (const key in this) {
+                   // console.log([key,Object.getPrototypeOf(this[key]).constructor.name,this]);
+                    
                     this[key] = null;
                 }
                 return true;

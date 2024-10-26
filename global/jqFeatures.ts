@@ -260,6 +260,12 @@ class jqFeatures {
 
     static regsMng: regsManage = new regsManage();
     private static doCommonDomProto(commonPrototype: any): void {
+        commonPrototype.bindEventWithUC = function (event, handler, parentUc: Usercontrol, options)  {
+            this.addEventListener(event, handler, options);
+            parentUc.ucExtends.Events.afterClose.on(() => {
+                this.removeEventListener(event, handler); 
+            });
+        };
         commonPrototype.parseUc = function (val: Usercontrol) {
             if (val) {
                 return val.ucExtends.passElement(this);

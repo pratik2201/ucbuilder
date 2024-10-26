@@ -24,7 +24,7 @@ class intenseGenerator {
        // console.log(toSend);
         
         let uc: Usercontrol = (new (classObj)(...toSend));
-        if (uc[0]) uc[0](args);
+        if (uc['$']) uc['$'](args);
         //uc.ucExtends.Events.loaded.fire();
         return uc;
     }
