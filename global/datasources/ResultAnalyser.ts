@@ -74,24 +74,24 @@ export class ResultAnalyser<T> {
     updateSource(sortSource: boolean = false) {
         let _SortEvent = this.Event.onSortCall;
         let src = this.source;
-         if (sortSource) {
-             let cols = this.columnsToFindIn;
-             let src = this.source;
-             //const indices = Array.from(src.keys());
-             let topDefaultRows = src.splice(0, this.defaultTopIndex);
-             src.sort((a, b) => { return _SortEvent(a, b); });
-             src.unshift(...topDefaultRows);
-             //this.source = indices.map(i => src[i]) as SourceManage<T>;
-             let obj = undefined;
-             if (src.length > 0)
-                 for (let j = 0; j < src.length; j++) {
-                     obj = src[j];
-                     src.getRowByObj(obj).isModified = true;
-                     for (let i = 0; i < cols.length; i++)
-                         obj[cols[i]].reset();
-                 }
- 
-         }
+        if (sortSource) {
+            let cols = this.columnsToFindIn;
+            let src = this.source;
+            //const indices = Array.from(src.keys());
+            let topDefaultRows = src.splice(0, this.defaultTopIndex);
+            src.sort((a, b) => { return _SortEvent(a, b); });
+            src.unshift(...topDefaultRows);
+            //this.source = indices.map(i => src[i]) as SourceManage<T>;
+            let obj = undefined;
+            if (src.length > 0)
+                for (let j = 0; j < src.length; j++) {
+                    obj = src[j];
+                    src.getRowByObj(obj).isModified = true;
+                    for (let i = 0; i < cols.length; i++)
+                        obj[cols[i]].reset();
+                }
+
+        }
         //this.Event.beforeFillingRows(this.source);
         this.source.callToFill();
 
@@ -119,22 +119,37 @@ export class ResultAnalyser<T> {
         this._defaultTopIndex = value;
         this.defaultTopRows = this.source.slice(0, this.defaultTopIndex);
     }
-    filterCleared = true;
+    filterInitlized = false;
     clearFilter() {
         let src = this.source;
-        src.info.doForAll({isModified:true,
-             isVisible: undefined, searchStatus: SearchStatus.notFound });
+        src.info.doForAll({
+            isModified: true,
+            isVisible: undefined, searchStatus: SearchStatus.notFound
+        });
         src.clear();
         src.push(...src.originalSource);
         this.updateSource(true);
-        this.filterCleared = true;
+        this.lasttext = '';
+        this.filterInitlized = false;
     }
+    lasttext = "";
     filter(text: string) {
-        console.log(text);
-        
         text = text.trim();
-        let src = this.source;
-        switch (text.length) {
+        let src = this.source;        
+        if (text == '') this.clearFilter();
+        else if (!text.startsWithI(this.lasttext) || this.lasttext =='') {
+            this.initFilter(text);
+        } else {
+            let snode = new SearchableItemNode();
+            snode.Text = text;
+            this.initStorageForAnalyse();
+            this.filteredSource.map(row => this.analyse(snode, row));
+            this.source.clear();
+            this.source.push(...this.defaultTopRows);
+            this.pushResultInside(snode, this.source);
+            this.updateSource();
+        }
+        /*switch (text.length) {
             case 0:
                 this.clearFilter();
 
@@ -143,8 +158,8 @@ export class ResultAnalyser<T> {
                 this.initFilter(text);
                 break;
             default:
-
-                if (this.filterCleared) { this.initFilter(text); return; }
+                //this.initFilter(text); return;
+                if (!this.filterInitlized) { this.initFilter(text); return; }
                 let snode = new SearchableItemNode();
                 snode.Text = text;
 
@@ -156,7 +171,7 @@ export class ResultAnalyser<T> {
                 this.pushResultInside(snode, this.source);
                 this.updateSource();
                 break;
-        }
+        }*/
     }
     private initFilter(text: string) {
         let snode = new SearchableItemNode();
@@ -177,7 +192,8 @@ export class ResultAnalyser<T> {
         this.source.clear();
         this.source.push(...this.defaultTopRows, ...this.filteredSource);
         this.updateSource();
-        this.filterCleared = false;
+        this.filterInitlized = true;
+        this.lasttext = text;
     }
 
     clearSources() {
