@@ -16,9 +16,10 @@ export interface BasicSize {
   width: number,
   height: number
 }
-export class RowInfo {
+export class RowInfo<K> {
   element?: HTMLElement;
   searchStatus = SearchStatus.notFound;
+  main: SourceManage<K>;
   isModified = false;
   private _isVisible = true;
   private _isVisibleDefault: boolean;
@@ -35,6 +36,9 @@ export class RowInfo {
       if (hasDefaultValue) this._isVisible = this._isVisibleDefault;
     }
   }
+  public get isHidden() {
+    return !this._isVisible;
+  }
 
   private _isSelectable = true;
   private _isSelectableDefault: boolean;
@@ -42,8 +46,6 @@ export class RowInfo {
     return this._isSelectable;
   }
   public set isSelectable(value) {
-
-
     let hasValue = value != undefined;
     let hasDefaultValue = this._isSelectableDefault != undefined;
     if (hasValue) {
@@ -52,26 +54,30 @@ export class RowInfo {
     } else {
       if (hasDefaultValue) this._isSelectable = this._isSelectableDefault;
     }
-     if(this.element!=undefined)
-    this.element.style.pointerEvents = (!this._isSelectable) ? 'none' : 'all';
+    if (this.element != undefined)
+      this.element.style.pointerEvents = (!this._isSelectable) ? 'none' : 'all';
   }
-  row: any;
+  public get isDisabled() {
+    return !this._isSelectable;
+  }
+
+  row: K;
   height = 0;
   width = 0;
   runningHeight = 0;
   index = 0;
-  filterIndex = 0;
-  get getNextSelectable(): RowInfo {
+  //filterIndex = 0;
+  get getNextSelectable(): RowInfo<K> {
     let nxt = this.next;
     if (nxt == undefined) return undefined;
-    if (nxt.isSelectable) return nxt;
+    if (nxt.isSelectable && nxt.isVisible) return nxt;
     else return nxt?.getNextSelectable;
   }
   get shouldIStopHere() {
     return this.isVisible /*&& this.isSelectable*/;
   }
-  next: RowInfo;
-  prev: RowInfo;
+  next: RowInfo<K>;
+  prev: RowInfo<K>;
 }
 type IndexType = "isAtLast" | "isAtTop" | "continue" | "undefined";
 class Info_<K> {
@@ -80,7 +86,7 @@ class Info_<K> {
   length = 0;
   height = 0;
   width = 0;
-  rows: K[] = [];
+  //rows: K[] = [];
   doForAll(s: {
     isModified?: boolean,
     isVisible?: boolean,
@@ -89,34 +95,38 @@ class Info_<K> {
   } = {}) {
     let ar = this.main;
     if (ar.length == 0) { return; }
-    let rInfo = ar.getRowByObj(ar[0]);
-    while (rInfo != undefined) {
-      Object.assign(rInfo, s);
-      rInfo = rInfo.next;
+    let src = this.main;
+    let obj: K = undefined;
+    for (let i = 0, ilen = this.main.length; i < ilen; i++) {
+      obj = src[i];
+      let rInfo = ar.getRowByObj(obj);
+      Object.assign(rInfo, s);      
     }
   }
   refresh() {
     let ar = this.main;
-    this.rows.length = 0;
+    let akey = SourceManage.ACCESS_KEY;
     this.length = 0;
     this.height = 0;
     this.width = 0;
     if (ar.length == 0) { return; }
     let rInfo = ar.getRow(0);
-    let w = 0, h = 0, len = 0,index = 0;
-
-    while (rInfo != undefined) {
-      if (rInfo.shouldIStopHere) {
-        len++;
-        h += rInfo.height;
-        rInfo.index = rInfo.filterIndex = index++;
-        rInfo.runningHeight = h;
-        w = Math.max(w, rInfo.width);
-        this.rows.push(rInfo.row);
-      }
-      rInfo = rInfo.next;
+    let w = 0, h = 0, len = 0, index = 0;
+    let obj: K = undefined;
+    let prevRow: RowInfo<K>;
+    let src = this.main;
+    this.length = this.main.length;
+    for (let i = 0, ilen = this.length; i < ilen; i++) {
+      obj = src[i];
+      prevRow = rInfo;
+      rInfo = obj[akey];
+      h += rInfo.height;
+      rInfo.index = i;
+      rInfo.runningHeight = h;
+      w = Math.max(w, rInfo.width);
+      rInfo.prev = prevRow;
+      if (i > 0) prevRow.next = rInfo;
     }
-    this.length = len;
     this.height = h;
     this.width = w;
   }
@@ -131,18 +141,20 @@ export class SourceManage<K> extends Array<K> {
       
     }, 2000);*/
   }
-  getRow(index: number): RowInfo {
-    if (!this[index]) debugger;
-    else return this[index][SourceManage.ACCESS_KEY];
+  getRow(index: number): RowInfo<K> {
+    return this[index][SourceManage.ACCESS_KEY];
+  }
+  static getRow<K>(obj: any): RowInfo<K> {
+    return obj[SourceManage.ACCESS_KEY];
   }
 
-  getRowByObj(row: K): RowInfo {
+  getRowByObj(row: K): RowInfo<K> {
     return row[SourceManage.ACCESS_KEY];
   }
-  setRow(index: number, val: RowInfo) {
+  setRow(index: number, val: RowInfo<K>) {
     let row = this[index];
     if (row) {
-      let obj = row[SourceManage.ACCESS_KEY] as RowInfo;
+      let obj = row[SourceManage.ACCESS_KEY] as RowInfo<K>;
       row[SourceManage.ACCESS_KEY] = val;
     }
   }
@@ -156,10 +168,12 @@ export class SourceManage<K> extends Array<K> {
     //this.rowInfo.length = 0;
     //this.update();
   }
-   getBottomIndex(topIndex: number, containerHeight: number, { length = undefined, overflowed = false }: { length?: number, overflowed?: boolean }): { index: number, status: IndexType } {
+  getBottomIndex(topIndex: number, containerHeight: number, { length = undefined, overflowed = false }: { length?: number, overflowed?: boolean }): { index: number, status: IndexType } {
     let h = 0;
     let len = length ? length : this.length;
     let i = topIndex;
+
+
     for (; i <= len - 1; i++) {
       h += this.getRow(i).height;
       if (h > containerHeight) break;
@@ -202,9 +216,9 @@ export class SourceManage<K> extends Array<K> {
     }
     return topPoint == 0 ? 0 : i + 1;
   }
-  loop_RowInfo(callback = (row: K, info: RowInfo, index: number) => { }) {
+  loop_RowInfo(callback = (row: K, info: RowInfo<K>, index: number) => { }) {
     console.log('loop_RowInfo...called');
-    let rInfo: RowInfo;
+    let rInfo: RowInfo<K>;
     let src = this;
     let akey = SourceManage.ACCESS_KEY;
     let obj: K = undefined;
@@ -221,68 +235,56 @@ export class SourceManage<K> extends Array<K> {
       callback(src[i], rInfo, i);
     }
     this.init_all_rows();
-    this.onUpdateRowInfo.fire();
+  }
+  static StickRow<K>(obj: any): RowInfo<K> {
+    let akey = this.ACCESS_KEY;
+    let rInfo: RowInfo<K> = obj[akey] ?? new RowInfo();
+    obj[akey] = rInfo;
+    rInfo.row = obj;
+    return rInfo;
+  }
+  StickRow(obj: K): RowInfo<K> {
+    let akey = SourceManage.ACCESS_KEY;
+    let rInfo: RowInfo<K> = obj[akey] ?? new RowInfo();
+    obj[akey] = rInfo;
+    rInfo.row = obj;
+    //rInfo.main = this;
+    return rInfo;
   }
   private init_all_rows() {
-    let rInfo: RowInfo;
+    let rInfo: RowInfo<K>;
     let akey = SourceManage.ACCESS_KEY;
     let obj: K = undefined;
-    let prevRow: RowInfo;
+    //let prevRow: RowInfo;
     this.originalSource.length = 0;
     for (let i = 0, len = this.length; i < len; i++) {
       obj = this[i];
       this.originalSource.push(obj);
-      prevRow = rInfo;
-      rInfo = obj[akey] ?? new RowInfo();
-      obj[akey] = rInfo;
-      rInfo.index = i;
-      rInfo.row = obj;
-      rInfo.prev = prevRow;
-      /*if (i == 14 || i == 24 || i == 35 || i == 29 || i == 0 || i == 396) {
-        rInfo.isSelectable = false;
-      }*/
-      if (i > 0) prevRow.next = rInfo;
-      rInfo.filterIndex = i;
-      rInfo.element?.data(SourceIndexElementAttr, i);
+      rInfo = this.StickRow(obj);  
+      rInfo.main = this;
     }
     this.info.refresh();
-    console.log(this.length);
+    //console.log(this.length);
   }
-  
-  /*private measure_all_size() {
-    let w: number = 0, h: number = 0;
-    let rInfo: RowInfo; let akey = SourceManage.ACCESS_KEY;
-    for (let i = 0, len = this.length; i < len; i++) {
-      let obj = this[i];
-      rInfo = obj[akey];
-      h += rInfo.height;
-      w = Math.max(w, rInfo.width);
-      rInfo.runningHeight = h;
-    }
-    this.allElementSize = {
-      width: w,
-      height: h
-    };
-  }*/
+
   ihaveCompletedByMySide() {
     let len = this.length;
 
     this.init_all_rows();
-    this.onCompleteUserSide.fire([len]);
+    this.onCompleteUserSide.fire();
     this.onUpdate.fire([len]);
   }
   originalSource: K[] = []
   callToFill(...indexes) {
     let len = this.length;
     for (let i = 0; i < indexes.length; i++) {
-      let row = this[indexes[i]][SourceManage.ACCESS_KEY] as RowInfo;
+      let row = this[indexes[i]][SourceManage.ACCESS_KEY] as RowInfo<K>;
       if (row) row.isModified = true;
     }
     this.info.refresh();
     this.onUpdate.fire([len]);
   }
   static ACCESS_KEY = uniqOpt.guid;
-  onCompleteUserSide = new CommonEvent<(arrayLen: number) => void>();
   onUpdate = new CommonEvent<(arrayLen: number) => void>();
-  onUpdateRowInfo = new CommonEvent<() => void>();
+  onCompleteUserSide = new CommonEvent<() => void>(); 
 };

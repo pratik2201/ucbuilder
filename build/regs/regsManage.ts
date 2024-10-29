@@ -3,6 +3,7 @@ import { loopRegs } from "ucbuilder/build/regs/process/loopRegs";
 import { switchRegs } from "ucbuilder/build/regs/process/switchRegs";
 import { objectOpt } from "ucbuilder/build/common";
 import { patternMatcher } from "ucbuilder/build/regs/patternMatcher";
+import { SourceManage } from "ucbuilder/global/datasources/SourceManage";
 
 class regsManage {
     private switchRgx: switchRegs;
@@ -55,23 +56,27 @@ class regsManage {
         });
         return this._GET_CELL_VAL(node, res);
     }
-
+    tText = undefined;
     /**
      * 
      * @param {string} content 
      * @param {{}} node 
      * @returns {string}
      */
-    private _GET_CELL_VAL(node: {}, content: string): string {
+    private _GET_CELL_VAL(node, content: string): string {        
         return content.replace(this.tableColCellPattern,  (
             match: string,
             cellName: string,
             offset: number,
             input_string: string
-        ):string => {
-            return (cellName == ".") ? ''+ node : ''+objectOpt.getValByNameSpace(node, cellName);
+        ): string => {
+            if (cellName.startsWith(".")) {
+                if (cellName == ".") return node;
+                else return ''+objectOpt.getValByNameSpace(node[SourceManage.ACCESS_KEY], cellName.substring(1));   
+            } else return ''+objectOpt.getValByNameSpace(node, cellName);            
         });
     }
+
 }
 
 export { regsManage };

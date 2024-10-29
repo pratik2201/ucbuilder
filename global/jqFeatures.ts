@@ -136,7 +136,39 @@ class dataManager {
         }
     }
 }
+/**
+ * Produces a function which uses template strings to do simple interpolation from objects.
+ * 
+ * Usage:
+ *    var makeMeKing = generateTemplateString('${name} is now the king of ${country}!');
+ * 
+ *    console.log(makeMeKing({ name: 'Bryan', country: 'Scotland'}));
+ *    // Logs 'Bryan is now the king of Scotland!'
+ */
+var generateTemplateString = (function(){
+    var cache = {};
 
+    function generateTemplate(template){
+        var fn = cache[template];
+
+        if (!fn){
+            // Replace ${expressions} (etc) with ${map.expressions}.
+
+            var sanitized = template
+                .replace(/\$\{([\s]*[^;\s\{]+[\s]*)\}/g, function(_, match){
+                    return `\$\{map.${match.trim()}\}`;
+                    })
+                // Afterwards, replace anything that's not ${map.expressions}' (etc) with a blank string.
+                .replace(/(\$\{(?!map\.)[^}]+\})/g, '');
+
+            fn = Function('map', `return \`${sanitized}\``);
+        }
+
+        return fn;
+    }
+
+    return generateTemplate;
+})();
 class jqFeatures {
     static isInited: boolean = false;
     static data: dataManager = new dataManager();
@@ -260,10 +292,10 @@ class jqFeatures {
 
     static regsMng: regsManage = new regsManage();
     private static doCommonDomProto(commonPrototype: any): void {
-        commonPrototype.bindEventWithUC = function (event, handler, parentUc: Usercontrol, options)  {
+        commonPrototype.bindEventWithUC = function (event, handler, parentUc: Usercontrol, options) {
             this.addEventListener(event, handler, options);
             parentUc.ucExtends.Events.afterClose.on(() => {
-                this.removeEventListener(event, handler); 
+                this.removeEventListener(event, handler);
             });
         };
         commonPrototype.parseUc = function (val: Usercontrol) {
@@ -378,6 +410,7 @@ class jqFeatures {
             });
         }
     }
+
     static init(): void {
         if (jqFeatures.isInited) return;
         //const commonPrototype = Object.assign({}, HTMLElement.prototype, Element.prototype, EventTarget.prototype);
@@ -424,7 +457,9 @@ class jqFeatures {
                 });
             });
         }
-
+        Array.prototype.distinct = function <K>(): Array<K> {
+            return (new Set(this)) as unknown as Array<K>;
+        }
         SVGElement.prototype.data = function (key?: string, value?: any): any {
             switch (arguments.length) {
                 case 0:
@@ -477,6 +512,21 @@ class jqFeatures {
                     return b.toUpperCase();
                 });
 
+        }
+        
+        String.prototype.templateBind = function (row) {
+           
+            return generateTemplateString(this)(row);
+            //return eval('`' + this + '`');
+            /*const names = Object.keys(params);
+            const vals = Object.values(params);
+            try {
+
+                return new Function(...names, `return \`${this}\`;`)(...vals);
+            } catch {
+                debugger;
+                return '';
+            }*/
         }
         String.prototype.startsWithI = function (s) {
             return this.match(new RegExp('^' + s, 'ig')) != null;

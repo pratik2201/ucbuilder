@@ -5,6 +5,7 @@ interface EventTarget  {
     find(selector: string, exclude?: string): HTMLElement[],
     fireEvent<K extends keyof HTMLElementEventMap>(eventName: K, bubble?: boolean, cancable?: boolean): void,
     delete(): void,
+    
     stamp(): string,
     contain(child:EventTarget):boolean,
     parseUc(uc:any):HTMLElement|HTMLElement[],
@@ -37,7 +38,8 @@ interface String {
     trim_(charlist?: string): string,
     _trim_(charlist?: string): string,
     __(jsonRow: {}): string,    
-    toCamelCase():string,
+    toCamelCase(): string,
+    templateBind(row:object):string,
     startsWithI (s: string): boolean,
     endsWithI(s: string): boolean,
     includesI(s: string): { result:boolean,log:RegExpExecArray },
@@ -50,6 +52,7 @@ interface NodeList {
 }
 interface Array<T> {
     on<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
+    distinct<T>():T[]
 }
 interface JQuery{
     css(args:any):void,

@@ -56,9 +56,9 @@ export class SearchableItemNode {
     private ignoredCharsIndexes: number[] = [];
 }
 interface analyserSource<T> {
-    foundIndexOfEqual?:number,
-    startIndexOfStartWith?:number,
-    endIndexOfStartWith?:number,
+    foundIndexOfEqual?: number,
+    startIndexOfStartWith?: number,
+    endIndexOfStartWith?: number,
     allMix: T[];
     equal: T[];
     startwith: T[];
@@ -74,24 +74,24 @@ export class ResultAnalyser<T> {
     updateSource(sortSource: boolean = false) {
         let _SortEvent = this.Event.onSortCall;
         let src = this.source;
-       /* if (sortSource) {
-            let cols = this.columnsToFindIn;
-            let src = this.source;
-            //const indices = Array.from(src.keys());
-            let topDefaultRows = src.splice(0, this.defaultTopIndex);
-            src.sort((a, b) => { return _SortEvent(a, b); });
-            src.unshift(...topDefaultRows);
-            //this.source = indices.map(i => src[i]) as SourceManage<T>;
-            let obj = undefined;
-            if (src.length > 0)
-                for (let j = 0; j < src.length; j++) {
-                    obj = src[j];
-                    src.getRowByObj(obj).isModified = true;
-                    for (let i = 0; i < cols.length; i++)
-                        obj[cols[i]].reset();
-                }
-
-        }*/
+         if (sortSource) {
+             let cols = this.columnsToFindIn;
+             let src = this.source;
+             //const indices = Array.from(src.keys());
+             let topDefaultRows = src.splice(0, this.defaultTopIndex);
+             src.sort((a, b) => { return _SortEvent(a, b); });
+             src.unshift(...topDefaultRows);
+             //this.source = indices.map(i => src[i]) as SourceManage<T>;
+             let obj = undefined;
+             if (src.length > 0)
+                 for (let j = 0; j < src.length; j++) {
+                     obj = src[j];
+                     src.getRowByObj(obj).isModified = true;
+                     for (let i = 0; i < cols.length; i++)
+                         obj[cols[i]].reset();
+                 }
+ 
+         }
         //this.Event.beforeFillingRows(this.source);
         this.source.callToFill();
 
@@ -122,13 +122,16 @@ export class ResultAnalyser<T> {
     filterCleared = true;
     clearFilter() {
         let src = this.source;
-        src.info.doForAll({isVisible:undefined,searchStatus:SearchStatus.notFound});
+        src.info.doForAll({isModified:true,
+             isVisible: undefined, searchStatus: SearchStatus.notFound });
         src.clear();
         src.push(...src.originalSource);
         this.updateSource(true);
         this.filterCleared = true;
     }
     filter(text: string) {
+        console.log(text);
+        
         text = text.trim();
         let src = this.source;
         switch (text.length) {
@@ -146,11 +149,11 @@ export class ResultAnalyser<T> {
                 snode.Text = text;
 
                 this.initStorageForAnalyse();
-                this.filteredSource.map(row => this.analyse(snode, row));
+                src.originalSource.map(row => this.analyse(snode, row));
 
                 this.source.clear();
                 this.source.push(...this.defaultTopRows);
-                this.pushResultInside(snode,this.source);
+                this.pushResultInside(snode, this.source);
                 this.updateSource();
                 break;
         }
@@ -170,7 +173,7 @@ export class ResultAnalyser<T> {
             this.analyse(snode, row);
         }
         this.filteredSource.length = 0;
-        this.pushResultInside(snode,this.filteredSource);
+        this.pushResultInside(snode, this.filteredSource);
         this.source.clear();
         this.source.push(...this.defaultTopRows, ...this.filteredSource);
         this.updateSource();
@@ -205,59 +208,46 @@ export class ResultAnalyser<T> {
         let results: AnalyseResultType[] = [];
         let cols = this.columnsToFindIn;
         let src = this.source;
-        let Robj: RowInfo; Robj = src.getRowByObj(row);
-        for (let i = 0,len = cols.length; i < len; i++) {
+        let Robj: RowInfo<T>; Robj = src.getRowByObj(row);
+        for (let i = 0, len = cols.length; i < len; i++) {
             const col = cols[i];
             let res = this.analyserStorage[col] as analyserSource<T>;
             let insideThis = row[col] as SearchableItemNode;
             Robj = src.getRowByObj(row);
             Robj.isVisible = true;
             insideThis.reset();
-            /*if (insideThis.SearchableText.equalIgnoreCase(findThis.SearchableText)) {
-                insideThis.setOutput(0, findThis.SearchableText, 'Equal');
+
+            let inTest = insideThis.SearchableText.includesI(findThis.SearchableText);
+            if (inTest.result) {
+                insideThis.setOutput(inTest.log.index, findThis.SearchableText, 'Include');
                 res.allMix.push(row);
-               // res.equal.push(row);
-                results.push('Equal');
+                //res.include.push(row);
+                results.push('Include');
                 Robj.isModified = true;
-            } else if (insideThis.SearchableText.startsWithI(findThis.SearchableText)) {
-                insideThis.setOutput(0, findThis.SearchableText, 'StartWith');
-                res.allMix.push(row);
-               // res.startwith.push(row);
-                results.push('StartWith');
-                Robj.isModified = true;
-            } else {*/
-                let inTest = insideThis.SearchableText.includesI(findThis.SearchableText);
-                if (inTest.result) {
-                    insideThis.setOutput(inTest.log.index, findThis.SearchableText, 'Include');
-                    res.allMix.push(row);
-                    //res.include.push(row);
-                    results.push('Include');
-                    Robj.isModified = true;
-                    Robj.searchStatus = SearchStatus.include;
-                }
-                else {
-                    Robj.isVisible = false;
-                    Robj.searchStatus = SearchStatus.notFound;
-                    results.push('NotFound');
-                }
-           // }
+                Robj.searchStatus = SearchStatus.include;
+            }
+            else {
+                Robj.isVisible = false;
+                Robj.searchStatus = SearchStatus.notFound;
+                results.push('NotFound');
+            }
         }
         return results;
     }
-    pushResultInside(findThis: SearchableItemNode,target = []) {
+    pushResultInside(findThis: SearchableItemNode, target = []) {
         let src = this.source;
-        let ttl: analyserSource<T> = {            
-            allMix:[],
+        let ttl: analyserSource<T> = {
+            allMix: [],
             equal: [],
             startwith: [],
             include: [],
         }
         let insideThis: SearchableItemNode;
         let cols = this.columnsToFindIn;
-        for (let i = 0,ilen = cols.length; i < ilen; i++) {
-            const col = cols[i];            
+        for (let i = 0, ilen = cols.length; i < ilen; i++) {
+            const col = cols[i];
             let res = this.analyserStorage[col] as analyserSource<T>;
-            for (let j = 0,jlen=res.allMix.length; j < jlen; j++) {
+            for (let j = 0, jlen = res.allMix.length; j < jlen; j++) {
                 const row = res.allMix[j];
                 insideThis = row[col] as SearchableItemNode;
                 let Robj = src.getRowByObj(row);
@@ -265,26 +255,27 @@ export class ResultAnalyser<T> {
                     insideThis.setOutput(0, findThis.SearchableText, 'StartWith');
                     res.startwith.push(row);
                     Robj.searchStatus = SearchStatus.startWith;
-                    Robj.isModified = true;
+
+                } else {
+                    res.include.push(row);
                 }
             }
-            for (let j = 0,jlen=res.startwith.length; j < jlen; j++) {
+            for (let j = 0, jlen = res.startwith.length; j < jlen; j++) {
                 const row = res.allMix[j];
                 insideThis = row[col] as SearchableItemNode;
                 let Robj = src.getRowByObj(row);
                 if (jlen == 1 || insideThis.SearchableText.equalIgnoreCase(findThis.SearchableText)) {
                     insideThis.setOutput(0, findThis.SearchableText, 'Equal');
-                    Robj.isModified = true;
                     Robj.searchStatus = SearchStatus.equal;
+                    res.equal.push(row);
                 }
             }
-            
-            ttl.allMix.push(...res.allMix);
+            ttl.allMix.push(...res.equal, ...res.startwith, ...res.include);
             //ttl.equal.push(...res.equal);
             //ttl.startwith.push(...res.startwith);
             //ttl.include.push(...res.include);
         }
-        target.push(...ttl.allMix,...ttl.equal, ...ttl.startwith, ...ttl.include);
+        target.push(...ttl.allMix.distinct<T>());
     }
 }
 export type AnalyseResultType = "Equal" | "StartWith" | "Include" | "NotFound";
