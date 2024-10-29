@@ -109,7 +109,7 @@ class Info_<K> {
       if (rInfo.shouldIStopHere) {
         len++;
         h += rInfo.height;
-        rInfo.filterIndex = index++;
+        rInfo.index = rInfo.filterIndex = index++;
         rInfo.runningHeight = h;
         w = Math.max(w, rInfo.width);
         this.rows.push(rInfo.row);
@@ -238,15 +238,17 @@ export class SourceManage<K> extends Array<K> {
       rInfo.index = i;
       rInfo.row = obj;
       rInfo.prev = prevRow;
-      if (i == 14 || i == 24 || i == 35 || i == 29) {
+      /*if (i == 14 || i == 24 || i == 35 || i == 29 || i == 0 || i == 396) {
         rInfo.isSelectable = false;
-      }
+      }*/
       if (i > 0) prevRow.next = rInfo;
       rInfo.filterIndex = i;
       rInfo.element?.data(SourceIndexElementAttr, i);
     }
     this.info.refresh();
+    console.log(this.length);
   }
+  
   /*private measure_all_size() {
     let w: number = 0, h: number = 0;
     let rInfo: RowInfo; let akey = SourceManage.ACCESS_KEY;
