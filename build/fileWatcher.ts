@@ -3,33 +3,77 @@ import { builder } from "./builder";
 import { codeFileInfo } from "./codeFileInfo";
 
 export class fileWatcher {
-    constructor() { }
+    constructor(main: builder) { this.main = main; }
     main: builder;
-    init(main: builder) {
-        this.main = main;
-
+    init(dirPath: string) {
+        this.dirPath = dirPath;
     }
-    startWatch(fPath: string) {
-        this.watcher = fs.watch(fPath, { recursive: true }, this.watch_Listner)
+    dirPath: string = "";
+    startWatch() {
+        this.watcher = fs.watch(this.dirPath, { recursive: true }, this.watch_Listner);
     }
-    stopWatch(fPath: string) {
-        this.watcher.close();
-
+    stopWatch() {
+        if (this.watcher != undefined)
+            this.watcher.close();
     }
     watcher: fs.FSWatcher = undefined;
 
     watch_Listner = (evt: fs.WatchEventType, filepath: string) => {
-        filepath = filepath.toLowerCase();
-        if (filepath.endsWith(codeFileInfo.___DESIGNER_EXT) || filepath.endsWith(codeFileInfo.___DESIGNER_SRC_EXT)) {
+        if (filepath == null || filepath == undefined) return;
+        filepath = filepath;
+        if (filepath.endsWithI(codeFileInfo.___DESIGNER_EXT) || filepath.endsWithI(codeFileInfo.___DESIGNER_SRC_EXT)) {
             switch (evt) {
-                case "change":
-                    console.log(`CHANGED :- ${filepath}`);
+                //case "change":
+                //    console.log(`CHANGED :- ${filepath}`);
 
-                    break;
+                //    break;
                 case "rename":
-                    console.log(`RENAMED :- ${filepath}`);
+                    this.checkFile(filepath);
                     break;
             }
         }
     };
+    static oPath = /_FILE_PATH\s*=\s*window\s*\.\s*atob\s*\(\s*('|"|`)(.*?)\1\s*\)/gm;
+    static getFilePathFromDesigner(content: string):string|undefined {
+        let match = content.matchAll(this.oPath);
+        let rval = match.next();
+        let key = rval.value[2];
+        return key;
+    }
+    generatingIsInProcess = false;
+    checkFile(fpath: string) {
+        let _this = this;
+        let fullpath = this.dirPath + '/' + fpath.toFilePath();
+        
+        if (fs.existsSync(fullpath)) {
+            let content = fs.readFileSync(fullpath, 'binary');
+            
+            let key = fileWatcher.getFilePathFromDesigner(content);
+            if (key!=undefined) {
+                let fpath = window.atob(key);
+                let cfile = new codeFileInfo(codeFileInfo.getExtType(fullpath));
+                cfile.parseUrl(fullpath);
+                if (!cfile.mainFileRootPath.equalIgnoreCase(fpath)) {
+                    this.main.commonMng.pathReplacement.push({
+                        findPath: fpath,
+                        replaceWith: cfile.mainFileRootPath
+                    });
+                    console.log(this.main.commonMng.pathReplacement.length);
+
+                    if (this.main.commonMng.pathReplacement.length > 0) {
+                        if (_this.generatingIsInProcess) return;
+                        this.generatingIsInProcess = true;
+                        setTimeout(() => {
+
+                            _this.main.renameFiles();
+                            _this.main.commonMng.rows.length = 0;
+                            _this.main.buildALL(false);
+                            _this.generatingIsInProcess = false;
+                        }, 2000)
+                    }
+                }
+            }
+        }
+
+    }
 }

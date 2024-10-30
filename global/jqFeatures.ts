@@ -486,9 +486,12 @@ class jqFeatures {
             }
             return arr.join("")
         }
+        String.prototype.escapeRegs = function (){
+            return this.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+        }
         String.prototype.replaceAllWithResult = function (find, replace) {
             let hasReplaced = false;
-            let content = this.replace(new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), () => {
+            let content = this.replace(new RegExp(find.escapeRegs(), 'gi'), () => {
                 hasReplaced = true;
                 return replace;
             });
@@ -539,13 +542,13 @@ class jqFeatures {
             }*/
         }
         String.prototype.startsWithI = function (s) {
-            return this.match(new RegExp('^' + s, 'ig')) != null;
+            return this.match(new RegExp('^' + s.escapeRegs(), 'ig')) != null;
         }
         String.prototype.endsWithI = function (s) {
-            return this.match(new RegExp(s + '$', 'ig')) != null;
+            return this.match(new RegExp(s.escapeRegs() + '$', 'ig')) != null;
         }
         String.prototype.includesI = function (s) {
-            let res = new RegExp(s, 'ig').exec(this);
+            let res = new RegExp(s.escapeRegs(), 'ig').exec(this);
             return {
                 result: res != null,
                 log: res

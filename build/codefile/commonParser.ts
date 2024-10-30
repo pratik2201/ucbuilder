@@ -62,8 +62,8 @@ export class commonParser {
             let tptbyCntnt = Template.getTemplates.byDirectory(filePath) as TemplatePathOptions[];
             let tpts = _row.designer.templetes;
             tptbyCntnt.forEach(template => {
-                let rolelwr = template.name.toLowerCase();
-                if (tpts.findIndex(s => s.name.toLowerCase() == rolelwr) != -1) return;
+                let rolelwr = template.name;
+                if (tpts.findIndex(s => s.name.equalIgnoreCase(rolelwr)) != -1) return;
                 let controls: Control[] = [];
                 let cntHT = template.htmlContents.$() as HTMLElement;
                 let _htEleAr = Array.from(cntHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
@@ -108,6 +108,9 @@ export class commonParser {
 
                     let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath));
                     uFInf.parseUrl(_subpath);
+                    //if(_row.src.fullPathWithoutExt.includes())
+                    //console.log(_row.src);
+                    
                    /* let fItem = this.pathReplacement.find(s => s.findPath.equalIgnoreCase(uFInf.mainFileRootPath));
                     if (fItem!=undefined) {
                         ele.setAttribute('x-from', fItem.replaceWith);

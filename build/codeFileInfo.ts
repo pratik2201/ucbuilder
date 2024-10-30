@@ -317,4 +317,5 @@ export class codeFileInfo {
         // console.log(this);
         return true;
     }
+    get mainFileRootPath_btoa() { return window.btoa(this.mainFileRootPath); }
 }

@@ -7,7 +7,13 @@ import { {=src.name} } from './{=src.name}.uc';
 
 
 export class {=designer.className } extends Usercontrol {    
-    static FILE_PATH = `{=src.mainFileRootPath}`;
+    /**  {=src.mainFileRootPath}
+     *  AUTO RENAMING IS DEPEND ON `_FILE_PATH` SO KEEP YOUR SELF FAR FROM THIS :-)
+     */
+    private static _FILE_PATH = window.atob('{=src.mainFileRootPath_btoa}');
+    public static get FILE_PATH() {
+        return Designer._FILE_PATH;
+    }
     static get giveMeHug(): string {
         return Usercontrol.giveMeHug;
     }

@@ -34,7 +34,7 @@ interface String {
     parseUc<T=import ("ucbuilder/Usercontrol").Usercontrol>(uc:T):string,
     toFilePath(): string,
     replaceAllWithResult(find:string,replace:string): {result:string,hasReplaced:boolean},
-    
+    escapeRegs():string,
     getDriveFromPath():string|undefined,
     _trim(charlist?: string): string,
     trim_(charlist?: string): string,
