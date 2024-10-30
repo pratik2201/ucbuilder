@@ -14,7 +14,9 @@ class {=name}_TEMPLATE extends TemplateNode{
 }
 `{/loopcls}`
 
-export class {=designer.className} extends Template {
+export class {=designer.className } extends Template {
+    static FILE_PATH = `{=src.mainFileRootPath}`;
+    
     `{looptpt=designer.templetes} 
     `    
     public {=name}:{=name}_TEMPLATE; 

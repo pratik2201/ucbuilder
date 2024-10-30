@@ -12,7 +12,12 @@ import { ResourcesUC } from 'ucbuilder/ResourcesUC';
 
 export class commonParser {
 
+    reset() {
+        this.rows.length = 0;
+        this.pathReplacement.length = 0;
+    }
     rows: CommonRow[] = [];
+    pathReplacement:{findPath:string,replaceWith:string}[] = [];
     bldr: builder;
     gen: commonGenerator;
     constructor(bldr: builder) {
@@ -34,19 +39,18 @@ export class commonParser {
         let _this = this;
         _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
         if (!_row.src.parseUrl(filePath)) return undefined;
-
+        
+        
+        //FileDataBank.readFile()
+        
         let code = (htmlContents == undefined) ? FileDataBank.readFile(_row.src.html.rootPath, {
             replaceContentWithKeys: false
         }) : htmlContents;
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
 
-        let req = ResourcesUC.codefilelist.getObj(_row.src.designer.rootPath);
-        if(!_row.src.mainFileRootPath.equalIgnoreCase(req.obj.FILE_PATH))
-            console.log(_row.src.mainFileRootPath+"\n"+req.obj.FILE_PATH);
         
-
         this.formHT = code.$() as HTMLElement;
-
+        
         this.aliceMng.fillAlices(this.formHT);
         _row.designer.className =
             _row.codefile.baseClassName = "Designer";
@@ -103,8 +107,14 @@ export class commonParser {
                     let _subpath = ele.getAttribute("x-from");
 
                     let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath));
-
                     uFInf.parseUrl(_subpath);
+                   /* let fItem = this.pathReplacement.find(s => s.findPath.equalIgnoreCase(uFInf.mainFileRootPath));
+                    if (fItem!=undefined) {
+                        ele.setAttribute('x-from', fItem.replaceWith);
+                        _row.htmlFile.content = this.formHT.outerHTML;
+                        _row.htmlFile.reGenerate = true;
+                    }*/
+                    
                     //console.log(_subpath);
                     //console.log(uFInf.mainFileRootPath);
                     if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {

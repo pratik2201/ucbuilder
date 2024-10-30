@@ -145,19 +145,19 @@ class dataManager {
  *    console.log(makeMeKing({ name: 'Bryan', country: 'Scotland'}));
  *    // Logs 'Bryan is now the king of Scotland!'
  */
-var generateTemplateString = (function(){
+var generateTemplateString = (function () {
     var cache = {};
 
-    function generateTemplate(template){
+    function generateTemplate(template) {
         var fn = cache[template];
 
-        if (!fn){
+        if (!fn) {
             // Replace ${expressions} (etc) with ${map.expressions}.
 
             var sanitized = template
-                .replace(/\$\{([\s]*[^;\s\{]+[\s]*)\}/g, function(_, match){
+                .replace(/\$\{([\s]*[^;\s\{]+[\s]*)\}/g, function (_, match) {
                     return `\$\{map.${match.trim()}\}`;
-                    })
+                })
                 // Afterwards, replace anything that's not ${map.expressions}' (etc) with a blank string.
                 .replace(/(\$\{(?!map\.)[^}]+\})/g, '');
 
@@ -486,7 +486,17 @@ class jqFeatures {
             }
             return arr.join("")
         }
-
+        String.prototype.replaceAllWithResult = function (find, replace) {
+            let hasReplaced = false;
+            let content = this.replace(new RegExp(find.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'), 'g'), () => {
+                hasReplaced = true;
+                return replace;
+            });
+            return {
+                result: content,
+                hasReplaced:hasReplaced
+            }
+        }
         String.prototype.$ = function (): HTMLElement {
             var div = document.createElement('pre');
             div.innerHTML = this.trim();
@@ -513,9 +523,9 @@ class jqFeatures {
                 });
 
         }
-        
+
         String.prototype.templateBind = function (row) {
-           
+
             return generateTemplateString(this)(row);
             //return eval('`' + this + '`');
             /*const names = Object.keys(params);

@@ -32,7 +32,9 @@ interface Number{
 interface String {
     $(): HTMLElement,
     parseUc<T=import ("ucbuilder/Usercontrol").Usercontrol>(uc:T):string,
-    toFilePath():string,
+    toFilePath(): string,
+    replaceAllWithResult(find:string,replace:string): {result:string,hasReplaced:boolean},
+    
     getDriveFromPath():string|undefined,
     _trim(charlist?: string): string,
     trim_(charlist?: string): string,
