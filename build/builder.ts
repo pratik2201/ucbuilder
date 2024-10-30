@@ -5,6 +5,7 @@ import { codeFileInfo } from 'ucbuilder/build/codeFileInfo';
 import * as path from 'path';
 import { ResourcesUC } from 'ucbuilder/ResourcesUC';
 import { FileDataBank } from 'ucbuilder/global/fileDataBank';
+import { fileWatcher } from './fileWatcher';
 
 
 export class builder {
@@ -18,11 +19,12 @@ export class builder {
     static addThisDirectories(...pathlist: string[]) {
         pathlist.forEach((s: string) => this.dirsToBuild.push(s));
     }
-
+    
+    filewatcher: fileWatcher = new fileWatcher();
     commonMng: commonParser;
-
     constructor() {
         this.init();
+        this.filewatcher.init(this);
     }
 
     init() {
@@ -50,11 +52,15 @@ export class builder {
         builder.dirsToBuild.forEach((s: string) => this.recursive(s, (filePath) => {
             let partInfo = pathInfo.getFileInfoPartly(filePath);
             let ext = partInfo.extension;
-            if (ext == undefined || partInfo.type == '.js') return;
-            if (ext.startsWith(SpecialExtEnum.uc) || ext.startsWith(SpecialExtEnum.tpt)) {
+            if (ext == undefined ) return;
+            if (ext.startsWith(SpecialExtEnum.uc) ||
+                ext.startsWith(SpecialExtEnum.tpt) ||
+                partInfo.type == '.ts') {
                 let content = fs.readFileSync(filePath, 'binary');
                 pathReplacement.forEach(s => {
                     let res = content.replaceAllWithResult(s.findPath, s.replaceWith);
+                    console.log(res);
+                    
                     if (res.hasReplaced) {
                         fs.writeFileSync(filePath, res.result, 'binary');
                     }
