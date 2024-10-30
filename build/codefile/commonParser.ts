@@ -8,6 +8,7 @@ import { AliceManager } from 'ucbuilder/build/codefile/aliceManager';
 import { Template } from 'ucbuilder/Template';
 import { builder } from 'ucbuilder/build/builder';
 import { TemplatePathOptions } from 'ucbuilder/enumAndMore';
+import { ResourcesUC } from 'ucbuilder/ResourcesUC';
 
 export class commonParser {
 
@@ -39,8 +40,10 @@ export class commonParser {
         }) : htmlContents;
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
 
-
-
+        let req = ResourcesUC.codefilelist.getObj(_row.src.designer.rootPath);
+        if(!_row.src.mainFileRootPath.equalIgnoreCase(req.obj.FILE_PATH))
+            console.log(_row.src.mainFileRootPath+"\n"+req.obj.FILE_PATH);
+        
 
         this.formHT = code.$() as HTMLElement;
 
