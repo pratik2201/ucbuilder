@@ -49,6 +49,8 @@ export class fileWatcher {
     checkFile() {
         let _this = this;
         _this.generatingIsInProcess = true;
+        console.log(this.filesInQueue.distinct()); return;
+        
         let pathlist = (this.filesInQueue.distinct()).filter(s => s.endsWithI(codeFileInfo.___DESIGNER_EXT));
 
         setTimeout(() => {
