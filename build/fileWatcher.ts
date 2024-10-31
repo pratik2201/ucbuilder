@@ -1,4 +1,4 @@
-import fs from "fs";
+import fs, { readFileSync } from "fs";
 import { builder } from "./builder";
 import { codeFileInfo } from "./codeFileInfo";
 
@@ -19,7 +19,7 @@ export class fileWatcher {
     watcher: fs.FSWatcher = undefined;
 
     watch_Listner = (evt: fs.WatchEventType, filepath: string) => {
-        
+
         if (filepath == null || filepath == undefined || filepath.startsWith('.git')) return;
         filepath = filepath;
         if (filepath.endsWithI(codeFileInfo.___DESIGNER_EXT) || filepath.endsWithI(codeFileInfo.___DESIGNER_SRC_EXT)) {
@@ -30,39 +30,70 @@ export class fileWatcher {
                 //    break;
                 case "rename":
                     let fullpath = (this.dirPath + '/' + filepath).toFilePath();
-                    this.filesInQueue.push(fullpath);
-                    if (this.generatingIsInProcess) return;
-                    this.checkFile();
+                    //this.filesInQueue.push(fullpath);
+                    //if (this.generatingIsInProcess) return;
+                    this.checkFile(fullpath);
                     break;
             }
         }
     };
     static oPath = /_FILE_PATH\s*=\s*window\s*\.\s*atob\s*\(\s*('|"|`)(.*?)\1\s*\)/gm;
-    static getFilePathFromDesigner(content: string):string|undefined {
+    static getFilePathFromDesigner(content: string): string | undefined {
         let match = content.matchAll(this.oPath);
         let rval = match.next();
+
         let key = rval.value[2];
         return key;
     }
     generatingIsInProcess = false;
-    filesInQueue:string[] = [];
-    checkFile() {
+    filesInQueue: string[] = [];
+    checkFile(currentPath: string) {
         let _this = this;
         _this.generatingIsInProcess = true;
-        console.log(this.filesInQueue.distinct()); return;
-        
-        let pathlist = (this.filesInQueue.distinct()).filter(s => s.endsWithI(codeFileInfo.___DESIGNER_EXT));
+        //console.log(this.filesInQueue);
 
-        setTimeout(() => {
-            console.log('called.');
-            
-            for (let i = 0; i < pathlist.length; i++) {
-                const _path = pathlist[i];
-                console.log([pathlist.length,_path]);
-            }
+        //if (this.filesInQueue.length == 0) return;
+        //let pathlist = (this.filesInQueue.distinct()).filter(s => s.endsWithI(codeFileInfo.___DESIGNER_EXT));
+        //this.filesInQueue.length = 0;
+        //setTimeout(() => {
+        console.log('called.');
+        //for (let i = 0; i < pathlist.length; i++) {
+        //const currentPath = pathlist[i];
+        if (!fs.existsSync(currentPath)) return;
+        let key = fileWatcher.getFilePathFromDesigner(fs.readFileSync(currentPath, 'binary'));
+        if (key == undefined) return;
+
+        let oldPath = window.atob(key);
+        let cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
+        cFinfo.parseUrl(currentPath);
+        let oFinfo = new codeFileInfo(codeFileInfo.getExtType(oldPath));
+        oFinfo.parseUrl(oldPath);
+        if (!oFinfo.mainFileRootPath.equalIgnoreCase(cFinfo.mainFileRootPath)) {
+            _this.stopWatch();
+            //  sharepnl/sampleForm/buttons/rightSide/rightButtonManage.uc
+            let oNameSpace = 'R.'+(oFinfo.mainFileRootPath.split('/').slice(1,-1)).join('.');
+            let cNameSpace = 'R.' + (cFinfo.mainFileRootPath.split('/').slice(1, -1)).join('.');
+            this.main.commonMng.pathReplacement.push({
+                findPath: oNameSpace,
+                replaceWith:cNameSpace,
+            })
+            this.main.commonMng.pathReplacement.push({
+                findPath: oFinfo.mainFileRootPath,
+                replaceWith: cFinfo.mainFileRootPath
+            });
+            _this.main.renameFiles();
+            _this.main.commonMng.rows.length = 0;
+            _this.main.buildALL(false);
             _this.generatingIsInProcess = false;
-        }, 2000)
-       
+            _this.startWatch();
+        }
+
+        //}
+        _this.generatingIsInProcess = false;
+        //     pathlist.length = 0;
+        // _this.checkFile();
+        // }, 2000)
+
         /*if (fs.existsSync(fullpath)) {
             let content = fs.readFileSync(fullpath, 'binary');            
             let key = fileWatcher.getFilePathFromDesigner(content);

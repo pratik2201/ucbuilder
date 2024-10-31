@@ -44,7 +44,8 @@ export class commonParser {
         //FileDataBank.readFile()
         
         let code = (htmlContents == undefined) ? FileDataBank.readFile(_row.src.html.rootPath, {
-            replaceContentWithKeys: false
+            replaceContentWithKeys: false,
+            reloadData:true,
         }) : htmlContents;
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
 

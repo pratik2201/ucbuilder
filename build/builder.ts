@@ -59,7 +59,7 @@ export class builder {
     }
     renameFiles() {
     let pathReplacement = this.commonMng.pathReplacement;
-    console.log(pathReplacement);
+   // console.log(pathReplacement);
         builder.dirsToBuild.forEach((s: string) => this.recursive(s, (filePath) => {
         let partInfo = pathInfo.getFileInfoPartly(filePath);
         let ext = partInfo.extension;
@@ -71,7 +71,7 @@ export class builder {
             pathReplacement.forEach(s => {
                 let res = content.replaceAllWithResult(s.findPath, s.replaceWith);
                 if (res.hasReplaced) {
-                    console.log(res);
+                   // console.log('changes.. in ('+filePath+')');
                     fs.writeFileSync(filePath, res.result, 'binary');
                 }
             });
