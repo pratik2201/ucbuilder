@@ -1,7 +1,7 @@
 import fs, { readFileSync } from "fs";
 import { builder } from "ucbuilder/build/builder";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
-import { SpecialExtEnum } from "./common";
+import { SpecialExtEnum } from "ucbuilder/build/common";
 
 export class fileWatcher {
     constructor(main: builder) { this.main = main; }
@@ -44,6 +44,7 @@ export class fileWatcher {
         let _this = this;
         if (currentPath.endsWithI(SpecialExtEnum.uc + '.html') || currentPath.endsWithI(SpecialExtEnum.tpt + '.html')) {
             let cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
+            cFinfo.parseUrl(currentPath);
             _this.stopWatch();
             _this.main.commonMng.rows.length = 0;
             _this.main.buildFile(cFinfo);
