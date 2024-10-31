@@ -1,6 +1,7 @@
 import fs, { readFileSync } from "fs";
 import { builder } from "ucbuilder/build/builder";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
+import { SpecialExtEnum } from "./common";
 
 export class fileWatcher {
     constructor(main: builder) { this.main = main; }
@@ -11,9 +12,9 @@ export class fileWatcher {
     dirPath: string = "";
     startWatch() {
         let _this = this;
-      //  setTimeout(() => {
-            _this.watcher = fs.watch(_this.dirPath, { recursive: true }, _this.watch_Listner);
-      //  },4000);
+        //  setTimeout(() => {
+        _this.watcher = fs.watch(_this.dirPath, { recursive: true }, _this.watch_Listner);
+        //  },4000);
     }
     stopWatch() {
         if (this.watcher != undefined)
@@ -25,46 +26,48 @@ export class fileWatcher {
 
         if (filepath == null || filepath == undefined || filepath.startsWith('.git')) return;
         filepath = filepath;
-        if (filepath.endsWithI(codeFileInfo.___DESIGNER_EXT)) {
+        if (filepath.endsWithI(codeFileInfo.___DESIGNER_EXT) ||
+            filepath.endsWithI(SpecialExtEnum.uc + '.html') ||
+            filepath.endsWithI(SpecialExtEnum.tpt + '.html')) {
             switch (evt) {
-                //case "change":
-                //    console.log(`CHANGED :- ${filepath}`);
-
-                //    break;
-                case "rename":
-                    let fullpath = (this.dirPath + '/' + filepath).toFilePath();
-                    //this.filesInQueue.push(fullpath);
-                    //if (this.generatingIsInProcess) return;
-                    this.checkFile(fullpath);
+                case "change":
+                    
+                    this.CHECK_FILE_MODIFIED((this.dirPath + '/' + filepath).toFilePath());
+                    break;
+                case "rename": // IF FILE CHANGED...
+                    this.CHECK_FILE_MOVE((this.dirPath + '/' + filepath).toFilePath());
                     break;
             }
         }
     };
+    CHECK_FILE_MODIFIED(currentPath: string) {
+        let _this = this;
+        if (currentPath.endsWithI(SpecialExtEnum.uc + '.html') || currentPath.endsWithI(SpecialExtEnum.tpt + '.html')) {
+            let cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
+            _this.stopWatch();
+            _this.main.commonMng.rows.length = 0;
+            _this.main.buildFile(cFinfo);
+            _this.generatingIsInProcess = false;
+            _this.startWatch();
+        }
+    }
     static oPath = /_FILE_PATH\s*=\s*\s*('|"|`)(.*?)\1\s*/gm;
     static getFilePathFromDesigner(content: string): string | undefined {
         let match = content.matchAll(this.oPath);
-        let rval = match.next();        
+        let rval = match.next();
         let key = rval?.value[2];
         return key;
     }
     generatingIsInProcess = false;
     filesInQueue: string[] = [];
-    checkFile(currentPath: string) {
+    CHECK_FILE_MOVE(currentPath: string) {
         let _this = this;
         _this.generatingIsInProcess = true;
         console.log('__FILE_WATCHER___ CALLED..');
-
-        //if (this.filesInQueue.length == 0) return;
-        //let pathlist = (this.filesInQueue.distinct()).filter(s => s.endsWithI(codeFileInfo.___DESIGNER_EXT));
-        //this.filesInQueue.length = 0;
-        //setTimeout(() => {
         console.log('called.');
-        //for (let i = 0; i < pathlist.length; i++) {
-        //const currentPath = pathlist[i];
         if (!fs.existsSync(currentPath)) return;
         let key = fileWatcher.getFilePathFromDesigner(fs.readFileSync(currentPath, 'binary'));
         if (key == undefined) return;
-
         let oldPath = key;//window.atob(key);
         let cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
         cFinfo.parseUrl(currentPath);
@@ -73,11 +76,11 @@ export class fileWatcher {
         if (!oFinfo.mainFileRootPath.equalIgnoreCase(cFinfo.mainFileRootPath)) {
             _this.stopWatch();
             //  sharepnl/sampleForm/buttons/rightSide/rightButtonManage.uc
-            let oNameSpace = 'R.'+(oFinfo.mainFileRootPath.split('/').slice(1,-1)).join('.');
+            let oNameSpace = 'R.' + (oFinfo.mainFileRootPath.split('/').slice(1, -1)).join('.');
             let cNameSpace = 'R.' + (cFinfo.mainFileRootPath.split('/').slice(1, -1)).join('.');
             this.main.commonMng.pathReplacement.push({
                 findPath: oNameSpace,
-                replaceWith:cNameSpace,
+                replaceWith: cNameSpace,
             })
             this.main.commonMng.pathReplacement.push({
                 findPath: oFinfo.mainFileRootPath,
