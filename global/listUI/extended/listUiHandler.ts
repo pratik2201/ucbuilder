@@ -3,7 +3,7 @@ import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { listUiSearch } from "ucbuilder/global/listUiSearch";
 import { timeoutCall } from "ucbuilder/global/timeoutCall";
 import { Usercontrol } from "ucbuilder/Usercontrol";
-import { SourceManage } from "../pager/enumAndMore";
+import { SourceManage } from "ucbuilder/global/listUI/pager/enumAndMore";
 export type ItemIndexChangeBy = "Other" | "Keyboard" | "Mouse";
 
 export class listUiHandler {

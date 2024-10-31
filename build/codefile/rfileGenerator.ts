@@ -1,10 +1,10 @@
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
-import { CommonRow } from "../buildRow";
-import { codeFileInfo } from "../codeFileInfo";
-import { objectOpt, uniqOpt } from "../common";
-import { regsManage } from "../regs/regsManage";
+import { CommonRow } from "ucbuilder/build/buildRow";
+import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
+import { objectOpt, uniqOpt } from "ucbuilder/build/common";
+import { regsManage } from "ucbuilder/build/regs/regsManage";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
-import fs from 'fs';
+import fs from "fs";
 
 export class rfileGenerator {
 

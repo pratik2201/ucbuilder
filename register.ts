@@ -3,7 +3,7 @@
  * REGISTER `ucbuilder` MODULE SO THAT CAN ACCESS LIBRARY USING `ucbuilder` KEYWORD
  */
 let _clientPath: string = __dirname.replace(/[\\/]{1,}/g, "/") + '/';
-import alc from 'module-alias';
+import alc from "module-alias";
 alc.addAlias("ucbuilder", _clientPath);
 
 /**
@@ -12,14 +12,14 @@ alc.addAlias("ucbuilder", _clientPath);
 import { jqFeatures } from "ucbuilder/global/jqFeatures";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { uniqOpt } from "ucbuilder/build/common";
-import { rootPathHandler } from 'ucbuilder/global/rootPathHandler';
+import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
-import { RootPathParam, rootPathParam } from 'ucbuilder/enumAndMore';
-import path from 'path';
-import { rootDirectoryOf, LocationOf } from './global/findAndReplace';
-import { newObjectOpt } from './global/objectOpt';
-import { Usercontrol } from './Usercontrol';
-import { winManager } from './global/winManager';
+import { RootPathParam, rootPathParam } from "ucbuilder/enumAndMore";
+import path from "path";
+import { rootDirectoryOf, LocationOf } from "ucbuilder/global/findAndReplace";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
+import { Usercontrol } from "ucbuilder/Usercontrol";
+import { winManager } from "ucbuilder/global/winManager";
 
 jqFeatures.init();
 

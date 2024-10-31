@@ -1,4 +1,4 @@
-import { codeFileInfo } from "./codeFileInfo";
+import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 
 class row {
     codefileObj: codeFileInfo;

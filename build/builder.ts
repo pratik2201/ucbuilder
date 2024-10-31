@@ -1,12 +1,12 @@
-import * as fs from 'fs';
-import { commonParser } from 'ucbuilder/build/codefile/commonParser';
-import { buildOptions, SpecialExtEnum, SpecialExtType, pathInfo, SourceCodeNode } from 'ucbuilder/build/common';
-import { codeFileInfo, FileInfo, FileNameInfo } from 'ucbuilder/build/codeFileInfo';
-import * as path from 'path';
-import { ResourcesUC } from 'ucbuilder/ResourcesUC';
-import { FileDataBank } from 'ucbuilder/global/fileDataBank';
-import { fileWatcher } from './fileWatcher';
-import { rootPathHandler } from 'ucbuilder/global/rootPathHandler';
+import * as fs from "fs";
+import { commonParser } from "ucbuilder/build/codefile/commonParser";
+import { buildOptions, SpecialExtEnum, SpecialExtType, pathInfo, SourceCodeNode } from "ucbuilder/build/common";
+import { codeFileInfo, FileInfo, FileNameInfo } from "ucbuilder/build/codeFileInfo";
+import * as path from "path";
+import { ResourcesUC } from "ucbuilder/ResourcesUC";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { fileWatcher } from "ucbuilder/build/fileWatcher";
+import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 
 
 export class builder {
@@ -104,11 +104,11 @@ export class builder {
                 content = content.replace(/(import.*?from)\s*('|"|`)(.*?)\2/gm, (match,importfrom:string, quate:string, _path:string) => {
                     _path = _path.toFilePath();
                     let _rootpath = builder.pathLinear(path.dirname(fInfo.rootPath),_path);
-                    let rtrn = `${importfrom} "${_rootpath}"`;                    
+                    let rtrn = `${importfrom} "${_rootpath}"`;               
                     if (!needToGenerate) {
                         needToGenerate = !_path.equalIgnoreCase(_rootpath); // IF PATH CHANGED...
                     }                    
-                    return match;
+                    return rtrn;
                 });
 
                 pathReplacement.forEach(s => {

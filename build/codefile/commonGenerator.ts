@@ -1,9 +1,9 @@
-import fs from 'fs';
-import { CommonRow } from 'ucbuilder/build/buildRow.js';
-import { regsManage } from 'ucbuilder/build/regs/regsManage.js';
-import { buildOptions, pathInfo } from 'ucbuilder/build/common';
-import {  FileDataBank } from 'ucbuilder/global/fileDataBank';
-import { rfileGenerator } from './rfileGenerator';
+import fs from "fs";
+import { CommonRow } from "ucbuilder/build/buildRow.js";
+import { regsManage } from "ucbuilder/build/regs/regsManage.js";
+import { buildOptions, pathInfo } from "ucbuilder/build/common";
+import {  FileDataBank } from "ucbuilder/global/fileDataBank";
+import { rfileGenerator } from "ucbuilder/build/codefile/rfileGenerator";
 
 export class commonGenerator {
     rows: CommonRow[] = [];

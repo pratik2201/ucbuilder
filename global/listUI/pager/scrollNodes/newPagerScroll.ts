@@ -4,7 +4,7 @@ import { pagerLV } from "ucbuilder/global/listUI/pagerLV";
 import { CommonEvent } from "ucbuilder/global/CommonEvent";
 import { keyBoard } from "ucbuilder/global/hardware/keyboard";
 import { getConvertedNames, namingConversion,NamingConversion } from "ucbuilder/global/resizer/namingConversion";
-import { ScrollerType } from "../enumAndMore";
+import { ScrollerType } from "ucbuilder/global/listUI/pager/enumAndMore";
 
 
 export class newPagerScroll {

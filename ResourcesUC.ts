@@ -4,7 +4,7 @@ import { stylerRegs } from "ucbuilder/global/stylerRegs";
 import { TabIndexManager } from "ucbuilder/global/tabIndexManager";
 import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { Usercontrol } from "ucbuilder/Usercontrol";
-import { rootPathHandler } from "./global/rootPathHandler";
+import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 export class ResourcesUC {
     static tabMng = new TabIndexManager();
     static styler = new stylerRegs();

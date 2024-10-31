@@ -1,6 +1,6 @@
 import fs, { readFileSync } from "fs";
-import { builder } from "./builder";
-import { codeFileInfo } from "./codeFileInfo";
+import { builder } from "ucbuilder/build/builder";
+import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 
 export class fileWatcher {
     constructor(main: builder) { this.main = main; }

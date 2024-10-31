@@ -3,7 +3,7 @@ import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { pagerLV } from "ucbuilder/global/listUI/pagerLV";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { getConvertedNames, namingConversion,NamingConversion } from "ucbuilder/global/resizer/namingConversion";
-import { ScrollerType } from "../enumAndMore";
+import { ScrollerType } from "ucbuilder/global/listUI/pager/enumAndMore";
 
 export class simpleScroll {
     nameList: NamingConversion = Object.assign({}, namingConversion);

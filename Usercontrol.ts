@@ -2,7 +2,7 @@
 import { propOpt, objectOpt, controlOpt, uniqOpt } from "ucbuilder/build/common";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
-import { UCGenerateMode, ucOptions, UcOptions, UcStates, WhatToDoWithTargetElement } from 'ucbuilder/enumAndMore';
+import { UCGenerateMode, ucOptions, UcOptions, UcStates, WhatToDoWithTargetElement } from "ucbuilder/enumAndMore";
 import { userControlStamp, userControlStampRow } from "ucbuilder/global/userControlStamp";
 import { SessionManager } from "ucbuilder/global/SessionManager";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
@@ -14,7 +14,7 @@ import { stylerRegs, VariableList } from "ucbuilder/global/stylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { winManager } from "ucbuilder/global/winManager";
-import { rootPathHandler } from "./global/rootPathHandler";
+import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 
 export class Usercontrol {
 

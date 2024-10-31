@@ -1,14 +1,14 @@
-import { Usercontrol } from 'ucbuilder/Usercontrol';
-import { Template } from 'ucbuilder/Template';
-import { TemplateNode } from 'ucbuilder/Template';
-import { newObjectOpt } from 'ucbuilder/global/objectOpt';
-import { UcOptions, ucOptions, TptOptions, tptOptions, WrapperNodeNameAs } from 'ucbuilder/enumAndMore';
-import { ResourcesUC } from 'ucbuilder/ResourcesUC';
-import { objectOpt, propOpt } from 'ucbuilder/build/common';
-import { UcRendarer } from 'ucbuilder/build/UcRendarer';
-import { stylerRegs, VariableList } from './global/stylerRegs';
-import { rootPathHandler } from './global/rootPathHandler';
-//import { createRequire, Module } from 'module';
+import { Usercontrol } from "ucbuilder/Usercontrol";
+import { Template } from "ucbuilder/Template";
+import { TemplateNode } from "ucbuilder/Template";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
+import { UcOptions, ucOptions, TptOptions, tptOptions, WrapperNodeNameAs } from "ucbuilder/enumAndMore";
+import { ResourcesUC } from "ucbuilder/ResourcesUC";
+import { objectOpt, propOpt } from "ucbuilder/build/common";
+import { UcRendarer } from "ucbuilder/build/UcRendarer";
+import { stylerRegs, VariableList } from "ucbuilder/global/stylerRegs";
+import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
+//import { createRequire, Module } from "module";
 
 class intenseGenerator {
     static setCSS_globalVar(varList:VariableList,  _path: string): void  {        
