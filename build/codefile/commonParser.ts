@@ -57,8 +57,13 @@ export class commonParser {
             _row.codefile.baseClassName = "Designer";
         _row.codefile.className = _row.src.name;
         if (!isUserControl) {
-
-
+            let im = _row.designer.importClasses;
+            let aliceNumber = 0;
+            aliceNumber = this.fillDefImports('Template, TemplateNode', 'ucbuilder/Template', aliceNumber, im);
+            aliceNumber = this.fillDefImports('intenseGenerator', 'ucbuilder/intenseGenerator', aliceNumber, im);
+            aliceNumber = this.fillDefImports('TptOptions, templatePathOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
+            aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/global/stylerRegs', aliceNumber, im);
+           
             _row.designer.baseClassName = "Template";
             let tptbyCntnt = Template.getTemplates.byDirectory(filePath) as TemplatePathOptions[];
             let tpts = _row.designer.templetes;

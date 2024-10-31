@@ -10,7 +10,10 @@ export class fileWatcher {
     }
     dirPath: string = "";
     startWatch() {
-        this.watcher = fs.watch(this.dirPath, { recursive: true }, this.watch_Listner);
+        let _this = this;
+      //  setTimeout(() => {
+            _this.watcher = fs.watch(_this.dirPath, { recursive: true }, _this.watch_Listner);
+      //  },4000);
     }
     stopWatch() {
         if (this.watcher != undefined)
@@ -22,7 +25,7 @@ export class fileWatcher {
 
         if (filepath == null || filepath == undefined || filepath.startsWith('.git')) return;
         filepath = filepath;
-        if (filepath.endsWithI(codeFileInfo.___DESIGNER_EXT) || filepath.endsWithI(codeFileInfo.___DESIGNER_SRC_EXT)) {
+        if (filepath.endsWithI(codeFileInfo.___DESIGNER_EXT)) {
             switch (evt) {
                 //case "change":
                 //    console.log(`CHANGED :- ${filepath}`);
@@ -37,12 +40,11 @@ export class fileWatcher {
             }
         }
     };
-    static oPath = /_FILE_PATH\s*=\s*window\s*\.\s*atob\s*\(\s*('|"|`)(.*?)\1\s*\)/gm;
+    static oPath = /_FILE_PATH\s*=\s*\s*('|"|`)(.*?)\1\s*/gm;
     static getFilePathFromDesigner(content: string): string | undefined {
         let match = content.matchAll(this.oPath);
-        let rval = match.next();
-
-        let key = rval.value[2];
+        let rval = match.next();        
+        let key = rval?.value[2];
         return key;
     }
     generatingIsInProcess = false;
@@ -50,7 +52,7 @@ export class fileWatcher {
     checkFile(currentPath: string) {
         let _this = this;
         _this.generatingIsInProcess = true;
-        //console.log(this.filesInQueue);
+        console.log('__FILE_WATCHER___ CALLED..');
 
         //if (this.filesInQueue.length == 0) return;
         //let pathlist = (this.filesInQueue.distinct()).filter(s => s.endsWithI(codeFileInfo.___DESIGNER_EXT));
@@ -63,7 +65,7 @@ export class fileWatcher {
         let key = fileWatcher.getFilePathFromDesigner(fs.readFileSync(currentPath, 'binary'));
         if (key == undefined) return;
 
-        let oldPath = window.atob(key);
+        let oldPath = key;//window.atob(key);
         let cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
         cFinfo.parseUrl(currentPath);
         let oFinfo = new codeFileInfo(codeFileInfo.getExtType(oldPath));

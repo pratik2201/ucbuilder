@@ -44,7 +44,7 @@ interface String {
     templateBind(row:object):string,
     startsWithI (s: string): boolean,
     endsWithI(s: string): boolean,
-    includesI(s: string): { result:boolean,log:RegExpExecArray },
+    includesI(s: string): { result:boolean,index:number },
     equalIgnoreCase(s: string): boolean,
 }
 

@@ -1,7 +1,11 @@
-import { Template, TemplateNode } from 'ucbuilder/Template.js';
-import { TptOptions, templatePathOptions } from 'ucbuilder/enumAndMore';
-import { R } from '{=src.rootInfo.alices}/R';
+`{loop=designer.importClasses}`import { {=importText } } from '{=url}';
+`{/loop}`
+ /**
+ *  code filename must same and case sensitive with classname 
+ */
+import { {=src.name} } from '{=src.mainFileRootPath}';
 
+    
 `{loopcls=designer.templetes}` 
 
 type {=name}_ELEMENT_MAP = {`{loopctr=controls}`{=name} : {=proto},`{/loopctr}`}
@@ -18,11 +22,18 @@ export class {=designer.className } extends Template {
     /** {=src.mainFileRootPath}
      *  AUTO RENAMING IS DEPEND ON `_FILE_PATH` SO KEEP YOUR SELF FAR FROM THIS :-)
      */
-    private static _FILE_PATH = window.atob('{=src.mainFileRootPath_btoa}');
+    private static _FILE_PATH =  '{=src.mainFileRootPath}'; //window.atob('{=src.mainFileRootPath_btoa}');
     public static get FILE_PATH() {
         return Designer._FILE_PATH;
     }
     
+    static setCSS_globalVar (varList:VariableList): void  {
+        intenseGenerator.setCSS_globalVar(varList,this.FILE_PATH);
+    }
+    static Create(pera: TptOptions): {=src.name} { 
+        return intenseGenerator.generateTPT(this.FILE_PATH,pera) as {=src.name};
+    }
+
     `{looptpt=designer.templetes} 
     `    
     public {=name}:{=name}_TEMPLATE; 

@@ -1,7 +1,6 @@
 import { uniqOpt, controlOpt } from 'ucbuilder/build/common';
 import { FocusManager } from 'ucbuilder/global/focusManage';
 import { Usercontrol } from 'ucbuilder/Usercontrol';
-//import { winFrame } from '../../uccontrols/controls/winFrame.uc';
 
 export class winContiner {
     static source: any[] = [];

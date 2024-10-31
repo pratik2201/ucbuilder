@@ -542,17 +542,23 @@ class jqFeatures {
             }*/
         }
         String.prototype.startsWithI = function (s) {
+            if (this.startsWith(s)) return true;
             return this.match(new RegExp('^' + s.escapeRegs(), 'ig')) != null;
         }
         String.prototype.endsWithI = function (s) {
+            if (this.endsWith(s)) return true;
             return this.match(new RegExp(s.escapeRegs() + '$', 'ig')) != null;
         }
         String.prototype.includesI = function (s) {
+            let index = this.indexOf(s);
+            if (index!=-1) return { result:true,index:index };
             let res = new RegExp(s.escapeRegs(), 'ig').exec(this);
-            return {
-                result: res != null,
-                log: res
-            }
+            if (res != null) {
+                return {
+                    result: true,
+                    index: res.index
+                };
+            } else return { result:false,index:-1 }
             //return this.match(new RegExp(s, 'ig')) != null;
         }
         String.prototype.equalIgnoreCase = function (s) {

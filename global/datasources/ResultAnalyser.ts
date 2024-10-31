@@ -235,7 +235,7 @@ export class ResultAnalyser<T> {
 
             let inTest = insideThis.SearchableText.includesI(findThis.SearchableText);
             if (inTest.result) {
-                insideThis.setOutput(inTest.log.index, findThis.SearchableText, 'Include');
+                insideThis.setOutput(inTest.index, findThis.SearchableText, 'Include');
                 res.allMix.push(row);
                 //res.include.push(row);
                 results.push('Include');

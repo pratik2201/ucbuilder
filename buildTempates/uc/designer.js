@@ -10,7 +10,7 @@ export class {=designer.className } extends Usercontrol {
     /**  {=src.mainFileRootPath}
      *  AUTO RENAMING IS DEPEND ON `_FILE_PATH` SO KEEP YOUR SELF FAR FROM THIS :-)
      */
-    private static _FILE_PATH = window.atob('{=src.mainFileRootPath_btoa}');
+    private static _FILE_PATH = '{=src.mainFileRootPath}';//window.atob('{=src.mainFileRootPath_btoa}');
     public static get FILE_PATH() {
         return Designer._FILE_PATH;
     }
@@ -59,10 +59,11 @@ export class {=designer.className } extends Usercontrol {
         [/case]`
         `[case=.tpt]`
         
-        this.{=name} = intenseGenerator.generateTPT('{=src.code.rootPath}',{ 
-                            parentUc : this, 
-                            elementHT : CONTROLS.{=name} 
-                       }) as any;       
+    this.{=name } = {=importedClass.objText}.Create({ 
+                        parentUc : this, 
+                        elementHT :CONTROLS.{=name} 
+                    });
+          
         ` 
              [/case]` 
         `[case=.uc]
