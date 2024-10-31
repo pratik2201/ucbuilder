@@ -54,7 +54,7 @@ interface NodeList {
 }
 interface Array<T> {
     on<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
-    distinct<T>():T[]
+    distinct():T[]
 }
 interface JQuery{
     css(args:any):void,

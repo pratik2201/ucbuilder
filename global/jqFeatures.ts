@@ -457,8 +457,8 @@ class jqFeatures {
                 });
             });
         }
-        Array.prototype.distinct = function <K>(): Array<K> {
-            return (new Set(this)) as unknown as Array<K>;
+        Array.prototype.distinct = function <T>(): Array<T> {
+            return (new Set(this)) as unknown as Array<T>;
         }
         SVGElement.prototype.data = function (key?: string, value?: any): any {
             switch (arguments.length) {

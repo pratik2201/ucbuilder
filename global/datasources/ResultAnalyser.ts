@@ -291,7 +291,7 @@ export class ResultAnalyser<T> {
             //ttl.startwith.push(...res.startwith);
             //ttl.include.push(...res.include);
         }
-        target.push(...ttl.allMix.distinct<T>());
+        target.push(...ttl.allMix.distinct());
     }
 }
 export type AnalyseResultType = "Equal" | "StartWith" | "Include" | "NotFound";

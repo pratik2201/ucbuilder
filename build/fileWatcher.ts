@@ -28,7 +28,10 @@ export class fileWatcher {
 
                 //    break;
                 case "rename":
-                    this.checkFile(filepath);
+                    let fullpath = (this.dirPath + '/' + filepath).toFilePath();
+                    this.filesInQueue.push(fullpath);
+                    if (this.generatingIsInProcess) return;
+                    this.checkFile();
                     break;
             }
         }
@@ -41,13 +44,21 @@ export class fileWatcher {
         return key;
     }
     generatingIsInProcess = false;
-    checkFile(fpath: string) {
+    filesInQueue:string[] = [];
+    checkFile() {
         let _this = this;
-        let fullpath = this.dirPath + '/' + fpath.toFilePath();
-        
-        if (fs.existsSync(fullpath)) {
-            let content = fs.readFileSync(fullpath, 'binary');
-            
+        _this.generatingIsInProcess = false;
+        let pathlist = (this.filesInQueue.distinct()).filter(s => s.endsWithI(codeFileInfo.___DESIGNER_EXT));
+
+        setTimeout(() => {
+            for (let i = 0; i < pathlist.length; i++) {
+                const _path = pathlist[i];
+                console.log(_path);
+            }
+        }, 2000)
+       
+        /*if (fs.existsSync(fullpath)) {
+            let content = fs.readFileSync(fullpath, 'binary');            
             let key = fileWatcher.getFilePathFromDesigner(content);
             if (key!=undefined) {
                 let fpath = window.atob(key);
@@ -73,7 +84,7 @@ export class fileWatcher {
                     }
                 }
             }
-        }
+        }*/
 
     }
 }
