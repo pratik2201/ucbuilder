@@ -116,6 +116,7 @@ class Info_<K> {
     let prevRow: RowInfo<K>;
     let src = this.main;
     this.length = this.main.length;
+    //debugger;
     for (let i = 0, ilen = this.length; i < ilen; i++) {
       obj = src[i];
       prevRow = rInfo;
@@ -270,8 +271,8 @@ export class SourceManage<K> extends Array<K> {
   ihaveCompletedByMySide() {
     let len = this.length;
 
-    this.init_all_rows();
     this.onCompleteUserSide.fire();
+    this.init_all_rows();
     this.onUpdate.fire([len]);
   }
   originalSource: K[] = []
