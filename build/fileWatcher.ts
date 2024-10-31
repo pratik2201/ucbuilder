@@ -53,7 +53,7 @@ export class fileWatcher {
         setTimeout(() => {
             for (let i = 0; i < pathlist.length; i++) {
                 const _path = pathlist[i];
-                console.log(_path);
+                console.log([pathlist.length,_path]);
             }
         }, 2000)
        
