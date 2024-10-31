@@ -19,9 +19,8 @@ export class fileWatcher {
     watcher: fs.FSWatcher = undefined;
 
     watch_Listner = (evt: fs.WatchEventType, filepath: string) => {
-        console.log(filepath);
         
-        if (filepath == null || filepath == undefined) return;
+        if (filepath == null || filepath == undefined || filepath.startsWith('.git')) return;
         filepath = filepath;
         if (filepath.endsWithI(codeFileInfo.___DESIGNER_EXT) || filepath.endsWithI(codeFileInfo.___DESIGNER_SRC_EXT)) {
             switch (evt) {

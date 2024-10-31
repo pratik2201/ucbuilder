@@ -3,7 +3,7 @@
 /**
  *  code filename must same and case sensitive with classname 
  */
-import { {=src.name} } from './{=src.name}.uc';
+import { {=src.name} } from '{=src.mainFileRootPath}';
 
 
 export class {=designer.className } extends Usercontrol {    
