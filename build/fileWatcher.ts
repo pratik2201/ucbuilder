@@ -19,6 +19,8 @@ export class fileWatcher {
     watcher: fs.FSWatcher = undefined;
 
     watch_Listner = (evt: fs.WatchEventType, filepath: string) => {
+        console.log(filepath);
+        
         if (filepath == null || filepath == undefined) return;
         filepath = filepath;
         if (filepath.endsWithI(codeFileInfo.___DESIGNER_EXT) || filepath.endsWithI(codeFileInfo.___DESIGNER_SRC_EXT)) {
@@ -47,14 +49,17 @@ export class fileWatcher {
     filesInQueue:string[] = [];
     checkFile() {
         let _this = this;
-        _this.generatingIsInProcess = false;
+        _this.generatingIsInProcess = true;
         let pathlist = (this.filesInQueue.distinct()).filter(s => s.endsWithI(codeFileInfo.___DESIGNER_EXT));
 
         setTimeout(() => {
+            console.log('called.');
+            
             for (let i = 0; i < pathlist.length; i++) {
                 const _path = pathlist[i];
                 console.log([pathlist.length,_path]);
             }
+            _this.generatingIsInProcess = false;
         }, 2000)
        
         /*if (fs.existsSync(fullpath)) {
