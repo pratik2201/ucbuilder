@@ -32,28 +32,26 @@ export class builder {
         this.commonMng = new commonParser(this);
     }
     public fillReplacerPath() {
-        this.commonMng.reset();
-        builder.dirsToBuild.forEach((s: string) => this.recursive(s, (filePath) => {
-            if (fileWatcher.isHTMLFile(filePath)) {
-                let fInfo = new codeFileInfo(codeFileInfo.getExtType(filePath));
-                fInfo.parseUrl(filePath);
-                if (!fs.existsSync(fInfo.html.fullPath)) return;
-                let content = fs.readFileSync(fInfo.html.fullPath, 'binary');
-                let key = fileWatcher.getFilePathFromHTML(content);
-                if (key != undefined) {
-                    let _FILE_PATH = key;//window.atob(key);
-                    if (!fInfo.mainFileRootPath.equalIgnoreCase(_FILE_PATH)) {
-                        let tmpfInfo = new codeFileInfo(codeFileInfo.getExtType(_FILE_PATH));
-                        tmpfInfo.parseUrl(_FILE_PATH);
+        builder.dirsToBuild.forEach((s: string) => this.recursive(s, (nfilePath) => {
+            if (fileWatcher.isHTMLFile(nfilePath)) {
+                let nfInfo = new codeFileInfo(codeFileInfo.getExtType(nfilePath));
+                nfInfo.parseUrl(nfilePath);
+                if (!fs.existsSync(nfInfo.html.fullPath)) return;
+                let content = fs.readFileSync(nfInfo.html.fullPath, 'binary');
+                let ofilePath = fileWatcher.getFilePathFromHTML(content);
+                if (ofilePath != undefined) {
+                    if (!nfInfo.mainFileRootPath.equalIgnoreCase(ofilePath)) {
+                        let ofInfo = new codeFileInfo(codeFileInfo.getExtType(ofilePath));
+                        ofInfo.parseUrl(ofilePath);
                         this.commonMng.pushReplacement({
-                            findPath: tmpfInfo.mainFileRootPath,
-                            replaceWith: fInfo.mainFileRootPath
+                            findPath: ofInfo.mainFileRootPath,
+                            replaceWith: nfInfo.mainFileRootPath
                         });
                     }
                 }
             }
         }));
-        this.renameFiles();
+        this.update_paths_inside_file();
     }
     
     private static pathLinear(currentDir: string, path: string) {
@@ -81,27 +79,30 @@ export class builder {
             return rstr;
         }
     }
-    renameFiles() {
+    update_paths_inside_file() {
         let pathReplacement = this.commonMng.pathReplacement;
         builder.dirsToBuild.forEach((s: string) => this.recursive(s, (filePath) => {
             let fInfo = new FileInfo();
             fInfo.parse(filePath, true);
             let partInfo = fInfo.partlyInfo;
             let ext = partInfo.extension;
-            if (ext == undefined || partInfo.type == undefined || partInfo.type == '.js') return;
-            if (ext.startsWith(SpecialExtEnum.uc) || ext.startsWith(SpecialExtEnum.tpt) || partInfo.type == '.ts') {
+            if (ext == undefined || partInfo.type == undefined ) return;
+            if (fileWatcher.isValidFileForPathReplacer(filePath)) {
                 let content = fs.readFileSync(filePath, 'binary');
                 let needToGenerate = false;
-                content = content.replace(/(import.*?from)\s*('|"|`)(.*?)\2/gm, (match,importfrom:string, quate:string, _path:string) => {
-                    _path = _path.toFilePath();
-                    let _rootpath = builder.pathLinear(path.dirname(fInfo.rootPath),_path);
-                    let rtrn = `${importfrom} "${_rootpath}"`;               
-                    if (!needToGenerate) {
-                        needToGenerate = !_path.equalIgnoreCase(_rootpath); // IF PATH CHANGED...
-                    }                    
-                    return rtrn;
-                });
-
+                // TS FILE'S import PATH RESOLVE
+                if (fileWatcher.isTSFile(filePath)) {
+                    content = content.replace(/(import.*?from)\s*('|"|`)(.*?)\2/gm, (match, importfrom: string, quate: string, _path: string) => {
+                        _path = _path.toFilePath();
+                        let _rootpath = builder.pathLinear(path.dirname(fInfo.rootPath), _path);
+                        let rtrn = `${importfrom} "${_rootpath}"`;
+                        if (!needToGenerate) {
+                            needToGenerate = !_path.equalIgnoreCase(_rootpath); // IF PATH CHANGED...
+                        }
+                        return rtrn;
+                    });
+                }
+                // REPLACE OLD PATH TO NEW PATH
                 pathReplacement.forEach(s => {
                     let res = content.replaceAllWithResult(s.findPath, s.replaceWith);
                     if (res.hasReplaced) {

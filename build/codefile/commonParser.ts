@@ -64,7 +64,8 @@ export class commonParser {
                     _row.htmlFile.reGenerate = true;
                 } 
             } else {
-                code = `<wrapper x-caption="${_row.src.name}" x-at="${_row.src.mainFileRootPath}" tabindex="0"><!-- DONT MODIFY "x-at" ATTRIBUTE ->
+                code = `<wrapper x-caption="${_row.src.name}" x-at="${_row.src.mainFileRootPath}" tabindex="0">
+<!-- DONT MODIFY "x-at" ATTRIBUTE -->
 </wrapper>`;
                 this.formHT = code.$() as HTMLElement;
                 _row.htmlFile.content = code;
