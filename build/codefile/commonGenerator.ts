@@ -2,8 +2,9 @@ import fs from "fs";
 import { CommonRow } from "ucbuilder/build/buildRow.js";
 import { regsManage } from "ucbuilder/build/regs/regsManage.js";
 import { buildOptions, pathInfo } from "ucbuilder/build/common";
-import {  FileDataBank } from "ucbuilder/global/fileDataBank";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { rfileGenerator } from "ucbuilder/build/codefile/rfileGenerator";
+import path from "path";
 
 export class commonGenerator {
     rows: CommonRow[] = [];
@@ -24,17 +25,24 @@ export class commonGenerator {
     }
 
     rgxManage: regsManage;
-
+    static ensureDirectoryExistence(filePath:string) {
+        var dirname = path.dirname(filePath);
+        if (fs.existsSync(dirname)) {
+            return true;
+        }
+        this.ensureDirectoryExistence(dirname);
+        fs.mkdirSync(dirname);
+    }
     generateFiles(rows: CommonRow[] = []) {
         let _this = this;
         this.rows = rows;
         let _data = "";
         this.rows.forEach(row => {
-           // console.log(row.src);
-            
+            // console.log(row.src);
+            commonGenerator.ensureDirectoryExistence(row.src.designer.fullPath);
             _data = _this.generateNew(row, _this.designerTMPLT[row.src.extCode]);
             fs.writeFileSync(`${row.src.designer.fullPath}`, _data);
-            
+
             if (row.htmlFile.reGenerate)
                 fs.writeFileSync(`${row.src.html.fullPath}`, row.htmlFile.content);
 
@@ -46,6 +54,9 @@ export class commonGenerator {
                 _data = _this.generateNew(row, _this.styleTMPLT[row.src.extCode]);
                 fs.writeFileSync(`${row.src.style.fullPath}`, _data);
             }
+          
+            //  fs.rmSync(row.src.mainFilePath+'.designer.ts');
+                
         });
         let rfileFrm = new rfileGenerator();
         rfileFrm.fill(rows);

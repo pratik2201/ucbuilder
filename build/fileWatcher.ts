@@ -31,7 +31,7 @@ export class fileWatcher {
             filepath.endsWithI(SpecialExtEnum.tpt + '.html')) {
             switch (evt) {
                 case "change":
-                    
+
                     this.CHECK_FILE_MODIFIED((this.dirPath + '/' + filepath).toFilePath());
                     break;
                 case "rename": // IF FILE CHANGED...
@@ -54,25 +54,41 @@ export class fileWatcher {
     }
     static oPath = /_FILE_PATH\s*=\s*\s*('|"|`)(.*?)\1\s*/gm;
     static getFilePathFromDesigner(content: string): string | undefined {
+
         let match = content.matchAll(this.oPath);
         let rval = match.next();
-        let key = rval?.value[2];
-        return key;
+        if (rval.value)
+            return rval.value[2];
+        return undefined;
     }
     generatingIsInProcess = false;
     filesInQueue: string[] = [];
     CHECK_FILE_MOVE(currentPath: string) {
         let _this = this;
+        let cFinfo: codeFileInfo, oFinfo: codeFileInfo;
         _this.generatingIsInProcess = true;
         console.log('__FILE_WATCHER___ CALLED..');
         console.log('called.');
         if (!fs.existsSync(currentPath)) return;
+        if (currentPath.endsWith('.html')) { //
+            cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
+            cFinfo.parseUrl(currentPath);
+            let htContent = fs.readFileSync(cFinfo.html.fullPath, 'binary');
+            if (htContent == '') {
+                _this.stopWatch();
+                _this.main.commonMng.rows.length = 0;
+                _this.main.buildFile(cFinfo);
+                _this.generatingIsInProcess = false;
+                _this.startWatch();
+            }
+            return;
+        }
         let key = fileWatcher.getFilePathFromDesigner(fs.readFileSync(currentPath, 'binary'));
         if (key == undefined) return;
         let oldPath = key;//window.atob(key);
-        let cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
+        cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
         cFinfo.parseUrl(currentPath);
-        let oFinfo = new codeFileInfo(codeFileInfo.getExtType(oldPath));
+        oFinfo = new codeFileInfo(codeFileInfo.getExtType(oldPath));
         oFinfo.parseUrl(oldPath);
         if (!oFinfo.mainFileRootPath.equalIgnoreCase(cFinfo.mainFileRootPath)) {
             _this.stopWatch();

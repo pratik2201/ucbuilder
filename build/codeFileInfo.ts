@@ -20,19 +20,22 @@ export class FileInfo {
         let spath = '';
         let odText = '';
         //console.log(val+"\n\n"+this.rootInfo.pathType);
-        
+
         if (this.rootInfo != undefined) {
-            
+            switch (locationType) {
+                case 'out': odText = this.rootInfo.location.outDir; break;
+                case 'designer':  odText = this.rootInfo.location.designerDir; break;
+            }
             switch (this.rootInfo.pathType) {
                 case 'alice':
-                    odText = (locationType == 'out' ? this.rootInfo.location.outDir : '');
+                    //odText = (locationType == 'out' ? this.rootInfo.location.outDir : '');
                     spath = strOpt._trim(this._path, this.rootInfo.alices);
                     this.sortPath = (odText + "/" + spath).toFilePath(); ///(odText+(spath._trim('/'))._trim('/'));
                     this.fullPath = (this.rootInfo.path + "/" + this.sortPath).toFilePath();
                     this.rootPath = (this.rootInfo.alices + "/" + this.sortPath).toFilePath();
                     break;
                 case 'full':
-                    odText = (locationType == 'out' ? this.rootInfo.location.outDir : '/');
+                    //odText = (locationType == 'out' ? this.rootInfo.location.outDir : '');
                     spath = strOpt._trim(this._path, this.rootInfo.path);
                     this.sortPath = (odText + "/" + spath).toFilePath();
                     this.fullPath = (this.rootInfo.path + this.sortPath).toFilePath();
@@ -306,7 +309,7 @@ export class codeFileInfo {
         this.html.parse(sortPath + this.htmlExt, false);
         this.style.parse(sortPath + this.styleExt, false);
         this.perameters.parse(sortPath + this.perametersExt, false);
-        this.designer.parse(sortPath + this.deignerExt, false);
+        this.designer.parse(sortPath + this.deignerExt, false,'designer');
         this.designerSrc.parse(sortPath + this.deignerSrcExt, false, 'out');
         this.code.parse(sortPath + this.codeExt, false);
         this.codeSrc.parse(sortPath + this.codeSrcExt, false, 'out');

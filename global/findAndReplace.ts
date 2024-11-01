@@ -5,15 +5,17 @@ export interface ReplaceTextRow {
     replaceWith: string;
     cssVars?: { key: string, value: string }[];
 }
-export type LocationType = "root" | "out";
+export type LocationType = "root" | "out" | "designer";
 export interface LocationOf {
     outDir: string,
+    designerDir: string,
     rootDir: string,
 }
 export const rootDirectoryOf: LocationOf = {
     outDir: "/",
+    designerDir: "/",
     rootDir: "",
-   
+
 };
 export const replaceTextRow: ReplaceTextRow = {
     id: 0,
@@ -25,15 +27,15 @@ export const replaceTextRow: ReplaceTextRow = {
 
 
 
-export type PathType = "full" | "alice" | "sort" |  "none";
+export type PathType = "full" | "alice" | "sort" | "none";
 export interface RootPathRow {
     id: number,
     path: string,
     alices: string,
     index: number,
     isAlreadyFullPath: boolean,
-    defaultLoadAt?:HTMLElement,
-    pathType : PathType,
+    defaultLoadAt?: HTMLElement,
+    pathType: PathType,
     outputDirectory: string,
     location: LocationOf,
     tInfo: ReplaceTextRow,
@@ -46,11 +48,13 @@ export const rootPathRow: RootPathRow = {
     path: '',
     alices: '',
     index: -1,
-    outputDirectory: '',    
-    pathType:"none",
+    outputDirectory: '',
+    pathType: "none",
     isAlreadyFullPath: false,
     location: {
         outDir: "/",
+
+        designerDir: "/",
         rootDir: "",
     },
     tInfo: {
@@ -58,7 +62,7 @@ export const rootPathRow: RootPathRow = {
         originalFinderText: "",
         textToFind: "",
         replaceWith: "",
-          cssVars: [],
+        cssVars: [],
     },
     cssVars: [],
 }

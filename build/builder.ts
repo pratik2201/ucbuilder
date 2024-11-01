@@ -39,6 +39,7 @@ export class builder {
             if (filePath.endsWithI(codeFileInfo.___DESIGNER_EXT)) {
                 let fInfo = new codeFileInfo(codeFileInfo.getExtType(filePath));
                 fInfo.parseUrl(filePath);
+                if (!fs.existsSync(fInfo.designer.fullPath)) return;
                 let content = fs.readFileSync(fInfo.designer.fullPath, 'binary');
                 /*let _FILE_PATH = ResourcesUC.codefilelist.getObj(fInfo.designer.rootPath).obj.FILE_PATH;*/
                 let key = fileWatcher.getFilePathFromDesigner(content);

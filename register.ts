@@ -53,7 +53,8 @@ class register {
        // console.log(rootDirOf);
         
         rootDirOf = newObjectOpt.copyProps(rootDirOf, rootDirectoryOf);   
-        if (rootDirOf.outDir == '') rootDirOf.outDir = '/';
+        if (rootDirOf.outDir == '') rootDirOf.outDir = '/'; 
+        if (rootDirOf.designerDir == '') rootDirOf.designerDir = '/';
         rootDirOf.rootDir = rootDirOf.rootDir.toFilePath();      
         let pera = newObjectOpt.copyProps(param2, rootPathParam);
         let pname = newObjectOpt.getProjectname(rootDirOf.rootDir); // dirpath
@@ -81,6 +82,7 @@ let ACTIVE_USER_CONTROL: typeof register = undefined;
 //let ACTIVE_USER_CONTROL:register = undefined;
 let res = register.registarMe({
     outDir: "/out/",
+    designerDir:"/",
     rootDir: path.dirname(__dirname),    
 }, {
     addModule: false

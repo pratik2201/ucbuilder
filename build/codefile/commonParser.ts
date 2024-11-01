@@ -49,8 +49,19 @@ export class commonParser {
         }) : htmlContents;
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
 
-        
-        this.formHT = code.$() as HTMLElement;
+        try {
+            if (code.trim() != '') {
+                this.formHT = code.$() as HTMLElement;
+            } else {
+                code = `<wrapper x-caption="${_row.src.name}" tabindex="0">
+</wrapper>`;                
+                this.formHT = code.$() as HTMLElement;
+                _row.htmlFile.content = code;
+                _row.htmlFile.reGenerate = true;                
+            }
+        } catch {
+            return undefined;
+        }
         
         this.aliceMng.fillAlices(this.formHT);
         _row.designer.className =
