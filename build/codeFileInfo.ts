@@ -9,6 +9,7 @@ export class FileInfo {
     rootPath = "";
     rootInfo: RootPathRow;
     constructor() { }
+    get rootPathSkippingExtension() { let s = this.rootPath; return s.slice(0,s.lastIndexOf('.')); }
 
     parse(val: string, parseRoot = true, locationType: LocationType = 'root') {
         this._path = val;
@@ -20,7 +21,6 @@ export class FileInfo {
         let spath = '';
         let odText = '';
         //console.log(val+"\n\n"+this.rootInfo.pathType);
-
         if (this.rootInfo != undefined) {
             switch (locationType) {
                 case 'out': odText = this.rootInfo.location.outDir; break;
@@ -38,7 +38,7 @@ export class FileInfo {
                     //odText = (locationType == 'out' ? this.rootInfo.location.outDir : '');
                     spath = strOpt._trim(this._path, this.rootInfo.path);
                     this.sortPath = (odText + "/" + spath).toFilePath();
-                    this.fullPath = (this.rootInfo.path + this.sortPath).toFilePath();
+                    this.fullPath = (this.rootInfo.path  + "/" + this.sortPath).toFilePath();
                     this.rootPath = (this.rootInfo.alices + "/" + this.sortPath).toFilePath();
                     break;
             }
@@ -309,7 +309,7 @@ export class codeFileInfo {
         this.html.parse(sortPath + this.htmlExt, false);
         this.style.parse(sortPath + this.styleExt, false);
         this.perameters.parse(sortPath + this.perametersExt, false);
-        this.designer.parse(sortPath + this.deignerExt, false,'designer');
+        this.designer.parse(sortPath + this.deignerExt, false, 'designer');
         this.designerSrc.parse(sortPath + this.deignerSrcExt, false, 'out');
         this.code.parse(sortPath + this.codeExt, false);
         this.codeSrc.parse(sortPath + this.codeSrcExt, false, 'out');

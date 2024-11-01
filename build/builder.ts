@@ -32,16 +32,14 @@ export class builder {
         this.commonMng = new commonParser(this);
     }
 
-    fillReplacerPath() {
+    private fillReplacerPath() {
         this.commonMng.reset();
         builder.dirsToBuild.forEach((s: string) => this.recursive(s, (filePath) => {
-
             if (filePath.endsWithI(codeFileInfo.___DESIGNER_EXT)) {
                 let fInfo = new codeFileInfo(codeFileInfo.getExtType(filePath));
                 fInfo.parseUrl(filePath);
                 if (!fs.existsSync(fInfo.designer.fullPath)) return;
                 let content = fs.readFileSync(fInfo.designer.fullPath, 'binary');
-                /*let _FILE_PATH = ResourcesUC.codefilelist.getObj(fInfo.designer.rootPath).obj.FILE_PATH;*/
                 let key = fileWatcher.getFilePathFromDesigner(content);
                 if (key != undefined) {
                     let _FILE_PATH = key;//window.atob(key);
@@ -59,7 +57,7 @@ export class builder {
         this.renameFiles();
     }
     
-    static pathLinear(currentDir: string, path: string) {
+    private static pathLinear(currentDir: string, path: string) {
         let dirPathSpl = [...currentDir.split(/\\|\//im)];
         let filePathSpl = [...path.split(/\\|\//im)];
         let resultPath: string[] = [];
@@ -83,16 +81,9 @@ export class builder {
             }
             return rstr;
         }
-        /*console.log('-------------------------------');
-        console.log(currentDir);
-        console.log(path);
-        console.log(resultPath);*/
     }
     renameFiles() {
         let pathReplacement = this.commonMng.pathReplacement;
-
-        //builder.pathLinear('ucbuilder/global/listUI/pager/scrollNodes', '../build/../regs/../../regsManage');
-        // console.log(pathReplacement);
         builder.dirsToBuild.forEach((s: string) => this.recursive(s, (filePath) => {
             let fInfo = new FileInfo();
             fInfo.parse(filePath, true);

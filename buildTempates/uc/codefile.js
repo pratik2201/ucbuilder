@@ -1,4 +1,4 @@
-import { {=designer.className} } from '{=src.mainFileRootPath}.designer';
+import { {=designer.className} } from '{=src.designer.rootPathSkippingExtension}';
 export class {=codefile.className} extends {=designer.className}{
     constructor() { super(); this.initializecomponent(arguments, this); }
     /**

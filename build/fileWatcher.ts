@@ -21,28 +21,63 @@ export class fileWatcher {
             this.watcher.close();
     }
     watcher: fs.FSWatcher = undefined;
+    static isGenerating = false;
+    static hasTimeoutCleared = false;
+    static timeoutInterval: any;
+    static rowsToFollow: { evt: fs.WatchEventType, filepath: string }[] = [];
 
     watch_Listner = (evt: fs.WatchEventType, filepath: string) => {
-
-        if (filepath == null || filepath == undefined || filepath.startsWith('.git')) return;
-        filepath = filepath;
+        if (filepath != null) {
+           /* let filename = filepath.substring(filepath.lastIndexOf('/'));
+            //console.log(filename);            
+            if ((filename.includes('.uc') || filename.includes('.tpt')) && !filename.endsWith('.js')) {
+                console.log([evt, filepath]);
+            }*/
+                
+        }
+        
+        let _this = this;
+        if (filepath == null || filepath == undefined/* || filepath.startsWith('.git')*/) return;
         if (filepath.endsWithI(codeFileInfo.___DESIGNER_EXT) ||
             filepath.endsWithI(SpecialExtEnum.uc + '.html') ||
             filepath.endsWithI(SpecialExtEnum.tpt + '.html')) {
-            switch (evt) {
-                case "change":
-
-                    this.CHECK_FILE_MODIFIED((this.dirPath + '/' + filepath).toFilePath());
-                    break;
-                case "rename": // IF FILE CHANGED...
-                    this.CHECK_FILE_MOVE((this.dirPath + '/' + filepath).toFilePath());
-                    break;
+            //this.WHATTODO(evt,filepath);
+            fileWatcher.rowsToFollow.push({ evt, filepath });
+            clearTimeout(fileWatcher.timeoutInterval);
+            fileWatcher.timeoutInterval = setTimeout(timerCall, 1500);
+        }
+        function timerCall() {
+            let rows = [...fileWatcher.rowsToFollow];
+            fileWatcher.rowsToFollow.length = 0;
+            _this.stopWatch();
+            console.log(rows);
+            
+            for (let i = 0; i < rows.length; i++) {
+                const rw = rows[i];
+                _this.WHATTODO(rw.evt, rw.filepath);
             }
+            _this.startWatch();
         }
     };
+
+    WHATTODO(evt: fs.WatchEventType, filepath: string) {
+
+        this.stopWatch();
+        switch (evt) {
+            case "change":
+                this.CHECK_FILE_MODIFIED((this.dirPath + '/' + filepath).toFilePath());
+                break;
+            case "rename": // IF FILE CHANGED...
+                this.CHECK_FILE_MOVE((this.dirPath + '/' + filepath).toFilePath());
+                break;
+        }
+        this.startWatch();
+
+    }
     CHECK_FILE_MODIFIED(currentPath: string) {
         let _this = this;
         if (currentPath.endsWithI(SpecialExtEnum.uc + '.html') || currentPath.endsWithI(SpecialExtEnum.tpt + '.html')) {
+            console.log('FILE_MODIFIED');
             let cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
             cFinfo.parseUrl(currentPath);
             _this.stopWatch();
@@ -64,25 +99,28 @@ export class fileWatcher {
     generatingIsInProcess = false;
     filesInQueue: string[] = [];
     CHECK_FILE_MOVE(currentPath: string) {
+        console.log('FILE_MOVE');
         let _this = this;
         let cFinfo: codeFileInfo, oFinfo: codeFileInfo;
         _this.generatingIsInProcess = true;
-        console.log('__FILE_WATCHER___ CALLED..');
-        console.log('called.');
-        if (!fs.existsSync(currentPath)) return;
         if (currentPath.endsWith('.html')) { //
             cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
             cFinfo.parseUrl(currentPath);
-            let htContent = fs.readFileSync(cFinfo.html.fullPath, 'binary');
-            if (htContent == '') {
-                _this.stopWatch();
-                _this.main.commonMng.rows.length = 0;
-                _this.main.buildFile(cFinfo);
-                _this.generatingIsInProcess = false;
-                _this.startWatch();
+            if (fs.existsSync(cFinfo.html.fullPath)) {
+
+                let htContent = fs.readFileSync(cFinfo.html.fullPath, 'binary');
+                if (htContent == '') {
+                    _this.main.commonMng.rows.length = 0;
+                    _this.main.buildFile(cFinfo);
+                    _this.generatingIsInProcess = false;
+                }
+                return;
+            } else {
+                fs.rmSync(cFinfo.designer.fullPath);
+                return;
             }
-            return;
         }
+        if (!fs.existsSync(currentPath)) return;
         let key = fileWatcher.getFilePathFromDesigner(fs.readFileSync(currentPath, 'binary'));
         if (key == undefined) return;
         let oldPath = key;//window.atob(key);
@@ -91,7 +129,7 @@ export class fileWatcher {
         oFinfo = new codeFileInfo(codeFileInfo.getExtType(oldPath));
         oFinfo.parseUrl(oldPath);
         if (!oFinfo.mainFileRootPath.equalIgnoreCase(cFinfo.mainFileRootPath)) {
-            _this.stopWatch();
+            
             //  sharepnl/sampleForm/buttons/rightSide/rightButtonManage.uc
             let oNameSpace = 'R.' + (oFinfo.mainFileRootPath.split('/').slice(1, -1)).join('.');
             let cNameSpace = 'R.' + (cFinfo.mainFileRootPath.split('/').slice(1, -1)).join('.');
@@ -107,7 +145,7 @@ export class fileWatcher {
             _this.main.commonMng.rows.length = 0;
             _this.main.buildALL(false);
             _this.generatingIsInProcess = false;
-            _this.startWatch();
+           
         }
 
         //}

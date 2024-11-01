@@ -58,8 +58,8 @@ export class commonGenerator {
             //  fs.rmSync(row.src.mainFilePath+'.designer.ts');
                 
         });
-        let rfileFrm = new rfileGenerator();
-        rfileFrm.fill(rows);
+        /*let rfileFrm = new rfileGenerator();
+        rfileFrm.fill(rows);*/
     }
 
     getDesignerCode(rw: CommonRow) {
