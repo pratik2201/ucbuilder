@@ -137,7 +137,7 @@ export class partlyInfo {
         }
     }
 }
-class htmlFileNode {
+export class htmlFileNode {
     static ___HTML_EXT = ".html";
     static ___STYLE_EXT = ".scss";
     rootInfo: RootPathRow | undefined;

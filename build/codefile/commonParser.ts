@@ -17,7 +17,12 @@ export class commonParser {
         this.pathReplacement.length = 0;
     }
     rows: CommonRow[] = [];
-    pathReplacement:{findPath:string,replaceWith:string}[] = [];
+    pathReplacement: { findPath: string, replaceWith: string }[] = [];
+    pushReplacement({ findPath = '', replaceWith = '' }: { findPath: string, replaceWith: string }) {
+        let index = this.pathReplacement.findIndex(s => s.findPath.equalIgnoreCase(findPath));
+        if (index == -1) this.pathReplacement.push({ findPath: findPath, replaceWith: replaceWith });
+        else this.pathReplacement[index].replaceWith = replaceWith;
+    }
     bldr: builder;
     gen: commonGenerator;
     constructor(bldr: builder) {
@@ -39,30 +44,36 @@ export class commonParser {
         let _this = this;
         _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
         if (!_row.src.parseUrl(filePath)) return undefined;
-        
-        
+
+
         //FileDataBank.readFile()
-        
+
         let code = (htmlContents == undefined) ? FileDataBank.readFile(_row.src.html.rootPath, {
             replaceContentWithKeys: false,
-            reloadData:true,
+            reloadData: true,
         }) : htmlContents;
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
 
         try {
             if (code.trim() != '') {
                 this.formHT = code.$() as HTMLElement;
+                let xAt = this.formHT.getAttribute('x-at');
+                if (xAt == null || !xAt.equalIgnoreCase(_row.src.mainFileRootPath)) {
+                    this.formHT.setAttribute('x-at', _row.src.mainFileRootPath);
+                    _row.htmlFile.content = this.formHT.outerHTML;
+                    _row.htmlFile.reGenerate = true;
+                } 
             } else {
-                code = `<wrapper x-caption="${_row.src.name}" x-at="${_row.src.mainFileRootPath}" tabindex="0">
-</wrapper>`;                
+                code = `<wrapper x-caption="${_row.src.name}" x-at="${_row.src.mainFileRootPath}" tabindex="0"><!-- DONT MODIFY "x-at" ATTRIBUTE ->
+</wrapper>`;
                 this.formHT = code.$() as HTMLElement;
                 _row.htmlFile.content = code;
-                _row.htmlFile.reGenerate = true;                
+                _row.htmlFile.reGenerate = true;
             }
         } catch {
             return undefined;
         }
-        
+
         this.aliceMng.fillAlices(this.formHT);
         _row.designer.className =
             _row.codefile.baseClassName = "Designer";
@@ -74,7 +85,7 @@ export class commonParser {
             aliceNumber = this.fillDefImports('intenseGenerator', 'ucbuilder/intenseGenerator', aliceNumber, im);
             aliceNumber = this.fillDefImports('TptOptions, templatePathOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
             aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/global/stylerRegs', aliceNumber, im);
-           
+
             _row.designer.baseClassName = "Template";
             let tptbyCntnt = Template.getTemplates.byDirectory(filePath) as TemplatePathOptions[];
             let tpts = _row.designer.templetes;
@@ -127,14 +138,14 @@ export class commonParser {
                     uFInf.parseUrl(_subpath);
                     //if(_row.src.fullPathWithoutExt.includes())
                     //console.log(_row.src);
-                    
-                   /* let fItem = this.pathReplacement.find(s => s.findPath.equalIgnoreCase(uFInf.mainFileRootPath));
-                    if (fItem!=undefined) {
-                        ele.setAttribute('x-from', fItem.replaceWith);
-                        _row.htmlFile.content = this.formHT.outerHTML;
-                        _row.htmlFile.reGenerate = true;
-                    }*/
-                    
+
+                    /* let fItem = this.pathReplacement.find(s => s.findPath.equalIgnoreCase(uFInf.mainFileRootPath));
+                     if (fItem!=undefined) {
+                         ele.setAttribute('x-from', fItem.replaceWith);
+                         _row.htmlFile.content = this.formHT.outerHTML;
+                         _row.htmlFile.reGenerate = true;
+                     }*/
+
                     //console.log(_subpath);
                     //console.log(uFInf.mainFileRootPath);
                     if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {
@@ -146,7 +157,7 @@ export class commonParser {
                             nodeName: uFInf.name,
                             src: uFInf,
                         }
-                        aliceNumber = _this.fillDefImports(uFInf.name, uFInf.mainFileRootPath, aliceNumber, im,ctrlNode);
+                        aliceNumber = _this.fillDefImports(uFInf.name, uFInf.mainFileRootPath, aliceNumber, im, ctrlNode);
                         _row.designer.controls.push(ctrlNode);
                     }
                 } else {
@@ -159,14 +170,14 @@ export class commonParser {
                     });
                 }
             });
-          //  console.log(_row.src.codeSrc.rootPath);
-          //  console.log(im);
+            //  console.log(_row.src.codeSrc.rootPath);
+            //  console.log(im);
 
         }
 
         return _row;
     }
-    fillDefImports(name: string, url: string, aliceNumber: number, classList: ImportClassNode[],ctrlNode?: Control): number {
+    fillDefImports(name: string, url: string, aliceNumber: number, classList: ImportClassNode[], ctrlNode?: Control): number {
         let _found = classList.find(s => s.name.equalIgnoreCase(name))
         let aliceTxt = (_found) ? 'a' + aliceNumber++ : '';
         let obj: ImportClassNode = {
@@ -179,7 +190,7 @@ export class commonParser {
                 else return `${this.name} as ${this.alice}`;
             },
             get objText() {
-                return (this.alice == '')?this.name: this.alice;
+                return (this.alice == '') ? this.name : this.alice;
             }
         };
         if (ctrlNode != undefined) ctrlNode.importedClass = obj;

@@ -1,7 +1,7 @@
 import * as fs from "fs";
 import { commonParser } from "ucbuilder/build/codefile/commonParser";
 import { buildOptions, SpecialExtEnum, SpecialExtType, pathInfo, SourceCodeNode } from "ucbuilder/build/common";
-import { codeFileInfo, FileInfo, FileNameInfo } from "ucbuilder/build/codeFileInfo";
+import { codeFileInfo, FileInfo, FileNameInfo, htmlFileNode } from "ucbuilder/build/codeFileInfo";
 import * as path from "path";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
@@ -31,22 +31,21 @@ export class builder {
     init() {
         this.commonMng = new commonParser(this);
     }
-
-    private fillReplacerPath() {
+    public fillReplacerPath() {
         this.commonMng.reset();
         builder.dirsToBuild.forEach((s: string) => this.recursive(s, (filePath) => {
-            if (filePath.endsWithI(codeFileInfo.___DESIGNER_EXT)) {
+            if (fileWatcher.isHTMLFile(filePath)) {
                 let fInfo = new codeFileInfo(codeFileInfo.getExtType(filePath));
                 fInfo.parseUrl(filePath);
-                if (!fs.existsSync(fInfo.designer.fullPath)) return;
-                let content = fs.readFileSync(fInfo.designer.fullPath, 'binary');
-                let key = fileWatcher.getFilePathFromDesigner(content);
+                if (!fs.existsSync(fInfo.html.fullPath)) return;
+                let content = fs.readFileSync(fInfo.html.fullPath, 'binary');
+                let key = fileWatcher.getFilePathFromHTML(content);
                 if (key != undefined) {
                     let _FILE_PATH = key;//window.atob(key);
                     if (!fInfo.mainFileRootPath.equalIgnoreCase(_FILE_PATH)) {
                         let tmpfInfo = new codeFileInfo(codeFileInfo.getExtType(_FILE_PATH));
                         tmpfInfo.parseUrl(_FILE_PATH);
-                        this.commonMng.pathReplacement.push({
+                        this.commonMng.pushReplacement({
                             findPath: tmpfInfo.mainFileRootPath,
                             replaceWith: fInfo.mainFileRootPath
                         });
