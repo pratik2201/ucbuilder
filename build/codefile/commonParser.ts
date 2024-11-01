@@ -53,7 +53,7 @@ export class commonParser {
             if (code.trim() != '') {
                 this.formHT = code.$() as HTMLElement;
             } else {
-                code = `<wrapper x-caption="${_row.src.name}" tabindex="0">
+                code = `<wrapper x-caption="${_row.src.name}" x-at="${_row.src.mainFileRootPath}" tabindex="0">
 </wrapper>`;                
                 this.formHT = code.$() as HTMLElement;
                 _row.htmlFile.content = code;
