@@ -275,7 +275,12 @@ export class SourceManage<K> extends Array<K> {
     this.init_all_rows();
     this.onUpdate.fire([len]);
   }
-  originalSource: K[] = []
+  originalSource: K[] = [];
+  refillSource() {
+    this.length = 0;
+    this.push(...this.originalSource);
+    this.info.refresh();
+  }
   callToFill(...indexes) {
     let len = this.length;
     for (let i = 0; i < indexes.length; i++) {

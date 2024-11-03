@@ -51,13 +51,15 @@ export class rootPathHandler {
         switch (result) {
             case "newRegister":
                 //replaceAlicesWith = strOpt.trim__(replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase(), '/');
-
-                /*if (param2.addIntoFileDataBankAlso) {
+            //console.log(param2.addIntoFileDataBankAlso);
+            //console.log([projectName,rootDirectoryOf.rootDir]);
+            
+                if (param2.addIntoFileDataBankAlso) {
                     (async () => {
                         let { FileDataBank } = await import('ucbuilder/global/fileDataBank');
                         FileDataBank.pushReplacableText(projectName, rootDirectoryOf.rootDir);// replaceAlicesWith
                     })();
-                }*/
+                }
 
 
 

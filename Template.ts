@@ -294,7 +294,7 @@ export class TemplateNode {
       tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator_sub({
         data:
           tptPathOpt.cssContents == undefined
-            ? FileDataBank.readFile(param0.source.cfInfo.style.fullPath)
+            ? FileDataBank.readFile(param0.source.cfInfo.style.fullPath,{replaceContentWithKeys:true})
             : tptPathOpt.cssContents,
         localNodeElement: tptExt.parentUc.ucExtends.self,
         cssVarStampKey: tptExt.main.extended.cssVarStampKey,

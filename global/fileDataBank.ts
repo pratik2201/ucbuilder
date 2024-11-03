@@ -65,8 +65,8 @@ class FileDataBank {
 
     static readFile(path: string, {
         reloadData = false,
-        isFullPath = true
-        /*replaceContentWithKeys = true,*/
+        isFullPath = true,
+        replaceContentWithKeys = false,
     } = {}): string {
        
         let fullPath = path/*.toLowerCase()*/.trim();
@@ -83,15 +83,15 @@ class FileDataBank {
        // console.log(path);
         
         if (data != undefined) {
-            //if (!reloadData)
-            //    return replaceContentWithKeys ? data.content : data.originalContent;
-            if (!reloadData) return data.originalContent;
+            if (!reloadData)
+                return replaceContentWithKeys ? data.content : data.originalContent;
+            //if (!reloadData) return data.originalContent;
             let originalContent = readFileSync(fullPath, "binary");
             let content = this.getReplacedContent(originalContent);
             data.originalContent = originalContent;
             data.content = content;
-            return originalContent;
-            //return replaceContentWithKeys ? content : originalContent;
+            //return originalContent;
+            return replaceContentWithKeys ? content : originalContent;
         }
         else {
             let originalContent = readFileSync(fullPath, "binary");
@@ -101,8 +101,8 @@ class FileDataBank {
                 content: content,
                 originalContent: originalContent,
             });
-            return originalContent;
-            //return replaceContentWithKeys ? content : originalContent;
+            //return originalContent;
+            return replaceContentWithKeys ? content : originalContent;
         }
     }
 

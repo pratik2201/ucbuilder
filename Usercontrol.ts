@@ -221,7 +221,7 @@ export class Usercontrol {
             param0.source.cssContents = ext.stampRow.styler.parseStyleSeperator_sub(
                 {
                     data: (param0.source.cssContents == undefined ?
-                        FileDataBank.readFile(ext.fileInfo.style.fullPath)
+                        FileDataBank.readFile(ext.fileInfo.style.fullPath,{replaceContentWithKeys:true})
                         :
                         param0.source.cssContents),
                     localNodeElement: ext.self,
