@@ -74,7 +74,7 @@ export class userControlStamp {
                 rtrn.content = param0.htmlContents;
                 this.reload(rtrn, param0.beforeContentAssign, param0);
             } else {
-                rtrn.content = FileDataBank.readFile(param0.cfInfo.html.rootPath);
+                rtrn.content = FileDataBank.readFile(param0.cfInfo.html.fullPath);
                 this.reload(rtrn, param0.beforeContentAssign, param0);
             }
             this.source.push(rtrn);

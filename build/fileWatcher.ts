@@ -52,7 +52,7 @@ export class fileWatcher {
             fileWatcher.isGenerating = true;
             fileWatcher.rowsToFollow.length = 0;
             _this.stopWatch();
-            
+
             /*
             WHOLE FOLDER MOVE CODE
             console.log(rows); 
@@ -112,6 +112,7 @@ export class fileWatcher {
         let _this = this;
         if (fileWatcher.isHTMLFile(currentPath)) {
             console.log('FILE_MODIFIED');
+            
             let cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
             cFinfo.parseUrl(currentPath);
             //_this.main.commonMng.rows.length = 0;

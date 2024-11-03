@@ -67,9 +67,8 @@ export class stylerRegs {
         ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
 
         let _data: string = FileDataBank.readFile(_stylepath, {
-          isFullPath: true,
-          replaceContentWithKeys: true,
-        });
+          isFullPath:false
+          });
 
         if (_data != undefined) {
           LoadGlobal.pushRow({
@@ -179,12 +178,12 @@ export class stylerRegs {
 
         switch (code) {
           case "theme":
-            return FileDataBank.readFile(path);
+            return FileDataBank.readFile(path,{isFullPath:false});
           case "css":
             let isGoodToAdd: boolean = LoadGlobal.isGoodToPush(path);
             if (isGoodToAdd) {
               let cssContents: string = _this.parseStyleSeperator_sub({
-                data: FileDataBank.readFile(path),
+                data: FileDataBank.readFile(path,{isFullPath:false}),
               });
               LoadGlobal.pushRow({
                 url: path,

@@ -1,0 +1,7 @@
+{
+  "outDir": "out",
+  "designerDir": "designer",
+  "paths": {
+    "ucbuilder/*": "./*"
+  }
+}

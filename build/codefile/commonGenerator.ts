@@ -16,13 +16,13 @@ export class commonGenerator {
     constructor() {
         this.rgxManage = new regsManage();
 
-        this.designerTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('ucbuilder/buildTempates/uc/designer.js', { replaceContentWithKeys: true, });
-        this.codefileTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('ucbuilder/buildTempates/uc/codefile.js', { replaceContentWithKeys: true, });
-        this.styleTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('ucbuilder/buildTempates/uc/styles.css', { replaceContentWithKeys: true, });
+        this.designerTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('ucbuilder/buildTempates/uc/designer.js', { isFullPath: false, });
+        this.codefileTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('ucbuilder/buildTempates/uc/codefile.js', { isFullPath: false, });
+        this.styleTMPLT[buildOptions.extType.Usercontrol] = FileDataBank.readFile('ucbuilder/buildTempates/uc/styles.css', { isFullPath: false, });
 
-        this.designerTMPLT[buildOptions.extType.template] = FileDataBank.readFile('ucbuilder/buildTempates/tpt/designer.js', { replaceContentWithKeys: true, });
-        this.codefileTMPLT[buildOptions.extType.template] = FileDataBank.readFile('ucbuilder/buildTempates/tpt/codefile.js', { replaceContentWithKeys: true, });
-        this.styleTMPLT[buildOptions.extType.template] = FileDataBank.readFile('ucbuilder/buildTempates/tpt/styles.css', { replaceContentWithKeys: true, });
+        this.designerTMPLT[buildOptions.extType.template] = FileDataBank.readFile('ucbuilder/buildTempates/tpt/designer.js', { isFullPath: false, });
+        this.codefileTMPLT[buildOptions.extType.template] = FileDataBank.readFile('ucbuilder/buildTempates/tpt/codefile.js', { isFullPath: false, });
+        this.styleTMPLT[buildOptions.extType.template] = FileDataBank.readFile('ucbuilder/buildTempates/tpt/styles.css', { isFullPath: false, });
     }
 
     rgxManage: regsManage;
@@ -49,6 +49,8 @@ export class commonGenerator {
         this.rows.forEach(row => {
             // console.log(row.src);            
             commonGenerator.ensureDirectoryExistence(row.src.designer.fullPath);
+           // console.log(row.src.designer.rootPath);
+        
             _data = _this.generateNew(row, _this.designerTMPLT[row.src.extCode]);
             fs.writeFileSync(`${row.src.designer.fullPath}`, _data);
 
@@ -67,8 +69,8 @@ export class commonGenerator {
             //  fs.rmSync(row.src.mainFilePath+'.designer.ts');
                 
         });
-        /*let rfileFrm = new rfileGenerator();
-        rfileFrm.fill(rows);*/
+        //let rfileFrm = new rfileGenerator();
+       // rfileFrm.fill(rows);
     }
 
     getDesignerCode(rw: CommonRow) {

@@ -33,7 +33,7 @@ export class Template {
           name: propOpt.ATTR.TEMPLETE_DEFAULT,
           mainFilePath: mainFilePath,
           htmlContents: htmlContents,
-          cssContents: FileDataBank.readFile(mainFilePath + ".scss"),
+          cssContents: FileDataBank.readFile(mainFilePath + ".scss",{}),
         });
       } else {
         tList.forEach((element) => {
@@ -43,8 +43,8 @@ export class Template {
           callback({
             name: element.getAttribute(propOpt.ATTR.ACCESS_KEY),
             mainFilePath: mainFilePath,
-            htmlContents: FileDataBank.readFile(mainFilePath + ".html"),
-            cssContents: FileDataBank.readFile(mainFilePath + ".scss"),
+            htmlContents: FileDataBank.readFile(mainFilePath + ".html",{}),
+            cssContents: FileDataBank.readFile(mainFilePath + ".scss",{}),
           });
         });
       }
@@ -75,7 +75,7 @@ export class Template {
      */
     byHTMLFilePath(htmlFilePath: string, returnArray = true) {
       let mainFilePath = strOpt.trim_(htmlFilePath, ".html");
-      let htmlContents = FileDataBank.readFile(mainFilePath + ".html");
+      let htmlContents = FileDataBank.readFile(mainFilePath + ".html",{});
       return this.byContents(htmlContents, mainFilePath, returnArray);
     },
     /**
@@ -124,8 +124,8 @@ export class Template {
           row.mainFilePath = pathInfo.cleanPath(
             fpart.dirPath + extLessFileName
           );
-          row.htmlContents = FileDataBank.readFile(row.mainFilePath + ".html");
-          row.cssContents = FileDataBank.readFile(row.mainFilePath + ".scss");
+          row.htmlContents = FileDataBank.readFile(row.mainFilePath + ".html",{});
+          row.cssContents = FileDataBank.readFile(row.mainFilePath + ".scss",{});
           callback(row);
         }
       });
@@ -294,7 +294,7 @@ export class TemplateNode {
       tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator_sub({
         data:
           tptPathOpt.cssContents == undefined
-            ? FileDataBank.readFile(param0.source.cfInfo.style.rootPath)
+            ? FileDataBank.readFile(param0.source.cfInfo.style.fullPath)
             : tptPathOpt.cssContents,
         localNodeElement: tptExt.parentUc.ucExtends.self,
         cssVarStampKey: tptExt.main.extended.cssVarStampKey,

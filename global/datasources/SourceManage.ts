@@ -218,7 +218,7 @@ export class SourceManage<K> extends Array<K> {
     return topPoint == 0 ? 0 : i + 1;
   }
   loop_RowInfo(callback = (row: K, info: RowInfo<K>, index: number) => { }) {
-    console.log('loop_RowInfo...called');
+   // console.log('loop_RowInfo...called');
     let rInfo: RowInfo<K>;
     let src = this;
     let akey = SourceManage.ACCESS_KEY;

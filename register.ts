@@ -2,10 +2,12 @@
 /**
  * REGISTER `ucbuilder` MODULE SO THAT CAN ACCESS LIBRARY USING `ucbuilder` KEYWORD
  */
-let _clientPath: string = __dirname.replace(/[\\/]{1,}/g, "/") + '/';
-import alc from "module-alias";
-alc.addAlias("ucbuilder", _clientPath);
+//let _clientPath: string = __dirname.replace(/[\\/]{1,}/g, "/") + '/';
 
+import alc from "module-alias";
+alc.addAlias("ucbuilder", __dirname);
+
+import path from "path";
 /**
  * INITIALIZE SOME EXTENSION METHOD TO USE.
  */
@@ -15,7 +17,6 @@ import { uniqOpt } from "ucbuilder/build/common";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { RootPathParam, rootPathParam } from "ucbuilder/enumAndMore";
-import path from "path";
 import { rootDirectoryOf, LocationOf } from "ucbuilder/global/findAndReplace";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { Usercontrol } from "ucbuilder/Usercontrol";
@@ -50,8 +51,10 @@ class register {
     
 
     static registarMe(rootDirOf: LocationOf, param2: RootPathParam): boolean {
-       // console.log(rootDirOf);
+        // console.log(rootDirOf);
         
+       // console.log(path.join(__dirname, '../..'), process.cwd());
+      // console.log(" >>> "+process.cwd());
         rootDirOf = newObjectOpt.copyProps(rootDirOf, rootDirectoryOf);   
         if (rootDirOf.outDir == '') rootDirOf.outDir = '/'; 
         if (rootDirOf.designerDir == '') rootDirOf.designerDir = '/';

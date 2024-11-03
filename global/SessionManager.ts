@@ -114,7 +114,6 @@ class SessionManager {
         if (pathInfo.existFile(this.dataPath)) {
             let data = FileDataBank.readFile(this.dataPath, {
                 reloadData: true,
-                replaceContentWithKeys: false,
             });
             let ssn = this.setSession(JSON.parse(data));
             this.main.ucExtends.formExtends.Events.completeSessionLoad.fire();

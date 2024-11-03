@@ -6,7 +6,7 @@
     "explorer.fileNesting.enabled": true,    
     "explorer.fileNesting.expand": false,  
     "explorer.fileNesting.patterns": {
-        "package.json": ".babelrc, LICENSE, jsconfig.json, package-lock.json, .browserslistrc, .dockerignore, .editorconfig, .env, .eslintignore, .eslintrc., .gitignore, .graphqlrc., .nvmrc, .prettierignore, .prettierrc.*, README.md, babel.config.json, cypress.json, jest.config.ts, jest.preset.js, nx.json, package.json, tsconfig.base.json, tsconfig.json, workspace.json, yarn.lock, vercel.json, netlify.toml, pnpm-lock.yaml",
+        "package.json": ".babelrc, LICENSE,ucconfig.json, jsconfig.json, package-lock.json, .browserslistrc, .dockerignore, .editorconfig, .env, .eslintignore, .eslintrc., .gitignore, .graphqlrc., .nvmrc, .prettierignore, .prettierrc.*, README.md, babel.config.json, cypress.json, jest.config.ts, jest.preset.js, nx.json, package.json, tsconfig.base.json, tsconfig.json, workspace.json, yarn.lock, vercel.json, netlify.toml, pnpm-lock.yaml",
         "*.tpt.ts": "${capture}.tpt.*",
         "*.uc.ts": "${capture}.uc.*",
         "*.ts": "${capture}.js,${capture}.js.map",        

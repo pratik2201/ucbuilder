@@ -12,10 +12,10 @@ export class rfileGenerator {
         this.rgxManage = new regsManage();
 
         this.key = uniqOpt.guidAs_;
-        this.Uc_TREE_Template = FileDataBank.readFile('ucbuilder/buildTempates/uc/rfiletree.js', { replaceContentWithKeys: true, });
-        this.Tpt_TREE_Template = FileDataBank.readFile('ucbuilder/buildTempates/tpt/rfiletree.js', { replaceContentWithKeys: true, });
+        this.Uc_TREE_Template = FileDataBank.readFile('ucbuilder/buildTempates/uc/rfiletree.js', { isFullPath: false, });
+        this.Tpt_TREE_Template = FileDataBank.readFile('ucbuilder/buildTempates/tpt/rfiletree.js', { isFullPath: false, });
 
-        this.MAIN_Template = FileDataBank.readFile('ucbuilder/buildTempates/rfilemain.js', { replaceContentWithKeys: true, });        
+        this.MAIN_Template = FileDataBank.readFile('ucbuilder/buildTempates/rfilemain.js', { isFullPath: false, });        
     }
     Uc_TREE_Template: string = "";
     Tpt_TREE_Template: string = "";
@@ -35,8 +35,10 @@ export class rfileGenerator {
 
         this.fillHeaderAsText(this.linker);
     }
+    
     fillTreeNodes(row: CommonRow) {
         let src = row.src;
+        
         let pth = src.rootInfo.alices + '/' + src.partInfo.sortDirPath;
         let parted = pth.split('/');
         let obj = this.linker;
