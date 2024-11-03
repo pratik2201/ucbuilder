@@ -5,6 +5,7 @@ import { buildOptions, pathInfo } from "ucbuilder/build/common";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { rfileGenerator } from "ucbuilder/build/codefile/rfileGenerator";
 import path from "path";
+import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 
 export class commonGenerator {
     rows: CommonRow[] = [];
@@ -37,8 +38,16 @@ export class commonGenerator {
         let _this = this;
         this.rows = rows;
         let _data = "";
+        /*for (let i = 0; i < rootPathHandler.source.length; i++) {
+            const src = rootPathHandler.source[i];
+            if (src.location.designerDir != '/') {
+                let rootDir = (src.path + "/" + src.location.designerDir).toFilePath();
+                console.log(rootDir);
+                
+            }
+        }*/
         this.rows.forEach(row => {
-            // console.log(row.src);
+            // console.log(row.src);            
             commonGenerator.ensureDirectoryExistence(row.src.designer.fullPath);
             _data = _this.generateNew(row, _this.designerTMPLT[row.src.extCode]);
             fs.writeFileSync(`${row.src.designer.fullPath}`, _data);

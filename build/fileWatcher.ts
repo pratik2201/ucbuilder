@@ -1,7 +1,7 @@
 import fs, { readFileSync } from "fs";
+import timers from "timers";
 import { builder } from "ucbuilder/build/builder";
-import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
-import { SpecialExtEnum } from "ucbuilder/build/common";
+import { codeFileInfo, FileInfo } from "ucbuilder/build/codeFileInfo";
 
 export class fileWatcher {
     constructor(main: builder) { this.main = main; }
@@ -24,53 +24,79 @@ export class fileWatcher {
     static isGenerating = false;
     static hasTimeoutCleared = false;
     static timeoutInterval: any;
-    static rowsToFollow: { evt: fs.WatchEventType, filepath: string }[] = [];
+    static rowsToFollow: { evt: fs.WatchEventType, isFolder: boolean, filepath: string }[] = [];
 
     static isValidFileForPathReplacer(filePath: string) { return filePath.match(/\.ts$|\.scss$|\.html$/i) != null; }
     static isTSFile(filePath: string) { return filePath.match(/\.ts$/i) != null; }
     static isHTMLFile(filePath: string) { return filePath.match(/\.uc\.html$|\.tpt\.html$/i) != null; }
+    dirMoveInfo = {
+        newPath: '' as string,
+        oldPath: '' as string,
+    }
     watch_Listner = (evt: fs.WatchEventType, filepath: string) => {
-        if (filepath != null) {
-            /* let filename = filepath.substring(filepath.lastIndexOf('/'));
-             //console.log(filename);            
-             if ((filename.includes('.uc') || filename.includes('.tpt')) && !filename.endsWith('.js')) {
-                 console.log([evt, filepath]);
-             }*/
-
-        }
         let _this = this;
-        if (filepath == null || filepath == undefined/* || filepath.startsWith('.git')*/) return;
-        if (fileWatcher.isHTMLFile(filepath)) {
+        if (filepath == null || filepath == undefined || filepath.startsWith('node_modules')) return;
+
+        let isFolder = fs.existsSync(filepath) && fs.lstatSync(filepath).isDirectory();
+        if (fileWatcher.isHTMLFile(filepath) || isFolder) {
             //this.WHATTODO(evt,filepath);
-            fileWatcher.rowsToFollow.push({ evt, filepath });
-            clearTimeout(fileWatcher.timeoutInterval);
-            fileWatcher.timeoutInterval = setTimeout(timerCall, 1500);
+            fileWatcher.rowsToFollow.push({ evt: evt, isFolder: isFolder, filepath: filepath });
+            //if (fileWatcher.isGenerating) return;
+            //timerCall();     
+
+            timers.clearTimeout(fileWatcher.timeoutInterval);
+            fileWatcher.timeoutInterval = timers.setTimeout(timerCall, 1000);
         }
         function timerCall() {
             let rows = [...fileWatcher.rowsToFollow];
+            fileWatcher.isGenerating = true;
             fileWatcher.rowsToFollow.length = 0;
             _this.stopWatch();
-           // console.log(rows);
-          
-           _this.main.commonMng.reset();
+            
+            /*
+            WHOLE FOLDER MOVE CODE
+            console.log(rows); 
+            let len = rows.length;
+            console.log(len);
+            if (len == 3) {
+                let frow = rows[0];
+                let lrow = rows[2];
+                if (fs.existsSync(frow.filepath) && fs.existsSync(lrow.filepath)) {
+                    let fstate = fs.lstatSync(frow.filepath);
+                    let lstate = fs.lstatSync(lrow.filepath);
+                    if (fstate.isDirectory() && lstate.isDirectory()) {
+                        if (frow.evt == 'rename' && lrow.evt == 'change' && rows.length == 4) {
+                            _this.dirMoveInfo.newPath = frow.filepath;
+                            _this.dirMoveInfo.oldPath = lrow.filepath;
+                            console.log(_this.dirMoveInfo);
+                        }
+                    }
+                }
+            }*/
+
+
+
+            _this.main.commonMng.reset();
             for (let i = 0; i < rows.length; i++) {
                 const rw = rows[i];
-                
+                if (rw.isFolder) continue;
                 _this.WHATTODO(rw.evt, rw.filepath);
             }
             _this.generatingIsInProcess = true;
-          //  _this.main.renameFiles();
             console.log([..._this.main.commonMng.pathReplacement]);
-            
+            //debugger;
+            //console.log('BUILDING...'+(new Date()).toLocaleTimeString());
+
             _this.main.buildALL();
             _this.generatingIsInProcess = false;
+            fileWatcher.isGenerating = false;
             _this.startWatch();
         }
     };
 
     WHATTODO(evt: fs.WatchEventType, filepath: string) {
 
-      //  this.stopWatch();
+        //  this.stopWatch();
         switch (evt) {
             case "change":
                 this.CHECK_FILE_MODIFIED((this.dirPath + '/' + filepath).toFilePath());
@@ -79,7 +105,7 @@ export class fileWatcher {
                 this.CHECK_FILE_MOVE((this.dirPath + '/' + filepath).toFilePath());
                 break;
         }
-      //  this.startWatch();
+        //  this.startWatch();
 
     }
     CHECK_FILE_MODIFIED(currentPath: string) {
@@ -115,24 +141,13 @@ export class fileWatcher {
         console.log('FILE_MOVE');
         let _this = this;
         let cFinfo: codeFileInfo, oFinfo: codeFileInfo;
-        /*if (currentPath.endsWith('.html')) { //
+        if (!fs.existsSync(currentPath)) { ///   IF FILE IS DELETED OR MOVED..
             cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
             cFinfo.parseUrl(currentPath);
-            if (fs.existsSync(cFinfo.html.fullPath)) {
-
-                let htContent = fs.readFileSync(cFinfo.html.fullPath, 'binary');
-                if (htContent == '') {
-                    _this.main.commonMng.rows.length = 0;
-                    _this.main.buildFile(cFinfo);
-                    _this.generatingIsInProcess = false;
-                }
-                return;
-            } else {
+            if (fs.existsSync(cFinfo.designer.fullPath))
                 fs.rmSync(cFinfo.designer.fullPath);
-                return;
-            }
-        }*/
-        if (!fs.existsSync(currentPath)) return;
+            return;
+        }
         let key = fileWatcher.getFilePathFromHTML(fs.readFileSync(currentPath, 'binary'));
         if (key == undefined) {
             cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
@@ -147,7 +162,8 @@ export class fileWatcher {
                 }
                 return;
             } else {
-                fs.rmSync(cFinfo.designer.fullPath);
+                if (fs.existsSync(cFinfo.designer.fullPath))
+                    fs.rmSync(cFinfo.designer.fullPath);
                 return;
             }
         }
@@ -171,19 +187,20 @@ export class fileWatcher {
             });
             //console.log(oFinfo.designer.rootPath.trim_('.designer.ts'));
             //console.log(cFinfo.designer.rootPath.trim_('.designer.ts'));
-            
+
             this.main.commonMng.pushReplacement({
                 findPath: oFinfo.designer.rootPath.trim_('.designer.ts'),
                 replaceWith: cFinfo.designer.rootPath.trim_('.designer.ts')
             });
-            fs.rmSync(oFinfo.designer.fullPath);
-           // let fileFolders = fs.readdirSync(dirPath);
+            if (fs.existsSync(oFinfo.designer.fullPath))
+                fs.rmSync(oFinfo.designer.fullPath);
+            // let fileFolders = fs.readdirSync(dirPath);
 
 
         }
 
         //}
         _this.generatingIsInProcess = false;
-    
+
     }
 }
