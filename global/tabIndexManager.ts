@@ -188,15 +188,16 @@ class TabIndexManager {
         let elements: HTMLElement[] = [];
         if (!giveMeLastElement) {
             elements = Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`)); /*   , [x-tabindex] *     */
-
             for (let i = 0; i < elements.length; i++) {
                 let ele = elements[i];
                 let sub = this.getChildIfExist(ele, 0);
+
                 if (sub.element == undefined) {
                     rtrn.element = ele;
                     rtrn.tIndex = this.getTindex(ele);
                     break;
                 }
+                
                 else return sub;
             }
             return rtrn;

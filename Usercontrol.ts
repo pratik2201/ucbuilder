@@ -15,7 +15,12 @@ import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { winManager } from "ucbuilder/global/winManager";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
-
+/*export enum ucVisibility{
+    inherit = 0,
+    visible = 1,
+    hidden = 2
+}*/
+export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export class Usercontrol {
 
 
@@ -246,10 +251,19 @@ export class Usercontrol {
                 this.element = element;
             }
         },
-        hide: ()=>{
+        visibility: 'inherit' as ucVisibility,
+        getVisibility:():ucVisibility =>{
+            let ext = this.ucExtends;
+            if (ext.visibility != 'inherit') return ext.visibility;
+            if (ext.isForm) return ext.visibility;
+            return ext.PARENT.ucExtends.visibility;
+        },       
+        hide: () => {
+            this.ucExtends.visibility = 'hidden';
             Usercontrol.HiddenSpace.appendChild(this.ucExtends.wrapperHT);
         },
-        show: ({ at = undefined, decision = undefined }: { at?: HTMLElement, decision?: WhatToDoWithTargetElement } = {}) => {
+        show: ({ at = undefined, decision = undefined, }:
+            { at?: HTMLElement, decision?: WhatToDoWithTargetElement,visibility?:ucVisibility } = {}) => {
             let _extend = this.ucExtends;
             let dec = decision ? decision : _extend.loadAt.decision as WhatToDoWithTargetElement;
             let ele = at ? at : _extend.loadAt.element as HTMLElement;
@@ -270,6 +284,7 @@ export class Usercontrol {
                 }
             }
             _extend.Events.loaded.fire();
+            _extend.visibility = 'visible';
             //return undefined as Usercontrol
         },
         showDialog: ({ defaultFocusAt = undefined, afterClose = undefined }: {

@@ -1,5 +1,7 @@
 import { uniqOpt } from "ucbuilder/build/common";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
+import { TemplateNode } from "ucbuilder/Template";
+import { SearchableItemNode } from "ucbuilder/global/datasources/ResultAnalyser";
 export const SourceIndexElementAttr = "itmIndx" + uniqOpt.randomNo();
 export enum SearchStatus {
   notFound = 0,
@@ -20,6 +22,7 @@ export class RowInfo<K> {
   element?: HTMLElement;
   searchStatus = SearchStatus.notFound;
   main: SourceManage<K>;
+  template: TemplateNode;
   isModified = false;
   private _isVisible = true;
   private _isVisibleDefault: boolean;
@@ -134,6 +137,7 @@ class Info_<K> {
 }
 export class SourceManage<K> extends Array<K> {
   info: Info_<K>;
+  searchables:string[] = [];
   constructor() {
     super(); this.info = new Info_<K>(this);
 
@@ -142,6 +146,7 @@ export class SourceManage<K> extends Array<K> {
       
     }, 2000);*/
   }
+
   getRow(index: number): RowInfo<K> {
     return this[index][SourceManage.ACCESS_KEY];
   }
@@ -164,11 +169,7 @@ export class SourceManage<K> extends Array<K> {
     width: 0,
     height: 0
   }
-  clear() {
-    this.length = 0;
-    //this.rowInfo.length = 0;
-    //this.update();
-  }
+  
   getBottomIndex(topIndex: number, containerHeight: number, { length = undefined, overflowed = false }: { length?: number, overflowed?: boolean }): { index: number, status: IndexType } {
     let h = 0;
     let len = length ? length : this.length;
@@ -245,7 +246,7 @@ export class SourceManage<K> extends Array<K> {
     return rInfo;
   }
   StickRow(obj: K): RowInfo<K> {
-    let akey = SourceManage.ACCESS_KEY;
+    let akey = SourceManage.ACCESS_KEY;    
     let rInfo: RowInfo<K> = obj[akey] ?? new RowInfo();
     obj[akey] = rInfo;
     rInfo.row = obj;
@@ -262,7 +263,7 @@ export class SourceManage<K> extends Array<K> {
       obj = this[i];
       this.originalSource.push(obj);
       rInfo = this.StickRow(obj);  
-      rInfo.main = this;
+      //rInfo.main = this;
     }
     this.info.refresh();
     //console.log(this.length);
@@ -270,16 +271,29 @@ export class SourceManage<K> extends Array<K> {
 
   ihaveCompletedByMySide() {
     let len = this.length;
-
+    
     this.onCompleteUserSide.fire();
     this.init_all_rows();
     this.onUpdate.fire([len]);
   }
   originalSource: K[] = [];
-  refillSource() {
+  reset() {
     this.length = 0;
     this.push(...this.originalSource);
+    for (let i = 0; i < this.length; i++)this.reserTow(this[i]);    
     this.info.refresh();
+  }
+  clear() {
+    this.length = 0;
+    //this.rowInfo.length = 0;
+    //this.update();
+  }
+  reserTow(row:K) {
+    for (let i = 0; i < this.searchables.length; i++) {
+      const searchable = this.searchables[i];
+      (row[searchable] as SearchableItemNode).reset();
+    }
+    this.getRowByObj(row).isModified = true;
   }
   callToFill(...indexes) {
     let len = this.length;

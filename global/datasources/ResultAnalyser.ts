@@ -67,7 +67,15 @@ interface analyserSource<T> {
 export class ResultAnalyser<T> {
 
 
-    source: SourceManage<T>;
+    private _source: SourceManage<T>;
+    public get source(): SourceManage<T> {
+        return this._source;
+    }
+    public set source(value: SourceManage<T>) {        
+        this._source = value;
+        this.source.searchables.length = 0;
+        this.source.searchables.push(...this.columnsToFindIn);
+    }
     //originalSource: SourceManage<T> = new SourceManage(); //any[] = [];
     filteredSource: any[] = [];
 
@@ -205,6 +213,7 @@ export class ResultAnalyser<T> {
     analyserStorage = {};
     constructor(...columnsToFindIn: string[]) {
         this.columnsToFindIn.push(...columnsToFindIn);
+        
         this.initStorageForAnalyse();
     }
     initStorageForAnalyse() {
@@ -243,6 +252,7 @@ export class ResultAnalyser<T> {
                 Robj.searchStatus = SearchStatus.include;
             }
             else {
+                
                 Robj.isVisible = false;
                 Robj.searchStatus = SearchStatus.notFound;
                 results.push('NotFound');

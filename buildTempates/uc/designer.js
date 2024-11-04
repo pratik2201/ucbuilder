@@ -80,7 +80,8 @@ export class {=designer.className } extends Usercontrol {
                             decisionForTargerElement:'replace',
                             targetElement : CONTROLS.{=name} 
                         });
-        this.{=name}.ucExtends.show();
+            this.{=name }.ucExtends.show();
+            this.{=name }.ucExtends.visibility = 'inherit';
         ` 
              [/case]`    
         `{/switch}``{/loop}`
