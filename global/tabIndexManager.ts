@@ -190,14 +190,15 @@ class TabIndexManager {
             elements = Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`)); /*   , [x-tabindex] *     */
             for (let i = 0; i < elements.length; i++) {
                 let ele = elements[i];
-                let sub = this.getChildIfExist(ele, 0);
-
+                let sub = this.getChildIfExist(ele, 0);                
                 if (sub.element == undefined) {
-                    rtrn.element = ele;
-                    rtrn.tIndex = this.getTindex(ele);
-                    break;
-                }
-                
+                    let closest = ele.parentElement.closest('[x-tabindex]');
+                    if (closest.is(container)) {
+                        rtrn.element = ele;
+                        rtrn.tIndex = this.getTindex(ele);
+                        break;
+                    } 
+                }                
                 else return sub;
             }
             return rtrn;
@@ -253,7 +254,7 @@ class TabIndexManager {
         if (style.pointerEvents == "none") return false;
         if (htEle.nodeName.match(this.allowNodePattern) != null
             || htEle.getAttribute("contenteditable") == "true"
-            || htEle.getAttribute("disabled") !== 'true') {
+            || (!htEle.hasAttribute("disabled") && !htEle.hasAttribute("inert"))) {
             return true;
         } else {
             return false;

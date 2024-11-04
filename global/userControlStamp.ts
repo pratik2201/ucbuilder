@@ -101,9 +101,10 @@ export class userControlStamp {
                     case 'targetElement': rtrn.styler.nodeName = param0.targetElementNodeName; break;
                     case 'wrapper': rtrn.styler.nodeName = otag; break;
                 }*/
+                   
                 rtrn.styler.nodeName = otag;
                 let newNodeName: string = rtrn.styler.nodeName;
-                return `<${newNodeName} ${ATTR_OF.UC.UC_STAMP}="${rtrn.uniqStamp}" x-tabindex="-1" ${contents}</${newNodeName}>`;
+                return `<${newNodeName} ${ATTR_OF.UC.UC_STAMP}="${rtrn.uniqStamp}" x-tabindex="-1"  ${contents}</${newNodeName}>`; // 
             });
 
         rtrn.content = rtrn.styler.parseStyle(rtrn.content);

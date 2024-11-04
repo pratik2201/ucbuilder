@@ -154,6 +154,7 @@ export class Usercontrol {
             ucExt.fileInfo = param0.source.cfInfo;
 
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
+            //param0.source.addTabIndex = ucExt.isForm;
             ucExt.stampRow = userControlStamp.getStamp(param0.source);
             ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true) as HTMLElement;
             //console.log(param0.targetElement.nodeName);

@@ -23,7 +23,7 @@ export class winManager {
     static pages: Usercontrol[] = [];
     static focusMng: FocusManager = new FocusManager();
 
-    static transperency: HTMLElement = document.createElement("tbck"+uniqOpt.randomNo()); //undefined;
+    static transperency: HTMLElement = document.createElement("tbck" + uniqOpt.randomNo()); //undefined;
     // constructor(/*mainNode: HTMLElement, */frame: winFrame) {
     //    // this.mainNode = mainNode;
     //     frame.ucExtends.passElement(this.transperency);
@@ -31,11 +31,11 @@ export class winManager {
 
     static push = (form: Usercontrol): void => {
         let _this = this;
-       
+
         if (_this.CURRENT_WIN != undefined) {
             this.setfreez(true, _this.CURRENT_WIN.ucExtends.self);
         }
-       
+
         _this.CURRENT_WIN = form;
         _this.pages.push(_this.CURRENT_WIN);
         _this.curIndex = _this.pages.length - 1;
@@ -68,35 +68,61 @@ export class winManager {
         DISABLE: {
             NEW_VALUE: "disnval" + uniqOpt.randomNo(),
             OLD_VALUE: "disoval" + uniqOpt.randomNo(),
+        },
+        INERT: {
+            NEW_VALUE: "inrtnval" + uniqOpt.randomNo(),
+            OLD_VALUE: "inrtoval" + uniqOpt.randomNo(),
         }
     }
 
     static setfreez = (freez: boolean, element: HTMLElement): void => {
         if (freez) {
             this.focusMng.fetch();
-            element.setAttribute('active', '0');
-            let eles = element.querySelectorAll(controlOpt.ATTR.editableControls);
-            eles.forEach(
-                (e: HTMLElement) => {
-                    let disableAttr = e.getAttribute("disabled");
-                    if (disableAttr != null) e.data(winManager.ATTR.DISABLE.OLD_VALUE, disableAttr);
-                    e.setAttribute('disabled', 'true');
-                    e.setAttribute(winManager.ATTR.DISABLE.NEW_VALUE, 'true');
-                });
 
+
+
+            let inertAttr = element.getAttribute("inert");
+            if (inertAttr != null) element.data(winManager.ATTR.INERT.OLD_VALUE, inertAttr);
+            element.setAttribute('inert', 'true');
+
+
+            /* element.setAttribute('active', '0');
+                 let eles = element.querySelectorAll(controlOpt.ATTR.editableControls);
+                 eles.forEach(
+                     (e: HTMLElement) => {
+                         let disableAttr = e.getAttribute("disabled");
+                         if (disableAttr != null) e.data(winManager.ATTR.DISABLE.OLD_VALUE, disableAttr);
+                         e.setAttribute('disabled', 'true');
+                         e.setAttribute(winManager.ATTR.DISABLE.NEW_VALUE, 'true');
+ 
+                         let inertAttr = e.getAttribute("inert");
+                         if (inertAttr != null) e.data(winManager.ATTR.INERT.OLD_VALUE, inertAttr);
+                         e.setAttribute('inert', 'true');
+                         e.setAttribute(winManager.ATTR.INERT.NEW_VALUE, 'true');
+                     });
+             */
         } else {
             element.setAttribute('active', '1');
-            let eles = element.querySelectorAll(`[${winManager.ATTR.DISABLE.NEW_VALUE}]`);
+
+            let inertAttr = element.data(winManager.ATTR.INERT.OLD_VALUE);
+            if (inertAttr != undefined) element.setAttribute('inert', inertAttr);
+            else element.removeAttribute('inert');
+
+
+            /*let eles = element.querySelectorAll(`[${winManager.ATTR.DISABLE.NEW_VALUE}]`);
             eles.forEach(
                 (e: HTMLElement) => {
                     let disableAttr = e.data(winManager.ATTR.DISABLE.OLD_VALUE);
-                  //  console.log(element);
-                  //  console.log(disableAttr);
-
                     if (disableAttr != undefined) e.setAttribute('disabled', disableAttr);
                     else e.removeAttribute('disabled');
+
+                    let inertAttr = e.data(winManager.ATTR.INERT.OLD_VALUE);
+                    if (inertAttr != undefined) e.setAttribute('inert', inertAttr);
+                    else e.removeAttribute('inert');
                     // e.removeAttribute('disabled', winManager.ATTR.DISABLE.NEW_VALUE);
-                });
+                });*/
+            
+            
             this.focusMng.focus(element);
         }
     }
