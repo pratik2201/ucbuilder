@@ -370,18 +370,16 @@ export class Usercontrol {
         },
         destruct: (): boolean => {
             let res = { prevent: false };
+            let _this = this;
             this.ucExtends.Events.beforeClose.fire([res]);
             if (!res.prevent) {
                 this.ucExtends.wrapperHT.delete();
-                if (this.ucExtends.isDialogBox) {
-                    winManager.pop();
-                }
+                if (this.ucExtends.isDialogBox) 
+                    winManager.pop();                
                 this.ucExtends.Events.afterClose.fire();
-                for (const key in this) {
-                   // console.log([key,Object.getPrototypeOf(this[key]).constructor.name,this]);
-                    
-                    this[key] = null;
-                }
+                setTimeout(() => { 
+                    for (const key in _this)_this[key] = null;
+                }, 1);                
                 return true;
             }
             return false;

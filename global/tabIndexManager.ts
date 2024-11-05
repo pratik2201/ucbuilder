@@ -192,12 +192,12 @@ class TabIndexManager {
                 let ele = elements[i];
                 let sub = this.getChildIfExist(ele, 0);                
                 if (sub.element == undefined) {
-                    let closest = ele.parentElement.closest('[x-tabindex]');
-                    if (closest.is(container)) {
+                    //let closest = ele.parentElement.closest('[x-tabindex]');
+                    //if (closest.is(container)) {
                         rtrn.element = ele;
                         rtrn.tIndex = this.getTindex(ele);
                         break;
-                    } 
+                    //} 
                 }                
                 else return sub;
             }

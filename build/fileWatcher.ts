@@ -43,7 +43,7 @@ export class fileWatcher {
             fileWatcher.rowsToFollow.push({ evt: evt, isFolder: isFolder, filepath: filepath });
             //if (fileWatcher.isGenerating) return;
             //timerCall();     
-
+            
             timers.clearTimeout(fileWatcher.timeoutInterval);
             fileWatcher.timeoutInterval = timers.setTimeout(timerCall, 1000);
         }
@@ -99,9 +99,11 @@ export class fileWatcher {
         //  this.stopWatch();
         switch (evt) {
             case "change":
+                console.log(this.dirPath + '/' + filepath);
                 this.CHECK_FILE_MODIFIED((this.dirPath + '/' + filepath).toFilePath());
                 break;
             case "rename": // IF FILE CHANGED...
+                
                 this.CHECK_FILE_MOVE((this.dirPath + '/' + filepath).toFilePath());
                 break;
         }

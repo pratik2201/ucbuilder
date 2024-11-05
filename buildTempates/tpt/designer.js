@@ -43,7 +43,7 @@ export class {=designer.className } extends Template {
         super();    
         let aargs = Template.extractArgs(arguments);
         let fargs = aargs[aargs.length - 1] as TptOptions;
-        
+        this.extended.parentUc = fargs.parentUc;
         //let fargs = Template.extractArgs(arguments) as TptOptions;
         
         //fargs = fargs[fargs.length-1] as TptOptions;

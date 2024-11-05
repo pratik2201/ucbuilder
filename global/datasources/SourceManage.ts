@@ -22,8 +22,9 @@ export class RowInfo<K> {
   element?: HTMLElement;
   searchStatus = SearchStatus.notFound;
   main: SourceManage<K>;
-  template: TemplateNode;
+  template: TemplateNode;  
   isModified = false;
+  isSourceRow = true;
   private _isVisible = true;
   private _isVisibleDefault: boolean;
   public get isVisible() {
@@ -86,9 +87,10 @@ type IndexType = "isAtLast" | "isAtTop" | "continue" | "undefined";
 class Info_<K> {
   main: SourceManage<K>;
   constructor(main: SourceManage<K>) { this.main = main; }
-  length = 0;
+  length = 0;  
   height = 0;
   width = 0;
+  defaultIndex = 0;
   //rows: K[] = [];
   doForAll(s: {
     isModified?: boolean,
@@ -280,7 +282,7 @@ export class SourceManage<K> extends Array<K> {
   reset() {
     this.length = 0;
     this.push(...this.originalSource);
-    for (let i = 0; i < this.length; i++)this.reserTow(this[i]);    
+    for (let i = 0; i < this.length; i++)this.resetTow(this[i]);    
     this.info.refresh();
   }
   clear() {
@@ -288,7 +290,8 @@ export class SourceManage<K> extends Array<K> {
     //this.rowInfo.length = 0;
     //this.update();
   }
-  reserTow(row:K) {
+  resetTow(row: K) {
+    if(!this.getRowByObj(row).isSourceRow)return;
     for (let i = 0; i < this.searchables.length; i++) {
       const searchable = this.searchables[i];
       (row[searchable] as SearchableItemNode).reset();

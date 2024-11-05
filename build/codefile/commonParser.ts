@@ -54,6 +54,7 @@ export class commonParser {
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
 
         try {
+            
             if (code.trim() != '') {
                 this.formHT = code.$() as HTMLElement;
                 let xAt = this.formHT.getAttribute('x-at');
@@ -61,11 +62,17 @@ export class commonParser {
                     this.formHT.setAttribute('x-at', _row.src.mainFileRootPath);
                     _row.htmlFile.content = this.formHT.outerHTML;
                     _row.htmlFile.reGenerate = true;
-                } 
+                }
             } else {
-                code = `<wrapper x-caption="${_row.src.name}" x-at="${_row.src.mainFileRootPath}" tabindex="0">
+                if (isUserControl) {
+                    code = `<wrapper x-caption="${_row.src.name}" x-at="${_row.src.mainFileRootPath}" tabindex="0">
 <!-- DONT MODIFY "x-at" ATTRIBUTE -->
 </wrapper>`;
+                } else {
+                   code = `<wrapper  searchstatus="{=.searchStatus}" aria-disabled="{=.isDisabled}" x-at="${_row.src.mainFileRootPath}"  >
+<!-- DONT MODIFY "x-at" ATTRIBUTE FROM PRIMARY FILE -->
+</wrapper>`
+                }
                 this.formHT = code.$() as HTMLElement;
                 _row.htmlFile.content = code;
                 _row.htmlFile.reGenerate = true;
@@ -87,12 +94,19 @@ export class commonParser {
             aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/global/stylerRegs', aliceNumber, im);
 
             _row.designer.baseClassName = "Template";
-            let tptbyCntnt = Template.getTemplates.byDirectory(filePath) as TemplatePathOptions[];
+            let subTemplates = Template.getTemplates.byDirectory(filePath) as TemplatePathOptions[];
             let tpts = _row.designer.templetes;
-            tptbyCntnt.forEach(template => {
+            subTemplates.forEach(template => {
                 let rolelwr = template.name;
                 if (tpts.findIndex(s => s.name.equalIgnoreCase(rolelwr)) != -1) return;
                 let controls: Control[] = [];
+                /*if (_row.htmlFile.reGenerate)
+                    template.htmlContents = template.htmlContents;*/
+                if (template.htmlContents == '') {
+                    template.htmlContents = `<wrapper  searchstatus="{=.searchStatus}" aria-disabled="{=.isDisabled}" x-at="${_row.src.mainFileRootPath}"  >
+<!-- DONT MODIFY "x-at" ATTRIBUTE FROM PRIMARY FILE -->
+</wrapper>`;
+                }
                 let cntHT = template.htmlContents.$() as HTMLElement;
                 let _htEleAr = Array.from(cntHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
                 _htEleAr.forEach(e => {

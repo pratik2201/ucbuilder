@@ -65,18 +65,16 @@ interface analyserSource<T> {
     include: T[];
 }
 export class ResultAnalyser<T> {
-
-
     private _source: SourceManage<T>;
     public get source(): SourceManage<T> {
         return this._source;
     }
-    public set source(value: SourceManage<T>) {        
+    public set source(value: SourceManage<T>) {
         this._source = value;
         this.source.searchables.length = 0;
         this.source.searchables.push(...this.columnsToFindIn);
     }
-    //originalSource: SourceManage<T> = new SourceManage(); //any[] = [];
+
     filteredSource: any[] = [];
 
     updateSource(sortSource: boolean = false) {
@@ -85,11 +83,8 @@ export class ResultAnalyser<T> {
         if (sortSource) {
             let cols = this.columnsToFindIn;
             let src = this.source;
-            //const indices = Array.from(src.keys());
-            let topDefaultRows = src.splice(0, this.defaultTopIndex);
+            let topDefaultRows = src.splice(0, src.info.defaultIndex);
             src.sort((a, b) => { return _SortEvent(a, b); });
-            src.unshift(...topDefaultRows);
-            //this.source = indices.map(i => src[i]) as SourceManage<T>;
             let obj = undefined;
             if (src.length > 0)
                 for (let j = 0; j < src.length; j++) {
@@ -98,9 +93,8 @@ export class ResultAnalyser<T> {
                     for (let i = 0; i < cols.length; i++)
                         obj[cols[i]].reset();
                 }
-
+            src.unshift(...topDefaultRows);
         }
-        //this.Event.beforeFillingRows(this.source);
         this.source.callToFill();
 
     }
@@ -118,14 +112,10 @@ export class ResultAnalyser<T> {
 
         }
     }
-    private _defaultTopIndex = 0;
     private defaultTopRows: T[] = [];
-    public get defaultTopIndex() {
-        return this._defaultTopIndex;
-    }
-    public set defaultTopIndex(value) {
-        this._defaultTopIndex = value;
-        this.defaultTopRows = this.source.slice(0, this.defaultTopIndex);
+    
+    setDefaultRow() {
+        this.defaultTopRows = this.source.slice(0, this.source.info.defaultIndex);
     }
     filterInitlized = false;
     clearFilter() {
@@ -143,18 +133,18 @@ export class ResultAnalyser<T> {
     lasttext = "";
     filter(text: string) {
         text = text.trim();
-        let src = this.source;        
+        let src = this.source;
         if (text == '') this.clearFilter();
-        else if (!text.startsWithI(this.lasttext) || this.lasttext =='') {
+        else if (!text.startsWithI(this.lasttext) || this.lasttext == '') {
             this.initFilter(text);
         } else {
             let snode = new SearchableItemNode();
             snode.Text = text;
             this.initStorageForAnalyse();
             this.filteredSource.map(row => this.analyse(snode, row));
-            this.source.clear();
-            this.source.push(...this.defaultTopRows);
-            this.pushResultInside(snode, this.source);
+            src.clear();
+            src.push(...this.defaultTopRows);
+            this.pushResultInside(snode, src);
             this.updateSource();
         }
         /*switch (text.length) {
@@ -185,11 +175,11 @@ export class ResultAnalyser<T> {
         let snode = new SearchableItemNode();
         this.initStorageForAnalyse();
         snode.Text = text;
-        //let src = this.source;
+        let src = this.source;
         let tmp: T[] = [];
-        tmp.push(...this.source.originalSource);
+        tmp.push(...src.originalSource);
 
-        tmp.splice(0, this.defaultTopIndex);
+        tmp.splice(0, src.info.defaultIndex);
         //this.source.originalSource.map(row => this.analyse(snode, row));
         for (let i = 0; i < tmp.length; i++) {
             const row = tmp[i];
@@ -197,8 +187,8 @@ export class ResultAnalyser<T> {
         }
         this.filteredSource.length = 0;
         this.pushResultInside(snode, this.filteredSource);
-        this.source.clear();
-        this.source.push(...this.defaultTopRows, ...this.filteredSource);
+        src.clear();
+        src.push(...this.defaultTopRows, ...this.filteredSource);
         this.updateSource();
         this.filterInitlized = true;
         this.lasttext = text;
@@ -213,7 +203,7 @@ export class ResultAnalyser<T> {
     analyserStorage = {};
     constructor(...columnsToFindIn: string[]) {
         this.columnsToFindIn.push(...columnsToFindIn);
-        
+
         this.initStorageForAnalyse();
     }
     initStorageForAnalyse() {
@@ -252,7 +242,7 @@ export class ResultAnalyser<T> {
                 Robj.searchStatus = SearchStatus.include;
             }
             else {
-                
+
                 Robj.isVisible = false;
                 Robj.searchStatus = SearchStatus.notFound;
                 results.push('NotFound');
@@ -297,9 +287,6 @@ export class ResultAnalyser<T> {
                 }
             }
             ttl.allMix.push(...res.equal, ...res.startwith, ...res.include);
-            //ttl.equal.push(...res.equal);
-            //ttl.startwith.push(...res.startwith);
-            //ttl.include.push(...res.include);
         }
         target.push(...ttl.allMix.distinct());
     }
