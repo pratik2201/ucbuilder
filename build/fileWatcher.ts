@@ -147,6 +147,8 @@ export class fileWatcher {
         if (!fs.existsSync(currentPath)) { ///   IF FILE IS DELETED OR MOVED..
             cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
             cFinfo.parseUrl(currentPath);
+            console.log('delete be :-'+cFinfo.designer.fullPath);
+            
             if (fs.existsSync(cFinfo.designer.fullPath))
                 fs.rmSync(cFinfo.designer.fullPath);
             return;

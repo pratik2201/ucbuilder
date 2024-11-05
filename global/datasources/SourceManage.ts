@@ -1,7 +1,7 @@
 import { uniqOpt } from "ucbuilder/build/common";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { TemplateNode } from "ucbuilder/Template";
-import { SearchableItemNode } from "ucbuilder/global/datasources/ResultAnalyser";
+import { ResultAnalyser, SearchableItemNode } from "ucbuilder/global/datasources/ResultAnalyser";
 export const SourceIndexElementAttr = "itmIndx" + uniqOpt.randomNo();
 export enum SearchStatus {
   notFound = 0,
@@ -139,10 +139,11 @@ class Info_<K> {
 }
 export class SourceManage<K> extends Array<K> {
   info: Info_<K>;
-  searchables:string[] = [];
+  searchables: string[] = [];
+  analyser: ResultAnalyser<K>;
   constructor() {
     super(); this.info = new Info_<K>(this);
-
+    this.analyser = new ResultAnalyser(this);
     /*setInterval(() => {
       console.log(this.info.length);
       

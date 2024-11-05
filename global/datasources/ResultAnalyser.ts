@@ -65,15 +65,14 @@ interface analyserSource<T> {
     include: T[];
 }
 export class ResultAnalyser<T> {
-    private _source: SourceManage<T>;
-    public get source(): SourceManage<T> {
+    source: SourceManage<T>;
+   /* public get source(): SourceManage<T> {
         return this._source;
     }
     public set source(value: SourceManage<T>) {
         this._source = value;
-        this.source.searchables.length = 0;
-        this.source.searchables.push(...this.columnsToFindIn);
-    }
+       
+    }*/
 
     filteredSource: any[] = [];
 
@@ -112,10 +111,11 @@ export class ResultAnalyser<T> {
 
         }
     }
-    private defaultTopRows: T[] = [];
+    public topStickyRows: T[] = [];
+    public defaultRows: T[] = [];
     
     setDefaultRow() {
-        this.defaultTopRows = this.source.slice(0, this.source.info.defaultIndex);
+        this.topStickyRows = this.source.slice(0, this.source.info.defaultIndex);
     }
     filterInitlized = false;
     clearFilter() {
@@ -143,7 +143,7 @@ export class ResultAnalyser<T> {
             this.initStorageForAnalyse();
             this.filteredSource.map(row => this.analyse(snode, row));
             src.clear();
-            src.push(...this.defaultTopRows);
+            src.push(...this.topStickyRows);
             this.pushResultInside(snode, src);
             this.updateSource();
         }
@@ -188,7 +188,7 @@ export class ResultAnalyser<T> {
         this.filteredSource.length = 0;
         this.pushResultInside(snode, this.filteredSource);
         src.clear();
-        src.push(...this.defaultTopRows, ...this.filteredSource);
+        src.push(...this.topStickyRows, ...this.filteredSource);
         this.updateSource();
         this.filterInitlized = true;
         this.lasttext = text;
@@ -201,9 +201,13 @@ export class ResultAnalyser<T> {
 
     columnsToFindIn: string[] = [];
     analyserStorage = {};
-    constructor(...columnsToFindIn: string[]) {
-        this.columnsToFindIn.push(...columnsToFindIn);
-
+    constructor(source:SourceManage<T>) {
+        this.source = source;
+    }
+    pushColumnsToFindIn(...columnsToFindIn: string[]) {
+        this.columnsToFindIn.push(...columnsToFindIn);        
+        this.source.searchables.length = 0;
+        this.source.searchables.push(...this.columnsToFindIn);
         this.initStorageForAnalyse();
     }
     initStorageForAnalyse() {
