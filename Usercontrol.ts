@@ -190,7 +190,7 @@ export class Usercontrol {
                 ucExt.parentDependantIndex = pucExt.dependant.length;
                 pucExt.dependant.push(this);
             }
-            ucExt.passElement(controlOpt.getArray(ucExt.wrapperHT.children));
+            ucExt.passElement(controlOpt.getArray(ucExt.wrapperHT)); //.children
             let sizeChangeEvt = ucExt.Events.sizeChanged;
             sizeChangeEvt.Events.onChangeEventList = () => {
                 if (ucExt.resizerObserver == undefined) {
@@ -377,9 +377,9 @@ export class Usercontrol {
                 if (this.ucExtends.isDialogBox) 
                     winManager.pop();                
                 this.ucExtends.Events.afterClose.fire();
-                setTimeout(() => { 
+                //setTimeout(() => { 
                     for (const key in _this)_this[key] = null;
-                }, 1);                
+               // }, 1);                
                 return true;
             }
             return false;

@@ -221,10 +221,10 @@ export class SourceManage<K> extends Array<K> {
     }
     return topPoint == 0 ? 0 : i + 1;
   }
-  loop_RowInfo(callback = (row: K, info: RowInfo<K>, index: number) => { }) {
+  loop_RowInfo(src:K[],callback = (row: K, info: RowInfo<K>, index: number) => { }) {
    // console.log('loop_RowInfo...called');
     let rInfo: RowInfo<K>;
-    let src = this;
+   // let src = this;
     let akey = SourceManage.ACCESS_KEY;
     let obj: K = undefined;
     for (let i = 0, len = src.length; i < len; i++) {
@@ -239,7 +239,7 @@ export class SourceManage<K> extends Array<K> {
       }
       callback(src[i], rInfo, i);
     }
-    this.init_all_rows();
+    //this.init_all_rows();
   }
   static StickRow<K>(obj: any): RowInfo<K> {
     let akey = this.ACCESS_KEY;
@@ -256,7 +256,7 @@ export class SourceManage<K> extends Array<K> {
     //rInfo.main = this;
     return rInfo;
   }
-  private init_all_rows() {
+  /*private init_all_rows(originalSrc:K[]) {
     let rInfo: RowInfo<K>;
     let akey = SourceManage.ACCESS_KEY;
     let obj: K = undefined;
@@ -270,28 +270,37 @@ export class SourceManage<K> extends Array<K> {
     }
     this.info.refresh();
     //console.log(this.length);
-  }
+  }*/
 
   ihaveCompletedByMySide() {
     let len = this.length;
+    this.originalSource.length = 0;
+    this.originalSource.push(...this);
+    let sample = this.analyser.getSample();
     
-    this.onCompleteUserSide.fire();
-    this.init_all_rows();
+    this.length = 0;
+    this.push(...sample);
+    this.onCompleteUserSide.fire([sample]);    
+    
+    for (let i = 0; i < sample.length; i++)this.StickRow(sample[i]);
+    this.info.refresh();
+    
     this.onUpdate.fire([len]);
   }
   originalSource: K[] = [];
   reset() {
-    this.length = 0;
-    this.push(...this.originalSource);
-    for (let i = 0; i < this.length; i++)this.resetTow(this[i]);    
+    //this.length = 0;
+    //this.push(...this.originalSource);
+    this.analyser.clearFilter(true);
+    let s = this.originalSource;
+    for (let i = 0,len = s.length; i < len; i++)this.resetRow(s[i]);    
     this.info.refresh();
   }
-  clear() {
+  clear(clearOriginalSource:boolean = false) {
     this.length = 0;
-    //this.rowInfo.length = 0;
-    //this.update();
+    if (clearOriginalSource) this.originalSource.length = 0;
   }
-  resetTow(row: K) {
+  resetRow(row: K) {
     if(!this.getRowByObj(row).isSourceRow)return;
     for (let i = 0; i < this.searchables.length; i++) {
       const searchable = this.searchables[i];
@@ -310,5 +319,5 @@ export class SourceManage<K> extends Array<K> {
   }
   static ACCESS_KEY = uniqOpt.guid;
   onUpdate = new CommonEvent<(arrayLen: number) => void>();
-  onCompleteUserSide = new CommonEvent<() => void>(); 
+  onCompleteUserSide = new CommonEvent<(src:K[]) => void>(); 
 };
