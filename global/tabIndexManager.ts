@@ -22,7 +22,7 @@ class TabIndexManager {
             switch (code) {
                 case keyBoard.keys.enter:
                     //console.log(Object.getPrototypeOf(ev.target).constructor.name);
-                    if (code == keyBoard.keys.enter && Object.getPrototypeOf(ev.target).constructor.name == 'HTMLTextAreaElement') {
+                    if (Object.getPrototypeOf(ev.target).constructor.name == 'HTMLTextAreaElement') {
                         let ele = ev.target as HTMLTextAreaElement;
                         let _val = ele.value;
                         if (_val != '' && _val == ele.getSelectedValue()) {
@@ -171,7 +171,7 @@ class TabIndexManager {
         return (tIndex == null) ? null : parseInt(tIndex);
     }
 
-    getClosest(target: HTMLElement): HTMLElement | null {
+    getClosest(target: HTMLElement|Element): HTMLElement | null {
         return target.parentElement.closest("[x-tabindex]");
     }
 
@@ -187,7 +187,7 @@ class TabIndexManager {
 
         let elements: HTMLElement[] = [];
         if (!giveMeLastElement) {
-            elements = Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`)); /*   , [x-tabindex] *     */
+            elements = Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`)).filter(s=>container.is(_this.getClosest(s))) as HTMLElement[]; /*   , [x-tabindex] *     */
             for (let i = 0; i < elements.length; i++) {
                 let ele = elements[i];
                 let sub = this.getChildIfExist(ele, 0);                
