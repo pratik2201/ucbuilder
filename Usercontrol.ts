@@ -247,9 +247,10 @@ export class Usercontrol {
         loadAt: {
             decision: "waitForDecision" as WhatToDoWithTargetElement,
             element: undefined as HTMLElement,
-            setValue(decision: WhatToDoWithTargetElement, element: HTMLElement) {
-                this.decision = decision;
-                this.element = element;
+            setValue: (decision: WhatToDoWithTargetElement, element: HTMLElement) => {
+                let _loadAt = this.ucExtends.loadAt;
+                _loadAt.decision = decision;
+                _loadAt.element = element;
             }
         },
         visibility: 'inherit' as ucVisibility,
@@ -266,11 +267,16 @@ export class Usercontrol {
         show: ({ at = undefined, decision = undefined, }:
             { at?: HTMLElement, decision?: WhatToDoWithTargetElement,visibility?:ucVisibility } = {}) => {
             let _extend = this.ucExtends;
-            let dec = decision ? decision : _extend.loadAt.decision as WhatToDoWithTargetElement;
-            let ele = at ? at : _extend.loadAt.element as HTMLElement;
+            let _loadAt = _extend.loadAt;
+            let dec = decision ? decision : _loadAt.decision as WhatToDoWithTargetElement;
+            let ele = at ? at : _loadAt.element as HTMLElement;
             if (ele == undefined) {
                 ele = _extend.fileInfo.rootInfo.defaultLoadAt;
             }
+            if (_loadAt.element == undefined) {
+                _loadAt.element = this.ucExtends.fileInfo.rootInfo.defaultLoadAt;
+            }
+           // _extend.loadAt.element = ele;
             if (ele) {
                 switch (dec) {
                     case 'replace':
@@ -284,6 +290,7 @@ export class Usercontrol {
                         break;
                 }
             }
+            
             _extend.Events.loaded.fire();
             _extend.visibility = 'visible';
             //return undefined as Usercontrol
