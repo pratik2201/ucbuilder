@@ -10,7 +10,7 @@ interface TabIndexRow {
 class TabIndexManager {
     mainHT: HTMLElement | undefined;
 
-    constructor() {}
+    constructor() { }
 
     init(mainHT: HTMLElement) {
         this.mainHT = mainHT;
@@ -19,6 +19,7 @@ class TabIndexManager {
 
         document.addEventListener('keydown', (ev: KeyboardEvent) => {
             let code = ev.keyCode;
+
             switch (code) {
                 case keyBoard.keys.enter:
                     //console.log(Object.getPrototypeOf(ev.target).constructor.name);
@@ -26,14 +27,15 @@ class TabIndexManager {
                         let ele = ev.target as HTMLTextAreaElement;
                         let _val = ele.value;
                         if (_val != '' && _val == ele.getSelectedValue()) {
-                        } else{
+                        } else {
                             if (!_val.endsWith('\n')) return;
                             else ele.value = _val.slice(0, -1);
-                        } 
+                        }
                     }
                 case keyBoard.keys.tab:
                     if (!ev.shiftKey) this.keymoveNext(ev.target as HTMLElement);
-                    else this.keymovePrev(ev.target as HTMLElement);
+                    else
+                        this.keymovePrev(ev.target as HTMLElement);
                     ev.preventDefault();
                     break;
                 case keyBoard.keys.left:
@@ -100,10 +102,36 @@ class TabIndexManager {
             else {
                 container = _this.getClosest(target);
                 prevRow = this.getChildIfExist(container, tIndex, true);
-                if (prevRow.element != undefined)
+                if (_this.isFocusableElement(prevRow.element))
                     this.focusTo(prevRow.element);
+                else {
+
+                    tIndex = _this.getTindex(prevRow.element)-1;
+                    _this.movePrev(prevRow.element, tIndex);
+
+                    // _this.movePrev(prevRow.element,tIndex);
+                }
             }
         }
+
+        function doProcessPrev(ele: HTMLElement, tIndex: number) {
+            if (tIndex == null) return;
+            tIndex++;
+            let container = _this.getClosest(ele);
+
+            if (container == null) {
+                let index = _this.getTindex(ele);
+                index = Math.max(0, index);
+                _this.moveNext(ele, index);
+                return;
+            }
+
+            let nextRow = _this.getChildIfExist(container, tIndex);
+            if (nextRow.element != undefined)
+                _this.moveNext(nextRow.element, nextRow.tIndex);
+        }
+
+
     }
 
     keymoveNext(target: HTMLElement) {
@@ -117,10 +145,10 @@ class TabIndexManager {
     moveNext(target: HTMLElement, tIndex: number = -1) {
         let _this = this;
         if (tIndex == null) return;
-        let row = this.getChildIfExist(target, 0);
+        let row = this.getChildIfExist(target, 0);  //  CHECK IF `target` IS CONTAINER ELEMENT
         let container: HTMLElement | undefined;
 
-        if (row.element == null) {
+        if (row.element == null) {   //  IF `target` IS NOT CONTAINER ELEMENT
             container = this.getClosest(target);
             if (container == null) return;
             let nextRow = this.getChildIfExist(container, tIndex);
@@ -132,12 +160,16 @@ class TabIndexManager {
                 }
             }
             else {
+                //this.moveNext(nextRow.container, this.getTindex(nextRow.container)+1);
                 doProcessNext(nextRow.container, this.getTindex(nextRow.container));
             }
-        } else {
+        } else { //  IF `target` IS CONTAINER ELEMENT
             if (this.isFocusableElement(row.element)) {
                 this.focusTo(row.element);
-            } else doProcessNext(row.element, row.tIndex);
+            } else {
+                this.moveNext(row.element, row.tIndex+1);
+                //doProcessNext(row.element, row.tIndex);
+            }
         }
 
         function doProcessNext(ele: HTMLElement, tIndex: number) {
@@ -153,8 +185,10 @@ class TabIndexManager {
             }
 
             let nextRow = _this.getChildIfExist(container, tIndex);
-            if (nextRow.element != undefined)
-                _this.moveNext(nextRow.element, nextRow.tIndex);
+            if (nextRow.element != undefined) {
+                _this.moveNext(nextRow.element,nextRow.tIndex);
+            } else 
+                _this.moveNext(container,_this.getTindex(container)+1);
         }
     }
 
@@ -171,7 +205,8 @@ class TabIndexManager {
         return (tIndex == null) ? null : parseInt(tIndex);
     }
 
-    getClosest(target: HTMLElement|Element): HTMLElement | null {
+    getClosest(target: HTMLElement | Element): HTMLElement | null {
+      //  if (target == undefined) debugger;
         return target.parentElement.closest("[x-tabindex]");
     }
 
@@ -187,18 +222,18 @@ class TabIndexManager {
 
         let elements: HTMLElement[] = [];
         if (!giveMeLastElement) {
-            elements = Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`)).filter(s=>container.is(_this.getClosest(s))) as HTMLElement[]; /*   , [x-tabindex] *     */
+            elements = Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`)).filter(s => container.is(_this.getClosest(s))) as HTMLElement[]; /*   , [x-tabindex] *     */
             for (let i = 0; i < elements.length; i++) {
                 let ele = elements[i];
-                let sub = this.getChildIfExist(ele, 0);                
+                let sub = this.getChildIfExist(ele, 0);
                 if (sub.element == undefined) {
                     //let closest = ele.parentElement.closest('[x-tabindex]');
                     //if (closest.is(container)) {
-                        rtrn.element = ele;
-                        rtrn.tIndex = this.getTindex(ele);
-                        break;
+                    rtrn.element = ele;
+                    rtrn.tIndex = this.getTindex(ele);
+                    break;
                     //} 
-                }                
+                }
                 else return sub;
             }
             return rtrn;
@@ -249,7 +284,8 @@ class TabIndexManager {
     allowNodePattern: RegExp = /INPUT|SELECT|BUTTON|TEXTAREA/i;
 
     isFocusableElement(htEle: HTMLElement): boolean {
-        if (htEle == undefined) return false;
+        return isElementFocusable(htEle);
+        /*if (htEle == undefined) return false;
         let style = window.getComputedStyle(htEle);
         if (style.pointerEvents == "none") return false;
         if (htEle.nodeName.match(this.allowNodePattern) != null
@@ -258,6 +294,9 @@ class TabIndexManager {
             return true;
         } else {
             return false;
+        }*/
+        function isElementFocusable(element) {
+            return element != undefined && element.tabIndex !== -1 && !element.disabled && element.offsetWidth > 0 && element.offsetHeight > 0;
         }
     }
 
