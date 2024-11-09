@@ -178,8 +178,10 @@ export class SourceManage<K> extends Array<K> {
     let len = length ? length : this.length;
     let i = topIndex;
 
-
+    let rInfo: RowInfo<K>;
     for (; i <= len - 1; i++) {
+      //rInfo = this.getRow(i);
+      //console.log([i,rInfo.element,rInfo.height,rInfo.runningHeight]);      
       h += this.getRow(i).height;
       if (h > containerHeight) break;
     }
