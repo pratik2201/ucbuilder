@@ -63,7 +63,7 @@ class TabIndexManager {
             }
         });
 
-        document.addEventListener("mousedown", (ev: MouseEvent) => {
+       /* document.addEventListener("mousedown", (ev: MouseEvent) => {
             htEle = ev.target as HTMLElement;
             tIndex = this.getTindex(htEle);
             if (tIndex != null) {
@@ -73,7 +73,7 @@ class TabIndexManager {
                     ev.preventDefault();
                 }
             }
-        });
+        });*/
     }
 
     keymovePrev(target: HTMLElement) {
@@ -143,7 +143,7 @@ class TabIndexManager {
     }
 
     moveNext(target: HTMLElement, tIndex: number = -1) {
-        let _this = this;
+        let _this = this; 
         if (tIndex == null) return;
         let row = this.getChildIfExist(target, 0);  //  CHECK IF `target` IS CONTAINER ELEMENT
         let container: HTMLElement | undefined;
@@ -206,8 +206,8 @@ class TabIndexManager {
     }
 
     getClosest(target: HTMLElement | Element): HTMLElement | null {
-      //  if (target == undefined) debugger;
-        return target.parentElement.closest("[x-tabindex]");
+        //if (target.parentElement == undefined) debugger;
+        return target.parentElement?.closest("[x-tabindex]");
     }
 
     getChildIfExist(container: HTMLElement, index: number, giveMeLastElement: boolean = false): TabIndexRow {
@@ -296,7 +296,8 @@ class TabIndexManager {
             return false;
         }*/
         function isElementFocusable(element) {
-            return element != undefined && element.tabIndex !== -1 && !element.disabled && element.offsetWidth > 0 && element.offsetHeight > 0;
+            return element != undefined && (!element.disabled && element.offsetWidth > 0 && element.offsetHeight > 0 || element.hasAttribute('tabindex') as boolean);
+             /*element.tabIndex !== -1 && */
         }
     }
 

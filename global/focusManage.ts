@@ -17,7 +17,7 @@ export class FocusManager {
             if (containerElement.hasAttribute('tabindex'))
                 containerElement.focus();
             else {
-                ResourcesUC.tabMng.moveNext(containerElement);
+                ResourcesUC.tabMng.keymoveNext(containerElement);
             }
         } else {
             this.currentElement.focus();
