@@ -54,7 +54,17 @@ interface NodeList {
 }
 interface Array<T> {
     on<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
-    distinct():T[]
+    distinct(): T[],
+    /**
+     * @param Eles elements to remove
+     * @returns removed elements
+     */
+    RemoveMultiple(...Eles: T[]): T[],
+     /**
+     * @param indexes indexes of elements to remove
+     * @returns removed elements
+     */
+    RemoveAtMultiple(...indexes:number[]):T[],
 }
 interface JQuery{
     css(args:any):void,

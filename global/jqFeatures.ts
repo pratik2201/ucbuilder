@@ -460,6 +460,28 @@ class jqFeatures {
         Array.prototype.distinct = function <T>(): Array<T> {
             return [...new Set(this)] as unknown as Array<T>;
         }
+
+        Array.prototype.RemoveMultiple = function <T>(...eleList: T[]): Array<T> {
+            var valuesArr = this as T[];
+            const indices = [];
+            let findex = -1;
+            for (let i = 0; i < eleList.length; i++) {
+                findex = valuesArr.indexOf(eleList[i]);
+                if (findex != -1) indices.push(findex);
+            }
+            return valuesArr.RemoveAtMultiple(...indices);
+        }
+        Array.prototype.RemoveAtMultiple = function <T>(...removeValFromIndex: number[]): Array<T> {
+            var valuesArr = this as T[];
+            removeValFromIndex.sort(function (a, b) { return b - a; });
+            let removedEle: T[];
+            for (var i = removeValFromIndex.length - 1; i >= 0; i--)
+                removedEle.push(...valuesArr.splice(removeValFromIndex[i], 1));
+            return removedEle;
+        }
+
+
+
         SVGElement.prototype.data = function (key?: string, value?: any): any {
             switch (arguments.length) {
                 case 0:
@@ -486,7 +508,7 @@ class jqFeatures {
             }
             return arr.join("")
         }
-        String.prototype.escapeRegs = function (){
+        String.prototype.escapeRegs = function () {
             return this.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
         }
         String.prototype.replaceAllWithResult = function (find, replace) {
@@ -497,7 +519,7 @@ class jqFeatures {
             });
             return {
                 result: content,
-                hasReplaced:hasReplaced
+                hasReplaced: hasReplaced
             }
         }
         String.prototype.$ = function (): HTMLElement {
@@ -551,14 +573,14 @@ class jqFeatures {
         }
         String.prototype.includesI = function (s) {
             let index = this.indexOf(s);
-            if (index!=-1) return { result:true,index:index };
+            if (index != -1) return { result: true, index: index };
             let res = new RegExp(s.escapeRegs(), 'ig').exec(this);
             if (res != null) {
                 return {
                     result: true,
                     index: res.index
                 };
-            } else return { result:false,index:-1 }
+            } else return { result: false, index: -1 }
             //return this.match(new RegExp(s, 'ig')) != null;
         }
         String.prototype.equalIgnoreCase = function (s) {

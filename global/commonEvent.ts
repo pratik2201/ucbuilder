@@ -69,7 +69,7 @@ export class CommonEvent<F extends (...arg: any) => any> {
     off(callback: Function): void {
         let fIndex: number = this._eventList.findIndex(s => s.callback === callback);
         if (fIndex != -1) {
-            arrayOpt.removeAt(this._eventList, fIndex);
+            this._eventList.RemoveAtMultiple(fIndex);
             this.Events.onChangeEventList();
         }
     }
