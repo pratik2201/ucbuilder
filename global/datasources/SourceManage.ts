@@ -273,12 +273,14 @@ export class SourceManage<K> extends Array<K> {
     this.info.refresh();
     //console.log(this.length);
   }*/
-
+  nullValue: number = 0;
   ihaveCompletedByMySide() {
     let len = this.length;
     this.originalSource.length = 0;
     this.originalSource.push(...this);
     let sample = this.analyser.getSample();
+   // this.nullRow = sample[this.info.defaultIndex];
+    //console.log([this.nullRow,this.info.defaultIndex,sample]);
     
     this.length = 0;
     this.push(...sample);
