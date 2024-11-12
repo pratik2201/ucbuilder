@@ -104,14 +104,19 @@ export class userControlStamp {
                    
                 rtrn.styler.nodeName = otag;
                 let newNodeName: string = rtrn.styler.nodeName;
-                return `<${newNodeName} ${ATTR_OF.UC.UC_STAMP}="${rtrn.uniqStamp}" x-tabindex="-1"  ${contents}</${newNodeName}>`; // 
+                return `<${newNodeName} ${ATTR_OF.UC.UC_STAMP}="${rtrn.uniqStamp}"  ${contents}</${newNodeName}>`; //   x-tabindex="-1"
             });
 
-        rtrn.content = rtrn.styler.parseStyle(rtrn.content);
+        rtrn.content = rtrn.styler.parseStyle(rtrn.content);        
         if (callback != undefined) rtrn.content = callback(rtrn.content);
+        
         rtrn.dataHT = rtrn.content.$();
+        if (!rtrn.dataHT.hasAttribute('x-tabindex')) {
+            rtrn.dataHT.setAttribute('x-tabindex', '-1');
+            rtrn.content = rtrn.dataHT.outerHTML;
+        }
 
-        if (!rtrn.dataHT.hasAttribute('x-allowtabindex'))
-            rtrn.dataHT.setAttribute('x-allowtabindex', '0');
+       // if (!rtrn.dataHT.hasAttribute('x-allowtabindex'))
+       //     rtrn.dataHT.setAttribute('x-allowtabindex', '0');
     }
 }

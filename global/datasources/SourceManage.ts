@@ -25,6 +25,7 @@ export class RowInfo<K> {
   template: TemplateNode;  
   isModified = false;
   isSourceRow = true;
+  viewIndex = 0;
   private _isVisible = true;
   private _isVisibleDefault: boolean;
   public get isVisible() {
