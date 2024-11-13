@@ -76,19 +76,17 @@ export class ResultAnalyser<T> {
 
     filteredSource: any[] = [];
 
-    sortSource(sortSource: boolean = false) {
+    sortSource() {
         let _SortEvent = this.Event.onSortCall;
         let src = this.source;
         src.sort((a, b) => { return _SortEvent(a, b); });
         let obj = undefined;
         for (let j = 0; j < src.length; j++) {
             obj = src[j];
-            src.getRowByObj(obj).isModified = true;
-            src.resetRow(src[j]);
+           // src.getRowByObj(obj).isModified = true;
+            src.resetRow(SourceManage.getRow(obj));
         }
-        //let topDefaultRows = src.splice(0, src.info.defaultIndex);
-        src.unshift(...this.topStickyRows, ...this.defaultRows);
-
+        src.unshift(...this.TopStickyRows, ...this.DefaultRows);
     }
     Event = {
         onSortCall: (a: T, b: T) => {
@@ -104,15 +102,21 @@ export class ResultAnalyser<T> {
 
         }
     }
-    public topStickyRows: T[] = [];
+    public TopStickyRows: T[] = [];
     public bottomStickyRows: T[] = [];
-    public defaultRows: T[] = [];
+    public DefaultRows: T[] = [];
 
     setDefaultRow() {
-        this.topStickyRows = this.source.slice(0, this.source.info.defaultIndex);
+        this.TopStickyRows = this.source.slice(0, this.source.info.defaultIndex);
     }
-    getSample() {
-        return [...this.topStickyRows, ...this.defaultRows, ...this.source.originalSource];
+    get NonSourceRows() {
+        return [...this.TopStickyRows, ...this.DefaultRows];
+    }
+    get SourceOriginalRows() {
+        return [ ...this.source.originalSource];
+    }
+    get FullSample() {
+        return [...this.TopStickyRows, ...this.DefaultRows, ...this.source.originalSource];
     }
     
     filterInitlized = false;
@@ -135,7 +139,7 @@ export class ResultAnalyser<T> {
     filter(text: string) {
         text = text.trim();
         let src = this.source;
-        if (text == '') this.clearFilter();
+        if (text == '') { this.clearFilter(); }
         else if (!text.startsWithI(this.lasttext) || this.lasttext == '') {
             this.initFilter(text);
         } else {
@@ -146,9 +150,9 @@ export class ResultAnalyser<T> {
             src.clear();
             this.pushResultInside(snode, src);
             if (src.length > 0) {
-                src.unshift(...this.topStickyRows);
+                src.unshift(...this.TopStickyRows);
             } else {
-                src.unshift(...this.topStickyRows,...this.defaultRows);
+                src.unshift(...this.TopStickyRows,...this.DefaultRows);
             }
             src.callToFill();
         }
@@ -193,9 +197,9 @@ export class ResultAnalyser<T> {
         src.clear();
         src.push(...this.filteredSource);
         if (src.length > 0) {
-            src.unshift(...this.topStickyRows);
+            src.unshift(...this.TopStickyRows);
         } else {
-            src.unshift(...this.topStickyRows,...this.defaultRows);
+            src.unshift(...this.TopStickyRows,...this.DefaultRows);
         }
         src.callToFill();
         this.filterInitlized = true;

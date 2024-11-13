@@ -22,7 +22,7 @@ export class RowInfo<K> {
   element?: HTMLElement;
   searchStatus = SearchStatus.notFound;
   main: SourceManage<K>;
-  template: TemplateNode;  
+  template: TemplateNode;
   isModified = false;
   isSourceRow = true;
   viewIndex = 0;
@@ -88,9 +88,10 @@ type IndexType = "isAtLast" | "isAtTop" | "continue" | "undefined";
 class Info_<K> {
   main: SourceManage<K>;
   constructor(main: SourceManage<K>) { this.main = main; }
-  length = 0;  
+  length = 0;
   height = 0;
   width = 0;
+  EditorMode = false;
   defaultIndex = 0;
   //rows: K[] = [];
   doForAll(s: {
@@ -99,14 +100,16 @@ class Info_<K> {
     searchStatus?: SearchStatus,
     isSelectable?: boolean
   } = {}) {
-    let ar = this.main;
-    if (ar.length == 0) { return; }
     let src = this.main;
+    if (src.length == 0) { return; }
     let obj: K = undefined;
     for (let i = 0, ilen = this.main.length; i < ilen; i++) {
       obj = src[i];
-      let rInfo = ar.getRowByObj(obj);
-      Object.assign(rInfo, s);      
+      let rInfo = SourceManage.getRow(obj);
+      //let before = rInfo.isVisible;
+      Object.assign(rInfo, s);
+      // console.log([before,rInfo.isVisible]);
+
     }
   }
   refresh() {
@@ -173,7 +176,7 @@ export class SourceManage<K> extends Array<K> {
     width: 0,
     height: 0
   }
-  
+
   getBottomIndex(topIndex: number, containerHeight: number, { length = undefined, overflowed = false }: { length?: number, overflowed?: boolean }): { index: number, status: IndexType } {
     let h = 0;
     let len = length ? length : this.length;
@@ -224,10 +227,10 @@ export class SourceManage<K> extends Array<K> {
     }
     return topPoint == 0 ? 0 : i + 1;
   }
-  loop_RowInfo(src:K[],callback = (row: K, info: RowInfo<K>, index: number) => { }) {
-   // console.log('loop_RowInfo...called');
+  loop_RowInfo(src: K[], callback = (row: K, info: RowInfo<K>, index: number) => { }) {
+    // console.log('loop_RowInfo...called');
     let rInfo: RowInfo<K>;
-   // let src = this;
+    // let src = this;
     let akey = SourceManage.ACCESS_KEY;
     let obj: K = undefined;
     for (let i = 0, len = src.length; i < len; i++) {
@@ -252,7 +255,7 @@ export class SourceManage<K> extends Array<K> {
     return rInfo;
   }
   StickRow(obj: K): RowInfo<K> {
-    let akey = SourceManage.ACCESS_KEY;    
+    let akey = SourceManage.ACCESS_KEY;
     let rInfo: RowInfo<K> = obj[akey] ?? new RowInfo();
     obj[akey] = rInfo;
     rInfo.row = obj;
@@ -279,39 +282,82 @@ export class SourceManage<K> extends Array<K> {
     let len = this.length;
     this.originalSource.length = 0;
     this.originalSource.push(...this);
-    let sample = this.analyser.getSample();
-   // this.nullRow = sample[this.info.defaultIndex];
+    let sample = this.analyser.FullSample;
+    // this.nullRow = sample[this.info.defaultIndex];
     //console.log([this.nullRow,this.info.defaultIndex,sample]);
-    
+
     this.length = 0;
     this.push(...sample);
-    this.onCompleteUserSide.fire([sample]);    
-    
+    this.onCompleteUserSide.fire([sample]);
+
     for (let i = 0; i < sample.length; i++)this.StickRow(sample[i]);
     this.info.refresh();
-    
+
     this.onUpdate.fire([len]);
   }
   originalSource: K[] = [];
-  reset() {
-    //this.length = 0;
-    //this.push(...this.originalSource);
-    this.analyser.clearFilter(true);
+  /*clearFilter(sort: boolean = true) {
+    let src = this.source;
+    src.info.doForAll({
+        isModified: true,
+        isVisible: undefined,
+        searchStatus: SearchStatus.notFound
+    });
+    src.clear();
+    src.push(...src.originalSource);
+    if (sort)
+        this.sortSource();
+    src.callToFill();
+    this.lasttext = '';
+    this.filterInitlized = false;
+}*/
+  reset(fireUpdateEvent = true) {
+    this.length = 0;
+    let anlyse = this.analyser;
+    this.push(...this.originalSource);
+    let _SortEvent = anlyse.Event.onSortCall;
+    this.sort((a, b) => { return _SortEvent(a, b); });
+    let _searchables = this.searchables;
+    for (let i = 0, len = this.length; i < len; i++) {
+      let row = this[i];
+      let rInfo = SourceManage.getRow(this[i]);
+      for (let j = 0, jlen = _searchables.length; j < jlen; j++)
+        (row[_searchables[j]] as SearchableItemNode).reset();
+      rInfo.isModified = true;//rInfo.searchStatus != SearchStatus.notFound;
+      rInfo.searchStatus = SearchStatus.notFound;
+    }
+    this.unshift(...anlyse.NonSourceRows);
+    anlyse.lasttext = '';
+    anlyse.filterInitlized = false;
+     /*this.analyser.clearFilter(true);
     let s = this.originalSource;
-    for (let i = 0,len = s.length; i < len; i++)this.resetRow(s[i]);    
-    this.info.refresh();
+    for (let i = 0, len = s.length; i < len; i++) {
+      this.resetRow(s[i]);
+    }*/    
+    if (fireUpdateEvent) {
+      this.callToFill();
+    }else this.info.refresh();
   }
-  clear(clearOriginalSource:boolean = false) {
+
+  clear(clearOriginalSource: boolean = false) {
     this.length = 0;
     if (clearOriginalSource) this.originalSource.length = 0;
   }
-  resetRow(row: K) {
-    if(!this.getRowByObj(row).isSourceRow)return;
+  resetRow(rInfo: RowInfo<K>) {
+    if (!rInfo.isSourceRow) return;
+    let _searchables = this.searchables;
+    let row = rInfo.row;
+    for (let i = 0, len = _searchables.length; i < len; i++) {
+      const searchable = _searchables[i];
+      (row[searchable] as SearchableItemNode).reset();
+    }
+    rInfo.isModified = true;
+    /*if(!this.getRowByObj(row).isSourceRow)return;
     for (let i = 0; i < this.searchables.length; i++) {
       const searchable = this.searchables[i];
       (row[searchable] as SearchableItemNode).reset();
     }
-    this.getRowByObj(row).isModified = true;
+    this.getRowByObj(row).isModified = true;*/
   }
   callToFill(...indexes) {
     let len = this.length;
@@ -324,5 +370,5 @@ export class SourceManage<K> extends Array<K> {
   }
   static ACCESS_KEY = uniqOpt.guid;
   onUpdate = new CommonEvent<(arrayLen: number) => void>();
-  onCompleteUserSide = new CommonEvent<(src:K[]) => void>(); 
+  onCompleteUserSide = new CommonEvent<(src: K[]) => void>();
 };

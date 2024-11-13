@@ -1,17 +1,21 @@
 import { propOpt, controlOpt, objectOpt, strOpt } from "ucbuilder/build/common";
 import { keyBoard } from "ucbuilder/global/hardware/keyboard";
+import { CommonEvent } from "ucbuilder/global/commonEvent";
 
 interface TabIndexRow {
     container: HTMLElement;
     element: HTMLElement;
     tIndex: number;
 }
-
+export interface TabContainerClearNode { target: HTMLElement, callback: () => void }
 class TabIndexManager {
     mainHT: HTMLElement | undefined;
 
     constructor() { }
-
+    Events = {
+        onContainerClear: [] as TabContainerClearNode[],
+        //onContainerClear:new CommonEvent<(element:HTMLElement)=>{}>()
+    }
     init(mainHT: HTMLElement) {
         this.mainHT = mainHT;
         let htEle: HTMLElement | undefined;
@@ -63,17 +67,17 @@ class TabIndexManager {
             }
         });
 
-       /* document.addEventListener("mousedown", (ev: MouseEvent) => {
-            htEle = ev.target as HTMLElement;
-            tIndex = this.getTindex(htEle);
-            if (tIndex != null) {
-                if (htEle.nodeName.match(this.allowNodePattern) == null &&
-                    htEle.getAttribute("contenteditable") != "true") {
-                    this.moveNext(htEle, tIndex);
-                    ev.preventDefault();
-                }
-            }
-        });*/
+        /* document.addEventListener("mousedown", (ev: MouseEvent) => {
+             htEle = ev.target as HTMLElement;
+             tIndex = this.getTindex(htEle);
+             if (tIndex != null) {
+                 if (htEle.nodeName.match(this.allowNodePattern) == null &&
+                     htEle.getAttribute("contenteditable") != "true") {
+                     this.moveNext(htEle, tIndex);
+                     ev.preventDefault();
+                 }
+             }
+         });*/
     }
 
     keymovePrev(target: HTMLElement) {
@@ -106,7 +110,7 @@ class TabIndexManager {
                     this.focusTo(prevRow.element);
                 else {
 
-                    tIndex = _this.getTindex(prevRow.element)-1;
+                    tIndex = _this.getTindex(prevRow.element) - 1;
                     _this.movePrev(prevRow.element, tIndex);
 
                     // _this.movePrev(prevRow.element,tIndex);
@@ -143,7 +147,7 @@ class TabIndexManager {
     }
 
     moveNext(target: HTMLElement, tIndex: number = -1) {
-        let _this = this; 
+        let _this = this;
         if (tIndex == null) return;
         let row = this.getChildIfExist(target, 0);  //  CHECK IF `target` IS CONTAINER ELEMENT
         let container: HTMLElement | undefined;
@@ -167,7 +171,7 @@ class TabIndexManager {
             if (this.isFocusableElement(row.element)) {
                 this.focusTo(row.element);
             } else {
-                this.moveNext(row.element, row.tIndex+1);
+                this.moveNext(row.element, row.tIndex + 1);
                 //doProcessNext(row.element, row.tIndex);
             }
         }
@@ -186,9 +190,9 @@ class TabIndexManager {
 
             let nextRow = _this.getChildIfExist(container, tIndex);
             if (nextRow.element != undefined) {
-                _this.moveNext(nextRow.element,nextRow.tIndex);
-            } else 
-                _this.moveNext(container,_this.getTindex(container)+1);
+                _this.moveNext(nextRow.element, nextRow.tIndex);
+            } else
+                _this.moveNext(container, _this.getTindex(container) + 1);
         }
     }
 
@@ -235,6 +239,13 @@ class TabIndexManager {
                     //} 
                 }
                 else return sub;
+            }
+            if (rtrn.element == undefined) {
+                let evt = this.Events.onContainerClear;
+                let ele = rtrn.container;
+                let _obj = evt.find(s => s.target == ele);
+                if (_obj != undefined) _obj.callback();
+                // rtrn.container
             }
             return rtrn;
         } else {
@@ -297,7 +308,7 @@ class TabIndexManager {
         }*/
         function isElementFocusable(element) {
             return element != undefined && (!element.disabled && element.offsetWidth > 0 && element.offsetHeight > 0 || element.hasAttribute('tabindex') as boolean);
-             /*element.tabIndex !== -1 && */
+            /*element.tabIndex !== -1 && */
         }
     }
 
