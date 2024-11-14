@@ -289,11 +289,19 @@ export class SourceManage<K> extends Array<K> {
     this.length = 0;
     this.push(...sample);
     this.onCompleteUserSide.fire([sample]);
-
     for (let i = 0; i < sample.length; i++)this.StickRow(sample[i]);
+
     this.info.refresh();
 
     this.onUpdate.fire([len]);
+  }
+  pushNew(...items: K[]): number {
+    this.originalSource.push(...items);
+    let len = this.push(...items);  
+    for (let i = 0, ilen = items.length; i < ilen; i++)   this.StickRow(items[i]);    
+    this.onCompleteUserSide.fire([items]);    
+    this.info.refresh();
+    return len;
   }
   originalSource: K[] = [];
   /*clearFilter(sort: boolean = true) {

@@ -7,13 +7,14 @@ interface TabIndexRow {
     element: HTMLElement;
     tIndex: number;
 }
-export interface TabContainerClearNode { target: HTMLElement, callback: () => void }
+export interface TabContainerClearNode { target: HTMLElement, callback: () => boolean | void }
 class TabIndexManager {
     mainHT: HTMLElement | undefined;
 
     constructor() { }
     Events = {
-        onContainerClear: [] as TabContainerClearNode[],
+        onContainerLeave: [] as TabContainerClearNode[],
+        onContainerEnter: [] as TabContainerClearNode[],
         //onContainerClear:new CommonEvent<(element:HTMLElement)=>{}>()
     }
     init(mainHT: HTMLElement) {
@@ -85,120 +86,110 @@ class TabIndexManager {
         let tIndex = this.getTindex(target);
         if (tIndex == null) return;
         tIndex--;
-        this.movePrev(target, tIndex);
+        this.movePrev(target/*, tIndex*/);
     }
 
-    movePrev(target: HTMLElement, tIndex: number = -1) {
+    movePrev(target: HTMLElement, goAhead: boolean = false) {
         let _this = this;
+        let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;
-        if (tIndex == -1) {
-            let container = _this.getClosest(target);
-            tIndex = this.getTindex(container);
-            let pcontainer = _this.getClosest(container);
-            return this.movePrev(pcontainer, tIndex - 1);
-        } else {
-            let container = target;
-            let prevRow = this.getChildIfExist(container, tIndex, true);
-            if (prevRow.element != undefined) {
-                if (this.isFocusableElement(prevRow.element))
-                    this.focusTo(prevRow.element);
+        if (goAhead) {
+            tIndex--;
+            if (tIndex == -1) { //  IF REACHED TO 0 TAB INDEX;
+                let parent = this.getDirectParent(target);
+                let evt = this.Events.onContainerLeave;
+                    let _obj = evt.find(s => s.target == parent);
+                    if (_obj != undefined) if(_obj.callback()===true)return;
+                this.movePrev(parent, true);
+            } else if (tIndex<-1) {  //  IF IN THE AIR    ,-)
+            } else {
+                let ele = this.getDirectElement(this.getDirectParent(target), tIndex);
+                if (this.isFocusableElement(ele)) {   // IF PREVIOUS ELEMENT IS TEXTBOX
+                    this.focusTo(ele);
+                } else {   
+                    this.movePrev(ele); 
+                }
             }
-            else {
-                container = _this.getClosest(target);
-                prevRow = this.getChildIfExist(container, tIndex, true);
-                if (_this.isFocusableElement(prevRow.element))
-                    this.focusTo(prevRow.element);
-                else {
+        } else {
+            let childLastElement = this.getLastElement(target);
+            if (childLastElement == undefined) {  //  IF NO CHILD TAB INDEX AVALABLE
+                this.movePrev(target, true);
+            } else { //  IF CHILD TAB INDEX EXIST
+                let evt = this.Events.onContainerEnter;
+                let _obj = evt.find(s => s.target == target);
+                if (_obj != undefined) if(_obj.callback()===true)return;
 
-                    tIndex = _this.getTindex(prevRow.element) - 1;
-                    _this.movePrev(prevRow.element, tIndex);
 
-                    // _this.movePrev(prevRow.element,tIndex);
+                if (this.isFocusableElement(childLastElement)) {  //  IF LAST ELEMENT IS TEXTBOX
+                    this.focusTo(childLastElement);
+                } else {     //  MOVE TO PREVIOUS WITH CHECK
+                    this.movePrev(childLastElement); 
                 }
             }
         }
-
-        function doProcessPrev(ele: HTMLElement, tIndex: number) {
-            if (tIndex == null) return;
-            tIndex++;
-            let container = _this.getClosest(ele);
-
-            if (container == null) {
-                let index = _this.getTindex(ele);
-                index = Math.max(0, index);
-                _this.moveNext(ele, index);
-                return;
-            }
-
-            let nextRow = _this.getChildIfExist(container, tIndex);
-            if (nextRow.element != undefined)
-                _this.moveNext(nextRow.element, nextRow.tIndex);
-        }
-
-
     }
-
+    getLastElement(container: HTMLElement): HTMLElement {
+        let i = 0;
+        let lastEle: HTMLElement;
+        do {
+            let ele = this.getDirectElement(container, i);
+            if (ele == undefined) break;
+            lastEle = ele;
+            i++;
+        } while (true);
+        return lastEle;
+    }
     keymoveNext(target: HTMLElement) {
         let _this = this;
         let tIndex = this.getTindex(target);
         if (tIndex == null) return;
         tIndex++;
-        this.moveNext(target, tIndex);
+        this.moveNext(target/*, tIndex*/);
     }
 
-    moveNext(target: HTMLElement, tIndex: number = -1) {
+    moveNext(target: HTMLElement, goAhead: boolean = false) {
         let _this = this;
+        let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;
-        let row = this.getChildIfExist(target, 0);  //  CHECK IF `target` IS CONTAINER ELEMENT
-        let container: HTMLElement | undefined;
+        let childFirstElement = goAhead ? undefined : this.getDirectElement(target, 0); 
+        if (childFirstElement != undefined) { // IF FIRST CHILD TAB-INDEX EXIST
+            let evt = this.Events.onContainerEnter;
+            let _obj = evt.find(s => s.target == childFirstElement);
+            if (_obj != undefined) if(_obj.callback()===true)return;
 
-        if (row.element == null) {   //  IF `target` IS NOT CONTAINER ELEMENT
-            container = this.getClosest(target);
-            if (container == null) return;
-            let nextRow = this.getChildIfExist(container, tIndex);
-            if (nextRow.element != undefined) {
-                if (this.isFocusableElement(nextRow.element)) {
-                    this.focusTo(nextRow.element);
-                } else {
-                    doProcessNext(nextRow.element, nextRow.tIndex);
+            if (this.isFocusableElement(childFirstElement)) { // IF FIRST CHILD IS TEXTBOX
+                this.focusTo(childFirstElement);
+            } else {   // GO TO NEXT TAB-INDEX
+                this.moveNext(childFirstElement);
+            }
+        } else {       // GO TO NEXT TAB-INDEX
+            tIndex++;
+            let parent = this.getDirectParent(target);
+            if (parent == null) return;
+            let ele = this.getDirectElement(parent, tIndex);
+            if (this.isFocusableElement(ele)) {   // IF NEXT ELEMENT IS TEXTBOX
+                this.focusTo(ele);
+            } else {    // IF NEXT ELEMENT HAS CHILD ELEMENT
+                if (ele != undefined) // IF NEXT ELEMENT EXIST      
+                    this.moveNext(ele);
+                else { // ELSE
+                    let evt = this.Events.onContainerLeave;
+                    let _obj = evt.find(s => s.target == parent);
+                    if (_obj != undefined) if(_obj.callback()===true)return;
+                    this.moveNext(parent, true);   // GO TO PARENT CONTAINER AND MOVE NEXT TAB-INDEX
                 }
             }
-            else {
-                //this.moveNext(nextRow.container, this.getTindex(nextRow.container)+1);
-                doProcessNext(nextRow.container, this.getTindex(nextRow.container));
-            }
-        } else { //  IF `target` IS CONTAINER ELEMENT
-            if (this.isFocusableElement(row.element)) {
-                this.focusTo(row.element);
-            } else {
-                this.moveNext(row.element, row.tIndex + 1);
-                //doProcessNext(row.element, row.tIndex);
-            }
         }
+    }
 
-        function doProcessNext(ele: HTMLElement, tIndex: number) {
-            if (tIndex == null) return;
-            tIndex++;
-            let container = _this.getClosest(ele);
-
-            if (container == null) {
-                let index = _this.getTindex(ele);
-                index = Math.max(0, index);
-                _this.moveNext(ele, index);
-                return;
-            }
-
-            let nextRow = _this.getChildIfExist(container, tIndex);
-            if (nextRow.element != undefined) {
-                _this.moveNext(nextRow.element, nextRow.tIndex);
-            } else
-                _this.moveNext(container, _this.getTindex(container) + 1);
-        }
+    getDirectParent(element) { return this.getClosest(element); }
+    getDirectElement(container: HTMLElement, index: number): HTMLElement {
+        return (Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`)).filter(s => container.is(this.getClosest(s))) as HTMLElement[])[0];
     }
 
     focusTo(htele: HTMLElement) {
-        htele.setAttribute('tabindex', '0');
-        console.log('focusTo');
+        //htele.setAttribute('tabindex', '0');
+       // console.log('focusTo');
         htele.focus();
         controlOpt.selectAllText(htele);
     }
@@ -230,6 +221,7 @@ class TabIndexManager {
             for (let i = 0; i < elements.length; i++) {
                 let ele = elements[i];
                 let sub = this.getChildIfExist(ele, 0);
+                if (sub == undefined) return undefined;
                 if (sub.element == undefined) {
                     //let closest = ele.parentElement.closest('[x-tabindex]');
                     //if (closest.is(container)) {
@@ -241,11 +233,18 @@ class TabIndexManager {
                 else return sub;
             }
             if (rtrn.element == undefined) {
-                let evt = this.Events.onContainerClear;
+                let evt = this.Events.onContainerLeave;
                 let ele = rtrn.container;
                 let _obj = evt.find(s => s.target == ele);
-                if (_obj != undefined) _obj.callback();
+                if (_obj != undefined) if (_obj.callback() === true) return undefined;
                 // rtrn.container
+            } else {
+                if (rtrn.tIndex == 0) {
+                    let evt = this.Events.onContainerEnter;
+                    let ele = rtrn.container;
+                    let _obj = evt.find(s => s.target == ele);
+                    if (_obj != undefined) if (_obj.callback() === true) return undefined;
+                }
             }
             return rtrn;
         } else {
@@ -267,7 +266,6 @@ class TabIndexManager {
                 element: undefined,
                 tIndex: -1,
             };
-
             if (container == null) return maxRtrn;
             if (elements == undefined)
                 elements = Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`));
@@ -295,7 +293,8 @@ class TabIndexManager {
     allowNodePattern: RegExp = /INPUT|SELECT|BUTTON|TEXTAREA/i;
 
     isFocusableElement(htEle: HTMLElement): boolean {
-        return isElementFocusable(htEle);
+        let _this = this;
+        return isElementFocusable(htEle as HTMLInputElement);
         /*if (htEle == undefined) return false;
         let style = window.getComputedStyle(htEle);
         if (style.pointerEvents == "none") return false;
@@ -306,8 +305,11 @@ class TabIndexManager {
         } else {
             return false;
         }*/
-        function isElementFocusable(element) {
-            return element != undefined && (!element.disabled && element.offsetWidth > 0 && element.offsetHeight > 0 || element.hasAttribute('tabindex') as boolean);
+        function isElementFocusable(element: HTMLInputElement) {
+            if (element == undefined) return false;
+            let andCondition = (!element.disabled && element.offsetWidth > 0 && element.offsetHeight > 0);
+            let orCondition = (element.nodeName.match(_this.allowNodePattern) != null || element.getAttribute('contenteditable') == 'true');
+            return andCondition && orCondition;
             /*element.tabIndex !== -1 && */
         }
     }
