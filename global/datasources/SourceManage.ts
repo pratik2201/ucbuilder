@@ -237,7 +237,7 @@ export class SourceManage<K> extends Array<K> {
     }
     return topPoint == 0 ? 0 : i + 1;
   }
-  loop_RowInfo(src: K[], callback = (row: K, info: RowInfo<K>, index: number) => { }) {
+  loop_RowInfo(src: K[], callback = (row: K, info: RowInfo<K>, index: number) => { },indexCounter = 0) {
     // console.log('loop_RowInfo...called');
     let rInfo: RowInfo<K>;
     // let src = this;
@@ -248,11 +248,11 @@ export class SourceManage<K> extends Array<K> {
       rInfo = obj[akey];
       if (rInfo == undefined) {
         rInfo = new RowInfo();
-        rInfo.index = i;
         rInfo.row = obj;
         obj[akey] = rInfo;
         //this.rowInfo[i] = rInfo;
       }
+      rInfo.index = indexCounter++;
       callback(src[i], rInfo, i);
     }
     //this.init_all_rows();
@@ -298,7 +298,7 @@ export class SourceManage<K> extends Array<K> {
 
     this.length = 0;
     this.push(...sample);
-    this.onCompleteUserSide.fire([sample]);
+    this.onCompleteUserSide.fire([sample,0]);
     for (let i = 0; i < sample.length; i++)this.StickRow(sample[i]);
 
     this.info.refresh();
@@ -307,9 +307,10 @@ export class SourceManage<K> extends Array<K> {
   }
   pushNew(...items: K[]): number {
     this.originalSource.push(...items);
+    let olen = this.length;
     let len = this.push(...items);  
     for (let i = 0, ilen = items.length; i < ilen; i++)   this.StickRow(items[i]);    
-    this.onCompleteUserSide.fire([items]);    
+    this.onCompleteUserSide.fire([items,olen]);    
     this.info.refresh();
     return len;
   }
@@ -388,5 +389,5 @@ export class SourceManage<K> extends Array<K> {
   }
   static ACCESS_KEY = uniqOpt.guid;
   onUpdate = new CommonEvent<(arrayLen: number) => void>();
-  onCompleteUserSide = new CommonEvent<(src: K[]) => void>();
+  onCompleteUserSide = new CommonEvent<(src: K[],indexCounter:number) => void>();
 };
