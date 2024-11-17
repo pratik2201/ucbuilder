@@ -84,7 +84,7 @@ export class RowInfo<K> {
   next: RowInfo<K>;
   prev: RowInfo<K>;
 }
-type IndexType = "isAtLast" | "isAtTop" | "continue" | "undefined";
+type IndexType = "isAtLast" | "isAtTop" | "continue" | "TopOverflowed" |"BottomOverflowed" | "undefined";
 class Info_<K> {
   main: SourceManage<K>;
   constructor(main: SourceManage<K>) { this.main = main; }
@@ -177,18 +177,22 @@ export class SourceManage<K> extends Array<K> {
     height: 0
   }
 
-  getBottomIndex(topIndex: number, containerHeight: number, { length = undefined, overflowed = false }: { length?: number, overflowed?: boolean }): { index: number, status: IndexType } {
-    let h = 0;
+  getBottomIndex(topIndex: number, containerHeight: number, { length = undefined, overflowed = false }: { length?: number, overflowed?: boolean }): { index: number,size:number, status: IndexType } {
+    if (containerHeight == 0) return {index:topIndex,size:0,status:'undefined'};
     let len = length ? length : this.length;
     let i = topIndex;
-
+    let h = 0;
+    let size = 0;
     let rInfo: RowInfo<K>;
-    for (; i <= len - 1; i++) {
+    for (; i <= len - 1; /*  i++; */ ) {
       //rInfo = this.getRow(i);
       //console.log([i,rInfo.element,rInfo.height,rInfo.runningHeight]);      
-      h += this.getRow(i).height;
-      if (h > containerHeight) break;
+      h = this.getRow(i).height;
+      size += h;
+      if (size > containerHeight) break;
+      i++;
     }
+    size = overflowed ? size : size-h;
     topIndex = overflowed ? i : i - 1;
 
     let status: IndexType = 'continue';
@@ -196,21 +200,27 @@ export class SourceManage<K> extends Array<K> {
     else if (topIndex == -1) status = 'undefined';
     return {
       index: topIndex,//index < 0 ? len : index,
+      size:size,
       status: status,
     }
   }
-  getTopIndex(botomIndex: number, containerHeight: number, { overflowed = false }: { length?: number, overflowed?: boolean }): { index: number, status: IndexType } {
+  getTopIndex(botomIndex: number, containerHeight: number, { overflowed = false }: { length?: number, overflowed?: boolean }): { index: number,size:number, status: IndexType } {
     let i = botomIndex;
+    if (containerHeight == 0) return {index:botomIndex,size:0,status:'undefined'};    
     let h = 0;
+    let size = 0;
     for (; i >= 0; i--) {
-      h += this.getRow(i).height;
-      if (h > containerHeight) { break; }
+      h = this.getRow(i).height;
+      size += h;
+      if (size > containerHeight) { break; }
     }
+    size = overflowed ? size : size-h;
     botomIndex = overflowed ? i : i + 1;
     let status: IndexType = 'continue';
     if (botomIndex == 0) status = 'isAtTop';
     else if (botomIndex == -1) status = 'undefined';
     return {
+      size:size,
       index: botomIndex,//index < 0 ? len : index,
       status: status,
     }

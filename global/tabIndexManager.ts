@@ -13,8 +13,12 @@ class TabIndexManager {
 
     constructor() { }
     Events = {
-        onContainerLeave: [] as TabContainerClearNode[],
-        onContainerEnter: [] as TabContainerClearNode[],
+       
+        onContainerTopLeave: [] as TabContainerClearNode[],
+        onContainerTopEnter: [] as TabContainerClearNode[],
+        onContainerBottomLeave: [] as TabContainerClearNode[],
+        onContainerBottomEnter: [] as TabContainerClearNode[],
+
         //onContainerClear:new CommonEvent<(element:HTMLElement)=>{}>()
     }
     init(mainHT: HTMLElement) {
@@ -97,17 +101,26 @@ class TabIndexManager {
             tIndex--;
             if (tIndex == -1) { //  IF REACHED TO 0 TAB INDEX;
                 let parent = this.getDirectParent(target);
-                let evt = this.Events.onContainerLeave;
-                    let _obj = evt.find(s => s.target == parent);
-                    if (_obj != undefined) if(_obj.callback()===true)return;
+                let evt = this.Events.onContainerTopLeave;
+                let _obj = evt.find(s => s.target == parent);
+                if (_obj != undefined) if (_obj.callback() === true) return;
                 this.movePrev(parent, true);
-            } else if (tIndex<-1) {  //  IF IN THE AIR    ,-)
+            } else if (tIndex < -1) {  //  IF IN THE AIR    ,-)
             } else {
-                let ele = this.getDirectElement(this.getDirectParent(target), tIndex);
+                let parent = this.getDirectParent(target);
+                let ele = this.getDirectElement(parent, tIndex);
                 if (this.isFocusableElement(ele)) {   // IF PREVIOUS ELEMENT IS TEXTBOX
                     this.focusTo(ele);
-                } else {   
-                    this.movePrev(ele); 
+                } else {
+                    if (ele !== undefined)
+                        this.movePrev(ele);
+                    else {
+                        //let ele = this.getDirectParent(parent);
+                        let evt = this.Events.onContainerTopLeave;
+                        let _obj = evt.find(s => s.target == parent);
+                        if (_obj != undefined) if (_obj.callback() === true) return;
+                        this.movePrev(parent, true);
+                    }
                 }
             }
         } else {
@@ -115,15 +128,13 @@ class TabIndexManager {
             if (childLastElement == undefined) {  //  IF NO CHILD TAB INDEX AVALABLE
                 this.movePrev(target, true);
             } else { //  IF CHILD TAB INDEX EXIST
-                let evt = this.Events.onContainerEnter;
+                let evt = this.Events.onContainerBottomEnter;
                 let _obj = evt.find(s => s.target == target);
-                if (_obj != undefined) if(_obj.callback()===true)return;
-
-
+                if (_obj != undefined) if (_obj.callback() === true) return;
                 if (this.isFocusableElement(childLastElement)) {  //  IF LAST ELEMENT IS TEXTBOX
                     this.focusTo(childLastElement);
                 } else {     //  MOVE TO PREVIOUS WITH CHECK
-                    this.movePrev(childLastElement); 
+                    this.movePrev(childLastElement);
                 }
             }
         }
@@ -151,11 +162,11 @@ class TabIndexManager {
         let _this = this;
         let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;
-        let childFirstElement = goAhead ? undefined : this.getDirectElement(target, 0); 
+        let childFirstElement = goAhead ? undefined : this.getDirectElement(target, 0);
         if (childFirstElement != undefined) { // IF FIRST CHILD TAB-INDEX EXIST
-            let evt = this.Events.onContainerEnter;
+            let evt = this.Events.onContainerTopEnter;
             let _obj = evt.find(s => s.target == childFirstElement);
-            if (_obj != undefined) if(_obj.callback()===true)return;
+            if (_obj != undefined) if (_obj.callback() === true) return;
 
             if (this.isFocusableElement(childFirstElement)) { // IF FIRST CHILD IS TEXTBOX
                 this.focusTo(childFirstElement);
@@ -173,9 +184,9 @@ class TabIndexManager {
                 if (ele != undefined) // IF NEXT ELEMENT EXIST      
                     this.moveNext(ele);
                 else { // ELSE
-                    let evt = this.Events.onContainerLeave;
+                    let evt = this.Events.onContainerBottomLeave;
                     let _obj = evt.find(s => s.target == parent);
-                    if (_obj != undefined) if(_obj.callback()===true)return;
+                    if (_obj != undefined) if (_obj.callback() === true) return;
                     this.moveNext(parent, true);   // GO TO PARENT CONTAINER AND MOVE NEXT TAB-INDEX
                 }
             }
@@ -189,7 +200,7 @@ class TabIndexManager {
 
     focusTo(htele: HTMLElement) {
         //htele.setAttribute('tabindex', '0');
-       // console.log('focusTo');
+        // console.log('focusTo');
         htele.focus();
         controlOpt.selectAllText(htele);
     }
@@ -203,91 +214,6 @@ class TabIndexManager {
     getClosest(target: HTMLElement | Element): HTMLElement | null {
         //if (target.parentElement == undefined) debugger;
         return target.parentElement?.closest("[x-tabindex]");
-    }
-
-    getChildIfExist(container: HTMLElement, index: number, giveMeLastElement: boolean = false): TabIndexRow {
-        let _this = this;
-        let rtrn: TabIndexRow = {
-            container: container,
-            element: undefined,
-            tIndex: -1,
-        };
-
-        if (container == null) return rtrn;
-
-        let elements: HTMLElement[] = [];
-        if (!giveMeLastElement) {
-            elements = Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`)).filter(s => container.is(_this.getClosest(s))) as HTMLElement[]; /*   , [x-tabindex] *     */
-            for (let i = 0; i < elements.length; i++) {
-                let ele = elements[i];
-                let sub = this.getChildIfExist(ele, 0);
-                if (sub == undefined) return undefined;
-                if (sub.element == undefined) {
-                    //let closest = ele.parentElement.closest('[x-tabindex]');
-                    //if (closest.is(container)) {
-                    rtrn.element = ele;
-                    rtrn.tIndex = this.getTindex(ele);
-                    break;
-                    //} 
-                }
-                else return sub;
-            }
-            if (rtrn.element == undefined) {
-                let evt = this.Events.onContainerLeave;
-                let ele = rtrn.container;
-                let _obj = evt.find(s => s.target == ele);
-                if (_obj != undefined) if (_obj.callback() === true) return undefined;
-                // rtrn.container
-            } else {
-                if (rtrn.tIndex == 0) {
-                    let evt = this.Events.onContainerEnter;
-                    let ele = rtrn.container;
-                    let _obj = evt.find(s => s.target == ele);
-                    if (_obj != undefined) if (_obj.callback() === true) return undefined;
-                }
-            }
-            return rtrn;
-        } else {
-            rtrn = getMaxTabIndexElement(container, index);
-            if (rtrn.container != null) {
-                if (!rtrn.container.is(container)) {
-                    rtrn.element = rtrn.container;
-                    rtrn.container = this.getClosest(rtrn.container);
-                    rtrn.tIndex = this.getTindex(rtrn.container);
-                }
-            }
-            return rtrn;
-        }
-
-        function getMaxTabIndexElement(container: HTMLElement, index: number, elements?: HTMLElement[], calltime: number = 0): TabIndexRow {
-            calltime++;
-            let maxRtrn: TabIndexRow = {
-                container: container,
-                element: undefined,
-                tIndex: -1,
-            };
-            if (container == null) return maxRtrn;
-            if (elements == undefined)
-                elements = Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`));
-            else if (calltime == 2)
-                elements = Array.from(container.querySelectorAll(`[x-tabindex]`));
-
-            for (let i = 0; i < elements.length; i++) {
-                let ele = elements[i];
-                if (_this.isDirectClose(ele, container)) {
-                    elements.splice(index, 1);
-                    let tIndex = _this.getTindex(ele);
-                    if (tIndex >= maxRtrn.tIndex) {
-                        maxRtrn.tIndex = tIndex;
-                        maxRtrn.element = ele;
-                        maxRtrn.container = container;
-                    }
-                }
-            }
-
-            if (maxRtrn.element != undefined) return getMaxTabIndexElement(maxRtrn.element, maxRtrn.tIndex, elements, calltime);
-            return maxRtrn;
-        }
     }
 
     allowNodePattern: RegExp = /INPUT|SELECT|BUTTON|TEXTAREA/i;
