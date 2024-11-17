@@ -287,7 +287,7 @@ export class SourceManage<K> extends Array<K> {
     this.info.refresh();
     //console.log(this.length);
   }*/
-  nullValue: number = 0;
+  nullValue: RowInfo<K>|any;
   ihaveCompletedByMySide() {
     let len = this.length;
     this.originalSource.length = 0;

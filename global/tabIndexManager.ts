@@ -13,13 +13,28 @@ class TabIndexManager {
 
     constructor() { }
     Events = {
-       
+
         onContainerTopLeave: [] as TabContainerClearNode[],
         onContainerTopEnter: [] as TabContainerClearNode[],
         onContainerBottomLeave: [] as TabContainerClearNode[],
         onContainerBottomEnter: [] as TabContainerClearNode[],
 
         //onContainerClear:new CommonEvent<(element:HTMLElement)=>{}>()
+
+    }
+    continueusMove(container: HTMLElement, { startAt = undefined, stopAt = undefined }: { startAt?: HTMLElement, stopAt?: HTMLElement }) {
+        let breakTheLoop = false;
+        let callback: TabContainerClearNode = {
+            target: container, callback: () => { breakTheLoop = true; return true; }
+        };
+        this.Events.onContainerBottomLeave.push(callback);
+        let activeElement = startAt==undefined?container:startAt;
+        do {
+            this.moveNext(activeElement);
+            activeElement = document.activeElement as HTMLElement;
+            if (activeElement === stopAt) breakTheLoop = true;
+        } while (!breakTheLoop);
+        this.Events.onContainerBottomLeave.RemoveMultiple(callback);
     }
     init(mainHT: HTMLElement) {
         this.mainHT = mainHT;

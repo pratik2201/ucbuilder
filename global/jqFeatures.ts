@@ -474,7 +474,7 @@ class jqFeatures {
         Array.prototype.RemoveAtMultiple = function <T>(...removeValFromIndex: number[]): Array<T> {
             var valuesArr = this as T[];
             removeValFromIndex.sort(function (a, b) { return b - a; });
-            let removedEle: T[];
+            let removedEle: T[] = [];
             for (var i = removeValFromIndex.length - 1; i >= 0; i--)
                 removedEle.push(...valuesArr.splice(removeValFromIndex[i], 1));
             return removedEle;
