@@ -11,17 +11,6 @@ export interface TabContainerClearNode { target: HTMLElement, callback: () => bo
 class TabIndexManager {
     mainHT: HTMLElement | undefined;
 
-    constructor() { }
-    Events = {
-
-        onContainerTopLeave: [] as TabContainerClearNode[],
-        onContainerTopEnter: [] as TabContainerClearNode[],
-        onContainerBottomLeave: [] as TabContainerClearNode[],
-        onContainerBottomEnter: [] as TabContainerClearNode[],
-
-        //onContainerClear:new CommonEvent<(element:HTMLElement)=>{}>()
-
-    }
     continueusMove(container: HTMLElement, { startAt = undefined, stopAt = undefined }: { startAt?: HTMLElement, stopAt?: HTMLElement }) {
         let breakTheLoop = false;
         let callback: TabContainerClearNode = {
@@ -37,6 +26,20 @@ class TabIndexManager {
         } while (!breakTheLoop);
         this.Events.onContainerBottomLeave.RemoveMultiple(callback);
     }
+
+    constructor() { }
+    Events = {
+
+        onContainerTopLeave: [] as TabContainerClearNode[],
+        onContainerTopEnter: [] as TabContainerClearNode[],
+        onContainerBottomLeave: [] as TabContainerClearNode[],
+        onContainerBottomEnter: [] as TabContainerClearNode[],
+
+        //onContainerClear:new CommonEvent<(element:HTMLElement)=>{}>()
+
+    }
+
+    
     init(mainHT: HTMLElement) {
         this.mainHT = mainHT;
         let htEle: HTMLElement | undefined;

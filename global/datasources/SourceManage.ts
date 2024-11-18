@@ -197,7 +197,8 @@ export class SourceManage<K> extends Array<K> {
 
     let status: IndexType = 'continue';
     if (topIndex == len - 1) status = 'isAtLast';
-    else if (topIndex == -1) status = 'undefined';
+    else if (topIndex == -1) { topIndex = 0; status = 'undefined'; }
+
     return {
       index: topIndex,//index < 0 ? len : index,
       size:size,
