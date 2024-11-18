@@ -6,7 +6,6 @@ import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 export class ResourcesUC {
-    static tabMng = new TabIndexManager();
     static styler = new stylerRegs();
     static rendrarCounter = 0;
     /** @type {{}}  */
@@ -28,7 +27,7 @@ export class ResourcesUC {
             rootPathHandler.contentHT = document.body;
             
             
-            ResourcesUC.tabMng.init(rootPathHandler.contentHT);
+            TabIndexManager.init();
             LoadGlobal.init();
             stylerRegs.pushPublicStyles(callback);
             this.isInitBefore = true;

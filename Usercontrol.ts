@@ -14,7 +14,7 @@ import { stylerRegs, VariableList } from "ucbuilder/global/stylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { winManager } from "ucbuilder/global/winManager";
-import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
+import { TabIndexManager } from "ucbuilder/global/tabIndexManager";
 /*export enum ucVisibility{
     inherit = 0,
     visible = 1,
@@ -329,10 +329,10 @@ export class Usercontrol {
                 this.ucExtends.Events.afterClose.on(afterClose);
            // setTimeout(() => {
                 if (!defaultFocusAt) {
-                    ResourcesUC.tabMng.moveNext(this.ucExtends.self);
+                    TabIndexManager.moveNext(this.ucExtends.self);
                 } else {
 
-                    ResourcesUC.tabMng.focusTo(defaultFocusAt);
+                    TabIndexManager.focusTo(defaultFocusAt);
 
                 }
             //}, 1);

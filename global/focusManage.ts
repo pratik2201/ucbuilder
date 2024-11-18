@@ -1,4 +1,4 @@
-import { ResourcesUC } from "ucbuilder/ResourcesUC";
+import { TabIndexManager } from "ucbuilder/global/tabIndexManager";
 
 export class FocusManager {
     currentElement: HTMLElement | undefined;
@@ -17,7 +17,7 @@ export class FocusManager {
             if (containerElement.hasAttribute('tabindex'))
                 containerElement.focus();
             else {
-                ResourcesUC.tabMng.keymoveNext(containerElement);
+                TabIndexManager.moveNext(containerElement);
             }
         } else {
             this.currentElement.focus();
