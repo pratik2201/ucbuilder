@@ -31,6 +31,7 @@ class TabIndexManager {
         let activeElement = startAt==undefined?container:startAt;
         do {
             this.moveNext(activeElement);
+            if (activeElement === document.activeElement) breakTheLoop = true;
             activeElement = document.activeElement as HTMLElement;
             if (activeElement === stopAt) breakTheLoop = true;
         } while (!breakTheLoop);
