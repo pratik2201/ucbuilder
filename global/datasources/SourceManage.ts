@@ -18,13 +18,19 @@ export interface BasicSize {
   width: number,
   height: number
 }
+type RowType = 0 | 1 | 2;
 export class RowInfo<K> {
   element?: HTMLElement;
   searchStatus = SearchStatus.notFound;
   main: SourceManage<K>;
   template: TemplateNode;
   isModified = false;
-  isSourceRow = true;
+  //isCommandRow = false;
+  //isSourceRow = true;
+  rowType: RowType = 0;
+  get isOnlySourceRow() { return this.rowType == 0; }
+  get isOnlyCommandRow() { return this.rowType == 1; }
+  get isBothTypeRow() { return this.rowType == 2; }
   viewIndex = 0;
   private _isVisible = true;
   private _isVisibleDefault: boolean;
@@ -84,7 +90,7 @@ export class RowInfo<K> {
   next: RowInfo<K>;
   prev: RowInfo<K>;
 }
-type IndexType = "isAtLast" | "isAtTop" | "continue" | "TopOverflowed" |"BottomOverflowed" | "undefined";
+type IndexType = "isAtLast" | "isAtTop" | "continue" | "TopOverflowed" | "BottomOverflowed" | "undefined";
 class Info_<K> {
   main: SourceManage<K>;
   constructor(main: SourceManage<K>) { this.main = main; }
@@ -132,6 +138,7 @@ class Info_<K> {
       rInfo = obj[akey];
       h += rInfo.height;
       rInfo.index = i;
+      rInfo.element?.setAttribute('x-tabindex', '' + i);
       rInfo.runningHeight = h;
       w = Math.max(w, rInfo.width);
       rInfo.prev = prevRow;
@@ -167,7 +174,7 @@ export class SourceManage<K> extends Array<K> {
   setRow(index: number, val: RowInfo<K>) {
     let row = this[index];
     if (row) {
-      let obj = row[SourceManage.ACCESS_KEY] as RowInfo<K>;
+      //let obj = row[SourceManage.ACCESS_KEY] as RowInfo<K>;
       row[SourceManage.ACCESS_KEY] = val;
     }
   }
@@ -177,14 +184,14 @@ export class SourceManage<K> extends Array<K> {
     height: 0
   }
 
-  getBottomIndex(topIndex: number, containerHeight: number, { length = undefined, overflowed = false }: { length?: number, overflowed?: boolean }): { index: number,size:number, status: IndexType } {
-    if (containerHeight == 0) return {index:topIndex,size:0,status:'undefined'};
+  getBottomIndex(topIndex: number, containerHeight: number, { length = undefined, overflowed = false }: { length?: number, overflowed?: boolean }): { index: number, size: number, status: IndexType } {
+    if (containerHeight == 0) return { index: topIndex, size: 0, status: 'undefined' };
     let len = length ? length : this.length;
     let i = topIndex;
     let h = 0;
     let size = 0;
     let rInfo: RowInfo<K>;
-    for (; i <= len - 1; /*  i++; */ ) {
+    for (; i <= len - 1; /*  i++; */) {
       //rInfo = this.getRow(i);
       //console.log([i,rInfo.element,rInfo.height,rInfo.runningHeight]);      
       h = this.getRow(i).height;
@@ -192,7 +199,7 @@ export class SourceManage<K> extends Array<K> {
       if (size > containerHeight) break;
       i++;
     }
-    size = overflowed ? size : size-h;
+    size = overflowed ? size : size - h;
     topIndex = overflowed ? i : i - 1;
 
     let status: IndexType = 'continue';
@@ -201,13 +208,13 @@ export class SourceManage<K> extends Array<K> {
 
     return {
       index: topIndex,//index < 0 ? len : index,
-      size:size,
+      size: size,
       status: status,
     }
   }
-  getTopIndex(botomIndex: number, containerHeight: number, { overflowed = false }: { length?: number, overflowed?: boolean }): { index: number,size:number, status: IndexType } {
+  getTopIndex(botomIndex: number, containerHeight: number, { overflowed = false }: { length?: number, overflowed?: boolean }): { index: number, size: number, status: IndexType } {
     let i = botomIndex;
-    if (containerHeight == 0) return {index:botomIndex,size:0,status:'undefined'};    
+    if (containerHeight == 0) return { index: botomIndex, size: 0, status: 'undefined' };
     let h = 0;
     let size = 0;
     for (; i >= 0; i--) {
@@ -215,13 +222,13 @@ export class SourceManage<K> extends Array<K> {
       size += h;
       if (size > containerHeight) { break; }
     }
-    size = overflowed ? size : size-h;
+    size = overflowed ? size : size - h;
     botomIndex = overflowed ? i : i + 1;
     let status: IndexType = 'continue';
     if (botomIndex == 0) status = 'isAtTop';
     else if (botomIndex == -1) status = 'undefined';
     return {
-      size:size,
+      size: size,
       index: botomIndex,//index < 0 ? len : index,
       status: status,
     }
@@ -238,7 +245,7 @@ export class SourceManage<K> extends Array<K> {
     }
     return topPoint == 0 ? 0 : i + 1;
   }
-  loop_RowInfo(src: K[], callback = (row: K, info: RowInfo<K>, index: number) => { },indexCounter = 0) {
+  loop_RowInfo(src: K[], callback = (row: K, info: RowInfo<K>, index: number) => { }, indexCounter = 0) {
     // console.log('loop_RowInfo...called');
     let rInfo: RowInfo<K>;
     // let src = this;
@@ -288,7 +295,7 @@ export class SourceManage<K> extends Array<K> {
     this.info.refresh();
     //console.log(this.length);
   }*/
-  nullValue: RowInfo<K>|any;
+  nullValue: RowInfo<K> | any;
   ihaveCompletedByMySide() {
     let len = this.length;
     this.originalSource.length = 0;
@@ -299,7 +306,7 @@ export class SourceManage<K> extends Array<K> {
 
     this.length = 0;
     this.push(...sample);
-    this.onCompleteUserSide.fire([sample,0]);
+    this.onCompleteUserSide.fire([sample, 0]);
     for (let i = 0; i < sample.length; i++)this.StickRow(sample[i]);
 
     this.info.refresh();
@@ -309,9 +316,9 @@ export class SourceManage<K> extends Array<K> {
   pushNew(...items: K[]): number {
     this.originalSource.push(...items);
     let olen = this.length;
-    let len = this.push(...items);  
-    for (let i = 0, ilen = items.length; i < ilen; i++)   this.StickRow(items[i]);    
-    this.onCompleteUserSide.fire([items,olen]);    
+    let len = this.push(...items);
+    for (let i = 0, ilen = items.length; i < ilen; i++)   this.StickRow(items[i]);
+    this.onCompleteUserSide.fire([items, olen]);
     this.info.refresh();
     return len;
   }
@@ -349,14 +356,14 @@ export class SourceManage<K> extends Array<K> {
     this.unshift(...anlyse.NonSourceRows);
     anlyse.lasttext = '';
     anlyse.filterInitlized = false;
-     /*this.analyser.clearFilter(true);
-    let s = this.originalSource;
-    for (let i = 0, len = s.length; i < len; i++) {
-      this.resetRow(s[i]);
-    }*/    
+    /*this.analyser.clearFilter(true);
+   let s = this.originalSource;
+   for (let i = 0, len = s.length; i < len; i++) {
+     this.resetRow(s[i]);
+   }*/
     if (fireUpdateEvent) {
       this.callToFill();
-    }else this.info.refresh();
+    } else this.info.refresh();
   }
 
   clear(clearOriginalSource: boolean = false) {
@@ -364,7 +371,7 @@ export class SourceManage<K> extends Array<K> {
     if (clearOriginalSource) this.originalSource.length = 0;
   }
   resetRow(rInfo: RowInfo<K>) {
-    if (!rInfo.isSourceRow) return;
+    if (rInfo.rowType!=0) return;
     let _searchables = this.searchables;
     let row = rInfo.row;
     for (let i = 0, len = _searchables.length; i < len; i++) {
@@ -390,5 +397,5 @@ export class SourceManage<K> extends Array<K> {
   }
   static ACCESS_KEY = uniqOpt.guid;
   onUpdate = new CommonEvent<(arrayLen: number) => void>();
-  onCompleteUserSide = new CommonEvent<(src: K[],indexCounter:number) => void>();
+  onCompleteUserSide = new CommonEvent<(src: K[], indexCounter: number) => void>();
 };

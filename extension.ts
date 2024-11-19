@@ -37,6 +37,8 @@ interface String {
     escapeRegs():string,
     getDriveFromPath():string|undefined,
     _trim(charlist?: string): string,
+    _trimText(charlist?: string): string,
+    trimText_(charlist?: string): string,
     trim_(charlist?: string): string,
     _trim_(charlist?: string): string,
     __(jsonRow: {}): string,    

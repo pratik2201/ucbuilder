@@ -12,7 +12,7 @@ type {=name}_ELEMENT_MAP = {`{loopctr=controls}`{=name} : {=proto},`{/loopctr}`}
 class {=name}_TEMPLATE extends TemplateNode{
     constructor(tpt:Template) { super(tpt);   }
    
-    getAllControls(elementHT: HTMLElement): {=name}_ELEMENT_MAP {
+    getAllControls(elementHT?: HTMLElement): {=name}_ELEMENT_MAP {
         return this.extended.getAllControls(undefined,elementHT) as {=name}_ELEMENT_MAP;
     }
 }

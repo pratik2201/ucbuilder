@@ -346,6 +346,7 @@ export class TemplateNode {
       return Array.from(ext.wrapper.querySelectorAll(ar.join(",")));
     },
     getAllControls: (specific: string[], fromHT: HTMLElement) => {
+      if (fromHT == undefined) return;
       let childs: { [key: string]: HTMLElement } = {};
       let uExt = this;
       let fromElement = fromHT;

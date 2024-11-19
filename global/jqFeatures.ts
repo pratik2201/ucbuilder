@@ -597,6 +597,21 @@ class jqFeatures {
                 charlist = "\s";
             return this.replace(new RegExp("^[" + charlist + "]+", 'ig'), "");
         }
+        String.prototype._trimText = function (charlist?: string): string {
+            if (charlist === undefined)
+                charlist = "\s";
+            return this.replace(new RegExp("^" + charlist + "", 'ig'), "");
+        }
+        String.prototype.trim_ = function (charlist?: string): string {
+            if (charlist === undefined)
+                charlist = "\s";
+            return this.replace(new RegExp("[" + charlist + "]+$", 'ig'), "");
+        }
+        String.prototype.trimText_ = function (charlist?: string): string {
+            if (charlist === undefined)
+                charlist = "\s";
+            return this.replace(new RegExp("" + charlist + "$", 'ig'), "");
+        }
         String.prototype.toFilePath = function (): string {
             return this.replace(/[\\\/]+/gi, "/")._trim_("/");
         }
@@ -604,11 +619,7 @@ class jqFeatures {
             let r = this.match(/^[\w]+?:+/gi);
             return r.length > 0 ? r[0] : undefined;
         }
-        String.prototype.trim_ = function (charlist?: string): string {
-            if (charlist === undefined)
-                charlist = "\s";
-            return this.replace(new RegExp("[" + charlist + "]+$", 'ig'), "");
-        }
+        
         String.prototype.__ = function (jsonRow: {}): string {
             let rtrn = this;
             if (jsonRow != undefined)
