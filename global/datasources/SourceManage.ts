@@ -19,19 +19,18 @@ export interface BasicSize {
   height: number
 }
 type RowType = 0 | 1 | 2;
-export class RowInfo<K> {
+export class RowInfo<K = any> {
   element?: HTMLElement;
+  elementReplaceWith?: HTMLElement;
   searchStatus = SearchStatus.notFound;
   main: SourceManage<K>;
   template: TemplateNode;
   isModified = false;
-  //isCommandRow = false;
-  //isSourceRow = true;
   rowType: RowType = 0;
   get isOnlySourceRow() { return this.rowType == 0; }
   get isOnlyCommandRow() { return this.rowType == 1; }
   get isBothTypeRow() { return this.rowType == 2; }
-  viewIndex = 0;
+  elementIndex = 0;
   private _isVisible = true;
   private _isVisibleDefault: boolean;
   public get isVisible() {
@@ -104,7 +103,7 @@ class Info_<K> {
     isModified?: boolean,
     isVisible?: boolean,
     searchStatus?: SearchStatus,
-    isSelectable?: boolean
+    isSelectable?: boolean,
   } = {}) {
     let src = this.main;
     if (src.length == 0) { return; }
@@ -130,11 +129,7 @@ class Info_<K> {
     let obj: K = undefined;
     let prevRow: RowInfo<K>;
     let src = this.main;
-    let all = src.analyser.FullSample;
-    for (let i = 0; i < all.length; i++){
-      let ele = (all[i][akey] as RowInfo<any>).element;
-      if (ele != undefined) ele.style.display = 'none';
-    } 
+    src.makeAllElementsCssDisplay();
     this.length = this.main.length;
     //debugger;
     for (let i = 0, ilen = this.length; i < ilen; i++) {
@@ -144,7 +139,7 @@ class Info_<K> {
       h += rInfo.height;
       rInfo.index = i;
       let ele = rInfo.element;
-      if (ele) {        
+      if (ele) {
         ele.setAttribute('x-tabindex', '' + i);
       }
       rInfo.runningHeight = h;
@@ -160,13 +155,21 @@ export class SourceManage<K> extends Array<K> {
   info: Info_<K>;
   searchables: string[] = [];
   analyser: ResultAnalyser<K>;
+  category = {
+    FullSample: [] as K[],
+    OriginalSource: [] as K[],
+    TopStickyRows: [] as K[],
+    DefaultRows: [] as K[],
+    FilteredSource: [] as K[],
+    isFiltered: false as boolean,
+    startWithBeginIndex: -1,
+    startWithEndIndex: -1,
+  }
+
   constructor() {
     super(); this.info = new Info_<K>(this);
     this.analyser = new ResultAnalyser(this);
-    /*setInterval(() => {
-      console.log(this.info.length);
-      
-    }, 2000);*/
+
   }
 
   getRow(index: number): RowInfo<K> {
@@ -288,41 +291,56 @@ export class SourceManage<K> extends Array<K> {
     //rInfo.main = this;
     return rInfo;
   }
-  /*private init_all_rows(originalSrc:K[]) {
-    let rInfo: RowInfo<K>;
+  doIndexing(setAttr = true) {
     let akey = SourceManage.ACCESS_KEY;
-    let obj: K = undefined;
-    //let prevRow: RowInfo;
-    this.originalSource.length = 0;
-    for (let i = 0, len = this.length; i < len; i++) {
-      obj = this[i];
-      this.originalSource.push(obj);
-      rInfo = this.StickRow(obj);  
-      //rInfo.main = this;
+    if (!setAttr)
+      for (let i = 0, len = this.length; i < len; i++)
+        (this[i][akey] as RowInfo<K>).index = i;
+    else
+      for (let i = 0, len = this.length; i < len; i++) {
+        let rInf = (this[i][akey] as RowInfo<K>);
+        rInf.index = i;
+        rInf.element?.setAttribute('x-tabindex', '' + i);
+      }
+  }
+  makeAllElementsCssDisplay(display: 'none' | 'block' = 'none') {
+    let akey = SourceManage.ACCESS_KEY;
+    let ar = this.category.FullSample;
+    for (let i = 0, len = ar.length; i < len; i++) {
+      let rInf = (ar[i][akey] as RowInfo<K>);
+      rInf.elementIndex = i;
+      if (rInf.element != undefined) rInf.element.style.display = display;
     }
-    this.info.refresh();
-    //console.log(this.length);
-  }*/
+  }
+  doElementIndexing() {
+    let akey = SourceManage.ACCESS_KEY;
+    let ar = this.category.FullSample;
+    for (let i = 0, len = ar.length; i < len; i++)
+      (ar[i][akey] as RowInfo<K>).elementIndex = i;
+  }
   nullValue: RowInfo<K> | any;
   ihaveCompletedByMySide() {
     let len = this.length;
-    this.originalSource.length = 0;
-    this.originalSource.push(...this);
-    let sample = this.analyser.FullSample;
-    // this.nullRow = sample[this.info.defaultIndex];
-    //console.log([this.nullRow,this.info.defaultIndex,sample]);
-
+    let ctg = this.category;
+    ctg.OriginalSource.length = 0;
+    ctg.OriginalSource.push(...this);
+    ctg.FullSample.length = 0;
+    ctg.FullSample.push(...ctg.TopStickyRows, ...ctg.DefaultRows, ...ctg.OriginalSource);
+    let sample = ctg.FullSample;
     this.length = 0;
     this.push(...sample);
+
     this.onCompleteUserSide.fire([sample, 0]);
-    for (let i = 0; i < sample.length; i++)this.StickRow(sample[i]);
 
+    for (let i = 0, len = sample.length; i < len; i++) {
+      let rInfo = this.StickRow(sample[i]);
+      rInfo.elementIndex = i;
+    }
     this.info.refresh();
-
     this.onUpdate.fire([len]);
   }
   pushNew(...items: K[]): number {
-    this.originalSource.push(...items);
+    this.category.OriginalSource.push(...items);
     let olen = this.length;
     let len = this.push(...items);
     for (let i = 0, ilen = items.length; i < ilen; i++)   this.StickRow(items[i]);
@@ -330,26 +348,11 @@ export class SourceManage<K> extends Array<K> {
     this.info.refresh();
     return len;
   }
-  originalSource: K[] = [];
-  /*clearFilter(sort: boolean = true) {
-    let src = this.source;
-    src.info.doForAll({
-        isModified: true,
-        isVisible: undefined,
-        searchStatus: SearchStatus.notFound
-    });
-    src.clear();
-    src.push(...src.originalSource);
-    if (sort)
-        this.sortSource();
-    src.callToFill();
-    this.lasttext = '';
-    this.filterInitlized = false;
-}*/
+
   reset(fireUpdateEvent = true) {
     this.length = 0;
     let anlyse = this.analyser;
-    this.push(...this.originalSource);
+    this.push(...this.category.OriginalSource);
     let _SortEvent = anlyse.Event.onSortCall;
     this.sort((a, b) => { return _SortEvent(a, b); });
     let _searchables = this.searchables;
@@ -364,11 +367,6 @@ export class SourceManage<K> extends Array<K> {
     this.unshift(...anlyse.NonSourceRows);
     anlyse.lasttext = '';
     anlyse.filterInitlized = false;
-    /*this.analyser.clearFilter(true);
-   let s = this.originalSource;
-   for (let i = 0, len = s.length; i < len; i++) {
-     this.resetRow(s[i]);
-   }*/
     if (fireUpdateEvent) {
       this.callToFill();
     } else this.info.refresh();
@@ -376,10 +374,20 @@ export class SourceManage<K> extends Array<K> {
 
   clear(clearOriginalSource: boolean = false) {
     this.length = 0;
-    if (clearOriginalSource) this.originalSource.length = 0;
+    if (clearOriginalSource) this.category.OriginalSource.length = 0;
+  }
+  clearFilter() {
+    let akey = SourceManage.ACCESS_KEY;
+    for (let i = 0; i < this.length; i++) {      
+      let rInfo = this[i][akey] as RowInfo;
+      this.resetRow(rInfo);
+      rInfo.elementReplaceWith = rInfo.element;
+    }
+    this.onCompleteUserSide.fire([this, 0]);
+    this.category.isFiltered = false;
   }
   resetRow(rInfo: RowInfo<K>) {
-    if (rInfo.rowType!=0) return;
+    if (rInfo.rowType != 0) return;
     let _searchables = this.searchables;
     let row = rInfo.row;
     for (let i = 0, len = _searchables.length; i < len; i++) {
@@ -396,9 +404,22 @@ export class SourceManage<K> extends Array<K> {
   }
   callToFill(...indexes) {
     let len = this.length;
+    let akey = SourceManage.ACCESS_KEY;
     for (let i = 0; i < indexes.length; i++) {
-      let row = this[indexes[i]][SourceManage.ACCESS_KEY] as RowInfo<K>;
+      let row = this[indexes[i]][akey] as RowInfo<K>;
       if (row) row.isModified = true;
+    }
+    this.sort((a, b) => (a[akey] as RowInfo).elementIndex - (b[akey] as RowInfo).elementIndex);
+    let category = this.category;
+    let hasBeginSet = false, hasEndSet = false;
+    if (category.startWithBeginIndex != -1) {
+      for (let i = 0, len = this.length; i < len; i++) {
+        let rObj = this[i][akey] as RowInfo;
+
+        if (!hasBeginSet && rObj.elementIndex == category.startWithBeginIndex) { hasBeginSet = true; category.startWithBeginIndex = i; }
+        if (!hasEndSet && rObj.elementIndex == category.startWithEndIndex) { hasEndSet = true; category.startWithEndIndex = i; }
+        if (hasBeginSet && hasEndSet) break;
+      }
     }
     this.info.refresh();
     this.onUpdate.fire([len]);

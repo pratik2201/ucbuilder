@@ -73,9 +73,15 @@ export class ResultAnalyser<T> {
          this._source = value;
         
      }*/
-
-    filteredSource: any[] = [];
-
+    private TopStickyRows: T[] = [];
+    private DefaultRows: T[] = [];
+    private FilteredSource: T[] = [];
+    constructor(source: SourceManage<T>) {
+        this.source = source;
+        this.TopStickyRows = source.category.TopStickyRows;
+        this.DefaultRows = source.category.DefaultRows;
+        this.FilteredSource = source.category.FilteredSource;
+    }
     sortSource() {
         let _SortEvent = this.Event.onSortCall;
         let src = this.source;
@@ -83,7 +89,7 @@ export class ResultAnalyser<T> {
         let obj = undefined;
         for (let j = 0; j < src.length; j++) {
             obj = src[j];
-           // src.getRowByObj(obj).isModified = true;
+            // src.getRowByObj(obj).isModified = true;
             src.resetRow(SourceManage.getRow(obj));
         }
         src.unshift(...this.TopStickyRows, ...this.DefaultRows);
@@ -102,9 +108,6 @@ export class ResultAnalyser<T> {
 
         }
     }
-    public TopStickyRows: T[] = [];
-    public bottomStickyRows: T[] = [];
-    public DefaultRows: T[] = [];
 
     setDefaultRow() {
         this.TopStickyRows = this.source.slice(0, this.source.info.defaultIndex);
@@ -113,12 +116,10 @@ export class ResultAnalyser<T> {
         return [...this.TopStickyRows, ...this.DefaultRows];
     }
     get SourceOriginalRows() {
-        return [ ...this.source.originalSource];
+        return [...this.source.category.OriginalSource];
     }
-    get FullSample() {
-        return [...this.TopStickyRows, ...this.DefaultRows, ...this.source.originalSource];
-    }
-    
+
+
     filterInitlized = false;
     clearFilter(sort: boolean = true) {
         let src = this.source;
@@ -128,7 +129,7 @@ export class ResultAnalyser<T> {
             searchStatus: SearchStatus.notFound
         });
         src.clear();
-        src.push(...src.originalSource);
+        src.push(...src.category.OriginalSource);
         if (sort)
             this.sortSource();
         src.callToFill();
@@ -136,9 +137,13 @@ export class ResultAnalyser<T> {
         this.filterInitlized = false;
     }
     lasttext = "";
+    
     filter(text: string) {
         text = text.trim();
         let src = this.source;
+        let category = src.category;
+        category.startWithBeginIndex =
+        category.startWithEndIndex = -1;
         if (text == '') { this.clearFilter(); }
         else if (!text.startsWithI(this.lasttext) || this.lasttext == '') {
             this.initFilter(text);
@@ -146,16 +151,23 @@ export class ResultAnalyser<T> {
             let snode = new SearchableItemNode();
             snode.Text = text;
             this.initStorageForAnalyse();
-            this.filteredSource.map(row => this.analyse(snode, row));
+            this.FilteredSource.map(row => this.analyse(snode, row));
             src.clear();
             this.pushResultInside(snode, src);
             if (src.length > 0) {
                 src.unshift(...this.TopStickyRows);
             } else {
-                src.unshift(...this.TopStickyRows,...this.DefaultRows);
+                src.unshift(...this.TopStickyRows, ...this.DefaultRows);
             }
-            src.callToFill();
         }
+        for (let i = 0; i < src.length; i++) {
+            let rInfo = SourceManage.getRow(src[i]);
+            rInfo.elementReplaceWith = rInfo.element;            
+        }
+        src.onCompleteUserSide.fire([src, 0]);
+        
+        src.callToFill();
+        src.category.isFiltered = true;
         /*switch (text.length) {
             case 0:
                 this.clearFilter();
@@ -186,36 +198,34 @@ export class ResultAnalyser<T> {
         snode.Text = text;
         let src = this.source;
         let tmp: T[] = [];
-        tmp.push(...src.originalSource);
+        tmp.push(...src.category.OriginalSource);
         //tmp.splice(0, src.info.defaultIndex);
         for (let i = 0; i < tmp.length; i++) {
             const row = tmp[i];
             this.analyse(snode, row);
         }
-        this.filteredSource.length = 0;
-        this.pushResultInside(snode, this.filteredSource);
+        this.FilteredSource.length = 0;
+        this.pushResultInside(snode, this.FilteredSource);
         src.clear();
-        src.push(...this.filteredSource);
+        src.push(...this.FilteredSource);
         if (src.length > 0) {
             src.unshift(...this.TopStickyRows);
         } else {
-            src.unshift(...this.TopStickyRows,...this.DefaultRows);
+            src.unshift(...this.TopStickyRows, ...this.DefaultRows);
         }
-        src.callToFill();
+        
         this.filterInitlized = true;
         this.lasttext = text;
     }
 
     clearSources() {
         this.source.clear(true);
-        this.filteredSource.length = 0;
+        this.FilteredSource.length = 0;
     }
 
     columnsToFindIn: string[] = [];
     analyserStorage = {};
-    constructor(source: SourceManage<T>) {
-        this.source = source;
-    }
+
     pushColumnsToFindIn(...columnsToFindIn: string[]) {
         this.columnsToFindIn.push(...columnsToFindIn);
         this.source.searchables.length = 0;
@@ -276,6 +286,7 @@ export class ResultAnalyser<T> {
         }
         let insideThis: SearchableItemNode;
         let cols = this.columnsToFindIn;
+       
         for (let i = 0, ilen = cols.length; i < ilen; i++) {
             const col = cols[i];
             let res = this.analyserStorage[col] as analyserSource<T>;
@@ -292,6 +303,7 @@ export class ResultAnalyser<T> {
                     res.include.push(row);
                 }
             }
+            
             for (let j = 0, jlen = res.startwith.length; j < jlen; j++) {
                 const row = res.allMix[j];
                 insideThis = row[col] as SearchableItemNode;
@@ -301,9 +313,18 @@ export class ResultAnalyser<T> {
                     Robj.searchStatus = SearchStatus.equal;
                     res.equal.push(row);
                 }
-            }
+            }            
             ttl.allMix.push(...res.equal, ...res.startwith, ...res.include);
+            if (res.equal.length > 0) {
+                src.category.startWithBeginIndex =
+                    src.category.startWithEndIndex = SourceManage.getRow(res.equal[0]).elementIndex;
+            }
+            else if (res.startwith.length > 0) {
+                src.category.startWithBeginIndex = SourceManage.getRow(res.startwith[0]).elementIndex;
+                src.category.startWithEndIndex = SourceManage.getRow(res.startwith[res.startwith.length-1]).elementIndex;
+            }
         }
+        
         target.push(...ttl.allMix.distinct());
     }
 }
