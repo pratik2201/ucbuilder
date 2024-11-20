@@ -130,6 +130,11 @@ class Info_<K> {
     let obj: K = undefined;
     let prevRow: RowInfo<K>;
     let src = this.main;
+    let all = src.analyser.FullSample;
+    for (let i = 0; i < all.length; i++){
+      let ele = (all[i][akey] as RowInfo<any>).element;
+      if (ele != undefined) ele.style.display = 'none';
+    } 
     this.length = this.main.length;
     //debugger;
     for (let i = 0, ilen = this.length; i < ilen; i++) {
@@ -139,8 +144,7 @@ class Info_<K> {
       h += rInfo.height;
       rInfo.index = i;
       let ele = rInfo.element;
-      if (ele) {
-        ele.style.display = 'none';
+      if (ele) {        
         ele.setAttribute('x-tabindex', '' + i);
       }
       rInfo.runningHeight = h;

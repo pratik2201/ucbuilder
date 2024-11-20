@@ -285,10 +285,16 @@ class TabIndexManager {
     }
 
     static allowNodePattern: RegExp = /INPUT|SELECT|BUTTON|TEXTAREA/i;
-
-    static isFocusableElement(htEle: HTMLElement): boolean {
-        let _this = this;
-        return isElementFocusable(htEle as HTMLInputElement);
+    static isVisaulyAppeared(hte: HTMLElement) {
+        if (hte == undefined) return false;
+        return hte.offsetWidth > 0 && hte.offsetHeight > 0
+    }
+    static isFocusableElement(hte: HTMLElement): boolean {
+        let isVisaulyAppeared = this.isVisaulyAppeared(hte);
+        if (!isVisaulyAppeared) return false;
+        let element = hte as HTMLInputElement;
+        let orCondition = (element.nodeName.match(this.allowNodePattern) != null || element.getAttribute('contenteditable') == 'true');
+        return !element.disabled && orCondition;
         /*if (htEle == undefined) return false;
         let style = window.getComputedStyle(htEle);
         if (style.pointerEvents == "none") return false;
@@ -299,13 +305,11 @@ class TabIndexManager {
         } else {
             return false;
         }*/
-        function isElementFocusable(element: HTMLInputElement) {
-            if (element == undefined) return false;
-            let andCondition = (!element.disabled && element.offsetWidth > 0 && element.offsetHeight > 0);
-            let orCondition = (element.nodeName.match(_this.allowNodePattern) != null || element.getAttribute('contenteditable') == 'true');
-            return andCondition && orCondition;
-            /*element.tabIndex !== -1 && */
-        }
+       
+        /*function isElementFocusable(element: HTMLInputElement) {
+           
+            //element.tabIndex !== -1 && 
+        }*/
     }
 
     static isDirectClose(child: HTMLElement, container: HTMLElement): boolean {
