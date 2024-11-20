@@ -138,7 +138,11 @@ class Info_<K> {
       rInfo = obj[akey];
       h += rInfo.height;
       rInfo.index = i;
-      rInfo.element?.setAttribute('x-tabindex', '' + i);
+      let ele = rInfo.element;
+      if (ele) {
+        ele.style.display = 'none';
+        ele.setAttribute('x-tabindex', '' + i);
+      }
       rInfo.runningHeight = h;
       w = Math.max(w, rInfo.width);
       rInfo.prev = prevRow;
