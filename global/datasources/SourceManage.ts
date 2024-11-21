@@ -2,6 +2,9 @@ import { uniqOpt } from "ucbuilder/build/common";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { TemplateNode } from "ucbuilder/Template";
 import { ResultAnalyser, SearchableItemNode } from "ucbuilder/global/datasources/ResultAnalyser";
+import { NodeHandler } from "ucbuilder/global/datasources/NodeHandler";
+import { SourceProperties } from "ucbuilder/global/datasources/PropertiesHandler";
+import { SourceScrollHandler } from "ucbuilder/global/datasources/ScrollHandler";
 export const SourceIndexElementAttr = "itmIndx" + uniqOpt.randomNo();
 export enum SearchStatus {
   notFound = 0,
@@ -90,71 +93,12 @@ export class RowInfo<K = any> {
   prev: RowInfo<K>;
 }
 type IndexType = "isAtLast" | "isAtTop" | "continue" | "TopOverflowed" | "BottomOverflowed" | "undefined";
-class Info_<K> {
-  main: SourceManage<K>;
-  constructor(main: SourceManage<K>) { this.main = main; }
-  length = 0;
-  height = 0;
-  width = 0;
-  EditorMode = false;
-  defaultIndex = 0;
-  //rows: K[] = [];
-  doForAll(s: {
-    isModified?: boolean,
-    isVisible?: boolean,
-    searchStatus?: SearchStatus,
-    isSelectable?: boolean,
-  } = {}) {
-    let src = this.main;
-    if (src.length == 0) { return; }
-    let obj: K = undefined;
-    for (let i = 0, ilen = this.main.length; i < ilen; i++) {
-      obj = src[i];
-      let rInfo = SourceManage.getRow(obj);
-      //let before = rInfo.isVisible;
-      Object.assign(rInfo, s);
-      // console.log([before,rInfo.isVisible]);
-
-    }
-  }
-  refresh() {
-    let ar = this.main;
-    let akey = SourceManage.ACCESS_KEY;
-    this.length = 0;
-    this.height = 0;
-    this.width = 0;
-    if (ar.length == 0) { return; }
-    let rInfo = ar.getRow(0);
-    let w = 0, h = 0, len = 0, index = 0;
-    let obj: K = undefined;
-    let prevRow: RowInfo<K>;
-    let src = this.main;
-    src.makeAllElementsCssDisplay();
-    this.length = this.main.length;
-    //debugger;
-    for (let i = 0, ilen = this.length; i < ilen; i++) {
-      obj = src[i];
-      prevRow = rInfo;
-      rInfo = obj[akey];
-      h += rInfo.height;
-      rInfo.index = i;
-      let ele = rInfo.element;
-      if (ele) {
-        ele.setAttribute('x-tabindex', '' + i);
-      }
-      rInfo.runningHeight = h;
-      w = Math.max(w, rInfo.width);
-      rInfo.prev = prevRow;
-      if (i > 0) prevRow.next = rInfo;
-    }
-    this.height = h;
-    this.width = w;
-  }
-}
 export class SourceManage<K> extends Array<K> {
-  info: Info_<K>;
+  info: SourceProperties<K>;
   searchables: string[] = [];
   analyser: ResultAnalyser<K>;
+  nodes: NodeHandler<K>;
+  scrollbar: SourceScrollHandler<K>;
   category = {
     FullSample: [] as K[],
     OriginalSource: [] as K[],
@@ -167,13 +111,17 @@ export class SourceManage<K> extends Array<K> {
   }
 
   constructor() {
-    super(); this.info = new Info_<K>(this);
+    super(); this.info = new SourceProperties<K>(this);
     this.analyser = new ResultAnalyser(this);
-
+    this.scrollbar = new SourceScrollHandler<K>(this);
+    this.nodes = new NodeHandler<K>(this);
   }
 
   getRow(index: number): RowInfo<K> {
     return this[index][SourceManage.ACCESS_KEY];
+  }
+  get CurrentRow(): RowInfo<K> {
+    return this[this.info.currentIndex][SourceManage.ACCESS_KEY];
   }
   static getRow<K>(obj: any): RowInfo<K> {
     return obj[SourceManage.ACCESS_KEY];
@@ -350,11 +298,14 @@ export class SourceManage<K> extends Array<K> {
   }
 
   reset(fireUpdateEvent = true) {
-    this.length = 0;
     let anlyse = this.analyser;
+    if (this.category.isFiltered) {
+      this.clearFilter();
+    }
+    this.length = 0;
     this.push(...this.category.OriginalSource);
-    let _SortEvent = anlyse.Event.onSortCall;
-    this.sort((a, b) => { return _SortEvent(a, b); });
+    //let _SortEvent = anlyse.Event.onSortCall;
+    //this.sort((a, b) => { return _SortEvent(a, b); });
     let _searchables = this.searchables;
     for (let i = 0, len = this.length; i < len; i++) {
       let row = this[i];
@@ -378,18 +329,20 @@ export class SourceManage<K> extends Array<K> {
   }
   clearFilter() {
     let akey = SourceManage.ACCESS_KEY;
-    for (let i = 0; i < this.length; i++) {      
-      let rInfo = this[i][akey] as RowInfo;
+    let ar = [...this.category.DefaultRows, ...this.category.OriginalSource];
+    for (let i = 0, len = ar.length; i < len; i++) {
+      let rInfo = ar[i][akey] as RowInfo;
       this.resetRow(rInfo);
       rInfo.elementReplaceWith = rInfo.element;
     }
-    this.onCompleteUserSide.fire([this, 0]);
+    this.onCompleteUserSide.fire([ar, 0]);
     this.category.isFiltered = false;
   }
   resetRow(rInfo: RowInfo<K>) {
     if (rInfo.rowType != 0) return;
     let _searchables = this.searchables;
     let row = rInfo.row;
+    rInfo.searchStatus = SearchStatus.notFound;
     for (let i = 0, len = _searchables.length; i < len; i++) {
       const searchable = _searchables[i];
       (row[searchable] as SearchableItemNode).reset();
@@ -424,7 +377,13 @@ export class SourceManage<K> extends Array<K> {
     this.info.refresh();
     this.onUpdate.fire([len]);
   }
+
+  ArrangingContents = false;
   static ACCESS_KEY = uniqOpt.guid;
+
+  Events = {
+    onChangeHiddenCount: new CommonEvent<(topHiddenCount: number, bottomHiddenCount: number) => void>(),
+  }
   onUpdate = new CommonEvent<(arrayLen: number) => void>();
   onCompleteUserSide = new CommonEvent<(src: K[], indexCounter: number) => void>();
 };
