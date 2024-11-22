@@ -8,14 +8,15 @@ export class SourceScrollHandler<K = any> {
     config: SourceProperties<K>;
     nodes: NodeHandler<K>;
     hasInited = false;
-    constructor(src: SourceManage<K>) {
+    constructor() { }
+    init(src: SourceManage<K>) {
         this.source = src;
         this.config = src.info;
         this.nodes = src.nodes;
     }
     sizerElement: HTMLElement = '<sizer></sizer>'.$();
     vScrollElement: HTMLElement;
-    init(vScrollbarElement: HTMLElement) {
+    setup(vScrollbarElement: HTMLElement) {
         let cfg = this.config;
         this.vScrollElement = vScrollbarElement;
         this.vScrollElement.appendChild(this.sizerElement);
@@ -51,6 +52,8 @@ export class SourceScrollHandler<K = any> {
         //console.log(this.navigatePages.config.top);
         if (this.isfilling) return;
         this.isfilling = true;
+        console.log(this);
+
         let _this = this;
         /*let element = this.main.vscrollbar1;
         if (element.scrollTop + element.offsetHeight >= element.scrollHeight - 1) { // is bottom reached
@@ -70,13 +73,14 @@ export class SourceScrollHandler<K = any> {
     fireScrollEvent = true;
     refreshScrollbarSilantly(): void {
         let src = this.source;
+        
         let config = this.config;
         if (!this.hasInited || src.length == 0) {
             src.Events.onChangeHiddenCount.fire([config.topHiddenRowCount, config.bottomHiddenRowCount]);
             return;
         }
-        this.fireScrollEvent = true;
-            
+        this.fireScrollEvent = false;
+
         let vScroll = this.vScrollElement;
         let top = src.getRow(config.top);
         let rw = top.runningHeight - top.height;

@@ -2,7 +2,7 @@ import { MouseForMove } from "ucbuilder/global/mouseForMove";
 import { getConvertedNames } from "ucbuilder/global/resizer/namingConversion";
 import { Point } from "ucbuilder/global/drawing/shapes";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
-import { MeasureManage } from "ucbuilder/global/measurement/MeasureManage";
+import { MeasureManage } from "ucbuilder/global/measurement/measureManage";
 
 class measurementNode {
   size: number = 0;

@@ -5,8 +5,11 @@ import { ResultAnalyser, SearchableItemNode } from "ucbuilder/global/datasources
 import { NodeHandler } from "ucbuilder/global/datasources/NodeHandler";
 import { SourceProperties } from "ucbuilder/global/datasources/PropertiesHandler";
 import { SourceScrollHandler } from "ucbuilder/global/datasources/ScrollHandler";
+import { RowGenerator } from "ucbuilder/global/datasources/RowGenerator";
+import { RowHandler } from "ucbuilder/global/datasources/RowHandler";
 export const SourceIndexElementAttr = "itmIndx" + uniqOpt.randomNo();
 export enum SearchStatus {
+  filterOut = -1,
   notFound = 0,
   equal = 1,
   startWith = 2,
@@ -24,7 +27,6 @@ export interface BasicSize {
 type RowType = 0 | 1 | 2;
 export class RowInfo<K = any> {
   element?: HTMLElement;
-  elementReplaceWith?: HTMLElement;
   searchStatus = SearchStatus.notFound;
   main: SourceManage<K>;
   template: TemplateNode;
@@ -94,11 +96,13 @@ export class RowInfo<K = any> {
 }
 type IndexType = "isAtLast" | "isAtTop" | "continue" | "TopOverflowed" | "BottomOverflowed" | "undefined";
 export class SourceManage<K> extends Array<K> {
-  info: SourceProperties<K>;
+  info= new SourceProperties<K>();
   searchables: string[] = [];
-  analyser: ResultAnalyser<K>;
-  nodes: NodeHandler<K>;
-  scrollbar: SourceScrollHandler<K>;
+  analyser = new ResultAnalyser<K>();
+  nodes = new NodeHandler<K>();
+  generator = new RowGenerator<K>();
+  rowhandler = new RowHandler<K>();
+  scrollbar = new SourceScrollHandler<K>();
   category = {
     FullSample: [] as K[],
     OriginalSource: [] as K[],
@@ -111,10 +115,13 @@ export class SourceManage<K> extends Array<K> {
   }
 
   constructor() {
-    super(); this.info = new SourceProperties<K>(this);
-    this.analyser = new ResultAnalyser(this);
-    this.scrollbar = new SourceScrollHandler<K>(this);
-    this.nodes = new NodeHandler<K>(this);
+    super();
+    this.info.init(this);
+    this.analyser.init(this);;
+    this.scrollbar.init(this);
+    this.nodes.init(this);
+    this.generator.init(this);
+    this.rowhandler.init(this);
   }
 
   getRow(index: number): RowInfo<K> {
@@ -123,7 +130,7 @@ export class SourceManage<K> extends Array<K> {
   get CurrentRow(): RowInfo<K> {
     return this[this.info.currentIndex][SourceManage.ACCESS_KEY];
   }
-  static getRow<K>(obj: any): RowInfo<K> {
+  static getRow<K>(obj: K): RowInfo<K> {
     return obj[SourceManage.ACCESS_KEY];
   }
 
@@ -274,17 +281,18 @@ export class SourceManage<K> extends Array<K> {
     ctg.OriginalSource.push(...this);
     ctg.FullSample.length = 0;
     ctg.FullSample.push(...ctg.TopStickyRows, ...ctg.DefaultRows, ...ctg.OriginalSource);
-    let sample = ctg.FullSample;
+    this.onCompleteUserSide.fire([ctg.FullSample, 0]);
+    this.length = 0;
+    this.push(...ctg.FullSample);
+    this.generator.reload();
+    /*let sample = ctg.FullSample;
     this.length = 0;
     this.push(...sample);
-
-    this.onCompleteUserSide.fire([sample, 0]);
-
+    
     for (let i = 0, len = sample.length; i < len; i++) {
       let rInfo = this.StickRow(sample[i]);
       rInfo.elementIndex = i;
-    }
-    this.info.refresh();
+    }*/
     this.onUpdate.fire([len]);
   }
   pushNew(...items: K[]): number {
@@ -293,7 +301,7 @@ export class SourceManage<K> extends Array<K> {
     let len = this.push(...items);
     for (let i = 0, ilen = items.length; i < ilen; i++)   this.StickRow(items[i]);
     this.onCompleteUserSide.fire([items, olen]);
-    this.info.refresh();
+    this.generator.refresh();
     return len;
   }
 
@@ -313,14 +321,14 @@ export class SourceManage<K> extends Array<K> {
       for (let j = 0, jlen = _searchables.length; j < jlen; j++)
         (row[_searchables[j]] as SearchableItemNode).reset();
       rInfo.isModified = true;//rInfo.searchStatus != SearchStatus.notFound;
-      rInfo.searchStatus = SearchStatus.notFound;
+      
     }
     this.unshift(...anlyse.NonSourceRows);
     anlyse.lasttext = '';
     anlyse.filterInitlized = false;
     if (fireUpdateEvent) {
       this.callToFill();
-    } else this.info.refresh();
+    } else this.generator.refresh();
   }
 
   clear(clearOriginalSource: boolean = false) {
@@ -329,14 +337,18 @@ export class SourceManage<K> extends Array<K> {
   }
   clearFilter() {
     let akey = SourceManage.ACCESS_KEY;
+    let gen = this.generator;
     let ar = [...this.category.DefaultRows, ...this.category.OriginalSource];
     for (let i = 0, len = ar.length; i < len; i++) {
-      let rInfo = ar[i][akey] as RowInfo;
-      this.resetRow(rInfo);
-      rInfo.elementReplaceWith = rInfo.element;
+      let row = ar[i];
+      let rInfo = row[akey] as RowInfo;
+      if (rInfo.searchStatus != SearchStatus.notFound) {
+        this.resetRow(rInfo);
+        gen.replaceElement(gen.giveMeNewNode(row),rInfo);
+      }
     }
-    this.onCompleteUserSide.fire([ar, 0]);
-    this.category.isFiltered = false;
+    
+    //this.category.isFiltered = false;
   }
   resetRow(rInfo: RowInfo<K>) {
     if (rInfo.rowType != 0) return;
@@ -374,7 +386,7 @@ export class SourceManage<K> extends Array<K> {
         if (hasBeginSet && hasEndSet) break;
       }
     }
-    this.info.refresh();
+    this.generator.refresh();
     this.onUpdate.fire([len]);
   }
 

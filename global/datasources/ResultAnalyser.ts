@@ -76,7 +76,8 @@ export class ResultAnalyser<T> {
     private TopStickyRows: T[] = [];
     private DefaultRows: T[] = [];
     private FilteredSource: T[] = [];
-    constructor(source: SourceManage<T>) {
+    constructor() { }
+    init(source: SourceManage<T>) {
         this.source = source;
         this.TopStickyRows = source.category.TopStickyRows;
         this.DefaultRows = source.category.DefaultRows;
@@ -137,13 +138,13 @@ export class ResultAnalyser<T> {
         this.filterInitlized = false;
     }
     lasttext = "";
-    
+
     filter(text: string) {
         text = text.trim();
         let src = this.source;
         let category = src.category;
         category.startWithBeginIndex =
-        category.startWithEndIndex = -1;
+            category.startWithEndIndex = -1;
         if (text == '') { this.clearFilter(); }
         else if (!text.startsWithI(this.lasttext) || this.lasttext == '') {
             this.initFilter(text);
@@ -160,12 +161,15 @@ export class ResultAnalyser<T> {
                 src.unshift(...this.TopStickyRows, ...this.DefaultRows);
             }
         }
+        let generator = this.source.generator;
         for (let i = 0; i < src.length; i++) {
-            let rInfo = SourceManage.getRow(src[i]);
-            rInfo.elementReplaceWith = rInfo.element;            
+            let row = src[i];
+            let rInfo = SourceManage.getRow(row);
+            generator.replaceElement(generator.giveMeNewNode(row), rInfo);
+            //rInfo.elementReplaceWith = rInfo.element;            
         }
         src.onCompleteUserSide.fire([src, 0]);
-        
+
         src.callToFill();
         src.category.isFiltered = true;
         /*switch (text.length) {
@@ -213,7 +217,7 @@ export class ResultAnalyser<T> {
         } else {
             src.unshift(...this.TopStickyRows, ...this.DefaultRows);
         }
-        
+
         this.filterInitlized = true;
         this.lasttext = text;
     }
@@ -270,8 +274,13 @@ export class ResultAnalyser<T> {
             else {
 
                 Robj.isVisible = false;
-                Robj.searchStatus = SearchStatus.notFound;
-                results.push('NotFound');
+                if (Robj.searchStatus == SearchStatus.notFound) {
+                    results.push('NotFound');
+                } else {
+                    Robj.searchStatus = SearchStatus.filterOut;
+                    results.push('FilterOut');
+                }
+
             }
         }
         return results;
@@ -286,7 +295,7 @@ export class ResultAnalyser<T> {
         }
         let insideThis: SearchableItemNode;
         let cols = this.columnsToFindIn;
-       
+
         for (let i = 0, ilen = cols.length; i < ilen; i++) {
             const col = cols[i];
             let res = this.analyserStorage[col] as analyserSource<T>;
@@ -298,12 +307,11 @@ export class ResultAnalyser<T> {
                     insideThis.setOutput(0, findThis.SearchableText, 'StartWith');
                     res.startwith.push(row);
                     Robj.searchStatus = SearchStatus.startWith;
-
                 } else {
                     res.include.push(row);
                 }
             }
-            
+
             for (let j = 0, jlen = res.startwith.length; j < jlen; j++) {
                 const row = res.allMix[j];
                 insideThis = row[col] as SearchableItemNode;
@@ -312,8 +320,10 @@ export class ResultAnalyser<T> {
                     insideThis.setOutput(0, findThis.SearchableText, 'Equal');
                     Robj.searchStatus = SearchStatus.equal;
                     res.equal.push(row);
-                }
-            }            
+                }/*else {
+                    res.include.push(row);
+                }*/
+            }
             ttl.allMix.push(...res.equal, ...res.startwith, ...res.include);
             if (res.equal.length > 0) {
                 src.category.startWithBeginIndex =
@@ -321,11 +331,11 @@ export class ResultAnalyser<T> {
             }
             else if (res.startwith.length > 0) {
                 src.category.startWithBeginIndex = SourceManage.getRow(res.startwith[0]).elementIndex;
-                src.category.startWithEndIndex = SourceManage.getRow(res.startwith[res.startwith.length-1]).elementIndex;
+                src.category.startWithEndIndex = SourceManage.getRow(res.startwith[res.startwith.length - 1]).elementIndex;
             }
         }
-        
+
         target.push(...ttl.allMix.distinct());
     }
 }
-export type AnalyseResultType = "Equal" | "StartWith" | "Include" | "NotFound";
+export type AnalyseResultType = "Equal" | "StartWith" | "Include" | "FilterOut" | "NotFound";
