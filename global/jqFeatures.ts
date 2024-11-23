@@ -480,7 +480,12 @@ class jqFeatures {
             return removedEle;
         }
 
+        Array.prototype.fillInto = function (to: []) {
+            let from = this as [];
+            for (let i = 0, len = from.length; i < len; i++)
+                to.push(from[i]);
 
+        }
 
         SVGElement.prototype.data = function (key?: string, value?: any): any {
             switch (arguments.length) {
@@ -619,7 +624,7 @@ class jqFeatures {
             let r = this.match(/^[\w]+?:+/gi);
             return r.length > 0 ? r[0] : undefined;
         }
-        
+
         String.prototype.__ = function (jsonRow: {}): string {
             let rtrn = this;
             if (jsonRow != undefined)

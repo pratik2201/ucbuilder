@@ -56,6 +56,7 @@ interface NodeList {
 }
 interface Array<T> {
     on<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,
+    fillInto:(target:Array<T>)=>void,
     distinct(): T[],
     /**
      * @param Eles elements to remove

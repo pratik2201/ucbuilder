@@ -21,15 +21,30 @@ export class RowGenerator<K> {
     }
 
     reload() {
-        let tpt = this.nodes.template;
+        //let tpt = this.nodes.template;
         this.nodes.container.innerHTML = '';
         let fullsrc = this.source.category.FullSample;
         for (let i = 0, len = fullsrc.length; i < len; i++) {
-            this.generate(fullsrc[i], tpt, i);
+            let r = this.generateRow(fullsrc[i], i);
+            r.elementIndex = i;
+            //this.generateFull(fullsrc[i], i, tpt);
         }
         this.refresh();
+        this.source.isLoaded = true;
     }
-    generate(row: K, tpt: TemplateNode, elementIndex: number = -1) {
+    generateRow(row: K, index: number): RowInfo<K> {
+        let rowInfo = row[SourceManage.ACCESS_KEY] as RowInfo<K>;
+        if (rowInfo == undefined) {
+            rowInfo = new RowInfo<K>();
+            rowInfo.row = row;
+            row[SourceManage.ACCESS_KEY] = rowInfo;
+        } else {
+            //console.log(['already generated',rowInfo]);
+            
+        }
+        return rowInfo;
+    }
+    private generateFull(row: K, elementIndex: number = -1, tpt: TemplateNode = this.nodes.template) {
         let rowInfo = row[SourceManage.ACCESS_KEY] as RowInfo<K>;
         if (rowInfo == undefined) {
             rowInfo = new RowInfo<K>();
@@ -43,6 +58,46 @@ export class RowGenerator<K> {
     giveMeNewNode(row: K) {
         return this.nodes.template.extended.generateNode(row);
     }
+    private _measurement(rowInfo: RowInfo<K>) {
+        let ele = rowInfo.element;
+        let cmp = window.getComputedStyle(ele);
+        rowInfo.height = Size.getFullHeight(cmp) || ele.offsetHeight;
+        rowInfo.width = Size.getFullWidth(cmp) || ele.offsetWidth;
+        rowInfo.hasMeasurement = true;
+    }
+    generateElement(rowInfo: RowInfo<K>, append:boolean = undefined): HTMLElement {
+        let ele: HTMLElement;
+        if (!rowInfo.hasElementSet) {
+            ele = this.nodes.template.extended.generateNode(rowInfo.row);
+            rowInfo.element = ele;
+            rowInfo.hasElementSet = true;
+            rowInfo.hasMeasurement = false;
+            ele.setAttribute('x-tabindex', '' + rowInfo.elementIndex);
+        } else ele = rowInfo.element;
+        if (append === undefined) { return ele; }
+        if (append) this.nodes.container.append(ele);
+        else this.nodes.container.prepend(ele);        
+        if(!rowInfo.hasMeasurement)
+            this._measurement(rowInfo);
+        
+        return rowInfo.element;
+    }
+    takeMeasurement(rowInfo: RowInfo<K>):RowInfo<K> {
+        if (rowInfo.hasElementSet) {
+            if (!rowInfo.hasMeasurement){
+                let ele = rowInfo.element;
+                let connected = ele.isConnected;
+                if(!connected)
+                    this.nodes.container.append(ele);
+                this._measurement(rowInfo);
+                if (!connected) ele.remove();
+            }
+        } else {
+            let ele = this.generateElement(rowInfo, true);
+            ele.remove();
+        }
+        return rowInfo;
+    }
     replaceElement(newElement: HTMLElement, rowInfo: RowInfo<K>) {
         if (rowInfo.element != undefined) {
             rowInfo.element.after(newElement);
@@ -52,11 +107,11 @@ export class RowGenerator<K> {
             rowInfo.element = newElement;
             this.nodes.container.appendChild(newElement);
         }
+        rowInfo.hasElementSet = true;
         newElement.setAttribute('x-tabindex', '' + rowInfo.elementIndex);
-        let cmp = window.getComputedStyle(newElement);
-        rowInfo.height = Size.getFullHeight(cmp) || newElement.offsetHeight;
-        rowInfo.width = Size.getFullWidth(cmp) || newElement.offsetWidth;
+        this._measurement(rowInfo);
     }
+    
     refresh() {
         let src = this.source,
             akey = SourceManage.ACCESS_KEY,
@@ -64,14 +119,16 @@ export class RowGenerator<K> {
         cfg.length = cfg.height = cfg.width = 0;
         if (src.length == 0) { return; }
         let w = 0, h = 0, rInfo: RowInfo<K>, prevRow: RowInfo<K>;
-        src.makeAllElementsCssDisplay();
+       // src.makeAllElementsCssDisplay();
         cfg.length = src.length;
         //debugger;
         for (let i = 0, ilen = cfg.length; i < ilen; i++) {
             let obj = src[i];
             rInfo = obj[akey];
             h += rInfo.height;
+            
             rInfo.index = i;
+         //   console.log([rInfo.index,rInfo]);
             // if (rInfo.element!=undefined) { rInfo.element.setAttribute('x-tabindex', '' + i); // UNCOMANT THIS IF USE INERT FOR `DISPLAY NONE` ELMENTS
             rInfo.runningHeight = h;
             w = Math.max(w, rInfo.width);

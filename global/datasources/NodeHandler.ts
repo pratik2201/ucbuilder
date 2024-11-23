@@ -25,13 +25,16 @@ export class NodeHandler<K> {
     calledToFill = false;
     public fill(): void {
         if (this.calledToFill) return;
+        this.source.ArrangingContents = true;
         this.calledToFill = true;
         let chg = this.config;
         this.clearView();
         let ht: HTMLElement;
         let curIndex = chg.currentIndex;
-        for (let index = chg.top, len = chg.bottomIndex; index <= len; index++) {
-            ht = this.InView(index);
+        let len = chg.bottomIndex;
+        if (len == chg.top && chg.top == 0) return;
+        for (let index = chg.top; index <= len; index++) {
+            ht = this.generate(index,true);
             //ht.style.display = 'block';
             if (index == curIndex)
                 chg.currentIndex = index;
@@ -39,58 +42,25 @@ export class NodeHandler<K> {
         this.scrollbar.refreshScrollbarSilantly();
         this.calledToFill = false;
     };
-    generateElement(index: number): { hasGenerated: boolean, element: HTMLElement } {
-        let hasGenerated = false;
-        let element: HTMLElement = undefined;
-        let src = this.source;
-        let obj = src[index];
-        let row = src.getRowByObj(obj);
-
-        if (row != undefined) {
-            hasGenerated = false; //row.elementReplaceWith!=undefined;//row.isModified;
-            element = hasGenerated ? this.getNode(index) : row.element;
-            row.isModified = false;
-            row.index = index;
-            row.element = element;
-
-        } else {
-            // console.log('----NEW `RowInfo` ADDED----');
-            console.warn('----NEW `RowInfo` ADDED----');
-            element = this.getNode(index);
-            hasGenerated = true;
-            row = new RowInfo<K>();
-            row.element = element;
-            row.index = index;
-            row.row = obj;
-            src.setRow(index, row);
-        }
-        //
-        row.element.data(SourceIndexElementAttr, row);
-
-        //}
-        ///console.log([hasGenerated, (this.config.top)]);
-        //element.setAttribute('x-tabindex', '' + index);
-        //element.setAttribute('x-tabindex', ''+(index - this.config.top));
-        return {
-            hasGenerated: hasGenerated,
-            element: element
-        }
-    }
-
-    InView(index: number, replaceNode: boolean = false): HTMLElement {
-        let rInfo = SourceManage.getRow(this.source[index]);
+    
+    
+    generate(index: number, append: boolean = undefined): HTMLElement {
+       /* let rInfo = SourceManage.getRow(this.source[index]);
         rInfo.element.style.display = 'block';
-        return rInfo.element;
+        return rInfo.element;*/
         //let itemNode = this.source.[index];
-        /*let itemNode = this.generateElement(index);
-        itemNode.element.style.display = 'block';
-        if (itemNode.hasGenerated) this.Events.OnComeViewArea.fire([itemNode.element, index]);
-        return itemNode.element;*/
+        let rInf = SourceManage.getRow(this.source[index]);
+        let hasSet = rInf.hasElementSet;
+        let itemNode = this.source.generator.generateElement(rInf,append);
+        //itemNode.element.style.display = 'block';
+        if (hasSet!=rInf.hasElementSet) this.Events.OnComeViewArea.fire([rInf.element, index]);
+        return rInf.element;
     }
     clearView(): void {
         let src = this.source;
-        for (let i = 0, len = src.length; i < len; i++)
-            SourceManage.getRow(this.source[i]).element.style.display = 'none';
+        this.container.innerHTML = '';
+        //for (let i = 0, len = src.length; i < len; i++)
+        //    SourceManage.getRow(this.source[i]).element.style.display = 'none';
     };
     getRowInfoFromChild(ele: HTMLElement): RowInfo<any> {
         return this.getItemFromChild(ele).data(SourceIndexElementAttr);

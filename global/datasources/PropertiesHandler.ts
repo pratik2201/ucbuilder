@@ -2,7 +2,7 @@ import { SourceManage, SearchStatus, RowInfo } from "ucbuilder/global/datasource
 import { Size } from "ucbuilder/global/drawing/shapes";
 import { TemplateNode } from "ucbuilder/Template";
 interface PosNode {
-  topIndex: number, /*append: number[], prepend: number[],*/ add: number[], remove: number[],
+  topIndex: number, append: number[], prepend: number[], remove: number[],
 }
 export class SourceProperties<K = any> {
   main: SourceManage<K>;
@@ -66,12 +66,17 @@ export class SourceProperties<K = any> {
         this.main.vscrollbar1.scrollTop =
         this.top = 0;
     } */
+    if (!cItem.hasElementSet) this.main.nodes.generate(value);
     cItem.element.setAttribute('aria-current', 'true');
   }
+  infiniteHeight = false;
   get bottomIndex() {
     let src = this.main;
     let vh = this.viewSize.height;
-    if (vh == 0) return src.length - 1;
+    if (this.infiniteHeight) return src.length - 1;
+    else if (vh == 0) {
+      return this.top; 
+    }
     return src.getBottomIndex(this.top, vh, { overflowed: false }).index;
   }
   get lastSideTopIndex() {
@@ -85,6 +90,7 @@ export class SourceProperties<K = any> {
     let len = this.main.length;
     let vh = this.viewSize.height;
     if (vh == 0) return 0;
+    
     let bIndex = this.main.getBottomIndex(this.top, vh, { length: len, overflowed: false })
     return Math.max(0, len - (bIndex.index) - 1);
     //return Math.max(0, (this.length - (this.top + this.perPageRecord)));
@@ -96,23 +102,23 @@ export class SourceProperties<K = any> {
     let nodes = this.main.nodes;
     let src = this.main;
     let _remove = whatsNext.remove;
-    for (let i = 0; i < _remove.length; i++) src.getRow(_remove[i]).element.style.display = 'none';
-    let _add = whatsNext.add;
-    for (let i = 0; i < _add.length; i++) nodes.InView(_add[i]);
-    /*let _prepend = whatsNext.prepend;
-    for (let i = 0; i < _prepend.length; i++) nodes.prepend(_prepend[i]);*/
+    for (let i = 0; i < _remove.length; i++) src.getRow(_remove[i]).element.remove();//.style.display = 'none';
+    let _add = whatsNext.append;
+    for (let i = 0; i < _add.length; i++) nodes.generate(_add[i],true);
+    let _prepend = whatsNext.prepend;
+    for (let i = 0; i < _prepend.length; i++) nodes.generate(_prepend[i],false);
     this.top = whatsNext.topIndex;
 
   }
   getPos(cIndex = this.currentIndex): PosNode {
     let top = this.top;
-    let rtrn: PosNode = { topIndex: top, add: [], remove: [], }
+    let rtrn: PosNode = { topIndex: top, append: [], prepend: [], remove: [], }
     let src = this.main;
-    if (cIndex < 0 || cIndex >= src.info.length) return rtrn;
+    let viewHeight = this.viewSize.height;
+    if (cIndex < 0 || cIndex >= src.info.length || viewHeight==0) return rtrn;
     let curBottomIndex = this.bottomIndex;
     let bottom = curBottomIndex;
     // let cIndex = this.currentIndex;
-    let viewHeight = this.viewSize.height;
 
     let freespace = 0;
     if (cIndex < top) {
@@ -122,7 +128,7 @@ export class SourceProperties<K = any> {
       freespace = viewHeight - bottomObj.size;
       if (freespace > 0)
         top = src.getTopIndex(top - 1, freespace, { overflowed: false }).index;
-      for (let i = this.top - 1; i >= top; i--)rtrn.add.push(i); // prepend element
+      for (let i = this.top - 1; i >= top; i--)rtrn.prepend.push(i); // prepend element
       for (let i = bottom + 1; i <= curBottomIndex; i++)rtrn.remove.push(i);
       /*for (let i = this.newTop - 1; i >= top; i--) {
         //console.log('UP ADDED...'+i);
@@ -146,7 +152,7 @@ export class SourceProperties<K = any> {
       for (let i = this.top; i < top; i++)
         rtrn.remove.push(i);
       for (let i = curBottomIndex + 1; i <= bottom; i++)
-        rtrn.add.push(i); // append element
+        rtrn.append.push(i); // append element
       /*for (let i = this.newTop; i < top; i++) {
         console.log('DOWN REMOVED...' + i);
         SourceManage.getRow(src[i]).element.remove();
