@@ -138,29 +138,101 @@ export class ResultAnalyser<T> {
         this.filterInitlized = false;
     }
     lasttext = "";
-
-    filter(text: string) {
+    
+    filter(text: string):analyserSource<T> {
         text = text.trim();
+        
         let src = this.source;
+        let ttl: analyserSource<T> = { allMix: [], equal: [], startwith: [], include: [], }
+        if (text == '') {
+            src.category.OriginalSource.fillInto(ttl.allMix);
+            return ttl;
+        }
         let category = src.category;
+        let cacheSrc: T[] = [];
+        src.category.OriginalSource.fillInto(cacheSrc);
         category.startWithBeginIndex =
             category.startWithEndIndex = -1;
-        if (text == '') { this.clearFilter(); }
-        else if (!text.startsWithI(this.lasttext) || this.lasttext == '') {
-            this.initFilter(text);
-        } else {
-            let snode = new SearchableItemNode();
-            snode.Text = text;
-            this.initStorageForAnalyse();
-            this.FilteredSource.map(row => this.analyse(snode, row));
-            src.clear();
-            this.pushResultInside(snode, src);
-            if (src.length > 0) {
-                src.unshift(...this.TopStickyRows);
-            } else {
-                src.unshift(...this.TopStickyRows, ...this.DefaultRows);
+        let findThis = new SearchableItemNode();
+        findThis.Text = text;
+        let results: AnalyseResultType[] = [];
+        let insideThis: SearchableItemNode;
+        let Robj: RowInfo<T>;
+        for (let j = 0; j < this.columnsToFindIn.length; j++) {
+            let col = this.columnsToFindIn[j];
+            for (let i = 0, ilen = cacheSrc.length; i < ilen; i++) {
+                let row = cacheSrc[i];
+                insideThis = row[col] as SearchableItemNode;
+                Robj = SourceManage.getRow(row);
+                let inTest = insideThis.SearchableText.includesI(findThis.SearchableText);
+                if (inTest.result) {
+                    insideThis.setOutput(inTest.index, findThis.SearchableText, 'Include');
+                    ttl.allMix.push(row);
+                    results.push('Include');
+                    Robj.isModified = true;
+                    Robj.hasMeasurement = Robj.hasElementSet = false;
+                    Robj.searchStatus = SearchStatus.include;
+                }                
             }
+
+            for (let i = 0, ilen = ttl.allMix.length; i < ilen; i++) {
+                let row = ttl.allMix[i];
+                insideThis = row[col] as SearchableItemNode;
+                Robj = SourceManage.getRow(row);
+                if (insideThis.SearchableText.startsWithI(findThis.SearchableText)) {
+                    insideThis.setOutput(0, findThis.SearchableText, 'StartWith');
+                    ttl.startwith.push(row);
+                    Robj.isModified = true;
+                    Robj.hasMeasurement = Robj.hasElementSet = false;
+                    Robj.searchStatus = SearchStatus.startWith;
+                } else {
+                    ttl.include.push(row);
+                }
+            }
+
+            for (let i = 0, ilen = ttl.startwith.length; i < ilen; i++) {
+                let row = ttl.startwith[i];
+                insideThis = row[col] as SearchableItemNode;
+                Robj = SourceManage.getRow(row);
+                if (insideThis.SearchableText.equalIgnoreCase(findThis.SearchableText)) {
+                    insideThis.setOutput(0, findThis.SearchableText, 'Equal');
+                    Robj.searchStatus = SearchStatus.equal;
+                    Robj.isModified = true;
+                    Robj.hasMeasurement = Robj.hasElementSet = false;
+                    ttl.equal.push(row);
+                }
+            }
+            ttl.allMix.length = 0;
+            [...ttl.equal, ...ttl.startwith, ...ttl.include].fillInto(ttl.allMix);
+            if (ttl.allMix.length > 0) break;            
         }
+        return ttl;
+        //return ttl.allMix.distinct();
+
+        /* if (text == '') { this.clearFilter(); }
+         else if (!text.startsWithI(this.lasttext) || this.lasttext == '') {
+             this.initFilter(text);
+         } else {
+             let snode = new SearchableItemNode();
+             snode.Text = text;
+             this.initStorageForAnalyse();
+             this.FilteredSource.map(row => this.analyse(snode, row));
+             src.clear();
+             this.pushResultInside(snode, src);
+             if (src.length > 0) {
+                 src.unshift(...this.TopStickyRows);
+             } else {
+                 src.unshift(...this.TopStickyRows, ...this.DefaultRows);
+             }
+         }
+             
+         src.onCompleteUserSide.fire([src, 0]);
+
+        src.callToFill();
+        src.category.isFiltered = true;
+         
+         */
+
         /* let generator = this.source.generator;
         for (let i = 0; i < src.length; i++) {
             let row = src[i];
@@ -168,10 +240,8 @@ export class ResultAnalyser<T> {
             generator.replaceElement(generator.giveMeNewNode(row), rInfo);
             //rInfo.elementReplaceWith = rInfo.element;            
         }*/
-        src.onCompleteUserSide.fire([src, 0]);
-
-        src.callToFill();
-        src.category.isFiltered = true;
+       
+        
         /*switch (text.length) {
             case 0:
                 this.clearFilter();
@@ -195,6 +265,28 @@ export class ResultAnalyser<T> {
                 this.updateSource();
                 break;
         }*/
+    }
+    fill(res:analyserSource<T> ) {
+        let src = this.source;
+        if (res.equal.length > 0) {
+            src.category.startWithBeginIndex =
+                src.category.startWithEndIndex = SourceManage.getRow(res.equal[0]).elementIndex;
+        }
+        else if (res.startwith.length > 0) {
+            src.category.startWithBeginIndex = SourceManage.getRow(res.startwith[0]).elementIndex;
+            src.category.startWithEndIndex = SourceManage.getRow(res.startwith[res.startwith.length - 1]).elementIndex;
+        }
+        src.length = 0;
+        res.allMix.fillInto(src);
+        if (src.length > 0) {
+            src.unshift(...this.TopStickyRows);
+        } else {
+            src.unshift(...this.TopStickyRows, ...this.DefaultRows);
+        }
+        
+        src.onCompleteUserSide.fire([src, 0]);
+        src.callToFill();
+        src.category.isFiltered = true;
     }
     private initFilter(text: string) {
         let snode = new SearchableItemNode();
@@ -249,7 +341,8 @@ export class ResultAnalyser<T> {
             };
         }
     }
-    analyse(findThis: SearchableItemNode, /*insideThis: SearchableItemNode,*/ row: T): AnalyseResultType[] {
+    
+    analyse(findThis: SearchableItemNode, row: T): AnalyseResultType[] {
         let results: AnalyseResultType[] = [];
         let cols = this.columnsToFindIn;
         let src = this.source;
@@ -321,9 +414,7 @@ export class ResultAnalyser<T> {
                     insideThis.setOutput(0, findThis.SearchableText, 'Equal');
                     Robj.searchStatus = SearchStatus.equal;
                     res.equal.push(row);
-                }/*else {
-                    res.include.push(row);
-                }*/
+                }
             }
             [...res.equal, ...res.startwith, ...res.include].fillInto(ttl.allMix);
             if (res.equal.length > 0) {
@@ -336,6 +427,6 @@ export class ResultAnalyser<T> {
             }
         }
         ttl.allMix.distinct().fillInto(target);
-    }
+    } 
 }
 export type AnalyseResultType = "Equal" | "StartWith" | "Include" | "FilterOut" | "NotFound";
