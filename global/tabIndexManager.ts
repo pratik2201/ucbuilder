@@ -224,6 +224,7 @@ class TabIndexManager {
 
     static moveNext(target: HTMLElement, goAhead: boolean = false) {
         let _this = this;
+        if (!target.isConnected) return;
         let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;
         let childFirstElement = goAhead ? undefined : this.getDirectElement(target, 0);

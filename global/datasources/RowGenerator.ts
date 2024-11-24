@@ -2,7 +2,7 @@ import { TemplateNode } from "ucbuilder/Template";
 import { NodeHandler } from "ucbuilder/global/datasources/NodeHandler";
 import { SourceProperties } from "ucbuilder/global/datasources/PropertiesHandler";
 import { SourceScrollHandler } from "ucbuilder/global/datasources/ScrollHandler";
-import { RowInfo, SourceManage } from "ucbuilder/global/datasources/SourceManage";
+import { RowInfo, SourceIndexElementAttr, SourceManage } from "ucbuilder/global/datasources/SourceManage";
 import { Size } from "ucbuilder/global/drawing/shapes";
 
 export class RowGenerator<K> {
@@ -73,6 +73,8 @@ export class RowGenerator<K> {
             rowInfo.hasElementSet = true;
             rowInfo.hasMeasurement = false;
             ele.setAttribute('x-tabindex', '' + rowInfo.elementIndex);
+            ele.data(SourceIndexElementAttr, rowInfo);
+            
         } else ele = rowInfo.element;
         if (append === undefined) { return ele; }
         if (append) this.nodes.container.append(ele);
@@ -112,7 +114,7 @@ export class RowGenerator<K> {
         this._measurement(rowInfo);
     }
     
-    refresh() {
+    refresh(args:{setTabIndex?:boolean} = {setTabIndex:false}) {
         let src = this.source,
             akey = SourceManage.ACCESS_KEY,
             cfg = this.config;
@@ -121,12 +123,13 @@ export class RowGenerator<K> {
         let w = 0, h = 0, rInfo: RowInfo<K>, prevRow: RowInfo<K>;
        // src.makeAllElementsCssDisplay();
         cfg.length = src.length;
+        
         //debugger;
         for (let i = 0, ilen = cfg.length; i < ilen; i++) {
             let obj = src[i];
             rInfo = obj[akey];
             h += rInfo.height;
-            
+            if(args.setTabIndex && rInfo.hasElementSet) rInfo.element.setAttribute('x-tabindex', '' + i);
             rInfo.index = i;
          //   console.log([rInfo.index,rInfo]);
             // if (rInfo.element!=undefined) { rInfo.element.setAttribute('x-tabindex', '' + i); // UNCOMANT THIS IF USE INERT FOR `DISPLAY NONE` ELMENTS

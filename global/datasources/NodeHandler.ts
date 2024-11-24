@@ -62,6 +62,9 @@ export class NodeHandler<K> {
         //for (let i = 0, len = src.length; i < len; i++)
         //    SourceManage.getRow(this.source[i]).element.style.display = 'none';
     };
+    getRow(ele: HTMLElement) {
+        return this.getRowInfoFromChild(this.getItemFromChild(ele));
+    }
     getRowInfoFromChild(ele: HTMLElement): RowInfo<any> {
         return this.getItemFromChild(ele).data(SourceIndexElementAttr);
     }
