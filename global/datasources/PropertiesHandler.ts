@@ -108,7 +108,7 @@ export class SourceProperties<K = any> {
     let _prepend = whatsNext.prepend;
     for (let i = 0; i < _prepend.length; i++) nodes.generate(_prepend[i],false);
     this.top = whatsNext.topIndex;
-
+    this.main.Events.onChangeHiddenCount.fire([this.topHiddenRowCount, this.bottomHiddenRowCount]);
   }
   getPos(cIndex = this.currentIndex): PosNode {
     let top = this.top;
@@ -167,7 +167,9 @@ export class SourceProperties<K = any> {
     //for (let i = this.newTop; i < top; i++)
     return rtrn;
   }
-
+  setPos(index = this.currentIndex) {
+    this.applyPos(this.getPos());
+  }
   updatePos() {
     this.top = this.getPos().topIndex;
     this.main.scrollbar.refreshScrollbarSilantly();

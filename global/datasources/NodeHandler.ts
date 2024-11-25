@@ -22,38 +22,40 @@ export class NodeHandler<K> {
     container: HTMLElement;
 
 
-    calledToFill = false;
+    //calledToFill = false;
     public fill(): void {
-        if (this.calledToFill) return;
+        //if (this.calledToFill) return;
         this.source.ArrangingContents = true;
-        this.calledToFill = true;
+       // this.calledToFill = true;
         let chg = this.config;
         this.clearView();
         let ht: HTMLElement;
         let curIndex = chg.currentIndex;
         let len = chg.bottomIndex;
-        if (len == chg.top && chg.top == 0) return;
+        if (this.source.length==0) {
+            /*this.calledToFill = false; */return;
+        }
         for (let index = chg.top; index <= len; index++) {
-            ht = this.generate(index,true);
+            ht = this.generate(index, true);
             //ht.style.display = 'block';
             if (index == curIndex)
                 chg.currentIndex = index;
         }
         this.scrollbar.refreshScrollbarSilantly();
-        this.calledToFill = false;
+       // this.calledToFill = false;
     };
-    
-    
+
+
     generate(index: number, append: boolean = undefined): HTMLElement {
-       /* let rInfo = SourceManage.getRow(this.source[index]);
-        rInfo.element.style.display = 'block';
-        return rInfo.element;*/
+        /* let rInfo = SourceManage.getRow(this.source[index]);
+         rInfo.element.style.display = 'block';
+         return rInfo.element;*/
         //let itemNode = this.source.[index];
         let rInf = SourceManage.getRow(this.source[index]);
         let hasSet = rInf.hasElementSet;
-        let itemNode = this.source.generator.generateElement(rInf,append);
+        let itemNode = this.source.generator.generateElement(rInf, append);
         //itemNode.element.style.display = 'block';
-        if (hasSet!=rInf.hasElementSet) this.Events.OnComeViewArea.fire([rInf.element, index]);
+        if (hasSet != rInf.hasElementSet) this.Events.OnComeViewArea.fire([rInf.element, index]);
         return rInf.element;
     }
     clearView(): void {

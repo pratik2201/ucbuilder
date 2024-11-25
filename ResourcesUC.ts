@@ -30,6 +30,7 @@ export class ResourcesUC {
             TabIndexManager.init();
             LoadGlobal.init();
             stylerRegs.pushPublicStyles(callback);
+            ///FocusManager.init();
             this.isInitBefore = true;
         }
     }

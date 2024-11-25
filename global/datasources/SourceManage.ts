@@ -82,14 +82,15 @@ export class RowInfo<K = any> {
   height = 0;
   width = 0;
   runningHeight = 0;
-  private _index = 0;
+  index = 0;
+  /*private _index = 0;
   public get index() {
     return this._index;
   }
   public set index(value) {
     //if (value == 107) debugger;
     this._index = value;
-  }
+  }*/
   //filterIndex = 0;
   get getNextSelectable(): RowInfo<K> {
     let nxt = this.next;

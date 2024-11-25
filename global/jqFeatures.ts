@@ -469,15 +469,34 @@ class jqFeatures {
                 findex = valuesArr.indexOf(eleList[i]);
                 if (findex != -1) indices.push(findex);
             }
-            return valuesArr.RemoveAtMultiple(...indices);
+            valuesArr.RemoveByFilter(row => eleList.indexOf(row)==-1);
+          //  console.log(eleList);
+            
+            return [];
+            //return valuesArr.RemoveAtMultiple(...indices);
         }
+        Array.prototype.RemoveByFilter = function (callback)  {
+            let i, j;
+        
+            for (i = 0, j = 0; i < this.length; ++i) {
+                if (callback(this[i])) {
+                    this[j] = this[i];
+                    ++j;
+                }
+            }
+        
+            while (j < this.length) {
+                this.pop();
+            }
+        }
+
         Array.prototype.RemoveAtMultiple = function <T>(...removeValFromIndex: number[]): Array<T> {
             var valuesArr = this as T[];
+            
             removeValFromIndex.sort(function (a, b) { return b - a; });
             let removedEle: T[] = [];
             for (var i = removeValFromIndex.length - 1; i >= 0; i--)
-                removedEle.push(...valuesArr.splice(removeValFromIndex[i], 1));
-            return removedEle;
+            return valuesArr.splice(removeValFromIndex[i], 1);
         }
 
         Array.prototype.fillInto = function (to: []) {

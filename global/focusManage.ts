@@ -1,4 +1,5 @@
 import { TabIndexManager } from "ucbuilder/global/tabIndexManager";
+import { CommonEvent } from "ucbuilder/global/commonEvent";
 
 export class FocusManager {
     currentElement: HTMLElement | undefined;
@@ -29,46 +30,100 @@ export class FocusManager {
     // static activeEditor: HTMLInputElement;
 
 
-    private static _onlyFocusOn: HTMLElement = undefined;
-    public static get onlyFocusOn(): HTMLElement {
-        return FocusManager._onlyFocusOn;
-    }
-    public static set onlyFocusOn(value: HTMLElement) {
-        FocusManager._onlyFocusOn = value;
-        this.init();
-    }
-    static allowdInOnly: HTMLElement[] = [];
-    private static hasBound = false;
-    static init() {
-        if (!this.hasBound) {
+
+    /*
+        private static _onlyFocusOn: HTMLElement[] = [];
+        public static get onlyFocusOn(): HTMLElement[] {
+            return FocusManager._onlyFocusOn;
+        }
+        public static set onlyFocusOn(value: HTMLElement[]) {
+            FocusManager._onlyFocusOn = value;
+            this.init();
+        }
+        static onOtherElementsFocus = (e: FocusEvent) => { };
+        private static hasBound = false;
+        static init() {
+            //if (!this.hasBound) {
             window.addEventListener('focusin', this.focusListner);
-            this.hasBound = true;
+            // //   this.hasBound = true;
+            //}
         }
-    }
-    private static stopIt() { window.removeEventListener('focusin', this.focusListner); this.hasBound = false; }
-    static focusListner = (e: FocusEvent) => {
-        if (this.onlyFocusOn != undefined && this.onlyFocusOn.isConnected) {
-            if (this.allowdInOnly.length > 0) {
-                let aonly = this.allowdInOnly;
-                for (let i = 0, len = aonly.length; i < len; i++) {
-                    if (aonly[i].contains(e.target as HTMLElement)) {
-                        this.onlyFocusOn.focus();
-                        e.preventDefault();
-                        break;
-                    }
+        //private static stopIt() { window.removeEventListener('focusin', this.focusListner); this.hasBound = false; }
+        static focusListner = (e: FocusEvent) => {
+            if (this.onlyFocusOn.length == 0) return;
+            let outFocus = true;
+            let aonly = [...this.onlyFocusOn];
+            for (let i = 0, len = aonly.length; i < len; i++) {
+                if (aonly[i].contains(e.target as HTMLElement)) {
+                    outFocus = false;
+                    break;
                 }
-            } else {
-                e.stopImmediatePropagation();
-                this.onlyFocusOn.focus();
-                //}, this.parentUC);
             }
+            if (outFocus) {
+                TabIndexManager.stopFurther(e);
+                this.onOtherElementsFocus(e);
+            }
+        }
+        */
+}
+export class CompoundFocus {
+    focus = (e: FocusEvent) => { };
+    blur = (e: FocusEvent) => { };
+    allowedFocus = (e: KeyboardEvent) => { }
+    allowdList: HTMLElement[] = [];
+    inp: HTMLElement;
+    blurEvent: FocusEvent;
+    constructor(inp: HTMLElement, allowdList: HTMLElement[] = [],
+        focus = (e: FocusEvent) => { },
+        blur = (e: FocusEvent) => { }, allowedFocus = (e: KeyboardEvent) => { }) {
+        this.inp = inp;
+        this.allowdList = allowdList;
+        this.focus = focus;
+        this.blur = blur;
+        this.allowedFocus = allowedFocus;
+        let _this = this;
+        inp.addEventListener('focus', (e) => {
+            focus(e);
+            _this.unbind();
+            inp.addEventListener('blur', (es) => { _this.inpBlur(es); });
+            window.addEventListener('mousedown', (es) => { _this.winFocusin(es) });
+        });
+    }
+    inpBlur(e: FocusEvent) {
+        this.blurEvent = e;
+        this.unbind();
+        this.blur(e);
+    }
+    winFocusin(e: MouseEvent) {
+       // console.log(this);
+        
+        let isOutFocus = true;
+        if (this.inp.contains(e.target as HTMLElement))
+            isOutFocus = false;
+        else
+            for (let i = 0, len = this.allowdList.length; i < len; i++)
+                if (this.allowdList[i].contains(e.target as HTMLElement)) {
+                    TabIndexManager.stopFurther(e);
+                    isOutFocus = false;
+                    break;
+                }
+
+        if (isOutFocus) {
+            //console.log(['winFocusin',inp]);
+            this.unbind();
+            this.blur(this.blurEvent);
+            //console.log('unbind all');
         } else {
-            this.stopIt(); return;
+            this.inp.removeEventListener('blur', this.inpBlur);
+            //console.log('unbind blur');
         }
     }
 
+    unbind() {
+        this.inp.removeEventListener('blur', this.inpBlur);
+        window.removeEventListener('mousedown', this.winFocusin);
+    }
 }
-
 /*window.addEventListener('mousedown', (e) => {
     let htE = e.target as HTMLElement;
     // if (window.getComputedStyle(htE).cursor == 'text') {

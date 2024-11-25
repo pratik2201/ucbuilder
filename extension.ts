@@ -67,7 +67,10 @@ interface Array<T> {
      * @param indexes indexes of elements to remove
      * @returns removed elements
      */
-    RemoveAtMultiple(...indexes:number[]):T[],
+    RemoveAtMultiple(...indexes: number[]): T[],
+    
+   
+    RemoveByFilter(callback:(row:T)=>boolean), 
 }
 interface JQuery{
     css(args:any):void,
