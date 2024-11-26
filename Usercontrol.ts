@@ -220,6 +220,7 @@ export class Usercontrol {
             })
             ucExt.Events.onDataExport = (data) =>
                 pucExt.Events.onDataExport(data);
+            ucExt.stageHT = ucExt.wrapperHT;
         },
         resizerObserver: undefined as ResizeObserver,
         finalizeInit: (param0: UcOptions): void => {
@@ -249,7 +250,7 @@ export class Usercontrol {
             element: undefined as HTMLElement,
             setValue: (decision: WhatToDoWithTargetElement, element: HTMLElement) => {
                 let _loadAt = this.ucExtends.loadAt;
-                _loadAt.decision = decision;
+                _loadAt.decision = decision?decision:'waitForDecision';
                 _loadAt.element = element;
             }
         },

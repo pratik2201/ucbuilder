@@ -68,12 +68,12 @@ export class NodeHandler<K> {
         return this.getRowInfoFromChild(this.getItemFromChild(ele));
     }
     getRowInfoFromChild(ele: HTMLElement): RowInfo<any> {
-        return this.getItemFromChild(ele).data(SourceIndexElementAttr);
+        return this.getItemFromChild(ele as HTMLElement)?.data(SourceIndexElementAttr);
     }
     getItemFromChild(ele: HTMLElement): HTMLElement {
         let _container = this.container;
         while (true) {
-            if (ele.parentElement == null) {
+            if (ele==null || ele.parentElement == null) {
                 return null;
             } else if (_container.is(ele.parentElement)) {
                 return ele;

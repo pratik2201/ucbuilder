@@ -59,6 +59,7 @@ interface analyserSource<T> {
     foundIndexOfEqual?: number,
     startIndexOfStartWith?: number,
     endIndexOfStartWith?: number,
+    isAnythingFound:boolean,
     allMix: T[];
     equal: T[];
     startwith: T[];
@@ -86,19 +87,14 @@ export class ResultAnalyser<T> {
     sortSource() {
         let _SortEvent = this.Event.onSortCall;
         let src = this.source;
-        src.sort((a, b) => { return _SortEvent(a, b); });
-        let obj = undefined;
-        for (let j = 0; j < src.length; j++) {
-            obj = src[j];
-            // src.getRowByObj(obj).isModified = true;
-            src.resetRow(SourceManage.getRow(obj));
-        }
+        //src.sort((a, b) => { return _SortEvent(a, b); });
+        this.removeFilter();
         src.unshift(...this.TopStickyRows, ...this.DefaultRows);
     }
     Event = {
         onSortCall: (a: T, b: T) => {
             let rtrn = 0;
-            let cols = this.columnsToFindIn;
+            let cols = this.source.searchables;
             for (let i = 0; i < cols.length; i++) {
                 const col = cols[i];
                 rtrn += a[col].SearchableText.localeCompare(a[col].SearchableText);
@@ -138,14 +134,23 @@ export class ResultAnalyser<T> {
         this.filterInitlized = false;
     }
     lasttext = "";
-    
+    removeFilter() {
+        let src = this.source;
+        let srcfs = src.category.FullSample;
+        let obj = undefined;
+        for (let j = 0,len = srcfs.length; j < len; j++) 
+           src.resetRow(SourceManage.getRow(srcfs[j]));
+        
+    }
     filter(text: string):analyserSource<T> {
         text = text.trim();
-        
+        let ttl: analyserSource<T> = { isAnythingFound:false, allMix: [], equal: [], startwith: [], include: [], }
         let src = this.source;
-        let ttl: analyserSource<T> = { allMix: [], equal: [], startwith: [], include: [], }
+        this.removeFilter();
         if (text == '') {
+            src.category.DefaultRows.fillInto(ttl.allMix);
             src.category.OriginalSource.fillInto(ttl.allMix);
+            ttl.isAnythingFound = true;
             return ttl;
         }
         let category = src.category;
@@ -155,56 +160,15 @@ export class ResultAnalyser<T> {
             category.startWithEndIndex = -1;
         let findThis = new SearchableItemNode();
         findThis.Text = text;
-        let results: AnalyseResultType[] = [];
-        let insideThis: SearchableItemNode;
-        let Robj: RowInfo<T>;
-        for (let j = 0; j < this.columnsToFindIn.length; j++) {
-            let col = this.columnsToFindIn[j];
-            for (let i = 0, ilen = cacheSrc.length; i < ilen; i++) {
-                let row = cacheSrc[i];
-                insideThis = row[col] as SearchableItemNode;
-                Robj = SourceManage.getRow(row);
-                let inTest = insideThis.SearchableText.includesI(findThis.SearchableText);
-                if (inTest.result) {
-                    insideThis.setOutput(inTest.index, findThis.SearchableText, 'Include');
-                    ttl.allMix.push(row);
-                    results.push('Include');
-                    Robj.isModified = true;
-                    Robj.hasMeasurement = Robj.hasElementSet = false;
-                    Robj.searchStatus = SearchStatus.include;
-                }                
-            }
-
-            for (let i = 0, ilen = ttl.allMix.length; i < ilen; i++) {
-                let row = ttl.allMix[i];
-                insideThis = row[col] as SearchableItemNode;
-                Robj = SourceManage.getRow(row);
-                if (insideThis.SearchableText.startsWithI(findThis.SearchableText)) {
-                    insideThis.setOutput(0, findThis.SearchableText, 'StartWith');
-                    ttl.startwith.push(row);
-                    Robj.isModified = true;
-                    Robj.hasMeasurement = Robj.hasElementSet = false;
-                    Robj.searchStatus = SearchStatus.startWith;
-                } else {
-                    ttl.include.push(row);
-                }
-            }
-
-            for (let i = 0, ilen = ttl.startwith.length; i < ilen; i++) {
-                let row = ttl.startwith[i];
-                insideThis = row[col] as SearchableItemNode;
-                Robj = SourceManage.getRow(row);
-                if (insideThis.SearchableText.equalIgnoreCase(findThis.SearchableText)) {
-                    insideThis.setOutput(0, findThis.SearchableText, 'Equal');
-                    Robj.searchStatus = SearchStatus.equal;
-                    Robj.isModified = true;
-                    Robj.hasMeasurement = Robj.hasElementSet = false;
-                    ttl.equal.push(row);
-                }
-            }
+        ttl = this.search(cacheSrc, src.searchables, findThis);
+        if (!ttl.isAnythingFound) {
+            cacheSrc.length = 0;
+            src.category.TopStickyRows.fillInto(cacheSrc);
+            src.category.DefaultRows.fillInto(cacheSrc);
+            ttl = this.search(cacheSrc, src.searchablesCommand, findThis);
             ttl.allMix.length = 0;
-            [...ttl.equal, ...ttl.startwith, ...ttl.include].fillInto(ttl.allMix);
-            if (ttl.allMix.length > 0) break;            
+            src.category.TopStickyRows.fillInto(ttl.allMix);
+            src.category.DefaultRows.fillInto(ttl.allMix);
         }
         return ttl;
         //return ttl.allMix.distinct();
@@ -266,6 +230,61 @@ export class ResultAnalyser<T> {
                 break;
         }*/
     }
+    private search(cacheSrc:T[],colsToFindIn:string[],findThis:SearchableItemNode) {
+        let insideThis: SearchableItemNode;
+        let ttl: analyserSource<T> = {isAnythingFound:false, allMix: [], equal: [], startwith: [], include: [], }
+        let Robj: RowInfo<T>;
+        for (let j = 0; j <colsToFindIn.length; j++) {
+            let col = colsToFindIn[j];
+            for (let i = 0, ilen = cacheSrc.length; i < ilen; i++) {
+                let row = cacheSrc[i];
+                insideThis = row[col] as SearchableItemNode;
+                Robj = SourceManage.getRow(row);
+                let inTest = insideThis.SearchableText.includesI(findThis.SearchableText);
+                if (inTest.result) {
+                    insideThis.setOutput(inTest.index, findThis.SearchableText, 'Include');
+                    ttl.allMix.push(row);
+                    //results.push('Include');
+                    Robj.isModified = true;
+                    Robj.hasMeasurement = Robj.hasElementSet = false;
+                    Robj.searchStatus = SearchStatus.include;
+                }                
+            }
+            
+            for (let i = 0, ilen = ttl.allMix.length; i < ilen; i++) {
+                let row = ttl.allMix[i];
+                insideThis = row[col] as SearchableItemNode;
+                Robj = SourceManage.getRow(row);
+                if (insideThis.SearchableText.startsWithI(findThis.SearchableText)) {
+                    insideThis.setOutput(0, findThis.SearchableText, 'StartWith');
+                    ttl.startwith.push(row);
+                    Robj.isModified = true;
+                    Robj.hasMeasurement = Robj.hasElementSet = false;
+                    Robj.searchStatus = SearchStatus.startWith;
+                } else {
+                    ttl.include.push(row);
+                }
+            }
+            
+            for (let i = 0, ilen = ttl.startwith.length; i < ilen; i++) {
+                let row = ttl.startwith[i];
+                insideThis = row[col] as SearchableItemNode;
+                Robj = SourceManage.getRow(row);
+                if (insideThis.SearchableText.equalIgnoreCase(findThis.SearchableText)) {
+                    insideThis.setOutput(0, findThis.SearchableText, 'Equal');
+                    Robj.searchStatus = SearchStatus.equal;
+                    Robj.isModified = true;
+                    Robj.hasMeasurement = Robj.hasElementSet = false;
+                    ttl.equal.push(row);
+                }
+            }
+            ttl.allMix.length = 0;
+            [...ttl.equal, ...ttl.startwith, ...ttl.include].fillInto(ttl.allMix);
+            if (ttl.allMix.length > 0) break;            
+        }
+        ttl.isAnythingFound = ttl.allMix.length > 0;
+        return ttl;
+    }
     fill(res:analyserSource<T> ) {
         let src = this.source;
         if (res.equal.length > 0) {
@@ -284,7 +303,7 @@ export class ResultAnalyser<T> {
             src.unshift(...this.TopStickyRows, ...this.DefaultRows);
         }
         
-        src.onCompleteUserSide.fire([src, 0]);
+       // src.onCompleteUserSide.fire([src, 0]);
         src.callToFill();
         src.category.isFiltered = true;
     }
@@ -323,14 +342,21 @@ export class ResultAnalyser<T> {
     analyserStorage = {};
 
     pushColumnsToFindIn(...columnsToFindIn: string[]) {
-        this.columnsToFindIn.push(...columnsToFindIn);
         this.source.searchables.length = 0;
-        this.source.searchables.push(...this.columnsToFindIn);
+        this.source.searchables.push(...columnsToFindIn);
+       
+        this.initStorageForAnalyse();
+    }
+    pushCommandToFindIn(...columnsToFindIn: string[]) {
+        this.source.searchablesCommand.length = 0;
+        this.source.searchablesCommand.push(...columnsToFindIn);
+       
+        //this.source.searchables.push(...this.columnsToFindIn);
         this.initStorageForAnalyse();
     }
     initStorageForAnalyse() {
 
-        let cols = this.columnsToFindIn;
+       /* let cols = this.source.searchables;
         for (let i = 0; i < cols.length; i++) {
             const col = cols[i];
             this.analyserStorage[col] = {
@@ -339,13 +365,13 @@ export class ResultAnalyser<T> {
                 startwith: [],
                 include: [],
             };
-        }
+        }*/
     }
     
     analyse(findThis: SearchableItemNode, row: T): AnalyseResultType[] {
         let results: AnalyseResultType[] = [];
-        let cols = this.columnsToFindIn;
         let src = this.source;
+        let cols = src.searchables;
         let Robj: RowInfo<T>; Robj = src.getRowByObj(row);
         for (let i = 0, len = cols.length; i < len; i++) {
             const col = cols[i];
@@ -382,13 +408,14 @@ export class ResultAnalyser<T> {
     pushResultInside(findThis: SearchableItemNode, target = []) {
         let src = this.source;
         let ttl: analyserSource<T> = {
+            isAnythingFound:false,
             allMix: [],
             equal: [],
             startwith: [],
             include: [],
         }
         let insideThis: SearchableItemNode;
-        let cols = this.columnsToFindIn;
+        let cols = src.searchables;
 
         for (let i = 0, ilen = cols.length; i < ilen; i++) {
             const col = cols[i];

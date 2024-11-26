@@ -39,6 +39,24 @@ export class RowInfo<K = any> {
   get isBothTypeRow() { return this.rowType == 2; }
   elementIndex = 0;
   private _isVisible = true;
+  remove() {
+    let main = this.main;
+    let category = main.category;
+    category.DefaultRows.RemoveMultiple(this.row);
+    category.FilteredSource.RemoveMultiple(this.row);
+    category.FullSample.RemoveMultiple(this.row);
+    category.OriginalSource.RemoveMultiple(this.row);
+    category.TopStickyRows.RemoveMultiple(this.row);
+    main.RemoveMultiple(this.row);
+    if (main.isLoaded) {
+      main.generator.refresh({ setTabIndex: true });
+      let index = this.index;
+      if (main.info.currentIndex == this.index) main.info.currentItem = undefined;
+      main.info.currentIndex = index;
+      this.main.info.setPos();
+    }
+
+  }
   private _isVisibleDefault: boolean;
   public get isVisible() {
     return this._isVisible;
@@ -108,6 +126,7 @@ type IndexType = "isAtLast" | "isAtTop" | "continue" | "TopOverflowed" | "Bottom
 export class SourceManage<K> extends Array<K> {
   info = new SourceProperties<K>();
   searchables: string[] = [];
+  searchablesCommand: string[] = [];
   analyser = new ResultAnalyser<K>();
   nodes = new NodeHandler<K>();
   generator = new RowGenerator<K>();
@@ -227,19 +246,14 @@ export class SourceManage<K> extends Array<K> {
     }
     return topPoint == 0 ? 0 : i + 1;
   }
-  
-  static StickRow<K>(obj: any): RowInfo<K> {
-    let akey = this.ACCESS_KEY;
-    let rInfo: RowInfo<K> = obj[akey] ?? new RowInfo();
-    obj[akey] = rInfo;
-    rInfo.row = obj;
-    return rInfo;
-  }
+
+
   StickRow(obj: K): RowInfo<K> {
     let akey = SourceManage.ACCESS_KEY;
     let rInfo: RowInfo<K> = obj[akey] ?? new RowInfo();
     obj[akey] = rInfo;
     rInfo.row = obj;
+    rInfo.main = this;
     //rInfo.main = this;
     return rInfo;
   }
@@ -331,7 +345,7 @@ export class SourceManage<K> extends Array<K> {
     anlyse.filterInitlized = false;
 
     if (fireUpdateEvent) {
-     
+
       this.callToFill();
     } else this.generator.refresh();
   }
@@ -357,13 +371,21 @@ export class SourceManage<K> extends Array<K> {
     //this.category.isFiltered = false;
   }
   resetRow(rInfo: RowInfo<K>) {
-    if (rInfo.rowType != 0) return;
     let _searchables = this.searchables;
     let row = rInfo.row;
-    rInfo.searchStatus = SearchStatus.notFound;
-    for (let i = 0, len = _searchables.length; i < len; i++) {
-      const searchable = _searchables[i];
-      (row[searchable] as SearchableItemNode).reset();
+    if (rInfo.rowType == 0) {
+      rInfo.searchStatus = SearchStatus.notFound;
+      for (let i = 0, len = _searchables.length; i < len; i++) {
+        const searchable = _searchables[i];
+        (row[searchable] as SearchableItemNode).reset();
+      }
+    } else {
+      _searchables = this.searchablesCommand;
+      rInfo.searchStatus = SearchStatus.notFound;
+      for (let i = 0, len = _searchables.length; i < len; i++) {
+        const searchable = _searchables[i];
+        (row[searchable] as SearchableItemNode).reset();
+      }
     }
     rInfo.isModified = true;
     rInfo.hasMeasurement = rInfo.hasElementSet = false;

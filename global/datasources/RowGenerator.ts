@@ -129,6 +129,8 @@ export class RowGenerator<K> {
             let obj = src[i];
             rInfo = obj[akey];
             h += rInfo.height;
+            //console.log(rInfo.hasElementSet);
+            
             if(args.setTabIndex && rInfo.hasElementSet) rInfo.element.setAttribute('x-tabindex', '' + i);
             rInfo.index = i;
          //   console.log([rInfo.index,rInfo]);
