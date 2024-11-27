@@ -310,12 +310,20 @@ export class SourceManage<K> extends Array<K> {
     this.onUpdate.fire([len, fillRecommand]);
   }
   pushNew(...items: K[]): number {
-    this.category.OriginalSource.push(...items);
+    let cat = this.category;
+    let slen = this.length;
+    let flen = cat.FullSample.length;
+    cat.OriginalSource.push(...items);
+    cat.FullSample.push(...items);
     let olen = this.length;
     let len = this.push(...items);
-    for (let i = 0, ilen = items.length; i < ilen; i++)   this.StickRow(items[i]);
+   
+    for (let i = 0, ilen = items.length; i < ilen; i++) {
+      let nr = this.StickRow(items[i]);
+      nr.elementIndex = flen++;
+      nr.index = slen++;
+    }
     this.onCompleteUserSide.fire([items, olen]);
-    this.generator.refresh();
     return len;
   }
 
