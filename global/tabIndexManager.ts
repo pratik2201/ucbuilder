@@ -227,6 +227,7 @@ class TabIndexManager {
         if (!target.isConnected) return;
         let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;
+        if (!this.isVisaulyAppeared(target)) goAhead = true;
         let childFirstElement = goAhead ? undefined : this.getDirectElement(target, 0);
         if (childFirstElement != undefined) { // IF FIRST CHILD TAB-INDEX EXIST
             let evt = this.Events.onContainerTopEnter;

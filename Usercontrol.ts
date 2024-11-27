@@ -87,7 +87,7 @@ export class Usercontrol {
     constructor() {
         Usercontrol._CSS_VAR_STAMP++;
         this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
-      
+
     }
 
     public ucExtends = {
@@ -95,6 +95,7 @@ export class Usercontrol {
         mode: 'client' as UCGenerateMode,
         fileInfo: undefined as codeFileInfo,
         form: undefined as Usercontrol,
+        dialogForm: undefined as Usercontrol,
         PARENT: undefined as Usercontrol,
         session: new SessionManager(),
         stampRow: undefined as userControlStampRow,
@@ -109,7 +110,7 @@ export class Usercontrol {
         set caption(text: string) {
             this.designer.setCaption(text);
         },
-        find:(skey: string): HTMLElement[] =>{
+        find: (skey: string): HTMLElement[] => {
             let ar = skey.split(',');
             let _this = this.ucExtends;
             let uniqStamp = _this.stampRow.uniqStamp;
@@ -220,6 +221,8 @@ export class Usercontrol {
             })
             ucExt.Events.onDataExport = (data) =>
                 pucExt.Events.onDataExport(data);
+            if (ucExt.dialogForm == undefined && pucExt.dialogForm != undefined)
+                ucExt.dialogForm = pucExt.dialogForm;
             ucExt.stageHT = ucExt.wrapperHT;
         },
         resizerObserver: undefined as ResizeObserver,
@@ -228,7 +231,7 @@ export class Usercontrol {
             param0.source.cssContents = ext.stampRow.styler.parseStyleSeperator_sub(
                 {
                     data: (param0.source.cssContents == undefined ?
-                        FileDataBank.readFile(ext.fileInfo.style.fullPath,{replaceContentWithKeys:true})
+                        FileDataBank.readFile(ext.fileInfo.style.fullPath, { replaceContentWithKeys: true })
                         :
                         param0.source.cssContents),
                     localNodeElement: ext.self,
@@ -250,23 +253,23 @@ export class Usercontrol {
             element: undefined as HTMLElement,
             setValue: (decision: WhatToDoWithTargetElement, element: HTMLElement) => {
                 let _loadAt = this.ucExtends.loadAt;
-                _loadAt.decision = decision?decision:'waitForDecision';
+                _loadAt.decision = decision ? decision : 'waitForDecision';
                 _loadAt.element = element;
             }
         },
         visibility: 'inherit' as ucVisibility,
-        getVisibility:():ucVisibility =>{
+        getVisibility: (): ucVisibility => {
             let ext = this.ucExtends;
             if (ext.visibility != 'inherit') return ext.visibility;
             if (ext.isForm) return ext.visibility;
             return ext.PARENT.ucExtends.visibility;
-        },       
+        },
         hide: () => {
             this.ucExtends.visibility = 'hidden';
             Usercontrol.HiddenSpace.appendChild(this.ucExtends.wrapperHT);
         },
         show: ({ at = undefined, decision = undefined, }:
-            { at?: HTMLElement, decision?: WhatToDoWithTargetElement,visibility?:ucVisibility } = {}) => {
+            { at?: HTMLElement, decision?: WhatToDoWithTargetElement, visibility?: ucVisibility } = {}) => {
             let _extend = this.ucExtends;
             let _loadAt = _extend.loadAt;
             let dec = decision ? decision : _loadAt.decision as WhatToDoWithTargetElement;
@@ -277,7 +280,7 @@ export class Usercontrol {
             if (_loadAt.element == undefined) {
                 _loadAt.element = this.ucExtends.fileInfo.rootInfo.defaultLoadAt;
             }
-           // _extend.loadAt.element = ele;
+            // _extend.loadAt.element = ele;
             if (ele) {
                 switch (dec) {
                     case 'replace':
@@ -291,7 +294,8 @@ export class Usercontrol {
                         break;
                 }
             }
-            
+            if (_extend.dialogForm == undefined)
+                _extend.dialogForm = _extend.isForm ? this : _extend.PARENT.ucExtends.dialogForm;
             _extend.Events.loaded.fire();
             _extend.visibility = 'visible';
             //return undefined as Usercontrol
@@ -302,46 +306,48 @@ export class Usercontrol {
             defaultFocusAt?: HTMLElement,
             afterClose?: () => void,
         } = {}): void => {
-
-            this.ucExtends.isDialogBox = true;
-            let loadAt = this.ucExtends.loadAt;// as WhatToDoWithTargetElement;
+            let _extends = this.ucExtends;
+            _extends.isDialogBox = true;
+            let loadAt = _extends.loadAt;// as WhatToDoWithTargetElement;
             if (loadAt.element == undefined) {
-                loadAt.element = this.ucExtends.fileInfo.rootInfo.defaultLoadAt;
+                loadAt.element = _extends.fileInfo.rootInfo.defaultLoadAt;
             }
             winManager.push(this);
             if (loadAt.element) {
                 switch (loadAt.decision) {
                     case 'replace':
-                        loadAt.element.after(this.ucExtends.wrapperHT);
+                        loadAt.element.after(_extends.wrapperHT);
                         loadAt.element.remove();
                         break;
-                    case 'append': loadAt.element.append(this.ucExtends.wrapperHT); break;
-                    case 'prepend': loadAt.element.prepend(this.ucExtends.wrapperHT); break;
+                    case 'append': loadAt.element.append(_extends.wrapperHT); break;
+                    case 'prepend': loadAt.element.prepend(_extends.wrapperHT); break;
                     case 'waitForDecision':
-                        loadAt.element.append(this.ucExtends.wrapperHT);
+                        loadAt.element.append(_extends.wrapperHT);
                         break;
                 }
             }
-            this.ucExtends.passElement(winManager.transperency);
-            this.ucExtends.wrapperHT.before(winManager.transperency);
+            _extends.passElement(winManager.transperency);
+            _extends.wrapperHT.before(winManager.transperency);
 
 
             if (afterClose)
-                this.ucExtends.Events.afterClose.on(afterClose);
-           // setTimeout(() => {
-                if (!defaultFocusAt) {
-                    TabIndexManager.moveNext(this.ucExtends.self);
-                } else {
+                _extends.Events.afterClose.on(afterClose);
+            // setTimeout(() => {
+            if (!defaultFocusAt) {
+                TabIndexManager.moveNext(_extends.self);
+            } else {
 
-                    TabIndexManager.focusTo(defaultFocusAt);
+                TabIndexManager.focusTo(defaultFocusAt);
 
-                }
+            }
+            if (_extends.dialogForm == undefined)
+                _extends.dialogForm = this;
             //}, 1);
-            this.ucExtends.Events.loaded.fire();
+            _extends.Events.loaded.fire();
 
             // });
         },
-        close:()=> {
+        close: () => {
             this.ucExtends.destruct();
         },
         queryElements(selector: string, callback: (element: HTMLElement) => void): void {
@@ -382,12 +388,12 @@ export class Usercontrol {
             this.ucExtends.Events.beforeClose.fire([res]);
             if (!res.prevent) {
                 this.ucExtends.wrapperHT.delete();
-                if (this.ucExtends.isDialogBox) 
-                    winManager.pop();                
+                if (this.ucExtends.isDialogBox)
+                    winManager.pop();
                 this.ucExtends.Events.afterClose.fire();
                 //setTimeout(() => { 
-                    for (const key in _this)_this[key] = null;
-               // }, 1);                
+                for (const key in _this) _this[key] = null;
+                // }, 1);                
                 return true;
             }
             return false;
