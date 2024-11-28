@@ -84,20 +84,29 @@ export class CompoundFocus {
         let _this = this;
         inp.addEventListener('focus', (e) => {
             focus(e);
+            console.log('focus');
+
             _this.unbind();
-            inp.addEventListener('blur', (es) => { _this.inpBlur(es); });
-            window.addEventListener('mousedown', (es) => { _this.winFocusin(es) });
+              inp.addEventListener('blur', _this.inpBlur);
+            document.addEventListener('mousedown', _this.winFocusin);
+
         });
     }
-    inpBlur(e: FocusEvent) {
+    inpBlur = (e: FocusEvent) => {
+
         this.blurEvent = e;
         this.unbind();
         this.blur(e);
     }
-    winFocusin(e: MouseEvent) {
-       // console.log(this);
-        
+    onDownAllowedCallback = (e: MouseEvent): boolean => { return false; };
+    winFocusin = (e: MouseEvent) => {
+
+        //console.log('winFocusin');
+        // console.log(this);
+
         let isOutFocus = true;
+
+
         if (this.inp.contains(e.target as HTMLElement))
             isOutFocus = false;
         else
@@ -114,14 +123,18 @@ export class CompoundFocus {
             this.blur(this.blurEvent);
             //console.log('unbind all');
         } else {
-            this.inp.removeEventListener('blur', this.inpBlur);
+            /*if (this.onDownAllowedCallback(e) === true) {
+                TabIndexManager.stopFurther(e);
+                isOutFocus = false;
+            } */
+             this.inp.removeEventListener('blur', this.inpBlur);
             //console.log('unbind blur');
         }
     }
 
     unbind() {
         this.inp.removeEventListener('blur', this.inpBlur);
-        window.removeEventListener('mousedown', this.winFocusin);
+        document.removeEventListener('mousedown', this.winFocusin);
     }
 }
 /*window.addEventListener('mousedown', (e) => {

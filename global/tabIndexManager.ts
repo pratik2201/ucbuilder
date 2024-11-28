@@ -12,11 +12,13 @@ export interface TabContainerClearNode { target: HTMLElement, callback: () => bo
 class TabIndexManager {
     static audioCtx = new (window.AudioContext)();
     static gainNode = this.audioCtx.createGain();
-    static stopFurther(e: Event) {
+    static stopFurther(e: Event, breakTheLoop: boolean = false) {
         if (e == undefined) return;
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
+        if(breakTheLoop)
+            TabIndexManager.breakTheLoop = true;
     }
 
     static beep() {
@@ -224,6 +226,7 @@ class TabIndexManager {
 
     static moveNext(target: HTMLElement, goAhead: boolean = false) {
         let _this = this;
+        
         if (!target.isConnected) return;
         let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;

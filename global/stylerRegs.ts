@@ -1,12 +1,11 @@
 import { AliceManager } from "ucbuilder/build/codefile/aliceManager";
-import { uniqOpt, propOpt } from "ucbuilder/build/common";
+import { uniqOpt } from "ucbuilder/build/common";
 import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
-import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { openCloser } from "ucbuilder/global/openCloser";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { ReplaceTextRow, RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
+import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
 export type VariableList = { [key: string]: string };
   
 interface PatternList {

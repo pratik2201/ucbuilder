@@ -25,23 +25,20 @@ export class RowGenerator<K> {
         this.nodes.container.innerHTML = '';
         let fullsrc = this.source.category.FullSample;
         for (let i = 0, len = fullsrc.length; i < len; i++) {
-            let r = this.generateRow(fullsrc[i], i);
+            let r = this.generateRow(fullsrc[i]);
             r.elementIndex = i;
             //this.generateFull(fullsrc[i], i, tpt);
         }
         this.refresh();
         this.source.isLoaded = true;
     }
-    generateRow(row: K, index: number): RowInfo<K> {
+    generateRow(row: K): RowInfo<K> {
         let rowInfo = row[SourceManage.ACCESS_KEY] as RowInfo<K>;
         if (rowInfo == undefined) {
             rowInfo = new RowInfo<K>();
             rowInfo.row = row;
             row[SourceManage.ACCESS_KEY] = rowInfo;
-        } else {
-            //console.log(['already generated',rowInfo]);
-            
-        }
+        } 
         return rowInfo;
     }
     private generateFull(row: K, elementIndex: number = -1, tpt: TemplateNode = this.nodes.template) {
