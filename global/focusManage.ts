@@ -88,12 +88,13 @@ export class CompoundFocus {
 
             _this.unbind();
               inp.addEventListener('blur', _this.inpBlur);
-            document.addEventListener('mousedown', _this.winFocusin);
+            window.addEventListener('mousedown', _this.winFocusin);
 
         });
     }
     inpBlur = (e: FocusEvent) => {
-
+        console.log('inpBlur');
+        
         this.blurEvent = e;
         this.unbind();
         this.blur(e);
@@ -101,7 +102,7 @@ export class CompoundFocus {
     onDownAllowedCallback = (e: MouseEvent): boolean => { return false; };
     winFocusin = (e: MouseEvent) => {
 
-        //console.log('winFocusin');
+        console.log('winFocusin');
         // console.log(this);
 
         let isOutFocus = true;
@@ -134,7 +135,7 @@ export class CompoundFocus {
 
     unbind() {
         this.inp.removeEventListener('blur', this.inpBlur);
-        document.removeEventListener('mousedown', this.winFocusin);
+        window.removeEventListener('mousedown', this.winFocusin);
     }
 }
 /*window.addEventListener('mousedown', (e) => {
