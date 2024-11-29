@@ -160,20 +160,55 @@ export class SourceManage<K> extends Array<K> {
 
   getRow(index: number): RowInfo<K> {
     if (index >= this.length || index < 0) {
-      console.error('INDEX IS OUT OF RANGE BEIBE')
+      console.error('INDEX IS OUT OF RANGE ')
       debugger;
     }
-    else return this[index][SourceManage.ACCESS_KEY];
+    else {
+      let row = this[index];
+      let rInfo = row[SourceManage.ACCESS_KEY];
+      return (rInfo != undefined) ? rInfo : this.StickRow(row);
+      //return r!=undefined?r:this.StickRow(r);
+    }
   }
   get CurrentRow(): RowInfo<K> {
     return this[this.info.currentIndex][SourceManage.ACCESS_KEY];
   }
   static getRow<K>(obj: K): RowInfo<K> {
+    if (obj==undefined) {
+      console.error('WOW..WOW..WOW...BAIBE')
+      debugger;
+      return undefined;
+    }
     return obj[SourceManage.ACCESS_KEY];
   }
-
+  private mutedRInfos: RowInfo[] = [];
+  mute() {
+    let ar = this.category.FullSample;
+    let akey = SourceManage.ACCESS_KEY;
+    let muteAr = this.mutedRInfos;
+    muteAr.length = 0;
+    for (let i = 0, len = ar.length; i < len; i++) {      
+      muteAr.push(ar[i][akey]);
+      delete ar[i][akey];
+    }
+  }
+  unmute() {
+    let akey = SourceManage.ACCESS_KEY;
+    let muteAr = this.mutedRInfos;
+    for (let i = 0, len = muteAr.length; i < len; i++) {      
+      let rInf = muteAr[i];
+      if (rInf != undefined) rInf.row[akey] = rInf;
+    }
+    muteAr.length = 0;
+  }
   getRowByObj(row: K): RowInfo<K> {
-    return row[SourceManage.ACCESS_KEY];
+    if (row == undefined) {
+      console.error('EH!!!!!!! UNDEFINED AT `getRowByObj` ')
+      debugger;
+      return undefined;
+    }
+    let rInfo = row[SourceManage.ACCESS_KEY];
+    return (rInfo != undefined) ? rInfo : this.StickRow(row);
   }
   setRow(index: number, val: RowInfo<K>) {
     let row = this[index];
@@ -196,9 +231,7 @@ export class SourceManage<K> extends Array<K> {
     let i = topIndex, h = 0, size = 0, rInfo: RowInfo<K>, akey = SourceManage.ACCESS_KEY,
       gen = this.generator;
     for (; i <= len - 1; /*  i++; */) {
-      //rInfo = this.getRow(i);
-      //console.log([i,rInfo.element,rInfo.height,rInfo.runningHeight]);  
-      rInfo = this[i][akey] as RowInfo<K>;
+      rInfo = this.getRowByObj(this[i]);
       h = gen.takeMeasurement(rInfo).height;
       size += h;
       if (size > containerHeight) break;
@@ -294,7 +327,7 @@ export class SourceManage<K> extends Array<K> {
     let tmp: K[] = [];
     this.fillInto(tmp);
     let len = tmp.length;
-    this.clearAll();
+    this.clearAll(false);
     let ctg = this.category;
     let gen = this.generator;
     for (let i = 0; i < len; i++) {
@@ -308,6 +341,7 @@ export class SourceManage<K> extends Array<K> {
     }
     [...ctg.TopStickyRows, ...ctg.DefaultRows, ...ctg.OriginalSource].fillInto(ctg.FullSample);
     ctg.FullSample.fillInto(this);
+    this.clearFilter();
     let skey = SourceManage.ACCESS_KEY;
     let ar = ctg.FullSample;
     for (let i = 0, flen = ar.length; i < flen; i++) {
@@ -316,25 +350,25 @@ export class SourceManage<K> extends Array<K> {
       rInfo.index = i;
     }
     this.Events.onRowSeperationComplete.fire([]);
-    this.Events.onCompleteUserSide.fire([ctg.FullSample, 0]);
     this.isLoaded = true;
     this.generator.refresh();
-    
+
   }
   isLoaded = false;
   ihaveCompletedByMySide(fillRecommand = true) {
-   /*let len = this.length;
-    let ctg = this.category;
-    ctg.OriginalSource.length = 0;
-    this.fillInto(ctg.OriginalSource);
-    ctg.FullSample.length = 0;
-    [...ctg.TopStickyRows, ...ctg.DefaultRows, ...ctg.OriginalSource].fillInto(ctg.FullSample);
-    this.onCompleteUserSide.fire([ctg.FullSample, 0]);
-    this.length = 0;
-    ctg.FullSample.fillInto(this);
-    this.generator.reload();*/
+    /*let len = this.length;
+     let ctg = this.category;
+     ctg.OriginalSource.length = 0;
+     this.fillInto(ctg.OriginalSource);
+     ctg.FullSample.length = 0;
+     [...ctg.TopStickyRows, ...ctg.DefaultRows, ...ctg.OriginalSource].fillInto(ctg.FullSample);
+     this.onCompleteUserSide.fire([ctg.FullSample, 0]);
+     this.length = 0;
+     ctg.FullSample.fillInto(this);
+     this.generator.reload();*/
     this.rowseperate();
-    if(fillRecommand)
+    this.Events.onCompleteUserSide.fire([this.category.FullSample, 0]);
+    if (fillRecommand)
       this.callToFill();
   }
   pushNew(...items: K[]): number {
@@ -362,17 +396,20 @@ export class SourceManage<K> extends Array<K> {
     }
     this.length = 0;
     this.category.FullSample.fillInto(this);
-   
-    
+
+
     if (fireUpdateEvent) {
       this.callToFill();
     } else this.generator.refresh();
   }
   clearSource() {
     this.length = 0;
+    this.nodes.clearView();
   }
-  clearAll() {
-    this.clearFilter();
+  clearAll(clearFilter = true) {
+    if (clearFilter)
+      this.clearFilter();
+    this.nodes.clearView();
     this.length =
       this.category.OriginalSource.length =
       this.category.FullSample.length =
@@ -393,7 +430,7 @@ export class SourceManage<K> extends Array<K> {
         this.resetRow(rInfo);
       }
     }
-  
+
     this.category.isFiltered = false;
   }
   resetRow(rInfo: RowInfo<K>) {
@@ -425,7 +462,7 @@ export class SourceManage<K> extends Array<K> {
   callToFill() {
     let len = this.length;
     let akey = SourceManage.ACCESS_KEY;
-   
+
     this.sort((a, b) => (a[akey] as RowInfo).elementIndex - (b[akey] as RowInfo).elementIndex);
     let category = this.category;
     let hasBeginSet = false, hasEndSet = false;
