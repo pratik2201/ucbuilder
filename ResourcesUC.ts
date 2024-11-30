@@ -1,12 +1,12 @@
 import { codefileHandler } from "ucbuilder/build/codefileHandler";
 import { propOpt } from "ucbuilder/build/common";
-import { stylerRegs } from "ucbuilder/global/stylerRegs";
+import { StylerRegs } from "ucbuilder/global/stylers/StylerRegs";
 import { TabIndexManager } from "ucbuilder/global/tabIndexManager";
 import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 export class ResourcesUC {
-    static styler = new stylerRegs();
+    static styler = new StylerRegs();
     static rendrarCounter = 0;
     /** @type {{}}  */
     static resources: {} = {};
@@ -29,7 +29,7 @@ export class ResourcesUC {
             
             TabIndexManager.init();
             LoadGlobal.init();
-            stylerRegs.pushPublicStyles(callback);
+            StylerRegs.pushPublicStyles(callback);
             ///FocusManager.init();
             this.isInitBefore = true;
         }

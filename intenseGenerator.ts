@@ -6,13 +6,13 @@ import { UcOptions, ucOptions, TptOptions, tptOptions, WrapperNodeNameAs } from 
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { objectOpt, propOpt } from "ucbuilder/build/common";
 import { UcRendarer } from "ucbuilder/build/UcRendarer";
-import { stylerRegs, VariableList } from "ucbuilder/global/stylerRegs";
+import { StylerRegs, VariableList } from "ucbuilder/global/stylers/StylerRegs";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 //import { createRequire, Module } from "module";
 
 class intenseGenerator {
     static setCSS_globalVar(varList:VariableList,  _path: string): void  {        
-        stylerRegs.__VAR.SETVALUE(varList, '' + rootPathHandler.getInfo(_path).id, 'g');
+        StylerRegs.__VAR.SETVALUE(varList, '' + rootPathHandler.getInfo(_path).id, 'g');
     }
     static generateUC<T = string>(path: T, pera: UcOptions, ...args: any[]): Usercontrol {
         let param0: UcOptions = newObjectOpt.copyProps(pera, ucOptions);

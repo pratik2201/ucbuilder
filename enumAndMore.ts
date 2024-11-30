@@ -87,6 +87,7 @@ export interface UcOptions {
     session?: SessionOptions;
     source?: SourceOptions;
     parentUc?: Usercontrol;
+    accessName?:string,
     events?: {
         beforeInitlize: (uc: Usercontrol) => void;
     };
@@ -96,7 +97,8 @@ export interface UcOptions {
     loadAt?: HTMLElement;
 }
 export const ucOptions: UcOptions = {
-    mode:  'client',
+    mode: 'client',
+    accessName: '',
     session: newObjectOpt.clone<SessionOptions>(sessionOptions),
     source: newObjectOpt.clone<SourceOptions>(sourceOptions),
     //loadAt: document.body,
@@ -129,10 +131,12 @@ export const templatePathOptions: TemplatePathOptions = {
 export interface TptOptions {
     elementHT?: HTMLElement;
     source?: SourceOptions;
+    accessName?:string,
     parentUc?: Usercontrol;
 }
 export const tptOptions: TptOptions = {
     source: newObjectOpt.clone<SourceOptions>(sourceOptions),
+    accessName:'',
 };
 
 

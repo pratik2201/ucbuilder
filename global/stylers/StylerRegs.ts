@@ -6,6 +6,7 @@ import { openCloser } from "ucbuilder/global/openCloser";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
+import { scopeSelectorOptions, ScopeSelectorOptions, SelectorHandler } from "ucbuilder/global/stylers/SelectorHandler";
 export type VariableList = { [key: string]: string };
 
 /*interface PatternList {
@@ -53,7 +54,7 @@ const styleSeperatorOptions: StyleSeperatorOptions = {
   localNodeElement: undefined,
   cssVarStampKey: "",
 };
-export class stylerRegs {
+export class StylerRegs {
   static pushPublicStyles(callback: () => void): void {
     import("ucbuilder/ResourcesUC").then(({ ResourcesUC }) => {
       rootPathHandler.source.forEach((row: RootPathRow) => {
@@ -62,7 +63,7 @@ export class stylerRegs {
 
         let node: RootPathRow = row;//rootPathHandler.convertToRow(row, true);
         node.isAlreadyFullPath = true;
-        let styler: stylerRegs = new stylerRegs(node, true);
+        let styler: StylerRegs = new StylerRegs(node, true);
         ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
 
         let _data: string = FileDataBank.readFile(_stylepath, {
@@ -83,13 +84,14 @@ export class stylerRegs {
   }
   stamp: string = "";
   uniqStamp: string = "";
+  controlName: string = '';
   static stampNo: number = 0;
   static stampCallTimes: number = 0;
   aliceMng: AliceManager = new AliceManager();
   rootInfo: RootPathRow = undefined;
   nodeName: string = "";
-  parent: stylerRegs = undefined;
-  children: stylerRegs[] = [];
+  parent: StylerRegs = undefined;
+  children: StylerRegs[] = [];
   alices: string = "";
   path: string = "";
   wrapperHT: HTMLElement = undefined;
@@ -97,15 +99,17 @@ export class stylerRegs {
   constructor(rootInfo?: RootPathRow, generateStamp: boolean = true) {
     this.rootInfo = rootInfo;
 
-    stylerRegs.stampCallTimes++;
+    StylerRegs.stampCallTimes++;
     if (generateStamp)
-      stylerRegs.stampNo++;
+      StylerRegs.stampNo++;
 
-    this.stamp = "" + stylerRegs.stampNo;
-    this.uniqStamp = "" + stylerRegs.stampCallTimes;
+    this.stamp = "" + StylerRegs.stampNo;
+    this.uniqStamp = "" + StylerRegs.stampCallTimes;
     this.nodeName = "f" + uniqOpt.randomNo();
+    this.selectorHandler = new SelectorHandler(this);
+    
   }
-
+  selectorHandler: SelectorHandler;
   cssVars: { key: string; value: string }[] = [];
 
   LoadGlobalPath(data: string): void {
@@ -232,7 +236,7 @@ export class stylerRegs {
 
           // console.log(sel);
           // console.log(styleContent);
-          return `${_this.parseScopeSeperator({
+          return `${_this.selectorHandler.parseScopeSeperator({
             selectorText: sel,
             scopeSelectorText: _params.scopeSelectorText,
             parent_stamp: pstamp_key,
@@ -298,13 +302,13 @@ export class stylerRegs {
                 (match: string, quationMark: string, filePath: string, UCselector: string) => {
                   filePath = filePath.toLowerCase();
                   UCselector = UCselector.trim();
-                  let tree: stylerRegs = this.children.find(
-                    (s: stylerRegs) => s.path == filePath || s.alices == filePath
+                  let tree: StylerRegs = this.children.find(
+                    (s: StylerRegs) => s.path == filePath || s.alices == filePath
                   );
                   if (tree != undefined) {
                     let nscope: string =
                       _params.callCounter == 1
-                        ? _this.parseScopeSeperator({
+                        ? _this.selectorHandler.parseScopeSeperator({
                           selectorText: UCselector,
                           parent_stamp: ATTR_OF.UC.UC_STAMP,  // ATTR_OF.UC.UC_STAMP  <- changed dont know why
                           parent_stamp_value: pstamp_val,
@@ -338,7 +342,7 @@ export class stylerRegs {
       (match: string, varName: string, defaultVal: string) => {
         let ky: string = varName;//.toLowerCase();
         let scope: string = ky.charAt(1);
-        let uniqId: string = stylerRegs.internalKey;
+        let uniqId: string = StylerRegs.internalKey;
         switch (scope) {
           case "g":
             uniqId = '' + this.rootInfo.id;
@@ -350,7 +354,7 @@ export class stylerRegs {
             uniqId = this.uniqStamp;
             break;
         }
-        return stylerRegs.__VAR.GETVALUE(
+        return StylerRegs.__VAR.GETVALUE(
           ky.substring(3).trim(),
           uniqId,
           scope,
@@ -364,7 +368,7 @@ export class stylerRegs {
 
         let ky: string = varName;//.toLowerCase();
         let scope: string = ky.charAt(1);
-        let uniqId: string = stylerRegs.internalKey;
+        let uniqId: string = StylerRegs.internalKey;
         let tarEle: HTMLElement = undefined;
         // debugger;
         switch (scope) {
@@ -382,7 +386,7 @@ export class stylerRegs {
           default: return match;
         }
         let key = ky.substring(3).trim();
-        stylerRegs.__VAR.SETVALUE({ [key]: value }, uniqId, scope, tarEle);
+        StylerRegs.__VAR.SETVALUE({ [key]: value }, uniqId, scope, tarEle);
         return '';
       }
     );
@@ -398,14 +402,14 @@ export class stylerRegs {
             let __ky = ky.substring(3).trim();
             switch (scope) {
               case "g":
-                stylerRegs.__VAR.SETVALUE(
+                StylerRegs.__VAR.SETVALUE(
                   { __ky: value },
                   '' + this.rootInfo.id,
                   scope
                 );
                 return "";
               case "t":
-                stylerRegs.__VAR.SETVALUE(
+                StylerRegs.__VAR.SETVALUE(
                   { __ky: value },
                   this.stamp,
                   scope,
@@ -413,7 +417,7 @@ export class stylerRegs {
                 );
                 return "";
               case "l":
-                stylerRegs.__VAR.SETVALUE(
+                StylerRegs.__VAR.SETVALUE(
                   { __ky: value },
                   this.uniqStamp,
                   scope,
@@ -421,9 +425,9 @@ export class stylerRegs {
                 );
                 return "";
               case "i":
-                stylerRegs.__VAR.SETVALUE(
+                StylerRegs.__VAR.SETVALUE(
                   { __ky: value },
-                  stylerRegs.internalKey,
+                  StylerRegs.internalKey,
                   scope,
                   _params.localNodeElement
                 );
@@ -483,14 +487,10 @@ export class stylerRegs {
     });
     return rtrn;
   }
- /* parseScopeSeperator({
-    selectorText = "",
-    scopeSelectorText = "",
-    parent_stamp = "",
-    parent_stamp_value = undefined,
-  } = {}): string {
+  parseScopeSeperator(scopeOpt:ScopeSelectorOptions): string {
+    scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions),scopeOpt);
     let oc = new openCloser();
-    let rtrn = oc.doTask('(', ')', selectorText, (selector, cssStyle, opened) => {
+    let rtrn = oc.doTask('(', ')', scopeOpt.selectorText, (selector, cssStyle, opened) => {
       if (opened > 1) {
         if (selector.endsWith(':has')) {
           cssStyle = this.giveContents(cssStyle);
@@ -499,27 +499,35 @@ export class stylerRegs {
         }
       }
       if (selector.endsWith(':has')) {
-        return selector + '<' + cssStyle + '>';
+        this.splitselector({
+          selectorText: cssStyle,
+          scopeSelectorText: scopeOpt.scopeSelectorText,
+          parent_stamp: scopeOpt.parent_stamp,
+          parent_stamp_value: scopeOpt.parent_stamp_value,
+        });
+        return selector + '<' +  + '>';
       } else {
         return selector + '(' + cssStyle + ')';
       }
 
     });
-
+    
     let sub = this.parseScopeSeperator_sub({
-      selectorText: selectorText,
-      scopeSelectorText: scopeSelectorText,
-      parent_stamp: parent_stamp,
-      parent_stamp_value: undefined,
+      selectorText: scopeOpt.selectorText,
+      scopeSelectorText: scopeOpt.scopeSelectorText,
+      parent_stamp: scopeOpt.parent_stamp,
+      parent_stamp_value: scopeOpt.parent_stamp_value,
     });
     return sub;
-  }*/
-  parseScopeSeperator({
-    selectorText = "",
-    scopeSelectorText = "",
-    parent_stamp = "",
-    parent_stamp_value = undefined,
-  } = {}): string {
+  }
+  splitselector(scopeOpt:ScopeSelectorOptions) {
+    scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions),scopeOpt);
+    console.log(this.parseScopeSeperator_sub(scopeOpt));
+    
+    
+  }
+  parseScopeSeperator_sub(scopeOpt:ScopeSelectorOptions): string {    
+    scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions),scopeOpt);
     let _this = this;
     let rtrn: string = "";
     let changed: boolean = false;
@@ -529,14 +537,14 @@ export class stylerRegs {
     let postText: string = "";
     let rVal: string = "";
     //if (selectorText.startsWithI('[SELF_]:focus-within title-text')) debugger;
-    selectorText.split(",").forEach((s: string) => {
+    scopeOpt.selectorText.split(",").forEach((s: string) => {
       changed = false;
       trimedVal = s.trim();
       calltime = 0;
       if (trimedVal == "[SELF_]") {
         changed = true;
         calltime++;
-        rVal = `${scopeSelectorText} ${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`;  //UNIQUE_STAMP ,_this.stamp  <-- i changed dont know why
+        rVal = `${scopeOpt.scopeSelectorText} ${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`;  //UNIQUE_STAMP ,_this.stamp  <-- i changed dont know why
       } else {
       //  console.log(trimedVal);
       //  console.log(trimedVal.split(' '));
@@ -563,14 +571,14 @@ export class stylerRegs {
             } else {*/
             if (calltime == 1) {
               if (trimedVal.startsWith("[SELF_]")) {
-                return `${scopeSelectorText} [${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`;  //UNIQUE_STAMP ,_this.stamp  <-- i changed dont know why
+                return `${scopeOpt.scopeSelectorText} [${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`;  //UNIQUE_STAMP ,_this.stamp  <-- i changed dont know why
               } else {
-                preText = scopeSelectorText + " ";
-                return `[${parent_stamp}="${parent_stamp_value}"]`;
+                preText = scopeOpt.scopeSelectorText + " ";
+                return `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
               }
             } else {
-              preText = scopeSelectorText;
-              return `[${parent_stamp}="${parent_stamp_value}"]`;
+              preText = scopeOpt.scopeSelectorText;
+              return `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
             }
             /*}*/
             return match;
@@ -578,16 +586,16 @@ export class stylerRegs {
         );
       }
       if (!changed) {
-        if (parent_stamp_value != undefined) {
+        if (scopeOpt.parent_stamp_value != undefined) {
           let dbl: string[] = trimedVal.split(/ *:: */);
           let sngl: string[] = dbl[0].split(/ *: */);
-          sngl[0] += `[${parent_stamp}="${parent_stamp_value}"]`;
+          sngl[0] += `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
           dbl[0] = sngl.join(":");
           rVal = dbl.join("::");
         } else {
           rVal = trimedVal;
         }
-        preText = scopeSelectorText + " ";
+        preText = scopeOpt.scopeSelectorText + " ";
       }
       rtrn += preText + "" + rVal + "" + postText + ",";
     });
@@ -596,9 +604,9 @@ export class stylerRegs {
     return rtrn;
   }
 
-  pushChild(path: string, node: stylerRegs, nodeName: string): void {
+  pushChild(path: string, node: StylerRegs, nodeName: string): void {
     let key: string = path.toLowerCase();
-    let sreg: stylerRegs = this.children.find((s: stylerRegs) => s.path == key);
+    let sreg: StylerRegs = this.children.find((s: StylerRegs) => s.path == key);
     if (sreg == undefined) {
       node.alices = nodeName.toLowerCase();
       node.path = key;

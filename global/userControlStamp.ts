@@ -3,13 +3,13 @@ import { pathInfo, controlOpt } from "ucbuilder/build/common";
 import { sourceOptions,SourceOptions, StringExchangerCallback } from "ucbuilder/enumAndMore";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { stylerRegs } from "ucbuilder/global/stylerRegs";
+import { StylerRegs } from "ucbuilder/global/stylers/StylerRegs";
 
 export class userControlStampRow {
     cInfo: codeFileInfo;
     get stamp(): string { return this.styler.stamp; }
     get uniqStamp(): string { return this.styler.uniqStamp; }
-    styler: stylerRegs;
+    styler: StylerRegs;
     content: string = "";
     dataHT: HTMLElement;
     fUniq: string = "";
@@ -67,7 +67,7 @@ export class userControlStamp {
         if (sindex == -1) {
             this.stampNo++;
             rtrn = new userControlStampRow();
-            rtrn.styler = new stylerRegs(param0.cfInfo.rootInfo, generateStamp);
+            rtrn.styler = new StylerRegs(param0.cfInfo.rootInfo, generateStamp);
             rtrn.fUniq = pathtofind;
             rtrn.cInfo = param0.cfInfo;
             if (param0.htmlContents != undefined) {

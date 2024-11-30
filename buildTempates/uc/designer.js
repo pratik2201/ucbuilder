@@ -60,7 +60,8 @@ export class {=designer.className } extends Usercontrol {
         `[case=.tpt]`
         
     this.{=name } = {=importedClass.objText}.Create({ 
-                        parentUc : this, 
+                        parentUc: this, 
+                        accessName:"{=name}" , 
                         elementHT :CONTROLS.{=name} 
                     });
           
@@ -72,6 +73,7 @@ export class {=designer.className } extends Usercontrol {
         this.{=name} = {=importedClass.objText}.Create({ 
                             parentUc : this, 
                             mode:args.mode,
+                            accessName:"{=name}" , 
                             session:{
                                 loadBySession:args.session.loadBySession,
                                 uniqueIdentity:"{=name}" , 

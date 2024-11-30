@@ -10,7 +10,7 @@ import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
-import { stylerRegs, VariableList } from "ucbuilder/global/stylerRegs";
+import { StylerRegs, VariableList } from "ucbuilder/global/stylers/StylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { winManager } from "ucbuilder/global/winManager";
@@ -124,27 +124,27 @@ export class Usercontrol {
         garbageElementsHT: undefined as HTMLCollection,
         setCSS_globalVar: (varList: VariableList /*key: string, value: string*/): void => {
             let _this = this.ucExtends;
-            stylerRegs.__VAR.SETVALUE(varList, '' + _this.stampRow.styler.rootInfo.id, 'g');
+            StylerRegs.__VAR.SETVALUE(varList, '' + _this.stampRow.styler.rootInfo.id, 'g');
         },
         setCSS_localVar: (varList: VariableList /*key: string, value: string*/): void => {
             let _this = this.ucExtends;
-            stylerRegs.__VAR.SETVALUE(varList, _this.stampRow.styler.uniqStamp, 'l', _this.self);
+            StylerRegs.__VAR.SETVALUE(varList, _this.stampRow.styler.uniqStamp, 'l', _this.self);
         },
         setCSS_internalVar: (varList: VariableList/*key: string, value: string*/): void => {
             let _this = this.ucExtends;
-            stylerRegs.__VAR.SETVALUE(varList, stylerRegs.internalKey, 'i', _this.self);
+            StylerRegs.__VAR.SETVALUE(varList, StylerRegs.internalKey, 'i', _this.self);
         },
         getCSS_globalVar: (key: string): string => {
             let _this = this.ucExtends;
-            return document.body.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, '' + _this.stampRow.styler.rootInfo.id, 'g'));
+            return document.body.style.getPropertyValue(StylerRegs.__VAR.getKeyName(key, '' + _this.stampRow.styler.rootInfo.id, 'g'));
         },
         getCSS_localVar: (key: string, localEle: HTMLElement): string => {
             let _this = this.ucExtends;
-            return _this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, _this.cssVarStampKey, 'l'));
+            return _this.self.style.getPropertyValue(StylerRegs.__VAR.getKeyName(key, _this.cssVarStampKey, 'l'));
         },
         getCSS_internalVar: (key: string, value: string): string => {
             let _this = this.ucExtends;
-            return _this.self.style.getPropertyValue(stylerRegs.__VAR.getKeyName(key, stylerRegs.internalKey, 'i'));
+            return _this.self.style.getPropertyValue(StylerRegs.__VAR.getKeyName(key, StylerRegs.internalKey, 'i'));
         },
         cssVarStampKey: '0',
         initializecomponent: (param0: UcOptions): void => {
@@ -159,7 +159,7 @@ export class Usercontrol {
             ucExt.stampRow = userControlStamp.getStamp(param0.source);
             ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true) as HTMLElement;
             //console.log(param0.targetElement.nodeName);
-
+            ucExt.stampRow.styler.controlName = param0.accessName;
             if (ucExt.isForm) {
                 ucExt.PARENT = this;
                 ucExt.form = this;

@@ -4,7 +4,7 @@ import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { stylerRegs, VariableList } from "ucbuilder/global/stylerRegs";
+import { StylerRegs, VariableList } from "ucbuilder/global/stylers/StylerRegs";
 import { userControlStampRow, userControlStamp, } from "ucbuilder/global/userControlStamp";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { tptOptions, TemplatePathOptions, templatePathOptions, TptOptions } from "ucbuilder/enumAndMore";
@@ -134,7 +134,7 @@ export class Template {
   static _CSS_VAR_STAMP = 0;
   constructor() {
     Template._CSS_VAR_STAMP++;
-    stylerRegs.stampNo++;
+    StylerRegs.stampNo++;
     this.extended.cssVarStampKey = "t" + Template._CSS_VAR_STAMP;
   } 
   
@@ -178,14 +178,14 @@ export class TemplateNode {
     regsMng: new regsManage(),
     setCSS_globalVar(varList:VariableList/*,key: string, value: string*/) {
       
-      stylerRegs.__VAR.SETVALUE(
+      StylerRegs.__VAR.SETVALUE(
         varList,
         ''+this.stampRow.styler.rootInfo.id,
         "g"
       );
     },
     setCSS_templateVar:(varList:VariableList/*,key: string, value: string*/)=> {
-      stylerRegs.__VAR.SETVALUE(
+      StylerRegs.__VAR.SETVALUE(
         varList,
         this.extended.stampRow.styler.stamp,
         "t",
@@ -193,7 +193,7 @@ export class TemplateNode {
       );
     },
     setCSS_localVar:(varList:VariableList/*,key: string, value: string*/)=> {
-      stylerRegs.__VAR.SETVALUE(
+      StylerRegs.__VAR.SETVALUE(
         varList,
         this.extended.stampRow.styler.uniqStamp,
         "l",
@@ -202,9 +202,9 @@ export class TemplateNode {
     },
     setCSS_internalVar:(varList:VariableList/*,key: string, value: string*/)=>  {
      
-      stylerRegs.__VAR.SETVALUE(
+      StylerRegs.__VAR.SETVALUE(
         varList,
-        stylerRegs.internalKey,
+        StylerRegs.internalKey,
         "i",
         this.extended.parentUc.ucExtends.self
       );
@@ -212,21 +212,21 @@ export class TemplateNode {
     
     getCSS_globalVar:(key: string)=> {
       return document.body.style.getPropertyValue(
-        stylerRegs.__VAR.getKeyName(key, ''+this.extended.stampRow.styler.rootInfo.id, "g")
+        StylerRegs.__VAR.getKeyName(key, ''+this.extended.stampRow.styler.rootInfo.id, "g")
       );
     },
     getCSS_templateVar:(key: string)=> {
       return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-        stylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.stamp, "t")
+        StylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.stamp, "t")
       );
     }, getCSS_localVar:(key: string)=> {
       return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-        stylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.uniqStamp, "l")
+        StylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.uniqStamp, "l")
       );
     },
     getCSS_internalVar:(key: string)=> {
       return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-        stylerRegs.__VAR.getKeyName(key, stylerRegs.internalKey, "i")
+        StylerRegs.__VAR.getKeyName(key, StylerRegs.internalKey, "i")
       );
     },
     generateContent: (jsonRow: {}): string => {
@@ -280,6 +280,8 @@ export class TemplateNode {
       let eleHT = param0.elementHT;
       tptExt.parentUc = param0.parentUc;
       tptExt.stampRow.styler.wrapperHT = tptExt.parentUc.ucExtends.wrapperHT;
+      
+      tptExt.stampRow.styler.controlName = param0.accessName;
       if (tptExt.parentUc != undefined)
         tptExt.parentUc.ucExtends.stampRow.styler.pushChild(
           param0.source.cfInfo.mainFilePath +
