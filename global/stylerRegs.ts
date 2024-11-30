@@ -7,8 +7,8 @@ import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
 export type VariableList = { [key: string]: string };
-  
-interface PatternList {
+
+/*interface PatternList {
   globalFinderPathPattern: RegExp;
   globalFinderPattern: RegExp;
   styleTagSelector: RegExp;
@@ -20,9 +20,9 @@ interface PatternList {
   varValueGetterPattern: RegExp;
   scopeSelector: RegExp;
   rootExcludePattern: RegExp;
-}
+}*/
 
-const patternList: PatternList = {
+const patternList/*: PatternList */ = {
   globalFinderPathPattern: /path=(["'`])([\s\S]*?)\1/gim,
   globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
@@ -31,7 +31,7 @@ const patternList: PatternList = {
   themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   stylesFilterPattern: /(animation-name|\$[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
   varValuePrinterPattern: /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\)\s*\;/gim,
-  varValueGetterPattern:/(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
+  varValueGetterPattern: /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
   scopeSelector: /\[SELF_]/gm,
   rootExcludePattern: /(.*?)(:root|:exclude)/gi,
 };
@@ -67,8 +67,8 @@ export class stylerRegs {
 
         let _data: string = FileDataBank.readFile(_stylepath, {
           isFullPath: false,
-          replaceContentWithKeys:true
-          });
+          replaceContentWithKeys: true
+        });
 
         if (_data != undefined) {
           LoadGlobal.pushRow({
@@ -178,14 +178,18 @@ export class stylerRegs {
 
         switch (code) {
           case "theme":
-            return FileDataBank.readFile(path,{isFullPath:false,
-              replaceContentWithKeys:true});
+            return FileDataBank.readFile(path, {
+              isFullPath: false,
+              replaceContentWithKeys: true
+            });
           case "css":
             let isGoodToAdd: boolean = LoadGlobal.isGoodToPush(path);
             if (isGoodToAdd) {
               let cssContents: string = _this.parseStyleSeperator_sub({
-                data: FileDataBank.readFile(path,{isFullPath:false,
-                  replaceContentWithKeys:true}),
+                data: FileDataBank.readFile(path, {
+                  isFullPath: false,
+                  replaceContentWithKeys: true
+                }),
               });
               LoadGlobal.pushRow({
                 url: path,
@@ -199,7 +203,12 @@ export class stylerRegs {
       }
     );
 
-    rtrn = rtrn.trim().replace(/(;|,|{|})[\n\r ]*/gi, "$1 ");
+    //rtrn = rtrn.trim().replace(/(;|,|{|})[\n\r ]*/gi, "$1 ");   // remove this comment it was old code
+    rtrn = rtrn.trim().replace(/(;|,|{|})[\n\r ]*/gi, "$1 ");   // remove this comment it was old code
+
+    //rtrn = rtrn.trim().replace(/\s+/g, " ");
+    // console.log(rtrn);
+
     let extraTextAtBegining = "";
     rtrn = this.opnClsr.doTask(
       "{",
@@ -209,18 +218,20 @@ export class stylerRegs {
         if (count == 1) {
           let sel = '';
           //console.log("<==================== ");
-          selectorText = selectorText.replace(/(.*?)([^;]*?)$/gim, (m,extraText, slctr) => {
+          selectorText = selectorText.replace(/(.*?)([^;]*?)$/gim, (m, extraText, slctr) => {
             extraTextAtBegining += " " + extraText;
-          //  console.log([m,extraText, slctr]);
-          //  console.log(slctr);
+            //  console.log([m,extraText, slctr]);
+            //  console.log(slctr);
             sel += slctr;
             return '';
           });
           sel = sel.trim();
+          //console.log(sel);
+          //if (sel == '[SELF_]:focus-within title-text[SELF_]') debugger;
           //console.log("=======>  "+_params.scopeSelectorText);
-          
-         // console.log(sel);
-         // console.log(styleContent);
+
+          // console.log(sel);
+          // console.log(styleContent);
           return `${_this.parseScopeSeperator({
             selectorText: sel,
             scopeSelectorText: _params.scopeSelectorText,
@@ -229,8 +240,8 @@ export class stylerRegs {
           })}{${styleContent}} `;
         } else {
           let changed: boolean = false;
-         
-          
+
+
           selectorText.split(",").forEach((pselctor: string) => {
             pselctor.trim().replace(
               patternList.rootExcludePattern,
@@ -239,7 +250,7 @@ export class stylerRegs {
                   case ":root":
                     changed = true;
                     if (rootAlices == undefined || rootAlices == '') {
-                     
+
                       externalStyles.push(
                         _this.parseStyleSeperator_sub({
                           data: _params.scopeSelectorText + styleContent,
@@ -319,7 +330,7 @@ export class stylerRegs {
         }
       }
     );
-  /// console.log(extraTextAtBegining);
+    /// console.log(extraTextAtBegining);
     rtrn = extraTextAtBegining + '' + rtrn;
     //debugger;
     rtrn = rtrn.replace(
@@ -350,12 +361,12 @@ export class stylerRegs {
     rtrn = rtrn.replace(
       patternList.varValueGetterPattern,
       (match: string, varName: string, value: string) => {
-        
+
         let ky: string = varName;//.toLowerCase();
         let scope: string = ky.charAt(1);
         let uniqId: string = stylerRegs.internalKey;
         let tarEle: HTMLElement = undefined;
-       // debugger;
+        // debugger;
         switch (scope) {
           case "g":
             uniqId = '' + _this.rootInfo.id;
@@ -371,7 +382,7 @@ export class stylerRegs {
           default: return match;
         }
         let key = ky.substring(3).trim();
-        stylerRegs.__VAR.SETVALUE({ [key] : value }, uniqId, scope,tarEle );
+        stylerRegs.__VAR.SETVALUE({ [key]: value }, uniqId, scope, tarEle);
         return '';
       }
     );
@@ -388,14 +399,14 @@ export class stylerRegs {
             switch (scope) {
               case "g":
                 stylerRegs.__VAR.SETVALUE(
-                  { __ky : value },
+                  { __ky: value },
                   '' + this.rootInfo.id,
                   scope
                 );
                 return "";
               case "t":
                 stylerRegs.__VAR.SETVALUE(
-                  { __ky : value },
+                  { __ky: value },
                   this.stamp,
                   scope,
                   _params.localNodeElement
@@ -403,7 +414,7 @@ export class stylerRegs {
                 return "";
               case "l":
                 stylerRegs.__VAR.SETVALUE(
-                  { __ky : value },
+                  { __ky: value },
                   this.uniqStamp,
                   scope,
                   _params.localNodeElement
@@ -411,7 +422,7 @@ export class stylerRegs {
                 return "";
               case "i":
                 stylerRegs.__VAR.SETVALUE(
-                  { __ky : value },
+                  { __ky: value },
                   stylerRegs.internalKey,
                   scope,
                   _params.localNodeElement
@@ -440,12 +451,12 @@ export class stylerRegs {
       return `--${key}${uniqId}${code}`;
     },
 
-    SETVALUE: (vlst:VariableList,/*key: string,*/ uniqId: string, code: string, /*value: string,*/ tarEle: HTMLElement = document.body): void => {
+    SETVALUE: (vlst: VariableList,/*key: string,*/ uniqId: string, code: string, /*value: string,*/ tarEle: HTMLElement = document.body): void => {
       let style = tarEle.style;
       for (const [key, value] of Object.entries(vlst)) {
         style.setProperty(this.__VAR.getKeyName(key, uniqId, code), value);
       }
-      
+
       return;
     },
 
@@ -453,7 +464,56 @@ export class stylerRegs {
       return ` var(${this.__VAR.getKeyName(key, uniqId, code)},${defaultVal}) `;
     },
   };
+  giveContents(contents) {
+    let oc = new openCloser();
+    let rtrn = oc.doTask('(', ')', contents, (selector, cssStyle, opened) => {
+      if (opened > 1) {
+        if (selector.endsWith(':has')) {
+          cssStyle = this.giveContents(cssStyle);
+        } else {
+          return selector + '(' + cssStyle + ')';
+        }
+      }
+      if (selector.endsWith(':has')) {
+        return selector + '<' + cssStyle + '>';
+      } else {
+        return selector + '(' + cssStyle + ')';
+      }
 
+    });
+    return rtrn;
+  }
+ /* parseScopeSeperator({
+    selectorText = "",
+    scopeSelectorText = "",
+    parent_stamp = "",
+    parent_stamp_value = undefined,
+  } = {}): string {
+    let oc = new openCloser();
+    let rtrn = oc.doTask('(', ')', selectorText, (selector, cssStyle, opened) => {
+      if (opened > 1) {
+        if (selector.endsWith(':has')) {
+          cssStyle = this.giveContents(cssStyle);
+        } else {
+          return selector + '(' + cssStyle + ')';
+        }
+      }
+      if (selector.endsWith(':has')) {
+        return selector + '<' + cssStyle + '>';
+      } else {
+        return selector + '(' + cssStyle + ')';
+      }
+
+    });
+
+    let sub = this.parseScopeSeperator_sub({
+      selectorText: selectorText,
+      scopeSelectorText: scopeSelectorText,
+      parent_stamp: parent_stamp,
+      parent_stamp_value: undefined,
+    });
+    return sub;
+  }*/
   parseScopeSeperator({
     selectorText = "",
     scopeSelectorText = "",
@@ -468,20 +528,39 @@ export class stylerRegs {
     let preText: string = "";
     let postText: string = "";
     let rVal: string = "";
+    //if (selectorText.startsWithI('[SELF_]:focus-within title-text')) debugger;
     selectorText.split(",").forEach((s: string) => {
       changed = false;
       trimedVal = s.trim();
       calltime = 0;
+      if (trimedVal == "[SELF_]") {
+        changed = true;
+        calltime++;
+        rVal = `${scopeSelectorText} ${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`;  //UNIQUE_STAMP ,_this.stamp  <-- i changed dont know why
+      } else {
+      //  console.log(trimedVal);
+      //  console.log(trimedVal.split(' '));
 
-      rVal = trimedVal.replace(
-        patternList.scopeSelector,
-        (match: string, offset: any, input_string: string) => {
-          changed = true;
-          calltime++;
+        // trimedVal.split(' ').forEach((val) => {
+        //   changed = true;
+        //   calltime++;
+        //   console.log(val);
 
-          if (trimedVal == "[SELF_]") {
-            return `${scopeSelectorText} ${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`;  //UNIQUE_STAMP ,_this.stamp  <-- i changed dont know why
-          } else {
+        //   if (calltime == 1) {
+        //     /*if (trimedVal.startsWith("[SELF_]")) {
+        //       return `${scopeSelectorText} ${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`; 
+        //     }*/
+        //   }
+        // })
+        rVal = trimedVal.replace(
+          patternList.scopeSelector,
+          (match: string, offset: any, input_string: string) => {
+            changed = true;
+            calltime++;
+
+            /*if (trimedVal == "[SELF_]") {
+              return `${scopeSelectorText} ${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`;  //UNIQUE_STAMP ,_this.stamp  <-- i changed dont know why
+            } else {*/
             if (calltime == 1) {
               if (trimedVal.startsWith("[SELF_]")) {
                 return `${scopeSelectorText} [${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`;  //UNIQUE_STAMP ,_this.stamp  <-- i changed dont know why
@@ -493,10 +572,11 @@ export class stylerRegs {
               preText = scopeSelectorText;
               return `[${parent_stamp}="${parent_stamp_value}"]`;
             }
+            /*}*/
+            return match;
           }
-          return match;
-        }
-      );
+        );
+      }
       if (!changed) {
         if (parent_stamp_value != undefined) {
           let dbl: string[] = trimedVal.split(/ *:: */);
@@ -511,6 +591,7 @@ export class stylerRegs {
       }
       rtrn += preText + "" + rVal + "" + postText + ",";
     });
+
     rtrn = rtrn.slice(0, -1);
     return rtrn;
   }

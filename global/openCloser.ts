@@ -22,16 +22,33 @@ export class openCloser {
             lastinIndex = 0;
         let iList = this.ignoreList;
         if (iList.length == 0) {
-            for (let index = 0, len = contents.length; index < len; index++) {
-                let cnt = contents.charAt(index);
+            let fcntnt = '';
+            let oLEN = openTxt.length;
+            let cLEN = closeTxt.length;
+            for (let index = 0, len = contents.length; index <= len; index++) {
+                
                 if (opened == closed && index > 0 && opened > 0) {
-                    let selector = contents.substring(lastoutIndex, lastinIndex);
-                    let cssStyle = contents.substring(lastinIndex + 1, index - 1);
+                    let selector = contents.substring(lastoutIndex, lastinIndex-oLEN+1);
+                    let cssStyle = contents.substring(lastinIndex + 1, index - cLEN);
                     rtrn += callback(selector, cssStyle, opened);
                     lastoutIndex = index;
                     opened = closed = 0;
                 }
-                switch (cnt) {
+                let cnt = contents.charAt(index);
+                if (index == len) {
+                    //console.log([cnt,contents.substring(lastoutIndex)]);
+                 
+                    rtrn += contents.substring(lastoutIndex);
+                }
+                fcntnt += cnt;
+                //console.log();
+                if (fcntnt.slice(-oLEN) == openTxt) {
+                    if (opened == 0) lastinIndex = index;
+                    opened++;
+                } else if (fcntnt.slice(-cLEN) == closeTxt){
+                    closed++;
+                }
+                /*switch (cnt) {
                     case openTxt:
                         if (opened == 0) lastinIndex = index;
                         opened++;
@@ -39,7 +56,7 @@ export class openCloser {
                     case closeTxt:
                         closed++;
                         break;
-                }
+                }*/
             }
         } else {
             let charNode: OpenCloseCharNode;
