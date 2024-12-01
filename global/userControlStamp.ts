@@ -4,7 +4,14 @@ import { sourceOptions,SourceOptions, StringExchangerCallback } from "ucbuilder/
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { StylerRegs } from "ucbuilder/global/stylers/StylerRegs";
-
+export interface PassElementOptions{
+    applySubTree?: boolean;
+    skipTopEle?: boolean;
+}
+const passElementOptions:PassElementOptions = {
+    applySubTree: true,
+    skipTopEle:false
+}
 export class userControlStampRow {
     cInfo: codeFileInfo;
     get stamp(): string { return this.styler.stamp; }
@@ -15,10 +22,11 @@ export class userControlStampRow {
     fUniq: string = "";
 
     isOurElement(ele: HTMLElement): boolean {
-        return ele.getAttribute(ATTR_OF.UC.UNIQUE_STAMP) == this.uniqStamp;
+        return ele.getAttribute(ATTR_OF.UC.ALL).startsWith(this.uniqStamp);
     }
 
-    passElement = <A = HTMLElement|HTMLElement[]>(ele: A, applySubTree: boolean = true): string[] => {
+    passElement = <A = HTMLElement | HTMLElement[]>(ele: A, options?: PassElementOptions): string[] => {
+        let option = Object.assign(Object.assign({},passElementOptions), options);
         let stamplist: string[] = [];
         let stmpTxt: string = this.stamp;
         let stmpUnq: string = this.uniqStamp;
@@ -30,15 +38,18 @@ export class userControlStampRow {
         let ar = controlOpt.getArray(ele);
         for (let index = 0; index < ar.length; index++) {
             let element: HTMLElement = ar[index];
-            element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
-            element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
-            element.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
-            if (applySubTree) {
+            if(!option.skipTopEle)
+             element.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
+            //element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
+           // element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
+            //element.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
+            if (option.applySubTree) {
                 element.querySelectorAll("*")
                     .forEach((s) => {
-                        s.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
-                        s.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
-                        s.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
+                        s.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
+                       //s.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
+                       // s.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
+                        //s.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
                     });
             }
         }
@@ -104,7 +115,7 @@ export class userControlStamp {
                    
                 rtrn.styler.nodeName = otag;
                 let newNodeName: string = rtrn.styler.nodeName;
-                return `<${newNodeName} ${ATTR_OF.UC.UC_STAMP}="${rtrn.uniqStamp}"  ${contents}</${newNodeName}>`; //   x-tabindex="-1"
+                return `<${newNodeName} ${ATTR_OF.UC.ALL}="${rtrn.uniqStamp}"  ${contents}</${newNodeName}>`; //   x-tabindex="-1"
             });
 
         rtrn.content = rtrn.styler.parseStyle(rtrn.content);        

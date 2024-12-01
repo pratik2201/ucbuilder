@@ -32,10 +32,11 @@ export const attrOfUC: AttrOfUC = {
 
 export const ATTR_OF = {
     UC: Object.freeze({
+        ALL: "all" + uniqOpt.randomNo(),
         UC_STAMP: "uc" + uniqOpt.randomNo(),
-        PARENT_STAMP: "parent" + uniqOpt.randomNo(),
-        UNIQUE_STAMP: "uniq" + uniqOpt.randomNo(),
-        ROOT_STAMP: "root" + uniqOpt.randomNo(),
+        //PARENT_STAMP: "parent" + uniqOpt.randomNo(),
+       // UNIQUE_STAMP: "uniq" + uniqOpt.randomNo(),
+        //ROOT_STAMP: "root" + uniqOpt.randomNo(),
     }),
 };
 

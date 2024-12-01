@@ -16,10 +16,10 @@ class FilterContent {
         ): string {
             isReplaced = true;
             //runtimeOpt_1.ATTR_OF.UC.UNIQUE_STAMP
-            return `${selector.trim()}[${ATTR_OF.UC.UNIQUE_STAMP}='${_guid}']${seperator}${pseudo}`;
+            return `${selector.trim()}[${ATTR_OF.UC.ALL}^='${_guid}_']${seperator}${pseudo}`;  // old one `${selector.trim()}[${ATTR_OF.UC.UNIQUE_STAMP}='${_guid}']${seperator}${pseudo}`
         });
         if (isReplaced) return rtrn;
-        return data.trim() + `[${ATTR_OF.UC.UNIQUE_STAMP}='${_guid}']`;
+        return data.trim() + `[${ATTR_OF.UC.ALL}^='${_guid}_']`;  // old one `[${ATTR_OF.UC.UNIQUE_STAMP}='${_guid}']`
     }
 }
 

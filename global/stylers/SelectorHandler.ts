@@ -2,24 +2,32 @@
 import { openCloser } from "ucbuilder/global/openCloser";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { StylerRegs } from "ucbuilder/global/stylers/StylerRegs";
+import { RootPathRow } from "ucbuilder/global/findAndReplace";
 export const scopeSelectorOptions: ScopeSelectorOptions = {
     selectorText: "",
     scopeSelectorText: "",
     parent_stamp: "",
     parent_stamp_value: undefined,
+    root: undefined,
+    isForRoot:false,
     hiddens: {
-        list: [],
+        root:undefined,
+        list: {},
+        isForRoot:false,
         counter: 0,
     }
 };
-export interface HiddenScopeKVP{
-    key: string,
-    selector?: string,
-    funcName?: string,
-    value: string
+export interface HiddenScopeKVP {
+    [key: string]: {
+        selector?: string,
+        funcName?: string,
+        value: string
+    }
 }
 export interface HiddenScopeNode {
-    list:HiddenScopeKVP[],
+    list: HiddenScopeKVP,
+    root: RootPathRow,
+    isForRoot: boolean,scopeSelectorText?: string;
     counter: number
 }
 export interface ScopeSelectorOptions {
@@ -27,6 +35,8 @@ export interface ScopeSelectorOptions {
     scopeSelectorText?: string;
     parent_stamp: string;
     parent_stamp_value?: string;
+    isForRoot:boolean,
+    root:RootPathRow,
     hiddens?: HiddenScopeNode
 }
 
@@ -55,19 +65,28 @@ export class SelectorHandler {
         return rtrn;
     }
     parseScopeSeperator(scopeOpt: ScopeSelectorOptions): string {
-         scopeOpt = Object.assign(scopeSelectorOptions,scopeOpt );
+        //return this.parseScopeSeperator_sub(scopeOpt)
+       /* if (scopeOpt.selectorText === '[SELF_] mainContainer') {
+            debugger;
+        }*/
+        scopeOpt = Object.assign(scopeSelectorOptions, scopeOpt);
+        scopeOpt.hiddens.root = scopeOpt.root;
+        scopeOpt.hiddens.scopeSelectorText = scopeOpt.scopeSelectorText;
+        scopeOpt.hiddens.isForRoot = scopeOpt.isForRoot;
+        if (scopeOpt.selectorText.trim() == '') return '';
         let counter = scopeOpt.hiddens.counter;
         let _this = this;
+        let oldSelector = scopeOpt.selectorText;
         if (scopeOpt.selectorText.includes('forms') /*&& sub.indexOf('◄◘') != -1*/) {
             // console.log(_this.main.children);
-            debugger;
+           // debugger;
             if (counter == 0) {
-                console.log([scopeOpt.parent_stamp,scopeOpt.parent_stamp_value,scopeOpt.scopeSelectorText]);
+                console.log([scopeOpt.parent_stamp, scopeOpt.parent_stamp_value, scopeOpt.scopeSelectorText]);
                 console.log(this.main);
-                
+
             }
- 
-             //debugger;
+
+            //debugger;
         }
         let oc = new openCloser();
         //let hiddens: {key:string,value:string}[] = []
@@ -77,7 +96,7 @@ export class SelectorHandler {
                     scopeOpt.selectorText = cssStyle;
                     let key = _this.KEY(scopeOpt.hiddens);
                     cssStyle = _this.parseScopeSeperator(scopeOpt);
-                    scopeOpt.hiddens.list.push({ key: key, selector: cssStyle, funcName: 'has', value: '(' + cssStyle + ')' });
+                    scopeOpt.hiddens.list[key] = { selector: cssStyle, funcName: 'has', value: '(' + cssStyle + ')' };
                     return selector + '' + key;
                 } else {
                     return selector + '(' + cssStyle + ')';
@@ -88,7 +107,7 @@ export class SelectorHandler {
                 scopeOpt.selectorText = cssStyle;
                 // let scss = cssStyle; // this.parseScopeSeperator_sub(n);
                 let key = _this.KEY(scopeOpt.hiddens);
-                scopeOpt.hiddens.list.push({ key: key, selector: cssStyle, funcName: 'has', value: '(' + cssStyle + ')' });
+                scopeOpt.hiddens.list[key] = { selector: cssStyle, funcName: 'has', value: '(' + cssStyle + ')' };
                 return selector + '' + key;
             } else {
                 return selector + '(' + cssStyle + ')';
@@ -98,63 +117,126 @@ export class SelectorHandler {
         //let n = Object.assign({}, scopeOpt);
         scopeOpt.selectorText = rtrn;
         if (counter == 0) {
-            rtrn = this.splitselector(rtrn, scopeOpt.hiddens);
-            console.log(rtrn);
-            
-            scopeOpt.hiddens.list.length = 0;
+            rtrn = this.loopMultipleSelectors(rtrn, this.main, scopeOpt.hiddens);
+            //console.log([oldSelector, rtrn]);
+            scopeOpt.hiddens.list = {}
             scopeOpt.hiddens.counter = 0;
         }
 
-        let sub = this.parseScopeSeperator_sub(scopeOpt);
-        console.log([sub,rtrn]);
-        
+        //let sub = this.parseScopeSeperator_sub(scopeOpt);
+        // console.log([sub, rtrn]);
+
         return rtrn;
+    }
+    loopMultipleSelectors(selector: string, stylers: StylerRegs, hiddens: HiddenScopeNode): string {
+        let selectors = selector.split(',');
+        let rtrn = [];
+        for (let i = 0, len = selectors.length; i < len; i++) {
+            rtrn.push(this.splitselector(selectors[i], stylers, hiddens));
+        }
+        return rtrn.join(',');
     }
     KEY(hiddens: HiddenScopeNode) {
         hiddens.counter++;
         return '◄◘' + hiddens.counter + '◘▀';
     }
-    splitselector(selector: string, hiddens: HiddenScopeNode):string {
+    splitselector(selector: string, styler: StylerRegs, hiddens: HiddenScopeNode): string {
+
         //console.log(selector, hiddens);     
         let splitted = selector.split(' ');
         let hasUcFound = false;
-        let kvNode: HiddenScopeKVP;
+        let kvNode: string;
         let _this = this;
         let nSelector = '';
         for (let i = 0, len = splitted.length; i < len; i++) {
             let sel = splitted[i];
             let matchs = sel.replace(/^in-(\w+)/gm, (s, ucName) => {
-                let styler = _this.main.children.find(s => s.controlName === ucName);
-                hasUcFound = (styler != undefined);
+                let sub_styler = _this.main.children.find(s => s.controlName === ucName);
+                hasUcFound = (sub_styler != undefined);
                 if (hasUcFound) {
-                    let nnode = `${styler.nodeName}[${ATTR_OF.UC.UC_STAMP}="${styler.uniqStamp}"]`;
+                    styler = sub_styler;
+                    let nnode = `${styler.nodeName}[WRAPPER="${styler.uniqStamp}"]`;
                     let key = _this.KEY(hiddens);
-                    kvNode = { key: key, value: nnode }
-                    hiddens.list.push(kvNode);
+                    kvNode = key;
+                    hiddens.list[kvNode] = { value: nnode };
                     return key;
                 } else return s;
             });
-            if (hasUcFound) {                
+            if (hasUcFound) {
                 splitted[i] = matchs;
                 let nextSplitters = splitted.slice(i);
                 let subSelector = nextSplitters.join(' ');
-                let s = subSelector.replace(kvNode.key, '[SELF_]');
-                console.log([...hiddens.list]);
-                
-                console.log(s);
-                
-               // console.log(splitted);
-               // console.log(JSON.stringify(hiddens.list));
+                splitted[i] = this.splitselector(subSelector.replace(kvNode, '[SELF_]'), styler, hiddens);
                 hasUcFound = false;
+                splitted = splitted.slice(0, i + 1);
+                break;
+
+            } else {
+                let ntext = splitted[i];
+                ntext = ntext.replace(/◄◘(\d+)◘▀/gm, (r) => {
+                    return '(' + _this.loopMultipleSelectors(hiddens.list[r].selector, styler, hiddens) + ')';
+                });
+                splitted[i] = ntext;
             }
         }
+        splitted = splitted.filter(word => word !== "");
+        let len = splitted.length;
+        let fsel = '';
+       
+        if (hiddens.isForRoot) {
+            fsel = splitted[len - 1];
+            splitted[len - 1] = this.setStamp_shu_____(fsel, /*ATTR_OF.UC.ROOT_STAMP*/'$', "_"+hiddens.root.id);
+        } else {
+            fsel = splitted[0];
+                   
+            switch (len) {
+                case 1:
+                    if (fsel.startsWith('[SELF_]'))
+                        splitted[0] = fsel.replace('[SELF_]', `WRAPPER[${ATTR_OF.UC.ALL}="${styler.uniqStamp}"]`);
+                    else {
+                    
+                        splitted[0] = this.setStamp_shu_____(fsel, /*ATTR_OF.UC.PARENT_STAMP*/'^', styler.uniqStamp+'_');
+                    }
+                    break;
+                default:
+                    if (fsel.startsWith('[SELF_]'))
+                        splitted[0] = fsel.replace('[SELF_]', `WRAPPER[${ATTR_OF.UC.ALL}="${styler.uniqStamp}"]`);
+                    else {
+                        fsel = splitted[len - 1];
+                        splitted[len - 1] = this.setStamp_shu_____(fsel, /*ATTR_OF.UC.PARENT_STAMP*/'^', styler.uniqStamp + '_');
+                    }
+                    break;
+            }
+        }
+       /* fsel = splitted[0];
+        if (fsel.startsWith('[SELF_]')) {
+            splitted[0] = fsel.replace('[SELF_]', `WRAPPER[${ATTR_OF.UC.UC_STAMP}="${styler.uniqStamp}"]`);
+        } else {
+            splitted[0] = `${fsel}`;//this.setStamp_shu_____(fsel, ATTR_OF.UC.UC_STAMP, styler.uniqStamp);
+        }
+        if (len > 1) {
+            let fsel = splitted[len - 1];
+            // splitted[len-1] = this.setStamp_shu_____(fsel, ATTR_OF.UC.PARENT_STAMP, styler.uniqStamp);
+        }*/
+       // console.log(hiddens.scopeSelectorText);
+        
+        splitted.unshift(hiddens.scopeSelectorText!=undefined?hiddens.scopeSelectorText:'');
         return splitted.join(' ');
         //scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions), scopeOpt);
         //return this.parseScopeSeperator_sub(scopeOpt);
 
     }
+    setStamp_shu_____(selector, /*stampKey,*/regxInd:'^'|'$'='^', stampvalue) {
+        let dbl: string[] = selector.split(/ *:: */);
+        let sngl: string[] = dbl[0].split(/ *: */);
+        sngl[0] += `[${ATTR_OF.UC.ALL}${regxInd}="${stampvalue}"]`;
+        dbl[0] = sngl.join(":");
+        return dbl.join("::");
+    }
+
     parseScopeSeperator_sub(scopeOpt: ScopeSelectorOptions): string {
         scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions), scopeOpt);
+        let oldSelector = scopeOpt.selectorText;
         let _this = this;
         let _main = this.main;
         let rtrn: string = "";
@@ -199,7 +281,7 @@ export class SelectorHandler {
                         } else {*/
                         if (calltime == 1) {
                             if (trimedVal.startsWith("[SELF_]")) {
-                                return `${scopeOpt.scopeSelectorText} [${ATTR_OF.UC.UC_STAMP}="${_main.uniqStamp}"]`;  //UNIQUE_STAMP ,_main.stamp  <-- i changed dont know why
+                                return `${scopeOpt.scopeSelectorText} [${ATTR_OF.UC.ALL}="${_main.uniqStamp}"]`;  //UNIQUE_STAMP ,_main.stamp  <-- i changed dont know why
                             } else {
                                 preText = scopeOpt.scopeSelectorText + " ";
                                 return `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
@@ -229,6 +311,8 @@ export class SelectorHandler {
         });
 
         rtrn = rtrn.slice(0, -1);
+        console.log([oldSelector, rtrn]);
+
         return rtrn;
     }
 }

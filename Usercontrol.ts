@@ -3,7 +3,7 @@ import { propOpt, objectOpt, controlOpt, uniqOpt } from "ucbuilder/build/common"
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { UCGenerateMode, ucOptions, UcOptions, UcStates, WhatToDoWithTargetElement } from "ucbuilder/enumAndMore";
-import { userControlStamp, userControlStampRow } from "ucbuilder/global/userControlStamp";
+import { PassElementOptions, userControlStamp, userControlStampRow } from "ucbuilder/global/userControlStamp";
 import { SessionManager } from "ucbuilder/global/SessionManager";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { LoadGlobal } from "ucbuilder/global/loadGlobal";
@@ -176,6 +176,8 @@ export class Usercontrol {
                         ucExt.fileInfo.mainFilePath,
                         ucExt.stampRow.styler, 'WRAPPER');  // param0.targetElement.nodeName
 
+                        ucExt.stampRow.styler.parent = ucExt.PARENT.ucExtends.stampRow.styler;
+               
                 if (param0.targetElement) {
                     newObjectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
                     ucExt.garbageElementsHT = param0.targetElement.children;
@@ -191,7 +193,7 @@ export class Usercontrol {
                 ucExt.parentDependantIndex = pucExt.dependant.length;
                 pucExt.dependant.push(this);
             }
-            ucExt.passElement(controlOpt.getArray(ucExt.wrapperHT)); //.children
+            ucExt.passElement(ucExt.wrapperHT,{ skipTopEle:true }); //.children
             let sizeChangeEvt = ucExt.Events.sizeChanged;
             sizeChangeEvt.Events.onChangeEventList = () => {
                 if (ucExt.resizerObserver == undefined) {
@@ -224,6 +226,8 @@ export class Usercontrol {
             if (ucExt.dialogForm == undefined && pucExt.dialogForm != undefined)
                 ucExt.dialogForm = pucExt.dialogForm;
             ucExt.stageHT = ucExt.wrapperHT;
+            //ucExt.wrapperHT.setAttribute(ATTR_OF.UC.UC_STAMP+"__", ucExt.stampRow.uniqStamp);
+            ucExt.wrapperHT.setAttribute(ATTR_OF.UC.ALL, ucExt.stampRow.uniqStamp);
         },
         resizerObserver: undefined as ResizeObserver,
         finalizeInit: (param0: UcOptions): void => {
@@ -398,9 +402,9 @@ export class Usercontrol {
             }
             return false;
         },
-        passElement: <A = HTMLElement | HTMLElement[]>(ele: A, applySubTree: boolean = true): A => {
+        passElement: <A = HTMLElement | HTMLElement[]>(ele: A, options?: PassElementOptions): A => {
             let uExt = this.ucExtends;
-            uExt.stampRow.passElement(ele, applySubTree);
+            uExt.stampRow.passElement(ele,options);
             return ele;
         },
         designer: {
@@ -416,12 +420,12 @@ export class Usercontrol {
                 if (specific != undefined) {
                     specific.forEach(itmpath => {
                         if (!(itmpath in childs)) {
-                            let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`) as HTMLElement;
+                            let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`) as HTMLElement; // old one `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
                             fillObj(itmpath, ele);
                         }
                     });
                 } else {
-                    let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`)) as HTMLElement[];
+                    let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
                     eleAr.forEach((ele) => {
                         fillObj(ele.getAttribute(propOpt.ATTR.ACCESS_KEY), ele);
                     });

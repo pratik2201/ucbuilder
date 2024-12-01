@@ -27,7 +27,9 @@ const patternList/*: PatternList */ = {
   globalFinderPathPattern: /path=(["'`])([\s\S]*?)\1/gim,
   globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
-  styleCommentRegs: /\/\*([\s\S]*?)\*\//gi,
+  styleMultilineCommentRegs: /\/\*([\s\S]*?)\*\//gi,
+  styleSingleLineCommentRegs:  /\/\/.*/mg,
+ 
   subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gim,
   themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   stylesFilterPattern: /(animation-name|\$[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
@@ -107,7 +109,7 @@ export class StylerRegs {
     this.uniqStamp = "" + StylerRegs.stampCallTimes;
     this.nodeName = "f" + uniqOpt.randomNo();
     this.selectorHandler = new SelectorHandler(this);
-    
+
   }
   selectorHandler: SelectorHandler;
   cssVars: { key: string; value: string }[] = [];
@@ -164,17 +166,17 @@ export class StylerRegs {
     _params.callCounter++;
     let externalStyles: string[] = [];
     let isChffd: boolean = false;
-    let pstamp_key: string = ATTR_OF.UC.PARENT_STAMP;
+    let pstamp_key: string = ''; //ATTR_OF.UC.PARENT_STAMP;
     let pstamp_val: string = _this.uniqStamp;  // _this.stamp  <-- i changed dont know why
+    let _curRoot: RootPathRow = undefined;
     if (_params.isForRoot) {
-      pstamp_key = ATTR_OF.UC.ROOT_STAMP;
-
-      pstamp_val = '' + (
-        _params._rootinfo == undefined
-          ? _this.rootInfo.id
-          : _params._rootinfo.id);
+      //pstamp_key = ATTR_OF.UC.ROOT_STAMP;
+      _curRoot = (_params._rootinfo == undefined) ? _this.rootInfo : _params._rootinfo;
+      //pstamp_val = '' + _curRoot.id;
     }
-    let rtrn: string = _params.data.replace(patternList.styleCommentRegs, "");
+    let rtrn: string = _params.data.replace(patternList.styleMultilineCommentRegs, "");
+    // rtrn = rtrn.replace(patternList.styleSingleLineCommentRegs , "");
+    
     rtrn = rtrn.replace(
       patternList.themeCSSLoader,
       (match: string, code: string, quationMark: string, path: string, offset: any, input_string: string) => {
@@ -236,11 +238,15 @@ export class StylerRegs {
 
           // console.log(sel);
           // console.log(styleContent);
+          //console.log(_params.scopeSelectorText);
+          
           return `${_this.selectorHandler.parseScopeSeperator({
             selectorText: sel,
             scopeSelectorText: _params.scopeSelectorText,
             parent_stamp: pstamp_key,
             parent_stamp_value: pstamp_val,
+            root: _curRoot,
+            isForRoot:_params.isForRoot
           })}{${styleContent}} `;
         } else {
           let changed: boolean = false;
@@ -308,11 +314,14 @@ export class StylerRegs {
                   if (tree != undefined) {
                     let nscope: string =
                       _params.callCounter == 1
-                        ? _this.selectorHandler.parseScopeSeperator({
+                        ? /*_this.selectorHandler.parseScopeSeperator({
                           selectorText: UCselector,
-                          parent_stamp: ATTR_OF.UC.UC_STAMP,  // ATTR_OF.UC.UC_STAMP  <- changed dont know why
+                          scopeSelectorText:_params.scopeSelectorText,
+                          parent_stamp:'',// ATTR_OF.UC.UC_STAMP,  REMOVED  // ATTR_OF.UC.UC_STAMP  <- changed dont know why
                           parent_stamp_value: pstamp_val,
-                        })
+                          root:_curRoot,
+                          isForRoot:_params.isForRoot
+                        })*/`WRAPPER[${ATTR_OF.UC.ALL}='${this.uniqStamp}'] `
                         : _params.scopeSelectorText;
 
                     let css: string = tree.parseStyleSeperator_sub({
@@ -465,144 +474,12 @@ export class StylerRegs {
     },
 
     GETVALUE: (key: string, uniqId: string, code: string, defaultVal: string): string => {
+     
+      
       return ` var(${this.__VAR.getKeyName(key, uniqId, code)},${defaultVal}) `;
     },
   };
-  giveContents(contents) {
-    let oc = new openCloser();
-    let rtrn = oc.doTask('(', ')', contents, (selector, cssStyle, opened) => {
-      if (opened > 1) {
-        if (selector.endsWith(':has')) {
-          cssStyle = this.giveContents(cssStyle);
-        } else {
-          return selector + '(' + cssStyle + ')';
-        }
-      }
-      if (selector.endsWith(':has')) {
-        return selector + '<' + cssStyle + '>';
-      } else {
-        return selector + '(' + cssStyle + ')';
-      }
-
-    });
-    return rtrn;
-  }
-  parseScopeSeperator(scopeOpt:ScopeSelectorOptions): string {
-    scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions),scopeOpt);
-    let oc = new openCloser();
-    let rtrn = oc.doTask('(', ')', scopeOpt.selectorText, (selector, cssStyle, opened) => {
-      if (opened > 1) {
-        if (selector.endsWith(':has')) {
-          cssStyle = this.giveContents(cssStyle);
-        } else {
-          return selector + '(' + cssStyle + ')';
-        }
-      }
-      if (selector.endsWith(':has')) {
-        this.splitselector({
-          selectorText: cssStyle,
-          scopeSelectorText: scopeOpt.scopeSelectorText,
-          parent_stamp: scopeOpt.parent_stamp,
-          parent_stamp_value: scopeOpt.parent_stamp_value,
-        });
-        return selector + '<' +  + '>';
-      } else {
-        return selector + '(' + cssStyle + ')';
-      }
-
-    });
-    
-    let sub = this.parseScopeSeperator_sub({
-      selectorText: scopeOpt.selectorText,
-      scopeSelectorText: scopeOpt.scopeSelectorText,
-      parent_stamp: scopeOpt.parent_stamp,
-      parent_stamp_value: scopeOpt.parent_stamp_value,
-    });
-    return sub;
-  }
-  splitselector(scopeOpt:ScopeSelectorOptions) {
-    scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions),scopeOpt);
-    console.log(this.parseScopeSeperator_sub(scopeOpt));
-    
-    
-  }
-  parseScopeSeperator_sub(scopeOpt:ScopeSelectorOptions): string {    
-    scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions),scopeOpt);
-    let _this = this;
-    let rtrn: string = "";
-    let changed: boolean = false;
-    let trimedVal: string = "";
-    let calltime: number = 0;
-    let preText: string = "";
-    let postText: string = "";
-    let rVal: string = "";
-    //if (selectorText.startsWithI('[SELF_]:focus-within title-text')) debugger;
-    scopeOpt.selectorText.split(",").forEach((s: string) => {
-      changed = false;
-      trimedVal = s.trim();
-      calltime = 0;
-      if (trimedVal == "[SELF_]") {
-        changed = true;
-        calltime++;
-        rVal = `${scopeOpt.scopeSelectorText} ${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`;  //UNIQUE_STAMP ,_this.stamp  <-- i changed dont know why
-      } else {
-      //  console.log(trimedVal);
-      //  console.log(trimedVal.split(' '));
-
-        // trimedVal.split(' ').forEach((val) => {
-        //   changed = true;
-        //   calltime++;
-        //   console.log(val);
-
-        //   if (calltime == 1) {
-        //     /*if (trimedVal.startsWith("[SELF_]")) {
-        //       return `${scopeSelectorText} ${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`; 
-        //     }*/
-        //   }
-        // })
-        rVal = trimedVal.replace(
-          patternList.scopeSelector,
-          (match: string, offset: any, input_string: string) => {
-            changed = true;
-            calltime++;
-
-            /*if (trimedVal == "[SELF_]") {
-              return `${scopeSelectorText} ${_this.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`;  //UNIQUE_STAMP ,_this.stamp  <-- i changed dont know why
-            } else {*/
-            if (calltime == 1) {
-              if (trimedVal.startsWith("[SELF_]")) {
-                return `${scopeOpt.scopeSelectorText} [${ATTR_OF.UC.UC_STAMP}="${_this.uniqStamp}"]`;  //UNIQUE_STAMP ,_this.stamp  <-- i changed dont know why
-              } else {
-                preText = scopeOpt.scopeSelectorText + " ";
-                return `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
-              }
-            } else {
-              preText = scopeOpt.scopeSelectorText;
-              return `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
-            }
-            /*}*/
-            return match;
-          }
-        );
-      }
-      if (!changed) {
-        if (scopeOpt.parent_stamp_value != undefined) {
-          let dbl: string[] = trimedVal.split(/ *:: */);
-          let sngl: string[] = dbl[0].split(/ *: */);
-          sngl[0] += `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
-          dbl[0] = sngl.join(":");
-          rVal = dbl.join("::");
-        } else {
-          rVal = trimedVal;
-        }
-        preText = scopeOpt.scopeSelectorText + " ";
-      }
-      rtrn += preText + "" + rVal + "" + postText + ",";
-    });
-
-    rtrn = rtrn.slice(0, -1);
-    return rtrn;
-  }
+  
 
   pushChild(path: string, node: StylerRegs, nodeName: string): void {
     let key: string = path.toLowerCase();

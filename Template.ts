@@ -244,7 +244,8 @@ export class TemplateNode {
       let element = dta.$();
       //console.log(_this.stampRow);
       
-      _this.stampRow.passElement(element);
+      _this.stampRow.passElement(element,{ skipTopEle:true });
+
       _this.Events.onGenerateNode(element, jsonRow);
       return element;
     },
@@ -280,8 +281,9 @@ export class TemplateNode {
       let eleHT = param0.elementHT;
       tptExt.parentUc = param0.parentUc;
       tptExt.stampRow.styler.wrapperHT = tptExt.parentUc.ucExtends.wrapperHT;
-      
+      tptExt.stampRow.styler.parent = tptExt.parentUc.ucExtends.stampRow.styler;
       tptExt.stampRow.styler.controlName = param0.accessName;
+      
       if (tptExt.parentUc != undefined)
         tptExt.parentUc.ucExtends.stampRow.styler.pushChild(
           param0.source.cfInfo.mainFilePath +
@@ -357,7 +359,7 @@ export class TemplateNode {
         specific.forEach((itmpath) => {
           if (!(itmpath in childs)) {
             let ele = fromElement.querySelector(
-              `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+              `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
             ) as HTMLElement;
             fillObj(itmpath, ele);
           }
@@ -366,7 +368,7 @@ export class TemplateNode {
         let uniqStamp = uExt.extended.stampRow.uniqStamp;
         let eleAr = Array.from(
           fromElement.querySelectorAll(
-            `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+            `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
           )
         ) as HTMLElement[];
         eleAr.forEach((ele) => {
