@@ -12,16 +12,22 @@ export const scopeSelectorOptions: ScopeSelectorOptions = {
         counter: 0,
     }
 };
-
+export interface HiddenScopeKVP{
+    key: string,
+    selector?: string,
+    funcName?: string,
+    value: string
+}
+export interface HiddenScopeNode {
+    list:HiddenScopeKVP[],
+    counter: number
+}
 export interface ScopeSelectorOptions {
     selectorText: string;
     scopeSelectorText?: string;
     parent_stamp: string;
     parent_stamp_value?: string;
-    hiddens?: {
-        list: { key: string, value: string }[],
-        counter: number
-    }
+    hiddens?: HiddenScopeNode
 }
 
 export class SelectorHandler {
@@ -49,72 +55,102 @@ export class SelectorHandler {
         return rtrn;
     }
     parseScopeSeperator(scopeOpt: ScopeSelectorOptions): string {
-        scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions), scopeOpt);
+         scopeOpt = Object.assign(scopeSelectorOptions,scopeOpt );
+        let counter = scopeOpt.hiddens.counter;
         let _this = this;
         if (scopeOpt.selectorText.includes('forms') /*&& sub.indexOf('◄◘') != -1*/) {
-            console.log(_this.main.children);
-            
+            // console.log(_this.main.children);
             debugger;
+            if (counter == 0) {
+                console.log([scopeOpt.parent_stamp,scopeOpt.parent_stamp_value,scopeOpt.scopeSelectorText]);
+                console.log(this.main);
+                
+            }
+ 
+             //debugger;
         }
         let oc = new openCloser();
         //let hiddens: {key:string,value:string}[] = []
         let rtrn = oc.doTask('(', ')', scopeOpt.selectorText, (selector, cssStyle, opened) => {
             if (opened > 1) {
-                if (selector.endsWith(':has')) {           
-                    let s = Object.assign({}, scopeOpt);
-                    s.selectorText = cssStyle;
-                    console.log(cssStyle);
-                    let scss = _this.parseScopeSeperator(s);
-                    scopeOpt.hiddens.counter++;
-                    let key = '◄◘' + scopeOpt.hiddens.counter + '◘▀';
-                    scopeOpt.hiddens.list.push({ key: key, value: '(' + scss + ')' });
+                if (selector.endsWith(':has')) {
+                    scopeOpt.selectorText = cssStyle;
+                    let key = _this.KEY(scopeOpt.hiddens);
+                    cssStyle = _this.parseScopeSeperator(scopeOpt);
+                    scopeOpt.hiddens.list.push({ key: key, selector: cssStyle, funcName: 'has', value: '(' + cssStyle + ')' });
                     return selector + '' + key;
                 } else {
                     return selector + '(' + cssStyle + ')';
                 }
             }
             if (selector.endsWith(':has')) {
-                let scss = this.splitselector({
-                    selectorText: cssStyle,
-                    scopeSelectorText: scopeOpt.scopeSelectorText,
-                    parent_stamp: scopeOpt.parent_stamp,
-                    parent_stamp_value: scopeOpt.parent_stamp_value,
-                });
-                scopeOpt.hiddens.counter++;
-               // debugger;
-                let key = '◄◘' + scopeOpt.hiddens.counter + '◘▀';
-                scopeOpt.hiddens.list.push({ key: key, value: '(' + scss + ')' });
+                //let n = Object.assign({}, scopeOpt);
+                scopeOpt.selectorText = cssStyle;
+                // let scss = cssStyle; // this.parseScopeSeperator_sub(n);
+                let key = _this.KEY(scopeOpt.hiddens);
+                scopeOpt.hiddens.list.push({ key: key, selector: cssStyle, funcName: 'has', value: '(' + cssStyle + ')' });
                 return selector + '' + key;
             } else {
                 return selector + '(' + cssStyle + ')';
             }
 
         });
-      //  console.log(rtrn);
-        let sub = this.parseScopeSeperator_sub({
-            selectorText: rtrn,
-            scopeSelectorText: scopeOpt.scopeSelectorText,
-            parent_stamp: scopeOpt.parent_stamp,
-            parent_stamp_value: scopeOpt.parent_stamp_value,
-        });
-        
-       for (let i = 0,len = scopeOpt.hiddens.list.length; i < len; i++) {
-        const row = scopeOpt.hiddens.list[i];
-        sub = sub.replace(row.key, row.value);
+        //let n = Object.assign({}, scopeOpt);
+        scopeOpt.selectorText = rtrn;
+        if (counter == 0) {
+            rtrn = this.splitselector(rtrn, scopeOpt.hiddens);
+            console.log(rtrn);
+            
+            scopeOpt.hiddens.list.length = 0;
+            scopeOpt.hiddens.counter = 0;
         }
-        scopeOpt.hiddens.list.length = 0;
-        scopeOpt.hiddens.counter = 0;
-        /*let sub = this.parseScopeSeperator_sub({
-            selectorText: scopeOpt.selectorText,
-            scopeSelectorText: scopeOpt.scopeSelectorText,
-            parent_stamp: scopeOpt.parent_stamp,
-            parent_stamp_value: scopeOpt.parent_stamp_value,
-        });*/
-        return sub;
+
+        let sub = this.parseScopeSeperator_sub(scopeOpt);
+        console.log([sub,rtrn]);
+        
+        return rtrn;
     }
-    splitselector(scopeOpt: ScopeSelectorOptions) {
-        scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions), scopeOpt);
-        return this.parseScopeSeperator_sub(scopeOpt);
+    KEY(hiddens: HiddenScopeNode) {
+        hiddens.counter++;
+        return '◄◘' + hiddens.counter + '◘▀';
+    }
+    splitselector(selector: string, hiddens: HiddenScopeNode):string {
+        //console.log(selector, hiddens);     
+        let splitted = selector.split(' ');
+        let hasUcFound = false;
+        let kvNode: HiddenScopeKVP;
+        let _this = this;
+        let nSelector = '';
+        for (let i = 0, len = splitted.length; i < len; i++) {
+            let sel = splitted[i];
+            let matchs = sel.replace(/^in-(\w+)/gm, (s, ucName) => {
+                let styler = _this.main.children.find(s => s.controlName === ucName);
+                hasUcFound = (styler != undefined);
+                if (hasUcFound) {
+                    let nnode = `${styler.nodeName}[${ATTR_OF.UC.UC_STAMP}="${styler.uniqStamp}"]`;
+                    let key = _this.KEY(hiddens);
+                    kvNode = { key: key, value: nnode }
+                    hiddens.list.push(kvNode);
+                    return key;
+                } else return s;
+            });
+            if (hasUcFound) {                
+                splitted[i] = matchs;
+                let nextSplitters = splitted.slice(i);
+                let subSelector = nextSplitters.join(' ');
+                let s = subSelector.replace(kvNode.key, '[SELF_]');
+                console.log([...hiddens.list]);
+                
+                console.log(s);
+                
+               // console.log(splitted);
+               // console.log(JSON.stringify(hiddens.list));
+                hasUcFound = false;
+            }
+        }
+        return splitted.join(' ');
+        //scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions), scopeOpt);
+        //return this.parseScopeSeperator_sub(scopeOpt);
 
     }
     parseScopeSeperator_sub(scopeOpt: ScopeSelectorOptions): string {
@@ -139,7 +175,7 @@ export class SelectorHandler {
                 rVal = `${scopeOpt.scopeSelectorText} ${_main.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_main.uniqStamp}"]`;  //UNIQUE_STAMP ,_main.stamp  <-- i changed dont know why
             } else {
                 //  console.log(trimedVal);
-               // console.log(trimedVal.split(' '));
+                // console.log(trimedVal.split(' '));
 
                 // trimedVal.split(' ').forEach((val) => {
                 //   changed = true;
