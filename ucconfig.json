@@ -1,7 +1,9 @@
 {
-  "outDir": "out",
-  "designerDir": "designer",
-  "paths": {
-    "ucbuilder/*": "./*"
-  }
+    "projectName": "ucbuilder",
+    "rootDir": "D:/projects/electronProjects/ucbuilder",
+    "outDir": "out",
+    "designerDir": "/_designer/",
+    "paths": {
+        "": "./"
+    }
 }

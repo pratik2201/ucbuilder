@@ -3,8 +3,7 @@
     "node_modules"
   ],
   "include": [
-    ".",
-    "./package.json", 
+    "."
   ],
   "compileOnSave": true,
   "compilerOptions": {

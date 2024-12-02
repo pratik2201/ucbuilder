@@ -1,3 +1,5 @@
+import { UcConfig } from "ucbuilder/start";
+
 export interface ReplaceTextRow {
     id?: number;
     originalFinderText: string;
@@ -6,7 +8,7 @@ export interface ReplaceTextRow {
     cssVars?: { key: string, value: string }[];
 }
 export type LocationType = "root" | "out" | "designer";
-export interface LocationOf {
+/*export interface LocationOf {
     outDir: string,
     designerDir: string,
     rootDir: string,
@@ -16,7 +18,7 @@ export const rootDirectoryOf: LocationOf = {
     designerDir: "/",
     rootDir: "",
 
-};
+};*/
 export const replaceTextRow: ReplaceTextRow = {
     id: 0,
     originalFinderText: "",
@@ -37,7 +39,7 @@ export interface RootPathRow {
     defaultLoadAt?: HTMLElement,
     pathType: PathType,
     outputDirectory: string,
-    location: LocationOf,
+    location: UcConfig,
     tInfo: ReplaceTextRow,
 
     cssVars: { key: string, value: string }[],
@@ -52,10 +54,11 @@ export const rootPathRow: RootPathRow = {
     pathType: "none",
     isAlreadyFullPath: false,
     location: {
+        projectName: '',
         outDir: "/",
-
         designerDir: "/",
         rootDir: "",
+        paths:{},
     },
     tInfo: {
         id: 0,

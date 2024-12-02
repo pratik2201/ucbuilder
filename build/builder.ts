@@ -8,7 +8,6 @@ import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { fileWatcher } from "ucbuilder/build/fileWatcher";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 
-
 export class builder {
     static ignoreDirs: string[] = [];
     static dirsToBuild: string[] = [];

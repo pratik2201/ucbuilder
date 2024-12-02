@@ -1,8 +1,9 @@
 import { pathInfo, strOpt } from "ucbuilder/build/common";
-import { replaceTextRow, ReplaceTextRow, LocationOf, RootPathRow, PathType } from "ucbuilder/global/findAndReplace";
+import { replaceTextRow, ReplaceTextRow, RootPathRow, PathType } from "ucbuilder/global/findAndReplace";
 import { rootPathParam, RootPathParam } from 'ucbuilder/enumAndMore';
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { builder } from "ucbuilder/build/builder";
+import { UcConfig } from "ucbuilder/start";
 
 export class rootPathHandler {
 
@@ -44,7 +45,7 @@ export class rootPathHandler {
         }
     }
 
-    static addRoot = (projectName: string, rootDirectoryOf: LocationOf /*replaceAlicesWith: string*/, pera: RootPathParam): boolean => {
+    static addRoot = (projectName: string, rootDirectoryOf: UcConfig /*replaceAlicesWith: string*/, pera: RootPathParam): boolean => {
         let param2 = newObjectOpt.copyProps(pera, rootPathParam);
         let pathAlicesLower = projectName/*.toLowerCase()*/;
         let result = this.checkStatus(pathAlicesLower, rootDirectoryOf.rootDir);

@@ -637,8 +637,9 @@ class jqFeatures {
                 charlist = "\s";
             return this.replace(new RegExp("" + charlist + "$", 'ig'), "");
         }
-        String.prototype.toFilePath = function (): string {
-            return this.replace(/[\\\/]+/gi, "/")._trim_("/");
+        String.prototype.toFilePath = function (trim=true): string {
+            let ns = this.replace(/[\\\/]+/gi, "/");
+            return trim?ns._trim_("/"):ns;
         }
         String.prototype.getDriveFromPath = function (): string | undefined {
             let r = this.match(/^[\w]+?:+/gi);
