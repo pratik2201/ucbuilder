@@ -43,7 +43,7 @@ class intenseGenerator {
             param0.elementHT =
                 (param0.parentUc == undefined) ?
                         rootPathHandler.contentHT :
-                    param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$()) as HTMLElement;
+                    param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$(),{ skipTopEle:true }) as HTMLElement;
         }
         args.push(param0);
         let uc: Template = (new (row.obj)(...args));

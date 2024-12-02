@@ -28,9 +28,9 @@ export const patternList/*: PatternList */ = {
   globalFinderPathPattern: /path=(["'`])([\s\S]*?)\1/gim,
   globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
-  styleMultilineCommentRegs: /\/\*([\s\S]*?)\*\//gi,
-  styleSingleLineCommentRegs:  /\/\/.*/mg,
- 
+  MULTILINE_COMMENT_REGS: /\/\*([\s\S]*?)\*\//gi,
+  SINGLELINE_COMMENT_REGS:  /\/\/.*/mg,
+  SPACE_REMOVER_REGS:/(;|,|:|{|})[\n\r ]*/gi,
   subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gim,
   themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   stylesFilterPattern: /(animation-name|\$[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
@@ -177,8 +177,8 @@ export class StylerRegs {
       _curRoot = (_params._rootinfo == undefined) ? _this.rootInfo : _params._rootinfo;
       //pstamp_val = '' + _curRoot.id;
     }
-    let rtrn: string = _params.data.replace(patternList.styleMultilineCommentRegs, "");
-    // rtrn = rtrn.replace(patternList.styleSingleLineCommentRegs , "");
+    let rtrn: string = _params.data.replace(patternList.MULTILINE_COMMENT_REGS, "");
+     rtrn = rtrn.replace(patternList.SINGLELINE_COMMENT_REGS , "");
     
     rtrn = rtrn.replace(
       patternList.themeCSSLoader,
@@ -213,10 +213,7 @@ export class StylerRegs {
     );
 
     //rtrn = rtrn.trim().replace(/(;|,|{|})[\n\r ]*/gi, "$1 ");   // remove this comment it was old code
-    rtrn = rtrn.trim().replace(/(;|,|{|})[\n\r ]*/gi, "$1 ");   // remove this comment it was old code
-
-    //rtrn = rtrn.trim().replace(/\s+/g, " ");
-    // console.log(rtrn);
+    rtrn = rtrn.trim().replace(patternList.SPACE_REMOVER_REGS, "$1");   // remove this comment it was old code
 
     let extraTextAtBegining = "";
     rtrn = this.opnClsr.doTask(
@@ -242,7 +239,7 @@ export class StylerRegs {
             parent_stamp_value: pstamp_val,
             root: _curRoot,
             isForRoot:_params.isForRoot
-          })}{${styleContent}} `;
+          })}{${styleContent}}`;
         } else {
           let changed: boolean = false;
           //let selList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
@@ -442,8 +439,8 @@ export class StylerRegs {
         }
       }
     );
-
-    return rtrn + " " + externalStyles.join(" ");
+    //rtrn = rtrn.trim().replace(/(;|,|:|{|})[\n\r ]*/gi, "$1");
+    return rtrn + "" + externalStyles.join("");//.trim().replace(/(;|,|{|})[\n\r ]*/gi, "$1");
   }
 
   /*initStampObj(): any {

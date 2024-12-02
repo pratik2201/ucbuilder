@@ -74,7 +74,7 @@ export class RootAndExcludeHandler {
                             } else {
                                 let rInfo = rootPathHandler.getInfoByAlices(
                                     rootAlices  // `@${rootAlices}:`
-                                );
+                                ); 
                                 if (rInfo != undefined) {
                                     externalStyles.push(
                                         _this.main.parseStyleSeperator_sub({

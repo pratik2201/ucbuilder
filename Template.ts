@@ -271,6 +271,7 @@ export class TemplateNode {
         param0.source.cfInfo.style.parse(fpath + ".scss", false);
       }
       param0.source.templateName = tptPathOpt.name;
+   //   debugger;
       tptExt.stampRow = userControlStamp.getStamp(param0.source,false);
       let htEle = tptExt.stampRow.dataHT;
      

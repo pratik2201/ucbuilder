@@ -38,8 +38,11 @@ export class userControlStampRow {
         let ar = controlOpt.getArray(ele);
         for (let index = 0; index < ar.length; index++) {
             let element: HTMLElement = ar[index];
-            if(!option.skipTopEle)
-             element.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
+           
+            if (!option.skipTopEle)
+                element.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
+            
+            
             //element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
            // element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
             //element.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
