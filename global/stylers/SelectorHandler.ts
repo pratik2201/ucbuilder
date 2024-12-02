@@ -42,7 +42,7 @@ export interface ScopeSelectorOptions {
 
 export class SelectorHandler {
     main: StylerRegs;
-    constructor(main) {
+    constructor(main:StylerRegs) {
         this.main = main;
     }
     giveContents(contents) {

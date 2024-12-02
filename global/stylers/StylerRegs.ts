@@ -7,6 +7,7 @@ import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
 import { scopeSelectorOptions, ScopeSelectorOptions, SelectorHandler } from "ucbuilder/global/stylers/SelectorHandler";
+import { RootAndExcludeHandler } from "ucbuilder/global/stylers/RootAndExcludeHandler";
 export type VariableList = { [key: string]: string };
 
 /*interface PatternList {
@@ -23,7 +24,7 @@ export type VariableList = { [key: string]: string };
   rootExcludePattern: RegExp;
 }*/
 
-const patternList/*: PatternList */ = {
+export const patternList/*: PatternList */ = {
   globalFinderPathPattern: /path=(["'`])([\s\S]*?)\1/gim,
   globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
@@ -36,9 +37,9 @@ const patternList/*: PatternList */ = {
   varValuePrinterPattern: /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\)\s*\;/gim,
   varValueGetterPattern: /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
   scopeSelector: /\[SELF_]/gm,
-  rootExcludePattern: /(.*?)(:root|:exclude)/gi,
+  rootExcludePattern: /(\w*)(:root|:exclude)/gi,
 };
-interface StyleSeperatorOptions {
+export interface StyleSeperatorOptions {
   data: string,
   scopeSelectorText?: string,
   callCounter?: number,
@@ -109,9 +110,11 @@ export class StylerRegs {
     this.uniqStamp = "" + StylerRegs.stampCallTimes;
     this.nodeName = "f" + uniqOpt.randomNo();
     this.selectorHandler = new SelectorHandler(this);
+    this.rootAndExcludeHandler = new RootAndExcludeHandler(this);
 
   }
   selectorHandler: SelectorHandler;
+  rootAndExcludeHandler: RootAndExcludeHandler;
   cssVars: { key: string; value: string }[] = [];
 
   LoadGlobalPath(data: string): void {
@@ -159,16 +162,16 @@ export class StylerRegs {
 
   parseStyleSeperator_sub(_args: StyleSeperatorOptions): string {
     let _this = this;
+  
     if (_args.data == undefined) return "";
-    let _params = Object.assign({}, styleSeperatorOptions);
-    _params = Object.assign(_params, _args);
+    let _params = Object.assign(Object.assign({}, styleSeperatorOptions), _args);
 
     _params.callCounter++;
     let externalStyles: string[] = [];
     let isChffd: boolean = false;
     let pstamp_key: string = ''; //ATTR_OF.UC.PARENT_STAMP;
     let pstamp_val: string = _this.uniqStamp;  // _this.stamp  <-- i changed dont know why
-    let _curRoot: RootPathRow = undefined;
+    let _curRoot: RootPathRow = _this.rootInfo;
     if (_params.isForRoot) {
       //pstamp_key = ATTR_OF.UC.ROOT_STAMP;
       _curRoot = (_params._rootinfo == undefined) ? _this.rootInfo : _params._rootinfo;
@@ -221,25 +224,17 @@ export class StylerRegs {
       "}",
       rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
-        if (count == 1) {
+        let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
+       
+        if (excludeContentList.length == 0) {
+          
           let sel = '';
-          //console.log("<==================== ");
           selectorText = selectorText.replace(/(.*?)([^;]*?)$/gim, (m, extraText, slctr) => {
             extraTextAtBegining += " " + extraText;
-            //  console.log([m,extraText, slctr]);
-            //  console.log(slctr);
             sel += slctr;
             return '';
           });
-          sel = sel.trim();
-          //console.log(sel);
-          //if (sel == '[SELF_]:focus-within title-text[SELF_]') debugger;
-          //console.log("=======>  "+_params.scopeSelectorText);
-
-          // console.log(sel);
-          // console.log(styleContent);
-          //console.log(_params.scopeSelectorText);
-          
+          sel = sel.trim();         
           return `${_this.selectorHandler.parseScopeSeperator({
             selectorText: sel,
             scopeSelectorText: _params.scopeSelectorText,
@@ -250,53 +245,54 @@ export class StylerRegs {
           })}{${styleContent}} `;
         } else {
           let changed: boolean = false;
-
-
-          selectorText.split(",").forEach((pselctor: string) => {
-            pselctor.trim().replace(
-              patternList.rootExcludePattern,
-              (match: string, rootAlices: string, nmode: string) => {
-                switch (nmode) {
-                  case ":root":
-                    changed = true;
-                    if (rootAlices == undefined || rootAlices == '') {
-
-                      externalStyles.push(
-                        _this.parseStyleSeperator_sub({
-                          data: _params.scopeSelectorText + styleContent,
-                          callCounter: _params.callCounter,
-                          isForRoot: true,
-                          _rootinfo: undefined
-                        })
-                      );
-                    } else {
-                      /*console.log('-----');
-                      console.log(rootAlices);
-                      console.log(nmode);
-                      console.log(rootPathHandler.getInfoByAlices(
-                        rootAlices  // `@${rootAlices}:`
-                      ));*/
-                      externalStyles.push(
-                        _this.parseStyleSeperator_sub({
-                          data: _params.scopeSelectorText + styleContent,
-                          callCounter: _params.callCounter,
-                          isForRoot: true,
-                          _rootinfo: rootPathHandler.getInfoByAlices(
-                            rootAlices  // `@${rootAlices}:`
-                          ),
-                        })
-                      );
-                    }
-                    break;
-                  case ":exclude":
-                    externalStyles.push(styleContent);
-                    changed = true;
-                    return "";
-                }
-                return "";
-              }
-            );
-          });
+          //let selList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
+          changed = excludeContentList.length != 0;
+          excludeContentList.fillInto(externalStyles);
+          //#region  old
+          // selectorText.split(",").forEach((pselctor: string) => {
+          //   pselctor.trim().replace(
+          //     patternList.rootExcludePattern,
+          //     (match: string, rootAlices: string, nmode: string) => {
+          //       console.log(match);
+               
+          //       switch (nmode) {
+          //         case ":root":
+          //          if (rootAlices == undefined || rootAlices == '') {
+          //           changed = true;
+          //           externalStyles.push(
+          //               _this.parseStyleSeperator_sub({
+          //                 data: _params.scopeSelectorText + styleContent,
+          //                 callCounter: _params.callCounter,
+          //                 isForRoot: true,
+          //                 _rootinfo: undefined
+          //               })
+          //             );
+          //           } else {  
+          //             let rInfo = rootPathHandler.getInfoByAlices(
+          //               rootAlices  // `@${rootAlices}:`
+          //             );
+          //             if (rInfo != undefined) {
+          //               externalStyles.push(
+          //                 _this.parseStyleSeperator_sub({
+          //                   data: _params.scopeSelectorText + styleContent,
+          //                   callCounter: _params.callCounter,
+          //                   isForRoot: true,
+          //                   _rootinfo: rInfo,
+          //                 })
+          //               );
+          //             }
+          //           }
+          //           break;
+          //         case ":exclude":
+          //           externalStyles.push(styleContent);
+          //           changed = true;
+          //           return "";
+          //       }
+          //       return "";
+          //     }
+          //   );
+          // });
+          //#endregion          
           if (!changed) {
             changed = false;
             let trimSelector: string = selectorText.trim();
@@ -354,7 +350,7 @@ export class StylerRegs {
         let uniqId: string = StylerRegs.internalKey;
         switch (scope) {
           case "g":
-            uniqId = '' + this.rootInfo.id;
+            uniqId = '' + _curRoot.id;
             break;
           case "t":
             uniqId = this.stamp;
@@ -382,7 +378,7 @@ export class StylerRegs {
         // debugger;
         switch (scope) {
           case "g":
-            uniqId = '' + _this.rootInfo.id;
+            uniqId = '' + _curRoot.id;
             break;
           case "t":
             uniqId = this.stamp;
@@ -413,7 +409,7 @@ export class StylerRegs {
               case "g":
                 StylerRegs.__VAR.SETVALUE(
                   { __ky: value },
-                  '' + this.rootInfo.id,
+                  '' + _curRoot.id,
                   scope
                 );
                 return "";
