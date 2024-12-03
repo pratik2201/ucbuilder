@@ -2,12 +2,12 @@ import fs from "fs";
 import path from "path";
 
 import alc from "module-alias";
-
 alc.addAlias("ucbuilder", __dirname);
 
-import ucr from "ucbuilder/register";
 
 import { RootPathParam } from "ucbuilder/enumAndMore";
+import ucr from "ucbuilder/register";
+import register from "ucbuilder/register";
 /**
  s(__dirname, {
     addModule: false
@@ -55,7 +55,8 @@ export class ConfigManage {
     private isSubModuleConfigExist(moduleName: string, rootpath: string = this.json.rootDir) {
         return fs.existsSync(this.getSubModuleConfigPath(moduleName, rootpath));
     }
-    private readSubModuleConfig(moduleName: string, rootpath: string = this.json.rootDir) {
+   
+    readSubModuleConfig(moduleName: string, rootpath: string = this.json.rootDir):UcConfig {
         if (this.isSubModuleConfigExist(moduleName, rootpath)) {
             let _pth = this.getSubModuleConfigPath(moduleName, rootpath);
             try {
@@ -140,7 +141,12 @@ export class ConfigManage {
     }
     json: UcConfig;
     isNewGenerated = false;
-    setbypath(dirpath: string) {
+    /**
+     * 
+     * @param dirpath path
+     * @returns rootdir path
+     */
+    setbypath(dirpath: string):string {
         dirpath = dirpath.toFilePath();
         //console.log(dirpath);
         let cinf = this.getConfig(dirpath);
@@ -154,20 +160,44 @@ export class ConfigManage {
                 jsn.projectName = cinf.package['name'];
                 this.updateAliceList();
             }
+            return jsn.rootDir;
         }
     }
 }
-function register(dirpath: string, pera?: RootPathParam): ConfigManage {
+export function registerDir(dirpath: string, pera?: RootPathParam): ConfigManage {
     //console.log('BOLO AMBE MATAKI JAY...\nstarted..');
     let outPutDir = dirpath;
     let config = new ConfigManage();
-    config.setbypath(dirpath);
-    ucr.registar(config.json, pera);
+    let rootDirPath = config.setbypath(dirpath);
+    if (rootDirPath != undefined) {
+        let jsn = config.json;
+        let keys = Object.keys(jsn.paths).filter(s => !s.equalIgnoreCase(jsn.projectName));
+        for (let i = 0; i < keys.length; i++) {
+            const alice = keys[i];
+            const modulepath = rootDirPath+'/'+jsn.paths[alice];
+            const modulename = path.basename(modulepath);
+            let smdl = config.readSubModuleConfig(modulename, rootDirPath);
+            if(smdl!=undefined)ucr.registar(smdl, pera);
+        }
+        ucr.registar(config.json, pera);
+    } else {
+        console.error('ROOT NOT GOT AS ASPECTED...');
+        return undefined;
+        
+    }
     return config;
     //console.log(fpath);
 
 };
-export default register;
-register(__dirname, {
+export default {
+    get Events() { return register.Events; },
+    registar: (
+        dirpath: string,
+        pera?: RootPathParam
+    ) => {
+        return registerDir(dirpath, pera);
+    }
+}
+registerDir(__dirname, {
     addModule: false
 });

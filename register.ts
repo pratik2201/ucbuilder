@@ -5,8 +5,6 @@
 //let _clientPath: string = __dirname.replace(/[\\/]{1,}/g, "/") + '/';
 
 
-
-import path from "path";
 /**
  * INITIALIZE SOME EXTENSION METHOD TO USE.
  */
@@ -55,11 +53,11 @@ class register {
         // console.log(" >>> "+process.cwd());
         rootDirOf = newObjectOpt.copyProps(rootDirOf, ucConfig);
         //if (rootDirOf.outDir == '') rootDirOf.outDir = '/';  //  old code i commented un coment if not work
-        rootDirOf.outDir += '/';
+        rootDirOf.outDir = '/' + rootDirOf.outDir + '/';
         rootDirOf.outDir = rootDirOf.outDir.toFilePath(false);
 
         // if (rootDirOf.designerDir == '') rootDirOf.designerDir = '/'; //  old code i commented un coment if not work
-        rootDirOf.designerDir += '/';
+        rootDirOf.designerDir = '/' + rootDirOf.designerDir + '/';
         rootDirOf.designerDir = rootDirOf.designerDir.toFilePath(false);
 
         rootDirOf.rootDir = rootDirOf.rootDir.toFilePath();
@@ -89,7 +87,7 @@ let ACTIVE_USER_CONTROL: typeof register = undefined;
 //let ACTIVE_USER_CONTROL:register = undefined;
 //debugger;
 
-import s, { ucConfig, UcConfig } from "ucbuilder/start";
+import { ucConfig, UcConfig } from "ucbuilder/start";
 
 /*let res = register.registarMe({
     outDir: "/out/",
