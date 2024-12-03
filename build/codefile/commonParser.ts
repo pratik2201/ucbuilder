@@ -1,14 +1,14 @@
-import { commonGenerator } from 'ucbuilder/build/codefile/commonGenerator';
-import { codeFileInfo } from 'ucbuilder/build/codeFileInfo';
-import { commonRow, CommonRow, Control, ImportClassNode } from 'ucbuilder/build/buildRow.js';
-import { buildOptions, objectOpt, propOpt, ScopeType } from 'ucbuilder/build/common';
-import { FilterContent } from 'ucbuilder/global/filterContent';
-import { FileDataBank } from 'ucbuilder/global/fileDataBank';
-import { AliceManager } from 'ucbuilder/build/codefile/aliceManager';
-import { Template } from 'ucbuilder/Template';
-import { builder } from 'ucbuilder/build/builder';
-import { TemplatePathOptions } from 'ucbuilder/enumAndMore';
-import { ResourcesUC } from 'ucbuilder/ResourcesUC';
+import { commonGenerator } from "ucbuilder/build/codefile/commonGenerator";
+import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
+import { commonRow, CommonRow, Control, ImportClassNode } from "ucbuilder/build/buildRow.js";
+import { buildOptions, objectOpt, propOpt, ScopeType } from "ucbuilder/build/common";
+import { FilterContent } from "ucbuilder/global/filterContent";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { AliceManager } from "ucbuilder/build/codefile/aliceManager";
+import { Template } from "ucbuilder/Template";
+import { builder } from "ucbuilder/build/builder";
+import { TemplatePathOptions } from "ucbuilder/enumAndMore";
+import { ResourcesUC } from "ucbuilder/ResourcesUC";
 
 export class commonParser {
 
@@ -171,10 +171,10 @@ export class commonParser {
                             src: uFInf,
                         }
                         aliceNumber = _this.fillDefImports(uFInf.name, uFInf.mainFileRootPath, aliceNumber, im, ctrlNode);
-                        _row.designer.controls.push(ctrlNode);
+                        _row.designeR.util.controls.push(ctrlNode);
                     }
                 } else {
-                    _row.designer.controls.push({
+                    _row.designeR.util.controls.push({
                         name: nameAttr,
                         proto: proto,
                         scope: scope,

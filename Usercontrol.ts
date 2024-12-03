@@ -57,7 +57,7 @@ export class Usercontrol {
                  else _self.removeAttribute(p.nodeName)*/
             });
     }
-    static get giveMeHug(): string {
+    static get designerToCode(): string {
         let evalExp = /\(@([\w.]*?)\)/gim;
         let thisExp = /(^|\s)(this)(\W|$)/gim;
         return `
@@ -100,7 +100,6 @@ export class Usercontrol {
         session: new SessionManager(),
         stampRow: undefined as userControlStampRow,
         wrapperHT: undefined as HTMLElement,
-        stageHT: undefined as HTMLElement,
         isDialogBox: false as boolean,
         parentDependantIndex: -1 as number,
         dependant: [] as Usercontrol[],
@@ -121,7 +120,25 @@ export class Usercontrol {
             let nodeList = _this.self.querySelectorAll(ar.join(","));
             return Array.from(nodeList) as HTMLElement[];
         },
-        garbageElementsHT: undefined as HTMLCollection,
+        initalComponents: {
+            elements: undefined as HTMLCollection,
+            stageHT: undefined as HTMLElement,
+            changeStage: (newStage: HTMLElement):boolean => {
+                let ucExt = this.ucExtends;
+                if (!this.ucExtends.wrapperHT.contain(newStage)) return false;
+                let initCompo = ucExt.initalComponents;
+                let ctrls: HTMLElement[] = [];
+                for (let index = 0, len = initCompo.elements.length; index < len; index++) {
+                    const node = initCompo.elements[index] as HTMLElement;
+                    if (!node.contains(newStage)) {
+                        newStage.appendChild(node);             
+                    }
+                }    
+                initCompo.stageHT = newStage;
+                return true;
+            }
+        },
+
         setCSS_globalVar: (varList: VariableList /*key: string, value: string*/): void => {
             let _this = this.ucExtends;
             StylerRegs.__VAR.SETVALUE(varList, '' + _this.stampRow.styler.rootInfo.id, 'g');
@@ -176,11 +193,11 @@ export class Usercontrol {
                         ucExt.fileInfo.mainFilePath,
                         ucExt.stampRow.styler, 'WRAPPER');  // param0.targetElement.nodeName
 
-                        ucExt.stampRow.styler.parent = ucExt.PARENT.ucExtends.stampRow.styler;
-               
+                ucExt.stampRow.styler.parent = ucExt.PARENT.ucExtends.stampRow.styler;
+
                 if (param0.targetElement) {
                     newObjectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
-                    ucExt.garbageElementsHT = param0.targetElement.children;
+                    ucExt.initalComponents.elements = param0.targetElement.children;
                     Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
                 } else {
                     Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
@@ -193,7 +210,7 @@ export class Usercontrol {
                 ucExt.parentDependantIndex = pucExt.dependant.length;
                 pucExt.dependant.push(this);
             }
-            ucExt.passElement(ucExt.wrapperHT,{ skipTopEle:true }); //.children
+            ucExt.passElement(ucExt.wrapperHT, { skipTopEle: true }); //.children
             let sizeChangeEvt = ucExt.Events.sizeChanged;
             sizeChangeEvt.Events.onChangeEventList = () => {
                 if (ucExt.resizerObserver == undefined) {
@@ -225,7 +242,7 @@ export class Usercontrol {
                 pucExt.Events.onDataExport(data);
             if (ucExt.dialogForm == undefined && pucExt.dialogForm != undefined)
                 ucExt.dialogForm = pucExt.dialogForm;
-            ucExt.stageHT = ucExt.wrapperHT;
+            ucExt.initalComponents.stageHT = ucExt.wrapperHT;
             //ucExt.wrapperHT.setAttribute(ATTR_OF.UC.UC_STAMP+"__", ucExt.stampRow.uniqStamp);
             ucExt.wrapperHT.setAttribute(ATTR_OF.UC.ALL, ucExt.stampRow.uniqStamp);
         },
@@ -404,7 +421,7 @@ export class Usercontrol {
         },
         passElement: <A = HTMLElement | HTMLElement[]>(ele: A, options?: PassElementOptions): A => {
             let uExt = this.ucExtends;
-            uExt.stampRow.passElement(ele,options);
+            uExt.stampRow.passElement(ele, options);
             return ele;
         },
         designer: {
