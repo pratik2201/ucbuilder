@@ -2,21 +2,7 @@ import { uniqOpt, controlOpt } from 'ucbuilder/build/common';
 import { FocusManager } from 'ucbuilder/global/focusManage';
 import { Usercontrol } from 'ucbuilder/Usercontrol';
 
-export class winContiner {
-    static source: any[] = [];
-    static randomName: string = 'w' + uniqOpt.randomNo();
-    // static mng = new winManager();
-    // static getManager(node: HTML;Element, frame: winFrame): winManager {
-    //     let rtrn: winManager = node.data(this.randomName);
-    //     if (rtrn == undefined) {
-    //         rtrn = new winManager(/*node, */frame);
-    //         node.data(this.randomName, rtrn);
-    //     }
-    //     return rtrn;
-    // }
-}
-
-export class winManager {
+export class WinManager {
     //mainNode: HTMLElement;
     static curIndex: number = 0;
     static CURRENT_WIN: Usercontrol;
@@ -82,7 +68,7 @@ export class winManager {
 
 
             let inertAttr = element.getAttribute("inert");
-            if (inertAttr != null) element.data(winManager.ATTR.INERT.OLD_VALUE, inertAttr);
+            if (inertAttr != null) element.data(WinManager.ATTR.INERT.OLD_VALUE, inertAttr);
             element.setAttribute('inert', 'true');
 
 
@@ -104,7 +90,7 @@ export class winManager {
         } else {
             element.setAttribute('active', '1');
 
-            let inertAttr = element.data(winManager.ATTR.INERT.OLD_VALUE);
+            let inertAttr = element.data(WinManager.ATTR.INERT.OLD_VALUE);
             if (inertAttr != undefined) element.setAttribute('inert', inertAttr);
             else element.removeAttribute('inert');
 

@@ -2,7 +2,7 @@
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { pagerLV } from "ucbuilder/global/listUI/pagerLV";
 import { CommonEvent } from "ucbuilder/global/CommonEvent";
-import { keyBoard } from "ucbuilder/global/hardware/keyboard";
+import { KeyboardKeys } from "ucbuilder/lib/hardware";
 import { getConvertedNames, namingConversion,NamingConversion } from "ucbuilder/global/resizer/namingConversion";
 import { ScrollerType } from "ucbuilder/global/listUI/pager/enumAndMore";
 
@@ -92,25 +92,25 @@ export class newPagerScroll {
 
     doKeyEvent(e: KeyboardEvent) {
         switch (e.keyCode) {
-            case keyBoard.keys.up: // up key
+            case KeyboardKeys.Up: // up key
                 this.navigatePages.moveTo.prevSide.Go(e);
                 break;
-            case keyBoard.keys.down: // down key
+            case KeyboardKeys.Down: // down key
                 
                 this.navigatePages.moveTo.nextSide.Go(e);
                 break;
-            case keyBoard.keys.pageUp: // page up key
+            case KeyboardKeys.PageUp: // page up key
                 this.navigatePages.pageTo.upSide.Go(e);
                 break;
-            case keyBoard.keys.pageDown: // page down key
+            case KeyboardKeys.PageDown: // page down key
                 this.navigatePages.pageTo.downSide.Go(e);
                 break;
-            case keyBoard.keys.end: // end key
+            case KeyboardKeys.End: // end key
                 this.currentIndex = this.length - 1;
                 this.nodes.callToFill();
                 this.nodes.onRendar();
                 break;
-            case keyBoard.keys.home: // home key
+            case KeyboardKeys.Home: // home key
                 this.currentIndex = 0;
                 this.nodes.callToFill();
                 this.nodes.onRendar();

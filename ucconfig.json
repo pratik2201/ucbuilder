@@ -3,6 +3,7 @@
     "rootDir": "D:/projects/electronProjects/ucbuilder",
     "outDir": "out",
     "designerDir": "/_designer/",
+    "type": "ts",
     "paths": {
         "": "./"
     }

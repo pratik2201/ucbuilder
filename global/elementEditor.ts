@@ -1,5 +1,5 @@
 import { controlOpt, uniqOpt, strOpt } from "ucbuilder/build/common";
-import { keyBoard } from "ucbuilder/global/hardware/keyboard";
+import { KeyboardKeys } from "ucbuilder/lib/hardware";
 
 export class ElementEditor {
     htEle: HTMLElement;
@@ -55,18 +55,18 @@ export class ElementEditor {
 
     keydownListener = (event: KeyboardEvent): void => {
         switch (event.keyCode) {
-            case keyBoard.keys.escape:
+            case KeyboardKeys.Escape:
                 this.reset();
                 event.preventDefault();
                 break;
-            case keyBoard.keys.up:
-            case keyBoard.keys.down:
+            case KeyboardKeys.Up:
+            case KeyboardKeys.Down:
                 if (!this.multiline) {
                     this.reset();
                     event.preventDefault();
                 }
                 break;
-            case keyBoard.keys.enter:
+            case KeyboardKeys.Enter:
                 if (this.isInEditMode) {
                     if (this.multiline && event.shiftKey) {
                         event.stopPropagation();

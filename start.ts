@@ -117,6 +117,9 @@ export class ConfigManage {
                 let dta = this.readConfig(orignalRootDir);
                 let isNewConfig = dta == undefined;
                 this.json = isNewConfig ? this.json : dta;
+                console.log(this.json.rootDir + '/tsconfig.json');
+                console.log(fs.existsSync(this.json.rootDir + '/tsconfig.json'));
+                
                 ptype = fs.existsSync(this.json.rootDir + '/tsconfig.json') ? 'ts' : 'js';
                 return { package: packageData, isNewConfig: isNewConfig, type:ptype, outputDir: opPath, rootDir: orignalRootDir };
             }
@@ -150,7 +153,7 @@ export class ConfigManage {
      * @param dirpath path
      * @returns rootdir path
      */
-    setbypath(dirpath: string):string {
+    setbypath(dirpath: string,updateAlices:boolean = true):string {
         dirpath = dirpath.toFilePath();
         //console.log(dirpath);
         let cinf = this.getConfig(dirpath);
@@ -159,11 +162,12 @@ export class ConfigManage {
             cinf.isNewConfig = cinf.isNewConfig;
             if (cinf.isNewConfig) {
                 jsn.outDir = cinf.outputDir;
+                jsn.type = cinf.type;
                 jsn.rootDir = cinf.rootDir;
                 jsn.paths[jsn.projectName] = './';
-                jsn.projectName = cinf.package['name'];
-                this.updateAliceList();
+                jsn.projectName = cinf.package['name'];                
             }
+            if (updateAlices) this.updateAliceList();
             return jsn.rootDir;
         }
     }

@@ -3,7 +3,7 @@ import { loopRegs } from "ucbuilder/build/regs/process/loopRegs";
 import { switchRegs } from "ucbuilder/build/regs/process/switchRegs";
 import { objectOpt } from "ucbuilder/build/common";
 import { patternMatcher } from "ucbuilder/build/regs/patternMatcher";
-import { SourceManage } from "ucbuilder/global/datasources/SourceManage";
+import { SourceManage } from "ucbuilder/lib/datasources/SourceManage";
 
 class regsManage {
     private switchRgx: switchRegs;

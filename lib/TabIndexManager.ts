@@ -1,5 +1,5 @@
 import { propOpt, controlOpt, objectOpt, strOpt } from "ucbuilder/build/common";
-import { keyBoard } from "ucbuilder/global/hardware/keyboard";
+import { KeyboardKeys } from "ucbuilder/lib/hardware";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 
 interface TabIndexRow {
@@ -67,13 +67,16 @@ class TabIndexManager {
         };
         this.Events.onContainerBottomLeave.push(callback);
         let activeElement = startAt == undefined ? container : startAt;
+        let prevActEle = undefined;
         do {
             this.moveNext(activeElement);
             if (TabIndexManager.breakTheLoop) { this.beep(); break; }
             if (activeElement === document.activeElement) TabIndexManager.breakTheLoop = true;
             activeElement = document.activeElement as HTMLElement;
-            if (activeElement === stopAt) TabIndexManager.breakTheLoop = true;
+            if (activeElement === stopAt || prevActEle == activeElement) TabIndexManager.breakTheLoop = true;
+            prevActEle = activeElement;
         } while (!TabIndexManager.breakTheLoop);
+
         TabIndexManager.breakTheLoop = false;
         this.Events.onContainerBottomLeave.RemoveMultiple(callback);
     }
@@ -103,7 +106,7 @@ class TabIndexManager {
         document.addEventListener('keydown', (ev: KeyboardEvent) => {
             let code = ev.keyCode;
             switch (code) {
-                case keyBoard.keys.enter:
+                case KeyboardKeys.Enter:
                     //console.log(Object.getPrototypeOf(ev.target).constructor.name);
                     if (Object.getPrototypeOf(ev.target).constructor.name == 'HTMLTextAreaElement') {
                         let ele = ev.target as HTMLTextAreaElement;
@@ -114,7 +117,7 @@ class TabIndexManager {
                             else ele.value = _val.slice(0, -1);
                         }
                     }
-                case keyBoard.keys.tab:
+                case KeyboardKeys.Tab:
                     // console.log(['before', this.breakTheLoop]);                    
                     if (!ev.shiftKey) {
                         this.status = 'forward';
@@ -126,7 +129,7 @@ class TabIndexManager {
                     this.status = 'none';
                     ev.preventDefault();
                     break;
-                case keyBoard.keys.left:
+                case KeyboardKeys.Left:
                     htEle = ev.target as HTMLElement;
                     tIndex = this.getTindex(htEle);
                     if (tIndex != null) {
@@ -137,7 +140,7 @@ class TabIndexManager {
                         }
                     }
                     break;
-                case keyBoard.keys.right:
+                case KeyboardKeys.Right:
                     htEle = ev.target as HTMLElement;
                     tIndex = this.getTindex(htEle);
                     if (tIndex != null) {

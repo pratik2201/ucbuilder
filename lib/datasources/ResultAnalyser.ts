@@ -1,4 +1,4 @@
-import { RowInfo, SearchStatus, SourceManage } from "ucbuilder/global/datasources/SourceManage";
+import { RowInfo, SearchStatus, SourceManage } from "ucbuilder/lib/datasources/SourceManage";
 
 export class SearchableItemNode {
     private _Text: string;

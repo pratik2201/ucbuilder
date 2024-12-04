@@ -1,7 +1,7 @@
 import { numOpt } from "ucbuilder/build/common";
-import { SourceProperties } from "ucbuilder/global/datasources/PropertiesHandler";
-import { SourceManage } from "ucbuilder/global/datasources/SourceManage";
-import { NodeHandler } from "ucbuilder/global/datasources/NodeHandler";
+import { SourceProperties } from "ucbuilder/lib/datasources/PropertiesHandler";
+import { SourceManage } from "ucbuilder/lib/datasources/SourceManage";
+import { NodeHandler } from "ucbuilder/lib/datasources/NodeHandler";
 
 export class SourceScrollHandler<K = any> {
     source: SourceManage<K>;

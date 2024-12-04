@@ -1,4 +1,4 @@
-import { keyBoard } from "ucbuilder/global/hardware/keyboard";
+import { KeyboardKeys } from "ucbuilder/lib/hardware";
 import { ItemIndexChangeBy, listUiHandler } from "ucbuilder/global/listUI/extended/listUiHandler";
 
 export class ScrollerLV extends listUiHandler {
@@ -47,23 +47,23 @@ export class ScrollerLV extends listUiHandler {
         this.Events.onkeydown = (e: KeyboardEvent): void => {
             
             switch (e.keyCode) {
-                case keyBoard.keys.up: // up key
+                case KeyboardKeys.Up: // up key
                     this.setCurrentIndex(this.currentIndex - 1, e,'Keyboard');
                     e.preventDefault();
                     break;
-                case keyBoard.keys.down: // down key
+                case KeyboardKeys.Down: // down key
                     this.setCurrentIndex(this.currentIndex + 1, e,'Keyboard');
                     e.preventDefault();
                     break;
-                case keyBoard.keys.pageUp: // page up key
+                case KeyboardKeys.PageUp: // page up key
                     break;
-                case keyBoard.keys.pageDown: // page down key
+                case KeyboardKeys.PageDown: // page down key
                     break;
-                case keyBoard.keys.end: // end key
+                case KeyboardKeys.End: // end key
                     this.setCurrentIndex(this.source._rows.length - 1, e,'Keyboard');
                     e.preventDefault();
                     break;
-                case keyBoard.keys.home: // home key
+                case KeyboardKeys.Home: // home key
                     this.setCurrentIndex(0, e,'Keyboard');
                     e.preventDefault();
                     break;

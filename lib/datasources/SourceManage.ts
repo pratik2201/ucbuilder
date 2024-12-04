@@ -1,12 +1,12 @@
 import { uniqOpt } from "ucbuilder/build/common";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { TemplateNode } from "ucbuilder/Template";
-import { ResultAnalyser, SearchableItemNode } from "ucbuilder/global/datasources/ResultAnalyser";
-import { NodeHandler } from "ucbuilder/global/datasources/NodeHandler";
-import { SourceProperties } from "ucbuilder/global/datasources/PropertiesHandler";
-import { SourceScrollHandler } from "ucbuilder/global/datasources/ScrollHandler";
-import { RowGenerator } from "ucbuilder/global/datasources/RowGenerator";
-import { RowHandler } from "ucbuilder/global/datasources/RowHandler";
+import { ResultAnalyser, SearchableItemNode } from "ucbuilder/lib/datasources/ResultAnalyser";
+import { NodeHandler } from "ucbuilder/lib/datasources/NodeHandler";
+import { SourceProperties } from "ucbuilder/lib/datasources/PropertiesHandler";
+import { SourceScrollHandler } from "ucbuilder/lib/datasources/ScrollHandler";
+import { RowGenerator } from "ucbuilder/lib/datasources/RowGenerator";
+import { RowHandler } from "ucbuilder/lib/datasources/RowHandler";
 export const SourceIndexElementAttr = "itmIndx" + uniqOpt.randomNo();
 export enum SearchStatus {
   filterOut = -1,

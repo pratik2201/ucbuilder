@@ -1,8 +1,8 @@
 import { CommonEvent } from "ucbuilder/global/commonEvent";
-import { RowInfo, SourceIndexElementAttr, SourceManage } from "ucbuilder/global/datasources/SourceManage";
-import { SourceProperties } from "ucbuilder/global/datasources/PropertiesHandler";
+import { RowInfo, SourceIndexElementAttr, SourceManage } from "ucbuilder/lib/datasources/SourceManage";
+import { SourceProperties } from "ucbuilder/lib/datasources/PropertiesHandler";
 import { TemplateNode } from "ucbuilder/Template";
-import { SourceScrollHandler } from "ucbuilder/global/datasources/ScrollHandler";
+import { SourceScrollHandler } from "ucbuilder/lib/datasources/ScrollHandler";
 
 export class NodeHandler<K> {
     source: SourceManage<K>;

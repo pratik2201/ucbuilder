@@ -52,6 +52,8 @@ export class CommonEvent<F extends (...arg: any) => any> {
         if (uc != undefined) {
             uc.ucExtends.Events.afterClose.on(() => { 
                 _this._eventList.splice(index, 1);
+                _this.onCounter--;
+                _this.Events.onChangeEventList();
             },undefined);
         }
         this.Events.onChangeEventList();

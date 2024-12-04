@@ -171,10 +171,10 @@ export class commonParser {
                             src: uFInf,
                         }
                         aliceNumber = _this.fillDefImports(uFInf.name, uFInf.mainFileRootPath, aliceNumber, im, ctrlNode);
-                        _row.designeR.util.controls.push(ctrlNode);
+                        _row.designer.controls.push(ctrlNode);
                     }
                 } else {
-                    _row.designeR.util.controls.push({
+                    _row.designer.controls.push({
                         name: nameAttr,
                         proto: proto,
                         scope: scope,

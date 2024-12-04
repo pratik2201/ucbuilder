@@ -4,7 +4,7 @@ import { MouseForMove } from "ucbuilder/global/mouseForMove";
 import { scrollbarHandler } from "ucbuilder/global/listUI/pager/scrollbarHandler";
 import { ScrollerType, ScrollerUIElements, scrollerUIElements } from "ucbuilder/global/listUI/pager/enumAndMore";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
-import { keyBoard } from "ucbuilder/global/hardware/keyboard";
+import { KeyboardKeys } from "ucbuilder/lib/hardware";
 import { timeoutCall } from "ucbuilder/global/timeoutCall";
 import { getConvertedNames, namingConversion, NamingConversion } from "ucbuilder/global/resizer/namingConversion";
 
@@ -87,7 +87,7 @@ export class pagerScroll {
     getComplete(main: scrollbarHandler): void {
         this.main = main;
         this.pagerLv.Records.scrollerElement.addEventListener("keydown", (e: any) => {
-            if (e.keyCode === keyBoard.keys.single_quote) {
+            if (e.keyCode === KeyboardKeys.SingleQuote) {
                 this.doDebug = !this.doDebug;
                 console.log("debug state : " + this.doDebug);
             }

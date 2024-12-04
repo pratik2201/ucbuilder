@@ -4,7 +4,7 @@ import { FilterContent } from "ucbuilder/global/filterContent";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { UCGenerateMode, ucOptions, UcOptions, UcStates, WhatToDoWithTargetElement } from "ucbuilder/enumAndMore";
 import { PassElementOptions, userControlStamp, userControlStampRow } from "ucbuilder/global/userControlStamp";
-import { SessionManager } from "ucbuilder/global/SessionManager";
+import { SessionManager } from "ucbuilder/lib/SessionManager";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
@@ -13,8 +13,8 @@ import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { StylerRegs, VariableList } from "ucbuilder/global/stylers/StylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
-import { winManager } from "ucbuilder/global/winManager";
-import { TabIndexManager } from "ucbuilder/global/tabIndexManager";
+import { WinManager } from "ucbuilder/lib/WinManager";
+import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
 /*export enum ucVisibility{
     inherit = 0,
     visible = 1,
@@ -203,6 +203,7 @@ export class Usercontrol {
                     Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
                 }
             }
+            
             ucExt.loadAt.setValue(param0.decisionForTargerElement, param0.targetElement);
             let pucExt = ucExt.PARENT.ucExtends;
             ucExt.wrapperHT.data(propOpt.ATTR.BASE_OBJECT, this);
@@ -333,7 +334,7 @@ export class Usercontrol {
             if (loadAt.element == undefined) {
                 loadAt.element = _extends.fileInfo.rootInfo.defaultLoadAt;
             }
-            winManager.push(this);
+            WinManager.push(this);
             if (loadAt.element) {
                 switch (loadAt.decision) {
                     case 'replace':
@@ -347,8 +348,8 @@ export class Usercontrol {
                         break;
                 }
             }
-            _extends.passElement(winManager.transperency);
-            _extends.wrapperHT.before(winManager.transperency);
+            _extends.passElement(WinManager.transperency);
+            _extends.wrapperHT.before(WinManager.transperency);
 
 
             if (afterClose)
@@ -410,7 +411,7 @@ export class Usercontrol {
             if (!res.prevent) {
                 this.ucExtends.wrapperHT.delete();
                 if (this.ucExtends.isDialogBox)
-                    winManager.pop();
+                    WinManager.pop();
                 this.ucExtends.Events.afterClose.fire();
                 //setTimeout(() => { 
                 for (const key in _this) _this[key] = null;

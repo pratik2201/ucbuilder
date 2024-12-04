@@ -1,7 +1,7 @@
 import { pathInfo, objectOpt } from "ucbuilder/build/common";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { Usercontrol } from "ucbuilder/Usercontrol";
-import { sessionOptions,SessionOptions } from "ucbuilder/enumAndMore";
+import { sessionOptions, SessionOptions } from "ucbuilder/enumAndMore";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 
 class SessionManager {
@@ -25,7 +25,7 @@ class SessionManager {
         if (this.autoLoadSession) {
             if (this.options.addNodeToParentSession) {
                 let parent = ext.PARENT;
-                if (!parent.ucExtends.session.has(this.options.uniqueIdentity) && !ext.isForm) {
+                if (!ext.isForm && !parent.ucExtends.session.has(this.options.uniqueIdentity)) {
                     parent.ucExtends.session.set(this.options.uniqueIdentity, this._source);
                     this.parentSource = parent.ucExtends.session.source;
                 }
@@ -51,6 +51,7 @@ class SessionManager {
         this.callmeOnNextexParent = callmeOnNextexParent;
         this.parentSource = newParent;
     }
+
 
     autoLoadSession: boolean = true;
 
@@ -118,7 +119,7 @@ class SessionManager {
             let ssn = this.setSession(JSON.parse(data));
             this.main.ucExtends.formExtends.Events.completeSessionLoad.fire();
             return ssn;
-        } else { 
+        } else {
             this.main.ucExtends.Events.newSessionGenerate.fire();
             return false;
         }

@@ -1,4 +1,4 @@
-import { TabIndexManager } from "ucbuilder/global/tabIndexManager";
+import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 
 export class FocusManager {

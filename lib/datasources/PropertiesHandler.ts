@@ -1,4 +1,4 @@
-import { SourceManage, SearchStatus, RowInfo } from "ucbuilder/global/datasources/SourceManage";
+import { SourceManage, SearchStatus, RowInfo } from "ucbuilder/lib/datasources/SourceManage";
 import { Size } from "ucbuilder/global/drawing/shapes";
 import { TemplateNode } from "ucbuilder/Template";
 interface PosNode {

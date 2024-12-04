@@ -1,8 +1,8 @@
 import { TemplateNode } from "ucbuilder/Template";
-import { NodeHandler } from "ucbuilder/global/datasources/NodeHandler";
-import { SourceProperties } from "ucbuilder/global/datasources/PropertiesHandler";
-import { SourceScrollHandler } from "ucbuilder/global/datasources/ScrollHandler";
-import { RowInfo, SourceManage } from "ucbuilder/global/datasources/SourceManage";
+import { NodeHandler } from "ucbuilder/lib/datasources/NodeHandler";
+import { SourceProperties } from "ucbuilder/lib/datasources/PropertiesHandler";
+import { SourceScrollHandler } from "ucbuilder/lib/datasources/ScrollHandler";
+import { RowInfo, SourceManage } from "ucbuilder/lib/datasources/SourceManage";
 import { Size } from "ucbuilder/global/drawing/shapes";
 
 export class RowHandler<K> {

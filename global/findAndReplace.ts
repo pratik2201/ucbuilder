@@ -58,6 +58,7 @@ export const rootPathRow: RootPathRow = {
         outDir: "/",
         designerDir: "/",
         rootDir: "",
+        type:'js',
         paths:{},
     },
     tInfo: {
