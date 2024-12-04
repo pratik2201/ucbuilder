@@ -21,6 +21,7 @@ export interface UcConfig {
     rootDir: string,
     designerDir: string,
     outDir: string,
+    type:'js'|'ts',
     paths: {
         [key: string]: string,
     },
@@ -30,6 +31,7 @@ export const ucConfig: UcConfig = {
     rootDir: "",
     outDir: "/",
     designerDir: '/_designer/',
+    type:'js',
     paths: {
 
     }
@@ -85,8 +87,9 @@ export class ConfigManage {
         let rpath = this.getUcConfigPath(cfg.rootDir);
         fs.writeFileSync(rpath, JSON.stringify(cfg, null, 4), 'binary');
     }
-    private getConfig(dirpath: string): { package: {}, isNewConfig: boolean, outputDir: string, rootDir: string } | undefined {
+    private getConfig(dirpath: string): { package: {}, isNewConfig: boolean, type:'js'|'ts', outputDir: string, rootDir: string } | undefined {
         let isPackageFound = false;
+        let ptype: 'js' | 'ts' = 'js';
         let _rootDir = dirpath;
         do {
             if (!this.isPackageJsonExist(_rootDir)) {
@@ -114,7 +117,8 @@ export class ConfigManage {
                 let dta = this.readConfig(orignalRootDir);
                 let isNewConfig = dta == undefined;
                 this.json = isNewConfig ? this.json : dta;
-                return { package: packageData, isNewConfig: isNewConfig, outputDir: opPath, rootDir: orignalRootDir };
+                ptype = fs.existsSync(this.json.rootDir + '/tsconfig.json') ? 'ts' : 'js';
+                return { package: packageData, isNewConfig: isNewConfig, type:ptype, outputDir: opPath, rootDir: orignalRootDir };
             }
             return undefined;
         }
