@@ -91,7 +91,7 @@ export class commonParser {
             aliceNumber = this.fillDefImports('Template, TemplateNode', 'ucbuilder/Template', aliceNumber, im);
             aliceNumber = this.fillDefImports('intenseGenerator', 'ucbuilder/intenseGenerator', aliceNumber, im);
             aliceNumber = this.fillDefImports('TptOptions, templatePathOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
-            aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/global/stylers/StylerRegs', aliceNumber, im);
+            aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/lib/stylers/StylerRegs', aliceNumber, im);
             _row.designer.baseClassName = "Template";
             let subTemplates = Template.getTemplates.byDirectory(filePath) as TemplatePathOptions[];
             let tpts = _row.designer.templetes;
@@ -133,7 +133,7 @@ export class commonParser {
             aliceNumber = this.fillDefImports('Usercontrol', 'ucbuilder/Usercontrol', aliceNumber, im);
             aliceNumber = this.fillDefImports('intenseGenerator', 'ucbuilder/intenseGenerator', aliceNumber, im);
             aliceNumber = this.fillDefImports('UcOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
-            aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/global/stylers/StylerRegs', aliceNumber, im);
+            aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/lib/stylers/StylerRegs', aliceNumber, im);
             elem.forEach((ele) => {
                 let nameAttr = ele.getAttribute(propOpt.ATTR.ACCESS_KEY);
                 let nodeName = ele.nodeName;

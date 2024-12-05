@@ -13,7 +13,7 @@ type ResultCallback = (returnedValue: any) => boolean;
 const resultCallback: ResultCallback = (returnedValue: any) => false;
 type Parameter<T> = T extends (...arg: infer T) => any ? T : never;
 type CtorType<T> = { new (): T;  };  // GET CLASS REFERENCE OF GIVEN CLASS    
-export class CommonEvent<F extends (...arg: any) => any> {
+export class CommonEvent<F extends (...arg: any) => void> {
     isSingleEvent: boolean = false;
    
     Events = {
@@ -79,12 +79,19 @@ export class CommonEvent<F extends (...arg: any) => any> {
     get length(): number {
         return this._eventList.length;
     }
-
-    fire(args:Parameter<F>|void): void {
-        this._eventList.forEach(s => {
-            s.callback.apply(this, args);
-        });
+    /**
+     * @returns `true` if any of callback from list returned `true` 
+     */
+    fire(args: Parameter<F> | void): boolean {
+        let elist = this._eventList;
+        let handeled = false;
+        for (let i = 0, len = elist.length; i < len; i++) {
+            const s = elist[i];
+            let rval = s.callback.apply(this, args);
+            if (rval === true) { handeled = true; break; }
+        }
         this.Events.afterFireCallbacks();
+        return handeled;
     }
 
     fireWithResult(

@@ -6,7 +6,7 @@ import { UcOptions, ucOptions, TptOptions, tptOptions, WrapperNodeNameAs } from 
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { objectOpt, propOpt } from "ucbuilder/build/common";
 import { UcRendarer } from "ucbuilder/build/UcRendarer";
-import { StylerRegs, VariableList } from "ucbuilder/global/stylers/StylerRegs";
+import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 //import { createRequire, Module } from "module";
 

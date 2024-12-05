@@ -15,7 +15,8 @@ class FilterContent {
             input_string: string
         ): string {
             isReplaced = true;
-            //runtimeOpt_1.ATTR_OF.UC.UNIQUE_STAMP
+            //runtimeOpt_1.ATTR_OF.UC.UNIQUE_STAMP            
+            //return `${selector.trim()}${ATTR_OF.setParent(_guid)}${seperator}${pseudo}`;
             return `${selector.trim()}[${ATTR_OF.UC.ALL}^='${_guid}_']${seperator}${pseudo}`;  // old one `${selector.trim()}[${ATTR_OF.UC.UNIQUE_STAMP}='${_guid}']${seperator}${pseudo}`
         });
         if (isReplaced) return rtrn;

@@ -4,8 +4,8 @@ import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { StylerRegs, VariableList } from "ucbuilder/global/stylers/StylerRegs";
-import { userControlStampRow, userControlStamp, } from "ucbuilder/global/userControlStamp";
+import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
+import { userControlStampRow, UserControlStamp, } from "ucbuilder/lib/UserControlStamp";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { tptOptions, TemplatePathOptions, templatePathOptions, TptOptions } from "ucbuilder/enumAndMore";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
@@ -272,7 +272,7 @@ export class TemplateNode {
       }
       param0.source.templateName = tptPathOpt.name;
    //   debugger;
-      tptExt.stampRow = userControlStamp.getStamp(param0.source,false);
+      tptExt.stampRow = UserControlStamp.getStamp(param0.source,false);
       let htEle = tptExt.stampRow.dataHT;
      
       Array.from(tptExt.stampRow.dataHT.attributes)

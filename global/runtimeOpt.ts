@@ -31,11 +31,29 @@ export const attrOfUC: AttrOfUC = {
 }
 
 export const ATTR_OF = {
+    setUc: (u: string): string => {
+        return "." + ATTR_OF.UC.UC_STAMP + "" + u;
+    },
+    setParent: (u: string): string => {
+        return "." + ATTR_OF.UC.CLASS_PARENT + "" + u;
+    }, setRoot: (u: string): string => {
+        return "." + ATTR_OF.UC.CLASS_ROOT + "" + u;
+    },
+    getParent: (p: string, r: string): string[] => {
+        return [ATTR_OF.UC.CLASS_PARENT + "" + p, ATTR_OF.UC.CLASS_ROOT + "" + r]
+    },
+    getUc: (u: string): string => {
+        return ATTR_OF.UC.UC_STAMP + "" + u;
+    },
     UC: Object.freeze({
         ALL: "all" + uniqOpt.randomNo(),
         UC_STAMP: "uc" + uniqOpt.randomNo(),
+        CLASS_PARENT: "parent" + uniqOpt.randomNo(),
+        CLASS_ROOT: "root" + uniqOpt.randomNo(),
+
+
         //PARENT_STAMP: "parent" + uniqOpt.randomNo(),
-       // UNIQUE_STAMP: "uniq" + uniqOpt.randomNo(),
+        // UNIQUE_STAMP: "uniq" + uniqOpt.randomNo(),
         //ROOT_STAMP: "root" + uniqOpt.randomNo(),
     }),
 };

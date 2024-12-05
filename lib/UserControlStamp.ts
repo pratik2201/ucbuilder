@@ -1,16 +1,16 @@
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { pathInfo, controlOpt } from "ucbuilder/build/common";
-import { sourceOptions,SourceOptions, StringExchangerCallback } from "ucbuilder/enumAndMore";
+import { sourceOptions, SourceOptions, StringExchangerCallback } from "ucbuilder/enumAndMore";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { StylerRegs } from "ucbuilder/global/stylers/StylerRegs";
-export interface PassElementOptions{
+import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
+export interface PassElementOptions {
     applySubTree?: boolean;
     skipTopEle?: boolean;
 }
-const passElementOptions:PassElementOptions = {
+const passElementOptions: PassElementOptions = {
     applySubTree: true,
-    skipTopEle:false
+    skipTopEle: false
 }
 export class userControlStampRow {
     cInfo: codeFileInfo;
@@ -26,32 +26,34 @@ export class userControlStampRow {
     }
 
     passElement = <A = HTMLElement | HTMLElement[]>(ele: A, options?: PassElementOptions): string[] => {
-        let option = Object.assign(Object.assign({},passElementOptions), options);
+        let option = Object.assign(Object.assign({}, passElementOptions), options);
         let stamplist: string[] = [];
         let stmpTxt: string = this.stamp;
         let stmpUnq: string = this.uniqStamp;
         if (this.cInfo.rootInfo == undefined)
             console.log(this.cInfo);
         let stmpRt = '' + this.cInfo.rootInfo.id;
-       
+
         //let ar: NodeListOf<HTMLElement> = ele.querySelectorAll("*");
         let ar = controlOpt.getArray(ele);
         for (let index = 0; index < ar.length; index++) {
             let element: HTMLElement = ar[index];
-           
-            if (!option.skipTopEle)
+
+            if (!option.skipTopEle) {
                 element.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
-            
-            
+                //element.classList.add(...ATTR_OF.getParent(stmpUnq, stmpRt));
+            }
+
             //element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
-           // element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
+            // element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
             //element.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
             if (option.applySubTree) {
                 element.querySelectorAll("*")
                     .forEach((s) => {
                         s.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
-                       //s.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
-                       // s.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
+                       // s.classList.add(...ATTR_OF.getParent(stmpUnq, stmpRt));
+                        //s.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
+                        // s.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
                         //s.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
                     });
             }
@@ -59,7 +61,7 @@ export class userControlStampRow {
         return stamplist;
     }
 }
-export class userControlStamp {
+export class UserControlStamp {
     static stampNo: number = 0;
     static source: userControlStampRow[] = [];
     static stampCallTimes: number = 0;
@@ -107,7 +109,7 @@ export class userControlStamp {
         }
         return rtrn;
     }
-    
+
     static reload(rtrn: userControlStampRow, callback: StringExchangerCallback, param0: SourceOptions) {
         rtrn.content = rtrn.content.replace(/^\s*<([\w\.:-]*?)([\S\s]*?)<\/\1>\s*$/g,
             (match: string, otag: string, contents: string, ctag: string) => {
@@ -115,22 +117,23 @@ export class userControlStamp {
                     case 'targetElement': rtrn.styler.nodeName = param0.targetElementNodeName; break;
                     case 'wrapper': rtrn.styler.nodeName = otag; break;
                 }*/
-                   
+
                 rtrn.styler.nodeName = otag;
                 let newNodeName: string = rtrn.styler.nodeName;
                 return `<${newNodeName} ${ATTR_OF.UC.ALL}="${rtrn.uniqStamp}"  ${contents}</${newNodeName}>`; //   x-tabindex="-1"
             });
 
-        rtrn.content = rtrn.styler.parseStyle(rtrn.content);        
+        rtrn.content = rtrn.styler.parseStyle(rtrn.content);
         if (callback != undefined) rtrn.content = callback(rtrn.content);
-        
+
         rtrn.dataHT = rtrn.content.$();
+        //rtrn.dataHT.classList.add(ATTR_OF.getUc(rtrn.uniqStamp));
         if (!rtrn.dataHT.hasAttribute('x-tabindex')) {
             rtrn.dataHT.setAttribute('x-tabindex', '-1');
             rtrn.content = rtrn.dataHT.outerHTML;
         }
 
-       // if (!rtrn.dataHT.hasAttribute('x-allowtabindex'))
-       //     rtrn.dataHT.setAttribute('x-allowtabindex', '0');
+        // if (!rtrn.dataHT.hasAttribute('x-allowtabindex'))
+        //     rtrn.dataHT.setAttribute('x-allowtabindex', '0');
     }
 }

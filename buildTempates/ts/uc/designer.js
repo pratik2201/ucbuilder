@@ -83,7 +83,6 @@ export class {=designer.className } extends Usercontrol {
                             targetElement : CONTROLS.{=name} 
                         });
             this.{=name }.ucExtends.show();
-            this.{=name }.ucExtends.visibility = 'inherit';
         ` 
              [/case]`    
         `{/switch}``{/loop}`

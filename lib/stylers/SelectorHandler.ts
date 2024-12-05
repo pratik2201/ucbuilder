@@ -1,7 +1,7 @@
 
 import { openCloser } from "ucbuilder/global/openCloser";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { StylerRegs } from "ucbuilder/global/stylers/StylerRegs";
+import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
 import { RootPathRow } from "ucbuilder/global/findAndReplace";
 export const scopeSelectorOptions: ScopeSelectorOptions = {
     selectorText: "",
@@ -185,25 +185,25 @@ export class SelectorHandler {
        
         if (hiddens.isForRoot) {
             fsel = splitted[len - 1];
-            splitted[len - 1] = this.setStamp_shu_____(fsel, /*ATTR_OF.UC.ROOT_STAMP*/'$', "_"+hiddens.root.id);
+            splitted[len - 1] = this.setStamp_shu_____(fsel,  '$', "_"+hiddens.root.id);  // ATTR_OF.UC.CLASS_ROOT+''+hiddens.root.id
         } else {
             fsel = splitted[0];
                    
             switch (len) {
                 case 1:
                     if (fsel.startsWith('[SELF_]'))
-                        splitted[0] = fsel.replace('[SELF_]', `WRAPPER[${ATTR_OF.UC.ALL}="${styler.uniqStamp}"]`);
+                        splitted[0] = fsel.replace('[SELF_]',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.uniqStamp}"]`);  //`WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
                     else {
                     
-                        splitted[0] = this.setStamp_shu_____(fsel, /*ATTR_OF.UC.PARENT_STAMP*/'^', styler.uniqStamp+'_');
+                        splitted[0] = this.setStamp_shu_____(fsel,  '^', styler.uniqStamp+'_');  //ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
                     }
                     break;
                 default:
                     if (fsel.startsWith('[SELF_]'))
-                        splitted[0] = fsel.replace('[SELF_]', `WRAPPER[${ATTR_OF.UC.ALL}="${styler.uniqStamp}"]`);
+                        splitted[0] = fsel.replace('[SELF_]',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.uniqStamp}"]` );  //   // `WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
                     else {
                         fsel = splitted[len - 1];
-                        splitted[len - 1] = this.setStamp_shu_____(fsel, /*ATTR_OF.UC.PARENT_STAMP*/'^', styler.uniqStamp + '_');
+                        splitted[len - 1] = this.setStamp_shu_____(fsel, '^', styler.uniqStamp + '_');  // ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
                     }
                     break;
             }
@@ -226,9 +226,10 @@ export class SelectorHandler {
         //return this.parseScopeSeperator_sub(scopeOpt);
 
     }
-    setStamp_shu_____(selector, /*stampKey,*/regxInd:'^'|'$'='^', stampvalue) {
+    setStamp_shu_____(selector, /*classes*/ regxInd:'^'|'$'='^', stampvalue) {
         let dbl: string[] = selector.split(/ *:: */);
         let sngl: string[] = dbl[0].split(/ *: */);
+        //sngl[0] += `.${classes}`;
         sngl[0] += `[${ATTR_OF.UC.ALL}${regxInd}="${stampvalue}"]`;
         dbl[0] = sngl.join(":");
         return dbl.join("::");

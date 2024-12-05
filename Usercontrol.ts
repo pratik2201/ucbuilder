@@ -3,14 +3,14 @@ import { propOpt, objectOpt, controlOpt, uniqOpt } from "ucbuilder/build/common"
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { UCGenerateMode, ucOptions, UcOptions, UcStates, WhatToDoWithTargetElement } from "ucbuilder/enumAndMore";
-import { PassElementOptions, userControlStamp, userControlStampRow } from "ucbuilder/global/userControlStamp";
+import { PassElementOptions, UserControlStamp, userControlStampRow } from "ucbuilder/lib/UserControlStamp";
 import { SessionManager } from "ucbuilder/lib/SessionManager";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { LoadGlobal } from "ucbuilder/global/loadGlobal";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
-import { StylerRegs, VariableList } from "ucbuilder/global/stylers/StylerRegs";
+import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { WinManager } from "ucbuilder/lib/WinManager";
@@ -101,6 +101,7 @@ export class Usercontrol {
         stampRow: undefined as userControlStampRow,
         wrapperHT: undefined as HTMLElement,
         isDialogBox: false as boolean,
+        keepVisible: false as boolean,
         parentDependantIndex: -1 as number,
         dependant: [] as Usercontrol[],
         isForm: false,
@@ -123,17 +124,18 @@ export class Usercontrol {
         initalComponents: {
             elements: undefined as HTMLCollection,
             stageHT: undefined as HTMLElement,
-            changeStage: (newStage: HTMLElement):boolean => {
+            changeStage: (newStage: HTMLElement): boolean => {
                 let ucExt = this.ucExtends;
                 if (!this.ucExtends.wrapperHT.contain(newStage)) return false;
                 let initCompo = ucExt.initalComponents;
+                let arL = Array.from(initCompo.elements);
                 let ctrls: HTMLElement[] = [];
-                for (let index = 0, len = initCompo.elements.length; index < len; index++) {
-                    const node = initCompo.elements[index] as HTMLElement;
+                for (let index = 0, len = arL.length; index < len; index++) {
+                    const node = arL[index] as HTMLElement;
                     if (!node.contains(newStage)) {
-                        newStage.appendChild(node);             
+                        newStage.appendChild(node);
                     }
-                }    
+                }
                 initCompo.stageHT = newStage;
                 return true;
             }
@@ -173,7 +175,7 @@ export class Usercontrol {
 
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             //param0.source.addTabIndex = ucExt.isForm;
-            ucExt.stampRow = userControlStamp.getStamp(param0.source);
+            ucExt.stampRow = UserControlStamp.getStamp(param0.source);
             ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true) as HTMLElement;
             //console.log(param0.targetElement.nodeName);
             ucExt.stampRow.styler.controlName = param0.accessName;
@@ -194,16 +196,17 @@ export class Usercontrol {
                         ucExt.stampRow.styler, 'WRAPPER');  // param0.targetElement.nodeName
 
                 ucExt.stampRow.styler.parent = ucExt.PARENT.ucExtends.stampRow.styler;
-
                 if (param0.targetElement) {
-                    newObjectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
                     ucExt.initalComponents.elements = param0.targetElement.children;
+                    if (param0.decisionForTargerElement == 'replace')
+                        newObjectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
+
                     Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
                 } else {
                     Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
                 }
             }
-            
+
             ucExt.loadAt.setValue(param0.decisionForTargerElement, param0.targetElement);
             let pucExt = ucExt.PARENT.ucExtends;
             ucExt.wrapperHT.data(propOpt.ATTR.BASE_OBJECT, this);
@@ -245,7 +248,11 @@ export class Usercontrol {
                 ucExt.dialogForm = pucExt.dialogForm;
             ucExt.initalComponents.stageHT = ucExt.wrapperHT;
             //ucExt.wrapperHT.setAttribute(ATTR_OF.UC.UC_STAMP+"__", ucExt.stampRow.uniqStamp);
+            //console.log(ucExt.wrapperHT.children);
+
+
             ucExt.wrapperHT.setAttribute(ATTR_OF.UC.ALL, ucExt.stampRow.uniqStamp);
+            //ucExt.wrapperHT.classList.add(ATTR_OF.getUc(ucExt.stampRow.uniqStamp));
         },
         resizerObserver: undefined as ResizeObserver,
         finalizeInit: (param0: UcOptions): void => {
@@ -282,9 +289,8 @@ export class Usercontrol {
         visibility: 'inherit' as ucVisibility,
         getVisibility: (): ucVisibility => {
             let ext = this.ucExtends;
-            if (ext.visibility != 'inherit') return ext.visibility;
-            if (ext.isForm) return ext.visibility;
-            return ext.PARENT.ucExtends.visibility;
+            return (ext.isForm || ext.visibility != 'inherit') ?
+                ext.visibility : ext.PARENT.ucExtends.visibility;
         },
         hide: () => {
             this.ucExtends.visibility = 'hidden';
@@ -348,8 +354,8 @@ export class Usercontrol {
                         break;
                 }
             }
-            _extends.passElement(WinManager.transperency);
-            _extends.wrapperHT.before(WinManager.transperency);
+            //_extends.passElement(WinManager.transperency);
+            //_extends.wrapperHT.before(WinManager.transperency);
 
 
             if (afterClose)
@@ -393,6 +399,8 @@ export class Usercontrol {
             captionChanged: new CommonEvent<(newCaptionText: string) => void>(),
             winStateChanged: new CommonEvent<(state: UcStates) => void>(),
             activate: new CommonEvent<() => void>(),
+            beforeFreez: new CommonEvent<(newUc: Usercontrol) => void>(),
+            beforeUnFreez: new CommonEvent<(oldUc: Usercontrol) => void>(),
             loaded: new CommonEvent<() => void>(),
             loadLastSession: new CommonEvent<() => void>(),
             _newSessionGenerate: new CommonEvent<() => void>(),
@@ -439,11 +447,13 @@ export class Usercontrol {
                     specific.forEach(itmpath => {
                         if (!(itmpath in childs)) {
                             let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`) as HTMLElement; // old one `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+                            //let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}']${ATTR_OF.setParent(uniqStamp)}`) as HTMLElement; 
                             fillObj(itmpath, ele);
                         }
                     });
                 } else {
                     let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+                    //let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]${ATTR_OF.setParent(uniqStamp)}`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
                     eleAr.forEach((ele) => {
                         fillObj(ele.getAttribute(propOpt.ATTR.ACCESS_KEY), ele);
                     });

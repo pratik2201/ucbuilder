@@ -6,8 +6,8 @@ import { openCloser } from "ucbuilder/global/openCloser";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
-import { scopeSelectorOptions, ScopeSelectorOptions, SelectorHandler } from "ucbuilder/global/stylers/SelectorHandler";
-import { RootAndExcludeHandler } from "ucbuilder/global/stylers/RootAndExcludeHandler";
+import { scopeSelectorOptions, ScopeSelectorOptions, SelectorHandler } from "ucbuilder/lib/stylers/SelectorHandler";
+import { RootAndExcludeHandler } from "ucbuilder/lib/stylers/RootAndExcludeHandler";
 export type VariableList = { [key: string]: string };
 
 /*interface PatternList {
