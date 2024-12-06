@@ -255,11 +255,12 @@ export class SourceManage<K> extends Array<K> {
     if (containerHeight == 0) return { index: botomIndex, size: 0, status: 'undefined' };
     let h = 0, size = 0, rInfo: RowInfo<K>, akey = SourceManage.ACCESS_KEY,
       gen = this.generator;
-    for (; i >= 0; i--) {
+    for (; i >= 0; ) {
       rInfo = this[i][akey] as RowInfo<K>;
       h = gen.takeMeasurement(rInfo).height;
       size += h;
       if (size > containerHeight) { break; }
+      i--;
     }
     size = overflowed ? size : size - h;
     botomIndex = overflowed ? i : i + 1;

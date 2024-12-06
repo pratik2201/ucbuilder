@@ -38,7 +38,7 @@ export class RowGenerator<K> {
             rowInfo = new RowInfo<K>();
             rowInfo.row = row;
             row[SourceManage.ACCESS_KEY] = rowInfo;
-        } 
+        }
         return rowInfo;
     }
     private generateFull(row: K, elementIndex: number = -1, tpt: TemplateNode = this.nodes.template) {
@@ -57,12 +57,20 @@ export class RowGenerator<K> {
     }
     private _measurement(rowInfo: RowInfo<K>) {
         let ele = rowInfo.element;
-        let cmp = window.getComputedStyle(ele);
-        rowInfo.height = Size.getFullHeight(cmp) || ele.offsetHeight;
-        rowInfo.width = Size.getFullWidth(cmp) || ele.offsetWidth;
+        //let cmp = window.getComputedStyle(ele);
+        /*let ch = Math.max(
+            document.body.scrollHeight,
+            document.body.clientHeight,
+            document.body.offsetHeight,
+            document.documentElement.scrollHeight,
+            document.documentElement.offsetHeight,
+            document.documentElement.clientHeight);*/
+        let br = ele.getBoundingClientRect();
+        rowInfo.height = /*Size.getFullHeight(cmp) ||*/ br.height;
+        rowInfo.width = /*Size.getFullWidth(cmp) ||*/ br.width;
         rowInfo.hasMeasurement = true;
     }
-    generateElement(rowInfo: RowInfo<K>, append:boolean = undefined): HTMLElement {
+    generateElement(rowInfo: RowInfo<K>, append: boolean = undefined): HTMLElement {
         let ele: HTMLElement;
         if (!rowInfo.hasElementSet) {
             ele = this.nodes.template.extended.generateNode(rowInfo.row);
@@ -71,22 +79,22 @@ export class RowGenerator<K> {
             rowInfo.hasMeasurement = false;
             ele.setAttribute('x-tabindex', '' + rowInfo.elementIndex);
             ele.data(SourceIndexElementAttr, rowInfo);
-            
+
         } else ele = rowInfo.element;
         if (append === undefined) { return ele; }
         if (append) this.nodes.container.append(ele);
-        else this.nodes.container.prepend(ele);        
-        if(!rowInfo.hasMeasurement)
+        else this.nodes.container.prepend(ele);
+        if (!rowInfo.hasMeasurement)
             this._measurement(rowInfo);
-        
+
         return rowInfo.element;
     }
-    takeMeasurement(rowInfo: RowInfo<K>):RowInfo<K> {
+    takeMeasurement(rowInfo: RowInfo<K>): RowInfo<K> {
         if (rowInfo.hasElementSet) {
-            if (!rowInfo.hasMeasurement){
+            if (!rowInfo.hasMeasurement) {
                 let ele = rowInfo.element;
                 let connected = ele.isConnected;
-                if(!connected)
+                if (!connected)
                     this.nodes.container.append(ele);
                 this._measurement(rowInfo);
                 if (!connected) ele.remove();
@@ -110,27 +118,27 @@ export class RowGenerator<K> {
         newElement.setAttribute('x-tabindex', '' + rowInfo.elementIndex);
         this._measurement(rowInfo);
     }
-    
-    refresh(args:{setTabIndex?:boolean} = {setTabIndex:false}) {
+
+    refresh(args: { setTabIndex?: boolean } = { setTabIndex: false }) {
         let src = this.source,
             akey = SourceManage.ACCESS_KEY,
             cfg = this.config;
         cfg.length = cfg.height = cfg.width = 0;
         if (src.length == 0) { return; }
         let w = 0, h = 0, rInfo: RowInfo<K>, prevRow: RowInfo<K>;
-       // src.makeAllElementsCssDisplay();
+        // src.makeAllElementsCssDisplay();
         cfg.length = src.length;
-        
+
         //debugger;
         for (let i = 0, ilen = cfg.length; i < ilen; i++) {
             let obj = src[i];
             rInfo = obj[akey];
             h += rInfo.height;
             //console.log(rInfo.hasElementSet);
-            
-            if(args.setTabIndex && rInfo.hasElementSet) rInfo.element.setAttribute('x-tabindex', '' + i);
+
+            if (args.setTabIndex && rInfo.hasElementSet) rInfo.element.setAttribute('x-tabindex', '' + i);
             rInfo.index = i;
-         //   console.log([rInfo.index,rInfo]);
+            //   console.log([rInfo.index,rInfo]);
             // if (rInfo.element!=undefined) { rInfo.element.setAttribute('x-tabindex', '' + i); // UNCOMANT THIS IF USE INERT FOR `DISPLAY NONE` ELMENTS
             rInfo.runningHeight = h;
             w = Math.max(w, rInfo.width);

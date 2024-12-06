@@ -34,7 +34,7 @@ export const patternList/*: PatternList */ = {
   subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gim,
   themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   stylesFilterPattern: /(animation-name|\$[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
-  varValuePrinterPattern: /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\)\s*\;/gim,
+  varValuePrinterPattern: /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\)/gim,
   varValueGetterPattern: /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
   scopeSelector: /\[SELF_]/gm,
   rootExcludePattern: /(\w*)(:root|:exclude)/gi,
