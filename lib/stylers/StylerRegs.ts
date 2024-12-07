@@ -8,6 +8,7 @@ import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
 import { scopeSelectorOptions, ScopeSelectorOptions, SelectorHandler } from "ucbuilder/lib/stylers/SelectorHandler";
 import { RootAndExcludeHandler } from "ucbuilder/lib/stylers/RootAndExcludeHandler";
+import { ThemeCssHandler } from "ucbuilder/lib/stylers/ThemeCssHandler";
 export type VariableList = { [key: string]: string };
 
 /*interface PatternList {
@@ -111,10 +112,11 @@ export class StylerRegs {
     this.nodeName = "f" + uniqOpt.randomNo();
     this.selectorHandler = new SelectorHandler(this);
     this.rootAndExcludeHandler = new RootAndExcludeHandler(this);
-
+    this.themeCssHandler= new ThemeCssHandler(this);
   }
   selectorHandler: SelectorHandler;
   rootAndExcludeHandler: RootAndExcludeHandler;
+  themeCssHandler: ThemeCssHandler;
   cssVars: { key: string; value: string }[] = [];
 
   LoadGlobalPath(data: string): void {
@@ -168,7 +170,6 @@ export class StylerRegs {
 
     _params.callCounter++;
     let externalStyles: string[] = [];
-    let isChffd: boolean = false;
     let pstamp_key: string = ''; //ATTR_OF.UC.PARENT_STAMP;
     let pstamp_val: string = _this.uniqStamp;  // _this.stamp  <-- i changed dont know why
     let _curRoot: RootPathRow = _this.rootInfo;
@@ -180,17 +181,20 @@ export class StylerRegs {
     let rtrn: string = _params.data.replace(patternList.MULTILINE_COMMENT_REGS, "");
      rtrn = rtrn.replace(patternList.SINGLELINE_COMMENT_REGS , "");
     
-    rtrn = rtrn.replace(
+    rtrn = _this.themeCssHandler.match(rtrn);
+
+    /*rtrn = rtrn.replace(
       patternList.themeCSSLoader,
       (match: string, code: string, quationMark: string, path: string, offset: any, input_string: string) => {
         isChffd = true;
-
         switch (code) {
           case "theme":
-            return FileDataBank.readFile(path, {
+            //if (path.indexOf('voucherexpenseitem.tpt@ledger')!=-1) debugger;
+            let themecontents = FileDataBank.readFile(path, {
               isFullPath: false,
               replaceContentWithKeys: true
             });
+            return themecontents;
           case "css":
             let isGoodToAdd: boolean = LoadGlobal.isGoodToPush(path);
             if (isGoodToAdd) {
@@ -210,7 +214,7 @@ export class StylerRegs {
             return "";
         }
       }
-    );
+    );*/
 
     //rtrn = rtrn.trim().replace(/(;|,|{|})[\n\r ]*/gi, "$1 ");   // remove this comment it was old code
     rtrn = rtrn.trim().replace(patternList.SPACE_REMOVER_REGS, "$1");   // remove this comment it was old code

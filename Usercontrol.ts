@@ -361,18 +361,16 @@ export class Usercontrol {
             if (afterClose)
                 _extends.Events.afterClose.on(afterClose);
             // setTimeout(() => {
-            if (!defaultFocusAt) {
-                TabIndexManager.moveNext(_extends.self);
-            } else {
-
-                TabIndexManager.focusTo(defaultFocusAt);
-
-            }
+          
             if (_extends.dialogForm == undefined)
                 _extends.dialogForm = this;
             //}, 1);
             _extends.Events.loaded.fire();
-
+            if (!defaultFocusAt) {
+                TabIndexManager.moveNext(_extends.self);
+            } else {
+                TabIndexManager.focusTo(defaultFocusAt);
+            }
             // });
         },
         close: () => {
