@@ -58,7 +58,7 @@ export class RowInfo<K = any> {
       let index = this.index;
       if (main.info.currentIndex == this.index) main.info.currentItem = undefined;
       main.info.currentIndex = index;
-      this.main.info.setPos();
+      main.info.setPos();
     }
 
   }
