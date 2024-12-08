@@ -328,7 +328,13 @@ class jqFeatures {
                 i++;
             return i;
         }
-
+       /* (function (supported){
+            if (supported) return;
+            Object.defineProperty(window.Node.prototype, 'isConnected', {get})
+            function get() {
+              return document.contains(this);
+            }
+          })('isConnected' in window.Node.prototype);*/
         commonPrototype.selector = function (): string {
             let elm: HTMLElement = this;
             if (elm.tagName === "BODY") return "BODY";

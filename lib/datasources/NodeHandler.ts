@@ -27,15 +27,15 @@ export class NodeHandler<K> {
 
         //if (this.calledToFill) return;
         this.source.ArrangingContents = true;
-       // this.calledToFill = true;
+        // this.calledToFill = true;
         let chg = this.config;
         this.clearView();
         let ht: HTMLElement;
         let curIndex = chg.currentIndex;
         let len = chg.bottomIndex;
-      // console.log(['fill',chg]);
-         
-        if (this.source.length==0 || (!chg.infiniteHeight && chg.viewSize.height==0)) {
+        // console.log(['fill',chg]);
+
+        if (this.source.length == 0 || (!chg.infiniteHeight && chg.viewSize.height == 0)) {
             /*this.calledToFill = false; */return;
         }
         for (let index = chg.top; index <= len; index++) {
@@ -45,24 +45,29 @@ export class NodeHandler<K> {
                 chg.currentIndex = index;
         }
         this.scrollbar.refreshScrollbarSilantly();
-       // this.calledToFill = false;
+        // this.calledToFill = false;
     };
 
 
     generate(index: number, append: boolean = undefined): HTMLElement {
-        /* let rInfo = SourceManage.getRow(this.source[index]);
-         rInfo.element.style.display = 'block';
-         return rInfo.element;*/
-        //let itemNode = this.source.[index];
+
         let rInf = SourceManage.getRow(this.source[index]);
-        let hasSet = rInf.hasElementSet;
+        //let hasSet = rInf.hasElementSet;
         let itemNode = this.source.generator.generateElement(rInf, append);
         //itemNode.element.style.display = 'block';
-        if (hasSet != rInf.hasElementSet) this.Events.OnComeViewArea.fire([rInf.element, index]);
+        if (rInf.isConnected) this.Events.OnComeViewArea.fire([rInf.element, index]);
+        // if (hasSet != rInf.hasElementSet) this.Events.OnComeViewArea.fire([rInf.element, index]);
         return rInf.element;
     }
     clearView(): void {
         let src = this.source;
+        let childs = this.container.children;
+        for (let i = 0, len = childs.length; i < len; i++) {
+            let row = this.getRowInfoFromChild(childs[i] as HTMLElement);
+            if(row!=undefined)
+            row.isConnected = false;
+        }
+        
         this.container.innerHTML = '';
         //for (let i = 0, len = src.length; i < len; i++)
         //    SourceManage.getRow(this.source[i]).element.style.display = 'none';
@@ -76,7 +81,7 @@ export class NodeHandler<K> {
     getItemFromChild(ele: HTMLElement): HTMLElement {
         let _container = this.container;
         while (true) {
-            if (ele==null || ele.parentElement == null) {
+            if (ele == null || ele.parentElement == null) {
                 return null;
             } else if (_container.is(ele.parentElement)) {
                 return ele;

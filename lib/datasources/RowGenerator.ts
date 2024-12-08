@@ -22,7 +22,7 @@ export class RowGenerator<K> {
 
     reload() {
         //let tpt = this.nodes.template;
-        this.nodes.container.innerHTML = '';
+        this.nodes.clearView();
         let fullsrc = this.source.category.FullSample;
         for (let i = 0, len = fullsrc.length; i < len; i++) {
             let r = this.generateRow(fullsrc[i]);
@@ -72,6 +72,7 @@ export class RowGenerator<K> {
     }
     generateElement(rowInfo: RowInfo<K>, append: boolean = undefined): HTMLElement {
         let ele: HTMLElement;
+        rowInfo.isConnected = false;
         if (!rowInfo.hasElementSet) {
             ele = this.nodes.template.extended.generateNode(rowInfo.row);
             rowInfo.element = ele;
@@ -79,11 +80,11 @@ export class RowGenerator<K> {
             rowInfo.hasMeasurement = false;
             ele.setAttribute('x-tabindex', '' + rowInfo.elementIndex);
             ele.data(SourceIndexElementAttr, rowInfo);
-
         } else ele = rowInfo.element;
-        if (append === undefined) { return ele; }
+        if (append === undefined) { return ele; } //  if to not added to dom tree now
         if (append) this.nodes.container.append(ele);
         else this.nodes.container.prepend(ele);
+        rowInfo.isConnected = true;
         if (!rowInfo.hasMeasurement)
             this._measurement(rowInfo);
 
@@ -93,7 +94,7 @@ export class RowGenerator<K> {
         if (rowInfo.hasElementSet) {
             if (!rowInfo.hasMeasurement) {
                 let ele = rowInfo.element;
-                let connected = ele.isConnected;
+                let connected = rowInfo.isConnected;//ele.isConnected;
                 if (!connected)
                     this.nodes.container.append(ele);
                 this._measurement(rowInfo);
@@ -101,6 +102,7 @@ export class RowGenerator<K> {
             }
         } else {
             let ele = this.generateElement(rowInfo, true);
+            rowInfo.isConnected = false;
             ele.remove();
         }
         return rowInfo;

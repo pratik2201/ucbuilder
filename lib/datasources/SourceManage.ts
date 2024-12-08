@@ -34,6 +34,13 @@ export class RowInfo<K = any> {
   element?: HTMLElement;
   hasElementSet: boolean = false;
   hasMeasurement: boolean = false;
+  private _isConnected: boolean = false;
+  public get isConnected(): boolean {
+    return this._isConnected;/*this.hasElementSet && this.element.isConnected*/;
+  }
+  public set isConnected(value: boolean) {
+    this._isConnected = value;
+  }
   searchStatus = SearchStatus.notFound;
   main: SourceManage<K>;
   template: TemplateNode;
@@ -174,7 +181,7 @@ export class SourceManage<K> extends Array<K> {
     return this[this.info.currentIndex][SourceManage.ACCESS_KEY];
   }
   static getRow<K>(obj: K): RowInfo<K> {
-    if (obj==undefined) {
+    if (obj == undefined) {
       console.error('WOW..WOW..WOW...BAIBE')
       debugger;
       return undefined;
@@ -187,7 +194,7 @@ export class SourceManage<K> extends Array<K> {
     let akey = SourceManage.ACCESS_KEY;
     let muteAr = this.mutedRInfos;
     muteAr.length = 0;
-    for (let i = 0, len = ar.length; i < len; i++) {      
+    for (let i = 0, len = ar.length; i < len; i++) {
       muteAr.push(ar[i][akey]);
       delete ar[i][akey];
     }
@@ -195,7 +202,7 @@ export class SourceManage<K> extends Array<K> {
   unmute() {
     let akey = SourceManage.ACCESS_KEY;
     let muteAr = this.mutedRInfos;
-    for (let i = 0, len = muteAr.length; i < len; i++) {      
+    for (let i = 0, len = muteAr.length; i < len; i++) {
       let rInf = muteAr[i];
       if (rInf != undefined) rInf.row[akey] = rInf;
     }
@@ -255,7 +262,7 @@ export class SourceManage<K> extends Array<K> {
     if (containerHeight == 0) return { index: botomIndex, size: 0, status: 'undefined' };
     let h = 0, size = 0, rInfo: RowInfo<K>, akey = SourceManage.ACCESS_KEY,
       gen = this.generator;
-    for (; i >= 0; ) {
+    for (; i >= 0;) {
       rInfo = this[i][akey] as RowInfo<K>;
       h = gen.takeMeasurement(rInfo).height;
       size += h;
@@ -396,7 +403,7 @@ export class SourceManage<K> extends Array<K> {
       this.clearFilter();
     }
     this.length = 0;
-    this.category.FullSample.fillInto(this);
+    this.category.FullSample.fillInto(this, true);
 
 
     if (fireUpdateEvent) {
@@ -427,6 +434,7 @@ export class SourceManage<K> extends Array<K> {
     for (let i = 0, len = ar.length; i < len; i++) {
       let row = ar[i];
       let rInfo = row[akey] as RowInfo;
+      rInfo.hasElementSet = false;
       if (rInfo.searchStatus != SearchStatus.notFound) {
         this.resetRow(rInfo);
       }

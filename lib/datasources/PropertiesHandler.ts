@@ -102,7 +102,11 @@ export class SourceProperties<K = any> {
     let nodes = this.main.nodes;
     let src = this.main;
     let _remove = whatsNext.remove;
-    for (let i = 0; i < _remove.length; i++) src.getRow(_remove[i]).element.remove();//.style.display = 'none';
+    for (let i = 0; i < _remove.length; i++) {
+      let r = src.getRow(_remove[i]);
+      r.isConnected = false;
+      r.element.remove();//.style.display = 'none';
+    }
     let _add = whatsNext.append;
     for (let i = 0; i < _add.length; i++) nodes.generate(_add[i],true);
     let _prepend = whatsNext.prepend;

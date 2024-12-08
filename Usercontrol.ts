@@ -102,6 +102,7 @@ export class Usercontrol {
         wrapperHT: undefined as HTMLElement,
         isDialogBox: false as boolean,
         keepVisible: false as boolean,
+        keepReference: false as boolean,
         parentDependantIndex: -1 as number,
         dependant: [] as Usercontrol[],
         isForm: false,
@@ -292,10 +293,7 @@ export class Usercontrol {
             return (ext.isForm || ext.visibility != 'inherit') ?
                 ext.visibility : ext.PARENT.ucExtends.visibility;
         },
-        hide: () => {
-            this.ucExtends.visibility = 'hidden';
-            Usercontrol.HiddenSpace.appendChild(this.ucExtends.wrapperHT);
-        },
+
         show: ({ at = undefined, decision = undefined, }:
             { at?: HTMLElement, decision?: WhatToDoWithTargetElement, visibility?: ucVisibility } = {}) => {
             let _extend = this.ucExtends;
@@ -361,7 +359,7 @@ export class Usercontrol {
             if (afterClose)
                 _extends.Events.afterClose.on(afterClose);
             // setTimeout(() => {
-          
+
             if (_extends.dialogForm == undefined)
                 _extends.dialogForm = this;
             //}, 1);
@@ -410,18 +408,26 @@ export class Usercontrol {
             onDataExport: (_data: TransferDataNode) => { return false; },
             onDataImport: (_data: TransferDataNode) => { return false; },
         },
+        hide: () => {
+            let _ext = this.ucExtends;
+            _ext.visibility = 'hidden';
+            Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
+            if (_ext.isDialogBox)
+                WinManager.pop();
+        },
         destruct: (): boolean => {
             let res = { prevent: false };
             let _this = this;
-            this.ucExtends.Events.beforeClose.fire([res]);
+            let _ext = _this.ucExtends;
+            _ext.Events.beforeClose.fire([res]);
             if (!res.prevent) {
-                this.ucExtends.wrapperHT.delete();
-                if (this.ucExtends.isDialogBox)
+                _ext.wrapperHT.delete();
+                if (_ext.isDialogBox)
                     WinManager.pop();
-                this.ucExtends.Events.afterClose.fire();
-                //setTimeout(() => { 
+                _ext.Events.afterClose.fire();
+                //if (!_ext.keepReference) {
                 for (const key in _this) _this[key] = null;
-                // }, 1);                
+                //}
                 return true;
             }
             return false;
