@@ -96,23 +96,28 @@ export class SourceProperties<K = any> {
     //return Math.max(0, (this.length - (this.top + this.perPageRecord)));
   }
   get isLastSideTopIndex() { return this.lastSideTopIndex == this.top; }
-  applyPos(whatsNext: PosNode) {
-
-    
+  applyPos(whatsNext: PosNode) {    
     let nodes = this.main.nodes;
     let src = this.main;
+    src.ArrangingContents = true;
     let _remove = whatsNext.remove;
     for (let i = 0; i < _remove.length; i++) {
       let r = src.getRow(_remove[i]);
       r.isConnected = false;
       r.element.remove();//.style.display = 'none';
     }
+    
+    src.ArrangingContents = true;
     let _add = whatsNext.append;
-    for (let i = 0; i < _add.length; i++) nodes.generate(_add[i],true);
+    for (let i = 0; i < _add.length; i++) nodes.generate(_add[i], true);
+    
+    src.ArrangingContents = true;
     let _prepend = whatsNext.prepend;
     for (let i = 0; i < _prepend.length; i++) nodes.generate(_prepend[i],false);
     this.top = whatsNext.topIndex;
     this.main.Events.onChangeHiddenCount.fire([this.topHiddenRowCount, this.bottomHiddenRowCount]);
+    
+    src.ArrangingContents = false;
   }
   getPos(cIndex = this.currentIndex): PosNode {
     let top = this.top;
