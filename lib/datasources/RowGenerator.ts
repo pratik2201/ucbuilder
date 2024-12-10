@@ -81,9 +81,10 @@ export class RowGenerator<K> {
             ele.setAttribute('x-tabindex', '' + rowInfo.elementIndex);
             ele.data(SourceIndexElementAttr, rowInfo);
         } else ele = rowInfo.element;
+        let cntnr = this.config.container;
         if (append === undefined) { return ele; } //  if to not added to dom tree now
-        if (append) this.nodes.container.append(ele);
-        else this.nodes.container.prepend(ele);
+        if (append) cntnr.append(ele);
+        else cntnr.prepend(ele);
         rowInfo.isConnected = true;
         if (!rowInfo.hasMeasurement)
             this._measurement(rowInfo);
@@ -96,7 +97,7 @@ export class RowGenerator<K> {
                 let ele = rowInfo.element;
                 let connected = rowInfo.isConnected;//ele.isConnected;
                 if (!connected)
-                    this.nodes.container.append(ele);
+                    this.config.container.append(ele);
                 this._measurement(rowInfo);
                 if (!connected) ele.remove();
             }
@@ -114,7 +115,7 @@ export class RowGenerator<K> {
             rowInfo.element = newElement;
         } else {
             rowInfo.element = newElement;
-            this.nodes.container.appendChild(newElement);
+            this.config.container.appendChild(newElement);
         }
         rowInfo.hasElementSet = true;
         newElement.setAttribute('x-tabindex', '' + rowInfo.elementIndex);

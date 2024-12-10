@@ -1,7 +1,7 @@
 interface EventTarget  {
     index(): number,
     bindEventWithUC<K extends keyof HTMLElementEventMap>(event:K,handler: (this: HTMLElement, ev: HTMLElementEventMap[K]) => any,parentUserControlRef:any, options?: boolean | AddEventListenerOptions):void,
-    selector(): string,
+    selector(at?:HTMLElement): string,
     find(selector: string, exclude?: string): HTMLElement[],
     fireEvent<K extends keyof HTMLElementEventMap>(eventName: K, bubble?: boolean, cancable?: boolean): void,
     delete(): void,

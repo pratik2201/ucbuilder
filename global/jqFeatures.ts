@@ -335,12 +335,13 @@ class jqFeatures {
               return document.contains(this);
             }
           })('isConnected' in window.Node.prototype);*/
-        commonPrototype.selector = function (): string {
+        commonPrototype.selector = function (rootEle:HTMLElement): string {
             let elm: HTMLElement = this;
             if (elm.tagName === "BODY") return "BODY";
             const names: string[] = [];
             while (elm.parentElement && elm.tagName !== "BODY") {
-                names.unshift(elm.tagName + ":nth-child(" + elm.index() + ")");
+                if (rootEle != undefined && elm === rootEle) break;
+                names.unshift(elm.tagName+":nth-child(" + (elm.index()+1) + ")");
                 elm = elm.parentElement;
             }
             return names.join(">");

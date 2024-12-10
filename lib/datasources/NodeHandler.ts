@@ -19,7 +19,7 @@ export class NodeHandler<K> {
         newItemGenerate: new CommonEvent<(itemnode: HTMLElement, index: number) => void>(),
         OnComeViewArea: new CommonEvent<(itemnode: HTMLElement, index: number) => void>(),
     }
-    container: HTMLElement;
+    
 
 
     //calledToFill = false;
@@ -61,29 +61,41 @@ export class NodeHandler<K> {
     }
     clearView(): void {
         let src = this.source;
-        let childs = this.container.children;
+        let cntnr = this.config.container;
+        let childs = cntnr.children;
         for (let i = 0, len = childs.length; i < len; i++) {
             let row = this.getRowInfoFromChild(childs[i] as HTMLElement);
             if(row!=undefined)
             row.isConnected = false;
         }
         
-        this.container.innerHTML = '';
+        cntnr.innerHTML = '';
         //for (let i = 0, len = src.length; i < len; i++)
         //    SourceManage.getRow(this.source[i]).element.style.display = 'none';
     };
     getRow(ele: HTMLElement) {
         return this.getRowInfoFromChild(this.getItemFromChild(ele));
     }
+    getParentSourceIfExist(element:HTMLElement):SourceManage<any> {
+        while (true) {
+            let p = element.parentElement;
+            if (p != null) {
+                let dta = p.data(SourceIndexElementAttr) as RowInfo<any>;
+                if (dta != undefined) return dta.main;
+            } else break;
+            element = element.parentElement;
+        }
+        return undefined;
+    }
     getRowInfoFromChild(ele: HTMLElement): RowInfo<any> {
         return this.getItemFromChild(ele as HTMLElement)?.data(SourceIndexElementAttr);
     }
     getItemFromChild(ele: HTMLElement): HTMLElement {
-        let _container = this.container;
+        let _cntnr = this.config.container;
         while (true) {
             if (ele == null || ele.parentElement == null) {
                 return null;
-            } else if (_container.is(ele.parentElement)) {
+            } else if (_cntnr.is(ele.parentElement)) {
                 return ele;
             } else {
                 ele = ele.parentElement;

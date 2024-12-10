@@ -7,6 +7,7 @@ import { SourceProperties } from "ucbuilder/lib/datasources/PropertiesHandler";
 import { SourceScrollHandler } from "ucbuilder/lib/datasources/ScrollHandler";
 import { RowGenerator } from "ucbuilder/lib/datasources/RowGenerator";
 import { RowHandler } from "ucbuilder/lib/datasources/RowHandler";
+import { EditorManage } from "ucbuilder/lib/datasources/EditorManage";
 export const SourceIndexElementAttr = "itmIndx" + uniqOpt.randomNo();
 export enum SearchStatus {
   filterOut = -1,
@@ -137,6 +138,7 @@ export class RowInfo<K = any> {
 type IndexType = "isAtLast" | "isAtTop" | "continue" | "TopOverflowed" | "BottomOverflowed" | "undefined";
 export class SourceManage<K> extends Array<K> {
   info = new SourceProperties<K>();
+  
   searchables: string[] = [];
   searchablesCommand: string[] = [];
   analyser = new ResultAnalyser<K>();
@@ -144,6 +146,7 @@ export class SourceManage<K> extends Array<K> {
   generator = new RowGenerator<K>();
   rowhandler = new RowHandler<K>();
   scrollbar = new SourceScrollHandler<K>();
+  editor = new EditorManage<K>();
   category = {
     FullSample: [] as K[],
     OriginalSource: [] as K[],
@@ -163,6 +166,7 @@ export class SourceManage<K> extends Array<K> {
     this.nodes.init(this);
     this.generator.init(this);
     this.rowhandler.init(this);
+    this.editor.init(this);
   }
 
   getRow(index: number): RowInfo<K> {
@@ -492,6 +496,7 @@ export class SourceManage<K> extends Array<K> {
   static ACCESS_KEY = uniqOpt.guid;
 
   Events = {
+    onDemandNewItem:undefined as ()=>K,
     onChangeHiddenCount: new CommonEvent<(topHiddenCount: number, bottomHiddenCount: number) => void>(),
     onUpdate: new CommonEvent<(arrayLen: number, fillRecommand: boolean) => void>(),
     onCompleteUserSide: new CommonEvent<(src: K[], indexCounter: number) => void>(),

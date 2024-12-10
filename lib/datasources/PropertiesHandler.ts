@@ -1,6 +1,9 @@
 import { SourceManage, SearchStatus, RowInfo } from "ucbuilder/lib/datasources/SourceManage";
 import { Size } from "ucbuilder/global/drawing/shapes";
 import { TemplateNode } from "ucbuilder/Template";
+import { KeyboardKeys } from "ucbuilder/lib/hardware";
+import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
+import { Usercontrol } from "ucbuilder/Usercontrol";
 interface PosNode {
   topIndex: number, append: number[], prepend: number[], remove: number[],
 }
@@ -18,6 +21,113 @@ export class SourceProperties<K = any> {
   width = 0;
   EditorMode = false;
   defaultIndex = 0;
+  refUC: Usercontrol;
+  private _container: HTMLElement;
+  public get container(): HTMLElement {
+    return this._container;
+  }
+  parentSource: SourceManage<any>;
+
+  public set container(value: HTMLElement) {
+    if (this._container != undefined) {
+      //this._container.removeEventListener("keydown", this.container_keyup);
+      this._container.removeEventListener("keyup", this.container_keydown);
+    }
+    this._container = value;
+    this.main.editor.onDamand();
+    this.parentSource = this.main.nodes.getParentSourceIfExist(value);
+    //value.addEventListener("keyup", this.container_keyup);
+    value.addEventListener("keydown", this.container_keydown);
+  }
+  /*private container_keyup = (e: KeyboardEvent) => {
+    SourceProperties.downCount=0;
+  }*/
+  private container_keydown = (e: KeyboardEvent) => {
+    this.doKeyEvent(e);
+  }
+
+  private _PreventKeyboardEvent = false;
+  public get PreventKeyboardEvent() {
+    return this._PreventKeyboardEvent;
+  }
+  public set PreventKeyboardEvent(value) {
+    this._PreventKeyboardEvent = value;
+    if (this.parentSource != undefined)
+      this.parentSource.info.PreventKeyboardEvent = value;
+  }
+  doKeyEvent(e: KeyboardEvent): boolean {
+    //if (!e.shiftKey) return false;
+    //let editMode = this.main.EditorMode;
+    //if (this.main.PreventKeyboardEvent) return false;
+    // if (SourceProperties.downCount > 0) { return; }
+    // SourceProperties.downCount++;
+    //if (this.PreventKeyboardEvent) return false;    
+    //console.log(['preveventd',e.defaultPrevented]);    
+    if (e.defaultPrevented) return true;
+    let cfg = this;
+    let selectorTxt = '';
+    let focusElementInsideNewitem = false;
+    if (/*editMode && */cfg.currentItem != undefined) {
+      let cele = cfg.currentItem.element;
+      if (cele.contain(document.activeElement)) {
+        selectorTxt = document.activeElement.selector(cfg.currentItem.element);
+        focusElementInsideNewitem = true;
+      }
+    }
+    let cIndex = cfg.currentIndex;
+    cfg.main.ArrangingContents = true;
+    switch (e.keyCode) {
+      case KeyboardKeys.Up: // up key 
+        cfg.movePrev(e);
+        e.preventDefault();
+        break;
+      case KeyboardKeys.Down: // down key
+        cfg.moveNext(e);
+        e.preventDefault();
+        break;
+      case KeyboardKeys.PageUp: // page up key
+        cfg.pagePrev(e);
+        cfg.currentIndex = cfg.top == 0 ? cfg.defaultIndex : cfg.top;
+        e.preventDefault();
+        break;
+      case KeyboardKeys.PageDown: // page down key
+        cfg.pageNext(e);
+        cfg.currentIndex = cfg.bottomIndex;
+        e.preventDefault();
+        break;
+      case KeyboardKeys.End: // end key
+        cfg.top = cfg.lastSideTopIndex;
+        cfg.main.nodes.fill();
+        cfg.currentIndex = cfg.sourceLength - 1;
+        e.preventDefault();
+        break;
+      case KeyboardKeys.Home: // home key  
+        cfg.top = 0;
+        cfg.main.nodes.fill();
+        cfg.currentIndex = 0;
+        e.preventDefault();
+        break;
+      default:
+        cfg.main.ArrangingContents = false;
+        return cIndex != cfg.currentIndex;
+    }
+
+    cfg.main.scrollbar.refreshScrollbarSilantly();
+    cfg.main.ArrangingContents = false;
+    let res = cIndex != cfg.currentIndex;
+    if (focusElementInsideNewitem && res) {
+      let ci = cfg.currentItem;
+      if (/*editMode && */ci != undefined && selectorTxt != '') {
+        let ele = ci.element.querySelector(selectorTxt) as HTMLInputElement;
+        if (ele != null) ele.focus();
+        else TabIndexManager.moveNext(ci.element)
+      }
+    }
+
+    this.PreventKeyboardEvent = true;
+    return res;
+  }
+
   doForAll(s: { isModified?: boolean; isVisible?: boolean; searchStatus?: SearchStatus; isSelectable?: boolean; } = {}) {
     let src = this.main;
     if (src.length == 0) { return; }
@@ -30,7 +140,7 @@ export class SourceProperties<K = any> {
       // console.log([before,rInfo.isVisible]);
     }
   }
-  
+
 
   get sourceLength() { return this.main.length; }
   public get currentIndex() {
@@ -75,7 +185,7 @@ export class SourceProperties<K = any> {
     let vh = this.viewSize.height;
     if (this.infiniteHeight) return src.length - 1;
     else if (vh == 0) {
-      return this.top; 
+      return this.top;
     }
     return src.getBottomIndex(this.top, vh, { overflowed: false }).index;
   }
@@ -90,13 +200,13 @@ export class SourceProperties<K = any> {
     let len = this.main.length;
     let vh = this.viewSize.height;
     if (vh == 0) return 0;
-    
+
     let bIndex = this.main.getBottomIndex(this.top, vh, { length: len, overflowed: false })
     return Math.max(0, len - (bIndex.index) - 1);
     //return Math.max(0, (this.length - (this.top + this.perPageRecord)));
   }
   get isLastSideTopIndex() { return this.lastSideTopIndex == this.top; }
-  applyPos(whatsNext: PosNode) {    
+  applyPos(whatsNext: PosNode) {
     let nodes = this.main.nodes;
     let src = this.main;
     src.ArrangingContents = true;
@@ -106,17 +216,17 @@ export class SourceProperties<K = any> {
       r.isConnected = false;
       r.element.remove();//.style.display = 'none';
     }
-    
+
     src.ArrangingContents = true;
     let _add = whatsNext.append;
     for (let i = 0; i < _add.length; i++) nodes.generate(_add[i], true);
-    
+
     src.ArrangingContents = true;
     let _prepend = whatsNext.prepend;
-    for (let i = 0; i < _prepend.length; i++) nodes.generate(_prepend[i],false);
+    for (let i = 0; i < _prepend.length; i++) nodes.generate(_prepend[i], false);
     this.top = whatsNext.topIndex;
     this.main.Events.onChangeHiddenCount.fire([this.topHiddenRowCount, this.bottomHiddenRowCount]);
-    
+
     src.ArrangingContents = false;
   }
   getPos(cIndex = this.currentIndex): PosNode {
@@ -124,7 +234,7 @@ export class SourceProperties<K = any> {
     let rtrn: PosNode = { topIndex: top, append: [], prepend: [], remove: [], }
     let src = this.main;
     let viewHeight = this.viewSize.height;
-    if (cIndex < 0 || cIndex >= src.info.length || viewHeight==0) return rtrn;
+    if (cIndex < 0 || cIndex >= src.info.length || viewHeight == 0) return rtrn;
     let curBottomIndex = this.bottomIndex;
     let bottom = curBottomIndex;
     // let cIndex = this.currentIndex;
@@ -206,6 +316,7 @@ export class SourceProperties<K = any> {
     cfg.currentIndex++;
     return;
   }
+
 
 
   pageNext = (event: KeyboardEvent): void => {
