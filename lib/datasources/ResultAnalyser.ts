@@ -106,7 +106,6 @@ export class ResultAnalyser<T> {
         let ttl: analyserSource<T> = { isAnythingFound:false, allMix: [], equal: [], startwith: [], include: [], }
         let src = this.source;
         src.clearFilter();
-        src.nodes.clearView();
         if (text == '') {
             src.category.DefaultRows.fillInto(ttl.allMix);
             src.category.OriginalSource.fillInto(ttl.allMix);
@@ -247,6 +246,7 @@ export class ResultAnalyser<T> {
     }
     fill(res:analyserSource<T> ) {
         let src = this.source;
+        src.nodes.clearView();
         let cat = src.category;
         if (res.equal.length > 0) {
             cat.startWithBeginIndex =

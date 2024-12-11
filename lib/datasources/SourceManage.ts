@@ -481,7 +481,7 @@ export class SourceManage<K> extends Array<K> {
   callToFill() {
     let len = this.length;
     let akey = SourceManage.ACCESS_KEY;
-    console.log('callto fill');
+    //console.log('callto fill');
     
     //this.sort((a, b) => (a[akey] as RowInfo).elementIndex - (b[akey] as RowInfo).elementIndex);
     let category = this.category;

@@ -2,6 +2,7 @@
 import { looping, uniqOpt } from "ucbuilder/build/common";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { UcExtra } from "ucbuilder/lib/UcExtra";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 
 
@@ -427,12 +428,13 @@ class jqFeatures {
 
         const _capitalizeHandle = function () {
             let child = this as HTMLTextAreaElement;
-            child.addEventListener('keyup', () => {
+            child.addEventListener('beforeinput', (e) => { 'keyup'
                 var textBox = event.target as HTMLInputElement;
                 var start = textBox.selectionStart;
                 var end = textBox.selectionEnd;
-                textBox.value = textBox.value.toCamelCase();
-                textBox.setSelectionRange(start, end);
+                textBox.value = UcExtra.getAdvanceTextBeforeInput(e).toCamelCase();//textBox.value.toCamelCase();
+                textBox.setSelectionRange(start+1, end+1);
+                e.preventDefault();
             });
         }
         HTMLInputElement.prototype.capitalizeHandle = _capitalizeHandle;

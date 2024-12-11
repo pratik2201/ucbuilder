@@ -20,33 +20,6 @@ export class RowGenerator<K> {
         this.nodes = src.nodes;
     }
 
-    reload() {
-        //let tpt = this.nodes.template;
-        this.nodes.clearView();
-        let fullsrc = this.source.category.FullSample;
-        for (let i = 0, len = fullsrc.length; i < len; i++) {
-            let r = this.source.StickRow(fullsrc[i]);
-            r.elementIndex = i;
-            //this.generateFull(fullsrc[i], i, tpt);
-        }
-        this.refresh();
-        this.source.isLoaded = true;
-    }
-    
-    private generateFull(row: K, elementIndex: number = -1, tpt: TemplateNode = this.nodes.template) {
-        let rowInfo = row[SourceManage.ACCESS_KEY] as RowInfo<K>;
-        if (rowInfo == undefined) {
-            rowInfo = new RowInfo<K>();
-            rowInfo.elementIndex = elementIndex;
-            rowInfo.row = row;
-            row[SourceManage.ACCESS_KEY] = rowInfo;
-        }
-        let genNode = tpt.extended.generateNode(row);
-        this.replaceElement(genNode, rowInfo);
-    }
-    giveMeNewNode(row: K) {
-        return this.nodes.template.extended.generateNode(row);
-    }
     private _measurement(rowInfo: RowInfo<K>) {
         let ele = rowInfo.element;
         //let cmp = window.getComputedStyle(ele);
@@ -100,19 +73,7 @@ export class RowGenerator<K> {
         }
         return rowInfo;
     }
-    replaceElement(newElement: HTMLElement, rowInfo: RowInfo<K>) {
-        if (rowInfo.element != undefined) {
-            rowInfo.element.after(newElement);
-            rowInfo.element.remove();
-            rowInfo.element = newElement;
-        } else {
-            rowInfo.element = newElement;
-            this.config.container.appendChild(newElement);
-        }
-        rowInfo.hasElementSet = true;
-        newElement.setAttribute('x-tabindex', '' + rowInfo.elementIndex);
-        this._measurement(rowInfo);
-    }
+ 
 
     refresh(args: { setTabIndex?: boolean } = { setTabIndex: false }) {
         let src = this.source,
