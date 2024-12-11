@@ -40,8 +40,12 @@ export class RowInfo<K = any> {
     return this._isConnected;/*this.hasElementSet && this.element.isConnected*/;
   }
   public set isConnected(value: boolean) {
+    if (!value && this._isConnected) { this.element.remove(); }
     this._isConnected = value;
+    // if (value) { this.main.activeIndexes.push(this);
+    // } else this.main.activeIndexes.RemoveMultiple(this);
   }
+
   searchStatus = SearchStatus.notFound;
   main: SourceManage<K>;
   template: TemplateNode;
@@ -55,6 +59,7 @@ export class RowInfo<K = any> {
   remove() {
     let main = this.main;
     let category = main.category;
+    this.isConnected = false;
     category.DefaultRows.RemoveMultiple(this.row);
     category.FilteredSource.RemoveMultiple(this.row);
     category.FullSample.RemoveMultiple(this.row);
@@ -64,9 +69,10 @@ export class RowInfo<K = any> {
     if (main.isLoaded) {
       main.generator.refresh({ setTabIndex: true });
       let index = this.index;
-      if (main.info.currentIndex == this.index) main.info.currentItem = undefined;
-      main.info.currentIndex = index;
-      main.info.setPos();
+      if (main.info.currentIndex == this.index) {
+        main.info.currentItem = undefined;
+        main.info.setPos(index, true);
+      } else main.info.setPos();
     }
 
   }
@@ -138,7 +144,7 @@ export class RowInfo<K = any> {
 type IndexType = "isAtLast" | "isAtTop" | "continue" | "TopOverflowed" | "BottomOverflowed" | "undefined";
 export class SourceManage<K> extends Array<K> {
   info = new SourceProperties<K>();
-  
+  activeIndexes: RowInfo<K>[] = [];
   searchables: string[] = [];
   searchablesCommand: string[] = [];
   analyser = new ResultAnalyser<K>();
@@ -344,7 +350,7 @@ export class SourceManage<K> extends Array<K> {
     let gen = this.generator;
     for (let i = 0; i < len; i++) {
       let row = tmp[i];
-      let rInfo = gen.generateRow(row);
+      let rInfo = this.StickRow(row);
       switch (rInfo.rowType) {
         case RowInfoType.Source: ctg.OriginalSource.push(row); break;
         case RowInfoType.TopSticky: ctg.TopStickyRows.push(row); break;
@@ -379,7 +385,7 @@ export class SourceManage<K> extends Array<K> {
      ctg.FullSample.fillInto(this);
      this.generator.reload();*/
     this.rowseperate();
-    this.Events.onCompleteUserSide.fire([this.category.FullSample, 0]);
+    //this.Events.onCompleteUserSide.fire([this.category.FullSample, 0]);
     if (fillRecommand)
       this.callToFill();
   }
@@ -397,7 +403,7 @@ export class SourceManage<K> extends Array<K> {
       nr.elementIndex = flen++;
       nr.index = slen++;
     }
-    this.Events.onCompleteUserSide.fire([items, olen]);
+    //this.Events.onCompleteUserSide.fire([items, olen]);
     return len;
   }
 
@@ -475,8 +481,9 @@ export class SourceManage<K> extends Array<K> {
   callToFill() {
     let len = this.length;
     let akey = SourceManage.ACCESS_KEY;
-
-    this.sort((a, b) => (a[akey] as RowInfo).elementIndex - (b[akey] as RowInfo).elementIndex);
+    console.log('callto fill');
+    
+    //this.sort((a, b) => (a[akey] as RowInfo).elementIndex - (b[akey] as RowInfo).elementIndex);
     let category = this.category;
     let hasBeginSet = false, hasEndSet = false;
     if (category.startWithBeginIndex != -1) {
@@ -496,10 +503,10 @@ export class SourceManage<K> extends Array<K> {
   static ACCESS_KEY = uniqOpt.guid;
 
   Events = {
-    onDemandNewItem:undefined as ()=>K,
+    onDemandNewItem: undefined as () => K,
     onChangeHiddenCount: new CommonEvent<(topHiddenCount: number, bottomHiddenCount: number) => void>(),
     onUpdate: new CommonEvent<(arrayLen: number, fillRecommand: boolean) => void>(),
-    onCompleteUserSide: new CommonEvent<(src: K[], indexCounter: number) => void>(),
+    //onCompleteUserSide: new CommonEvent<(src: K[], indexCounter: number) => void>(),
     onRowSeperationComplete: new CommonEvent<() => void>(),
   }
 };

@@ -21,7 +21,7 @@ export class SourceScrollHandler<K = any> {
         this.vScrollElement = vScrollbarElement;
         this.vScrollElement.appendChild(this.sizerElement);
         this.fireScrollEvent = true;
-        this.vScrollElement.addEventListener("scroll", (e: Event) => {
+       /* this.vScrollElement.addEventListener("scroll", (e: Event) => {
             if (!this.fireScrollEvent) { this.fireScrollEvent = true; return; }
             let vScroll = this.vScrollElement;
 
@@ -44,7 +44,7 @@ export class SourceScrollHandler<K = any> {
             // console.log([topInfo.index,topInfo.status,tval]);
 
             //this.doVerticalContentScrollAt(top, false);
-        });
+        });*/
         this.hasInited = true;
     }
     isfilling: boolean = false;
@@ -63,8 +63,9 @@ export class SourceScrollHandler<K = any> {
         else doscroll();
         function doscroll() {
             let config = _this.config;
-            config.top = Math.floor(scrollval);
-            _this.nodes.fill();
+            /*config.top = Math.floor(scrollval);
+            _this.nodes.fill();*/
+            config.setPos(Math.floor(scrollval));
             _this.isfilling = false;
 
             _this.source.Events.onChangeHiddenCount.fire([config.topHiddenRowCount, config.bottomHiddenRowCount]);

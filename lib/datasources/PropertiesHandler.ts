@@ -5,7 +5,11 @@ import { KeyboardKeys } from "ucbuilder/lib/hardware";
 import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 interface PosNode {
-  topIndex: number, append: number[], prepend: number[], remove: number[],
+  newCurrentIndex: number,
+  newTopIndex: number,
+  curBottomIndex: number,
+  newBottomIndex: number,
+  append: number[], prepend: number[], remove: number[],
 }
 export class SourceProperties<K = any> {
   main: SourceManage<K>;
@@ -16,6 +20,15 @@ export class SourceProperties<K = any> {
   top = 0; viewSize = new Size(0, 0);
   currentItem: RowInfo<K>;
 
+  private oldHeight = undefined;
+  public set infiniteHeight(value) {
+    if (value) {
+      this.oldHeight = this.viewSize.height;
+      this.viewSize.height = Number.MAX_SAFE_INTEGER;
+    } else {
+      this.viewSize.height = this.oldHeight ?? 0;
+    }
+  }
   length = 0;
   height = 0;
   width = 0;
@@ -96,15 +109,18 @@ export class SourceProperties<K = any> {
         e.preventDefault();
         break;
       case KeyboardKeys.End: // end key
-        cfg.top = cfg.lastSideTopIndex;
+        /*cfg.top = cfg.lastSideTopIndex;
         cfg.main.nodes.fill();
-        cfg.currentIndex = cfg.sourceLength - 1;
+        cfg.currentIndex = cfg.sourceLength - 1;*/
+        cfg.setPos(cfg.sourceLength - 1, true);
+
         e.preventDefault();
         break;
-      case KeyboardKeys.Home: // home key  
-        cfg.top = 0;
+      case KeyboardKeys.Home: // home key
+        /*cfg.top = 0;
         cfg.main.nodes.fill();
-        cfg.currentIndex = 0;
+        cfg.currentIndex = 0;*/
+        cfg.setPos(0, true);
         e.preventDefault();
         break;
       default:
@@ -148,13 +164,14 @@ export class SourceProperties<K = any> {
   }
   public set currentIndex(value) {
     //let eletof = value - this.top;
-    if (value < 0 || value >= this.length) return;
+    let src = this.main;
+    let slen = src.length;
+    if (slen == 0 || value < 0 || value >= slen) return;
     let cItem = this.currentItem;
     let prevIndex = 0;
     let isPreviousUndefined = (cItem == undefined);
 
     if (!isPreviousUndefined) { prevIndex = cItem.index; cItem.element.setAttribute('aria-current', `false`); }
-    let src = this.main;
     let rObj = src.getRow(value);
     if (!rObj.isSelectable) {
       this.currentItem = rObj;
@@ -179,12 +196,11 @@ export class SourceProperties<K = any> {
     if (!cItem.hasElementSet) this.main.nodes.generate(value);
     cItem.element.setAttribute('aria-current', 'true');
   }
-  infiniteHeight = false;
   get bottomIndex() {
     let src = this.main;
     let vh = this.viewSize.height;
-    if (this.infiniteHeight) return src.length - 1;
-    else if (vh == 0) {
+    /*if (this.infiniteHeight) return src.length - 1;
+    else */if (vh == 0) {
       return this.top;
     }
     return src.getBottomIndex(this.top, vh, { overflowed: false }).index;
@@ -206,17 +222,50 @@ export class SourceProperties<K = any> {
     //return Math.max(0, (this.length - (this.top + this.perPageRecord)));
   }
   get isLastSideTopIndex() { return this.lastSideTopIndex == this.top; }
-  applyPos(whatsNext: PosNode) {
+  applyPos(whatsNext: PosNode, setAsCurrentIndex = false) {
     let nodes = this.main.nodes;
     let src = this.main;
     src.ArrangingContents = true;
-    let _remove = whatsNext.remove;
-    for (let i = 0; i < _remove.length; i++) {
-      let r = src.getRow(_remove[i]);
-      r.isConnected = false;
-      r.element.remove();//.style.display = 'none';
-    }
 
+    /*let activeIndexes = src.activeIndexes;
+    let FullSample = src.category.FullSample;
+    console.log(activeIndexes);
+    let torem: RowInfo<K>[] = [];
+    for (let i = 0, len = activeIndexes.length; i < len; i++) {
+      const _actRow = activeIndexes[i];
+    // if (_actRow.index < whatsNext.newTopIndex && _actRow.index > whatsNext.newBottomIndex) {
+        torem.push(_actRow);
+    //  }
+    }
+    for (let index = 0; index < torem.length; index++) {
+      const element = torem[index];
+      element.isConnected = false;
+    }*/
+    
+    for (let i = this.top; i < whatsNext.newTopIndex; i++)
+      SourceManage.getRow(src[i]).isConnected = false;
+
+    for (let i = whatsNext.newBottomIndex + 1; i <= whatsNext.curBottomIndex; i++)
+      SourceManage.getRow(src[i]).isConnected = false;
+
+    let prow: RowInfo;
+    for (let i = whatsNext.newTopIndex; i <= whatsNext.newBottomIndex; i++) {
+      const nrow = SourceManage.getRow(src[i]);
+      if (!nrow.isConnected) {
+        if (!nrow.hasElementSet) { src.generator.generateElement(nrow); }
+        if (prow != undefined)
+          prow.element.after(nrow.element);
+        else
+          this.container.prepend(nrow.element);
+        nrow.isConnected = true;
+      }
+      prow = nrow;
+    }
+    /*
+    let _remove = whatsNext.remove;
+    for (let i = 0; i < _remove.length; i++) 
+      src.getRow(_remove[i]).isConnected = false; 
+    
     src.ArrangingContents = true;
     let _add = whatsNext.append;
     for (let i = 0; i < _add.length; i++) nodes.generate(_add[i], true);
@@ -224,19 +273,44 @@ export class SourceProperties<K = any> {
     src.ArrangingContents = true;
     let _prepend = whatsNext.prepend;
     for (let i = 0; i < _prepend.length; i++) nodes.generate(_prepend[i], false);
-    this.top = whatsNext.topIndex;
-    this.main.Events.onChangeHiddenCount.fire([this.topHiddenRowCount, this.bottomHiddenRowCount]);
+    */
 
+    this.top = whatsNext.newTopIndex;
+    if (setAsCurrentIndex) {
+      let cIndex = whatsNext.newCurrentIndex;
+      if (cIndex >= whatsNext.newTopIndex && cIndex <= whatsNext.newBottomIndex) {
+        this.currentIndex = cIndex;
+      }
+    }
+    this.main.Events.onChangeHiddenCount.fire([this.topHiddenRowCount, this.bottomHiddenRowCount]);
     src.ArrangingContents = false;
   }
   getPos(cIndex = this.currentIndex): PosNode {
     let top = this.top;
-    let rtrn: PosNode = { topIndex: top, append: [], prepend: [], remove: [], }
+    let rtrn: PosNode = { newCurrentIndex: -1, newTopIndex: top, curBottomIndex: undefined, newBottomIndex: undefined, append: [], prepend: [], remove: [], }
     let src = this.main;
+    let srcLen = src.length;
     let viewHeight = this.viewSize.height;
-    if (cIndex < 0 || cIndex >= src.info.length || viewHeight == 0) return rtrn;
-    let curBottomIndex = this.bottomIndex;
-    let bottom = curBottomIndex;
+    if (srcLen == 0) {
+      rtrn.newCurrentIndex = -1; return rtrn;
+    } else if (cIndex < 0) {
+      rtrn.newCurrentIndex = 0; return rtrn;
+    } else if (cIndex >= srcLen) {
+      rtrn.newCurrentIndex = srcLen - 1; return rtrn;
+    } else if (/*!this.infiniteHeight &&*/ viewHeight == 0) return rtrn;
+    /*if (srcLen == 0 || cIndex < 0 || cIndex >= srcLen || viewHeight == 0) {
+      if (srcLen == 0) {
+        rtrn.newCurrentIndex = -1;
+      } else if (cIndex < 0) {
+        rtrn.newCurrentIndex = 0;
+      } else {
+
+      }
+      return rtrn;
+    }*/
+    rtrn.curBottomIndex = this.bottomIndex;
+
+    let bottom = rtrn.curBottomIndex;
     // let cIndex = this.currentIndex;
 
     let freespace = 0;
@@ -248,7 +322,7 @@ export class SourceProperties<K = any> {
       if (freespace > 0)
         top = src.getTopIndex(top - 1, freespace, { overflowed: false }).index;
       for (let i = this.top - 1; i >= top; i--)rtrn.prepend.push(i); // prepend element
-      for (let i = bottom + 1; i <= curBottomIndex; i++)rtrn.remove.push(i);
+      for (let i = bottom + 1; i <= rtrn.curBottomIndex; i++)rtrn.remove.push(i);
       /*for (let i = this.newTop - 1; i >= top; i--) {
         //console.log('UP ADDED...'+i);
         this.main.nodes.prepend(i)
@@ -259,8 +333,12 @@ export class SourceProperties<K = any> {
       }*/
       // console.log([this.newTop-top, this.newBottom-bottom,prevIndex,cIndex]);
     }
-    if (bottom == 0) bottom = src.getBottomIndex(top, viewHeight, { overflowed: false }).index;
-    if (cIndex > bottom) {
+    else if (bottom == 0) {
+      //debugger;
+
+      bottom = src.getBottomIndex(top, viewHeight, { overflowed: false }).index;
+    }
+    else if (cIndex > bottom) {
       bottom = cIndex;
       let topObj = src.getTopIndex(bottom, viewHeight, { overflowed: false });
       top = topObj.index;
@@ -270,7 +348,7 @@ export class SourceProperties<K = any> {
 
       for (let i = this.top; i < top; i++)
         rtrn.remove.push(i);
-      for (let i = curBottomIndex + 1; i <= bottom; i++)
+      for (let i = rtrn.curBottomIndex + 1; i <= bottom; i++)
         rtrn.append.push(i); // append element
       /*for (let i = this.newTop; i < top; i++) {
         console.log('DOWN REMOVED...' + i);
@@ -282,25 +360,28 @@ export class SourceProperties<K = any> {
       }
       console.log([top - this.newTop, bottom - this.newBottom, this.newTop, this.newBottom,cIndex]);*/
     }
-    rtrn.topIndex = top;
+    rtrn.newCurrentIndex = cIndex;
+    rtrn.newBottomIndex = bottom;
+    rtrn.newTopIndex = top;
     //for (let i = this.newTop; i < top; i++)
     return rtrn;
   }
-  setPos(index = this.currentIndex) {
-    this.applyPos(this.getPos());
+  setPos(index = this.currentIndex, setAsCurrentIndex = false) {
+    this.applyPos(this.getPos(index), setAsCurrentIndex);
   }
   updatePos() {
-    this.top = this.getPos().topIndex;
+    this.top = this.getPos().newTopIndex;
     this.main.scrollbar.refreshScrollbarSilantly();
   }
 
   movePrev(event: KeyboardEvent, valToCount: number = 1): void {
     let cfg = this;
-    let src = this.main;
+    /*let src = this.main;
     let whatsNext = cfg.getPos(cfg.currentIndex - 1);
-    if (whatsNext.topIndex == cfg.top) { cfg.currentIndex--; return; }
+    if (whatsNext.newTopIndex == cfg.top) { cfg.currentIndex--; return; }
     cfg.applyPos(whatsNext);
-    cfg.currentIndex--;
+    cfg.currentIndex--;*/
+    cfg.setPos(cfg.currentIndex - 1, true);
     return;
   }
 
@@ -308,12 +389,13 @@ export class SourceProperties<K = any> {
 
   moveNext(event: KeyboardEvent, valToCount: number = 1): void {
     let cfg = this;
-    let src = this.main;
-    let whatsNext = cfg.getPos(cfg.currentIndex + 1);
-
-    if (whatsNext.topIndex == cfg.top) { cfg.currentIndex++; return; }
-    cfg.applyPos(whatsNext);
-    cfg.currentIndex++;
+    /* let src = this.main;
+     let whatsNext = cfg.getPos(cfg.currentIndex + 1);
+ 
+     if (whatsNext.newTopIndex == cfg.top) { cfg.currentIndex++; return; }
+     cfg.applyPos(whatsNext);
+     cfg.currentIndex++;*/
+    cfg.setPos(cfg.currentIndex + 1, true);
     return;
   }
 
@@ -323,9 +405,12 @@ export class SourceProperties<K = any> {
     let src = this.main;
     let cfg = src.info;
     let len = src.length;
+    let ss = src.getBottomIndex(cfg.top, cfg.viewSize.height * 2, { length: len, overflowed: false });
+    this.setPos(ss.index);
+    /*let len = src.length;
     let bindex = cfg.bottomIndex;
     if (bindex == len - 1) return;
-    //  debugger;
+    
     let nextPageBottom = src.getBottomIndex(cfg.top, cfg.viewSize.height * 2, { length: len, overflowed: false });
     switch (nextPageBottom.status) {
       case 'continue':
@@ -338,7 +423,7 @@ export class SourceProperties<K = any> {
         cfg.top = src.getTopIndex(len - 1, cfg.viewSize.height, { length: len, overflowed: false }).index;
         break;
     }
-    this.main.nodes.fill();
+    this.main.nodes.fill();*/
   }
 
 
@@ -346,7 +431,11 @@ export class SourceProperties<K = any> {
   pagePrev = (event: KeyboardEvent): void => {
     let src = this.main;
     let cfg = src.info;
-    if (cfg.top == 0) return;
+
+    let previousPageTop = src.getTopIndex(cfg.top, cfg.viewSize.height, { overflowed: false });
+    this.setPos(previousPageTop.index);
+
+    /*if (cfg.top == 0) return;
     let previousPageTop = src.getTopIndex(cfg.top, cfg.viewSize.height, { overflowed: false });
     switch (previousPageTop.status) {
       case 'continue':
@@ -358,7 +447,7 @@ export class SourceProperties<K = any> {
         cfg.top = 0;
         break;
     }
-    this.main.nodes.fill();
+    this.main.nodes.fill();*/
   }
 
 

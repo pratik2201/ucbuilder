@@ -24,7 +24,7 @@ export class NodeHandler<K> {
 
     //calledToFill = false;
     public fill(): void {
-
+        /*
         //if (this.calledToFill) return;
         this.source.ArrangingContents = true;
         // this.calledToFill = true;
@@ -36,7 +36,8 @@ export class NodeHandler<K> {
         // console.log(['fill',chg]);
 
         if (this.source.length == 0 || (!chg.infiniteHeight && chg.viewSize.height == 0)) {
-            /*this.calledToFill = false; */return;
+            //this.calledToFill = false; 
+            return;
         }
         for (let index = chg.top; index <= len; index++) {
             ht = this.generate(index, true);
@@ -46,6 +47,7 @@ export class NodeHandler<K> {
         }
         this.scrollbar.refreshScrollbarSilantly();
         // this.calledToFill = false;
+        */
     };
 
 

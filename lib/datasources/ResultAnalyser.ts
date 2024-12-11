@@ -106,6 +106,7 @@ export class ResultAnalyser<T> {
         let ttl: analyserSource<T> = { isAnythingFound:false, allMix: [], equal: [], startwith: [], include: [], }
         let src = this.source;
         src.clearFilter();
+        src.nodes.clearView();
         if (text == '') {
             src.category.DefaultRows.fillInto(ttl.allMix);
             src.category.OriginalSource.fillInto(ttl.allMix);
