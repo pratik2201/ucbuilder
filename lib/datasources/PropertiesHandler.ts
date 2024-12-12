@@ -21,13 +21,9 @@ export class SourceProperties<K = any> {
   currentItem: RowInfo<K>;
 
   private oldHeight = undefined;
-  public set infiniteHeight(value) {
-    if (value) {
-      this.oldHeight = this.viewSize.height;
-      this.viewSize.height = Number.MAX_SAFE_INTEGER;
-    } else {
-      this.viewSize.height = this.oldHeight ?? 0;
-    }
+  setInfiniteHeight() {
+    this.oldHeight = this.viewSize.height;
+    this.viewSize.height = Number.MAX_SAFE_INTEGER;
   }
   length = 0;
   height = 0;
@@ -241,7 +237,7 @@ export class SourceProperties<K = any> {
       const element = torem[index];
       element.isConnected = false;
     }*/
-    
+
     for (let i = this.top; i < whatsNext.newTopIndex; i++)
       SourceManage.getRow(src[i]).isConnected = false;
 
@@ -291,13 +287,16 @@ export class SourceProperties<K = any> {
     let src = this.main;
     let srcLen = src.length;
     let viewHeight = this.viewSize.height;
-    if (srcLen == 0) {
-      rtrn.newCurrentIndex = -1; return rtrn;
+    //console.log([srcLen,viewHeight]);
+    if (srcLen == 0 || /*!this.infiniteHeight &&*/ viewHeight == 0) {
+      return rtrn;
     } else if (cIndex < 0) {
-      rtrn.newCurrentIndex = 0; return rtrn;
+      
+      cIndex = 0; //return rtrn;
     } else if (cIndex >= srcLen) {
-      rtrn.newCurrentIndex = srcLen - 1; return rtrn;
-    } else if (/*!this.infiniteHeight &&*/ viewHeight == 0) return rtrn;
+      cIndex = srcLen - 1; //return rtrn;
+    }
+
     /*if (srcLen == 0 || cIndex < 0 || cIndex >= srcLen || viewHeight == 0) {
       if (srcLen == 0) {
         rtrn.newCurrentIndex = -1;
@@ -312,6 +311,7 @@ export class SourceProperties<K = any> {
 
     let bottom = rtrn.curBottomIndex;
     // let cIndex = this.currentIndex;
+    //console.log(['before',bottom]);
 
     let freespace = 0;
     if (cIndex < top) {
@@ -363,6 +363,8 @@ export class SourceProperties<K = any> {
     rtrn.newCurrentIndex = cIndex;
     rtrn.newBottomIndex = bottom;
     rtrn.newTopIndex = top;
+    //console.log(['after',bottom]);
+
     //for (let i = this.newTop; i < top; i++)
     return rtrn;
   }

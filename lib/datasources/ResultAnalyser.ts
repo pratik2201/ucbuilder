@@ -265,6 +265,7 @@ export class ResultAnalyser<T> {
         }
         
        // src.onCompleteUserSide.fire([src, 0]);
+            
         src.callToFill();
         cat.isFiltered = true;
     }

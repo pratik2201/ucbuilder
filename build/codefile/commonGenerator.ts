@@ -102,18 +102,23 @@ export class commonGenerator {
             
             commonGenerator.ensureDirectoryExistence(row.src.designer.fullPath);
             _data = _this.generateNew(row, _this.Events.onDemandDesignerFile(srctype, uctype));
-            fs.writeFileSync(`${row.src.designer.fullPath}`, _data);
+            fs.writeFileSync(row.src.designer.fullPath, _data);
 
             if (row.htmlFile.reGenerate)
                 fs.writeFileSync(`${row.src.html.fullPath}`, row.htmlFile.content);
 
-            if (!fs.existsSync(`${row.src.code.fullPath}`)) {
+            if (!fs.existsSync(row.src.code.fullPath)) {
                 _data = _this.generateNew(row, _this.Events.onDemandCodeFile(srctype, uctype));
-                fs.writeFileSync(`${row.src.code.fullPath}`, _data);
+                fs.writeFileSync(row.src.code.fullPath, _data);
             }
-            if (!fs.existsSync(`${row.src.style.fullPath}`)) {
+            if (!fs.existsSync(row.src.style.fullPath)) {
                 _data = _this.generateNew(row, _this.Events.onDemandStyleFile(srctype, uctype));
-                fs.writeFileSync(`${row.src.style.fullPath}`, _data);
+                fs.writeFileSync(row.src.style.fullPath, _data);
+                if (row.src.extCode == ".tpt") {
+                    let commonCssFile = `${row.src.mainFilePath}.common.scss`;
+                    if (!fs.existsSync(commonCssFile))
+                        fs.writeFileSync(commonCssFile, '');
+                }
             }
         }
         

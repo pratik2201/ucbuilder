@@ -496,6 +496,7 @@ export class SourceManage<K> extends Array<K> {
       }
     }
     this.generator.refresh();
+     
     this.Events.onUpdate.fire([len, true]);
   }
 
