@@ -35,8 +35,8 @@ export const patternList/*: PatternList */ = {
   subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gim,
   themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   stylesFilterPattern: /(animation-name|\$[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
-  varValuePrinterPattern: /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
-  varValueGetterPattern: /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
+  varValuePrinterPattern: /(-[lgit]-\w+)\s*(.*?)--/gim ,    //       /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
+  varValueGetterPattern: /(-[lgit]-\w+)--\s*\:(.*?)\;/gim,            //      /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
   scopeSelector: /\[SELF_]/gm,
   rootExcludePattern: /(\w*)(:root|:exclude)/gi,
 };
@@ -365,7 +365,7 @@ export class StylerRegs {
           uniqId,
           scope,
           defaultVal
-        ) + ';';
+        ) /*+ ';'*/;
       }
     );
     rtrn = rtrn.replace(
