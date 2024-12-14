@@ -1,5 +1,5 @@
 import { TemplateNode } from "ucbuilder/Template";
-import { NodeHandler } from "ucbuilder/lib/datasources/NodeHandler";
+import { GenerateMode, NodeHandler } from "ucbuilder/lib/datasources/NodeHandler";
 import { SourceProperties } from "ucbuilder/lib/datasources/PropertiesHandler";
 import { SourceScrollHandler } from "ucbuilder/lib/datasources/ScrollHandler";
 import { RowInfo, SourceIndexElementAttr, SourceManage } from "ucbuilder/lib/datasources/SourceManage";
@@ -35,7 +35,7 @@ export class RowGenerator<K> {
         rowInfo.width = /*Size.getFullWidth(cmp) ||*/ br.width;
         rowInfo.hasMeasurement = true;
     }
-    generateElement(rowInfo: RowInfo<K>, append: boolean = undefined): HTMLElement {
+    generateElement(rowInfo: RowInfo<K>, mode: GenerateMode = GenerateMode.dontGenerate, tarEle?: HTMLElement): HTMLElement {
         let ele: HTMLElement;
         rowInfo.isConnected = false;
         if (!rowInfo.hasElementSet) {
@@ -47,9 +47,16 @@ export class RowGenerator<K> {
             ele.data(SourceIndexElementAttr, rowInfo);
         } else ele = rowInfo.element;
         let cntnr = this.config.container;
-        if (append === undefined) { return ele; } //  if to not added to dom tree now
-        if (append) cntnr.append(ele);
-        else cntnr.prepend(ele);
+        switch (mode) {
+            case GenerateMode.dontGenerate: return ele;
+            case GenerateMode.append: cntnr.append(ele); break;
+            case GenerateMode.prepend: cntnr.prepend(ele); break;
+            case GenerateMode.before: if (tarEle == undefined) return; tarEle.before(ele); break;
+            case GenerateMode.after: if (tarEle == undefined) return; tarEle.after(ele); break;
+        }
+        /* if (append === undefined) { return ele; } //  if to not added to dom tree now
+         if (append) cntnr.append(ele);
+         else cntnr.prepend(ele);*/
         rowInfo.isConnected = true;
         if (!rowInfo.hasMeasurement)
             this._measurement(rowInfo);
@@ -67,13 +74,13 @@ export class RowGenerator<K> {
                 if (!connected) ele.remove();
             }
         } else {
-            let ele = this.generateElement(rowInfo, true);
+            let ele = this.generateElement(rowInfo, GenerateMode.append);
             rowInfo.isConnected = false;
             ele.remove();
         }
         return rowInfo;
     }
- 
+
 
     refresh(args: { setTabIndex?: boolean } = { setTabIndex: false }) {
         let src = this.source,

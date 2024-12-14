@@ -36,7 +36,7 @@ export const patternList/*: PatternList */ = {
   themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   stylesFilterPattern: /(animation-name|\$[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
   varValuePrinterPattern: /(-[lgit]-\w+)\s*(.*?)--/gim ,    //       /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
-  varValueGetterPattern: /(-[lgit]-\w+)--\s*\:(.*?)\;/gim,            //      /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
+  varValueGetterPattern: /(\$[lgit]-\w+)\:(.*?)\;/gim,            //      /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
   scopeSelector: /\[SELF_]/gm,
   rootExcludePattern: /(\w*)(:root|:exclude)/gi,
 };
@@ -349,6 +349,8 @@ export class StylerRegs {
         let ky: string = varName;//.toLowerCase();
         let scope: string = ky.charAt(1);
         let uniqId: string = StylerRegs.internalKey;
+        //console.log(['printer',patternList.varValuePrinterPattern,varName,defaultVal,match]);
+        
         switch (scope) {
           case "g":
             uniqId = '' + _curRoot.id;
@@ -371,7 +373,8 @@ export class StylerRegs {
     rtrn = rtrn.replace(
       patternList.varValueGetterPattern,
       (match: string, varName: string, value: string) => {
-
+      //  console.log(['getter',varName,value,match]);
+        
         let ky: string = varName;//.toLowerCase();
         let scope: string = ky.charAt(1);
         let uniqId: string = StylerRegs.internalKey;

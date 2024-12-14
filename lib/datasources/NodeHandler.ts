@@ -3,7 +3,13 @@ import { RowInfo, SourceIndexElementAttr, SourceManage } from "ucbuilder/lib/dat
 import { SourceProperties } from "ucbuilder/lib/datasources/PropertiesHandler";
 import { TemplateNode } from "ucbuilder/Template";
 import { SourceScrollHandler } from "ucbuilder/lib/datasources/ScrollHandler";
-
+export enum GenerateMode{
+    dontGenerate = 0,
+    append = 1,
+    prepend = 2,
+    before = 3,
+    after = 4
+}
 export class NodeHandler<K> {
     source: SourceManage<K>;
     config: SourceProperties<K>;
@@ -51,11 +57,11 @@ export class NodeHandler<K> {
     };
 
 
-    generate(index: number, append: boolean = undefined): HTMLElement {
+    generate(index: number,mode:GenerateMode = GenerateMode.dontGenerate, tarEle?: HTMLElement/* append: boolean = undefined*/): HTMLElement {
 
         let rInf = SourceManage.getRow(this.source[index]);
         //let hasSet = rInf.hasElementSet;
-        let itemNode = this.source.generator.generateElement(rInf, append);
+        let itemNode = this.source.generator.generateElement(rInf, mode,tarEle);
         //itemNode.element.style.display = 'block';
         if (rInf.isConnected) this.Events.OnComeViewArea.fire([rInf.element, index]);
         // if (hasSet != rInf.hasElementSet) this.Events.OnComeViewArea.fire([rInf.element, index]);

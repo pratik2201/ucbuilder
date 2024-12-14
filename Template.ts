@@ -326,6 +326,7 @@ export class TemplateNode {
     },
     sampleNode:undefined as HTMLElement,
     Events: {
+      //onGettingContent: (jsonRow: any) => { return this.extended.stampRow.content; },
       beforeGenerateContent:(content: string, jsonRow: any)=>content,
       onGenerateContent:(content: string, jsonRow: any)=>content,
       onGenerateNode: (mainNode: HTMLElement, jsonRow: any) => {},

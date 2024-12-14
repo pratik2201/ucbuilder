@@ -389,7 +389,7 @@ export class SourceManage<K> extends Array<K> {
     if (fillRecommand)
       this.callToFill();
   }
-  pushNew(...items: K[]): number {
+  /*pushNew(...items: K[]): number {
     let cat = this.category;
     let slen = this.length;
     let flen = cat.FullSample.length;
@@ -405,7 +405,7 @@ export class SourceManage<K> extends Array<K> {
     }
     //this.Events.onCompleteUserSide.fire([items, olen]);
     return len;
-  }
+  }*/
 
   reset(fireUpdateEvent = true) {
     let anlyse = this.analyser;
@@ -504,7 +504,7 @@ export class SourceManage<K> extends Array<K> {
   static ACCESS_KEY = uniqOpt.guid;
 
   Events = {
-    onDemandNewItem: undefined as () => K,
+    onDemandNewItem: undefined as (index:number) => K,
     onChangeHiddenCount: new CommonEvent<(topHiddenCount: number, bottomHiddenCount: number) => void>(),
     onUpdate: new CommonEvent<(arrayLen: number, fillRecommand: boolean) => void>(),
     //onCompleteUserSide: new CommonEvent<(src: K[], indexCounter: number) => void>(),
