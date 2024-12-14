@@ -18,7 +18,16 @@ export class SourceProperties<K = any> {
     this.main = main;
   }
   top = 0; viewSize = new Size(0, 0);
-  currentItem: RowInfo<K>;
+  private _currentItem: RowInfo<K>;
+  public get currentItem(): RowInfo<K> {
+    return this._currentItem;
+  }
+  public set currentItem(value: RowInfo<K>) {
+    if (value == undefined && this._currentItem != undefined)
+      this._currentItem.element?.setAttribute('aria-current', `false`);
+    this._currentItem = value;
+
+  }
 
   private oldHeight = undefined;
   setInfiniteHeight() {
@@ -291,7 +300,7 @@ export class SourceProperties<K = any> {
     if (srcLen == 0 || /*!this.infiniteHeight &&*/ viewHeight == 0) {
       return rtrn;
     } else if (cIndex < 0) {
-      
+
       cIndex = 0; //return rtrn;
     } else if (cIndex >= srcLen) {
       cIndex = srcLen - 1; //return rtrn;
