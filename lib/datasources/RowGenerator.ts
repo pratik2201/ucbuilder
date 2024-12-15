@@ -43,6 +43,7 @@ export class RowGenerator<K> {
             rowInfo.element = ele;
             rowInfo.hasElementSet = true;
             rowInfo.hasMeasurement = false;
+            if(!rowInfo.isSelectable)ele.setAttribute('inert', 'true');
             ele.setAttribute('x-tabindex', '' + rowInfo.elementIndex);
             ele.data(SourceIndexElementAttr, rowInfo);
         } else ele = rowInfo.element;

@@ -26,7 +26,6 @@ export class SourceProperties<K = any> {
     if (value == undefined && this._currentItem != undefined)
       this._currentItem.element?.setAttribute('aria-current', `false`);
     this._currentItem = value;
-
   }
 
   private oldHeight = undefined;
@@ -179,6 +178,11 @@ export class SourceProperties<K = any> {
     if (!isPreviousUndefined) { prevIndex = cItem.index; cItem.element.setAttribute('aria-current', `false`); }
     let rObj = src.getRow(value);
     if (!rObj.isSelectable) {
+      if (rObj.index >= slen - 1) {
+        this.currentItem = undefined;
+        cItem?.element.setAttribute('aria-current', `false`);
+        return;
+      }
       this.currentItem = rObj;
       if (prevIndex > value) { //  IF TOP SIDE SELECTED
         this.movePrev(undefined as KeyboardEvent);

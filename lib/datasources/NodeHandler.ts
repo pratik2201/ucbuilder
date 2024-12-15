@@ -70,7 +70,7 @@ export class NodeHandler<K> {
     clearView(): void {
         let src = this.source;
         let cntnr = this.config.container;
-        let childs = cntnr.children;
+        let childs = Array.from(cntnr.children);
         for (let i = 0, len = childs.length; i < len; i++) {
             let row = this.getRowInfoFromChild(childs[i] as HTMLElement);
             if(row!=undefined)

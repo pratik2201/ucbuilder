@@ -17,7 +17,7 @@ class TabIndexManager {
         e.preventDefault();
         e.stopPropagation();
         e.stopImmediatePropagation();
-        if(breakTheLoop)
+        if (breakTheLoop)
             TabIndexManager.breakTheLoop = true;
     }
 
@@ -120,12 +120,10 @@ class TabIndexManager {
                 case KeyboardKeys.Tab:
                     // console.log(['before', this.breakTheLoop]);                    
                     if (!ev.shiftKey) {
-                        this.status = 'forward';
                         this.moveNext(ev.target as HTMLElement);
                     } else {
-                        this.status = 'backword';
                         this.movePrev(ev.target as HTMLElement);
-                    }                    
+                    }
                     this.status = 'none';
                     ev.preventDefault();
                     break;
@@ -171,15 +169,18 @@ class TabIndexManager {
 
     static movePrev(target: HTMLElement, goAhead: boolean = false) {
         let _this = this;
+        
+        this.status = 'backword';
         let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;
         if (goAhead) {
             tIndex--;
             if (tIndex == -1) { //  IF REACHED TO 0 TAB INDEX;
                 let parent = this.getDirectParent(target);
-                let evt = this.Events.onContainerTopLeave;
+                if (this._HELLO_KON(parent, this.Events.onContainerTopLeave)) return;
+               /* let evt = this.Events.onContainerTopLeave;
                 let _obj = evt.find(s => s.target == parent);
-                if (_obj != undefined) if (_obj.callback() === true) return;
+                if (_obj != undefined) if (_obj.callback() === true) return;*/
                 this.movePrev(parent, true);
             } else if (tIndex < -1) {  //  IF IN THE AIR    ,-)
             } else {
@@ -204,9 +205,11 @@ class TabIndexManager {
             if (childLastElement == undefined) {  //  IF NO CHILD TAB INDEX AVALABLE
                 this.movePrev(target, true);
             } else { //  IF CHILD TAB INDEX EXIST
-                let evt = this.Events.onContainerBottomEnter;
+                if (this._HELLO_KON(target, this.Events.onContainerBottomEnter)) return;
+                /*let evt = this.Events.onContainerBottomEnter;
                 let _obj = evt.find(s => s.target == target);
-                if (_obj != undefined) if (_obj.callback() === true) return;
+                if (_obj != undefined) if (_obj.callback() === true) return;*/
+
                 if (this.isFocusableElement(childLastElement)) {  //  IF LAST ELEMENT IS TEXTBOX
                     this.focusTo(childLastElement);
                 } else {     //  MOVE TO PREVIOUS WITH CHECK
@@ -226,19 +229,30 @@ class TabIndexManager {
         } while (true);
         return lastEle;
     }
-
+    static _HELLO_KON(ele: HTMLElement, cnt: TabContainerClearNode[]): boolean {
+        let res = false;
+        for (let i = 0, len = cnt.length; i < len; i++) {
+            let nd = cnt[i];
+            if (ele == nd.target) {
+                res = nd.callback() === true;
+                break;
+            }
+        }
+        return res;
+    }
     static moveNext(target: HTMLElement, goAhead: boolean = false) {
         let _this = this;
-        
+        this.status = 'forward';
         if (!target.isConnected) return;
         let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;
         if (!this.isVisaulyAppeared(target)) goAhead = true;
         let childFirstElement = goAhead ? undefined : this.getDirectElement(target, 0);
         if (childFirstElement != undefined) { // IF FIRST CHILD TAB-INDEX EXIST
-            let evt = this.Events.onContainerTopEnter;
+            if (this._HELLO_KON(childFirstElement, this.Events.onContainerTopEnter)) return;
+            /*let evt = this.Events.onContainerTopEnter;
             let _obj = evt.find(s => s.target == childFirstElement);
-            if (_obj != undefined) if (_obj.callback() === true) return;
+            if (_obj != undefined) if (_obj.callback() === true) return;*/
 
             if (this.isFocusableElement(childFirstElement)) { // IF FIRST CHILD IS TEXTBOX
                 this.focusTo(childFirstElement);
@@ -253,12 +267,14 @@ class TabIndexManager {
             if (this.isFocusableElement(ele)) {   // IF NEXT ELEMENT IS TEXTBOX
                 this.focusTo(ele);
             } else {    // IF NEXT ELEMENT HAS CHILD ELEMENT
-                if (ele != undefined) // IF NEXT ELEMENT EXIST      
+                if (ele != undefined) { // IF NEXT ELEMENT EXIST      
+                    if (this._HELLO_KON(ele, this.Events.onContainerTopEnter)) return;
                     this.moveNext(ele);
-                else { // ELSE
-                    let evt = this.Events.onContainerBottomLeave;
+                } else { // ELSE
+                    if (this._HELLO_KON(parent, this.Events.onContainerBottomLeave)) return;
+                   /* let evt = this.Events.onContainerBottomLeave;
                     let _obj = evt.find(s => s.target == parent);
-                    if (_obj != undefined) if (_obj.callback() === true) return;
+                    if (_obj != undefined) if (_obj.callback() === true) return;*/
                     this.moveNext(parent, true);   // GO TO PARENT CONTAINER AND MOVE NEXT TAB-INDEX
                 }
             }
@@ -271,6 +287,7 @@ class TabIndexManager {
     }
 
     static focusTo(htele: HTMLElement) {
+        this.status = 'none';
         if (this.breakTheLoop) {
             if (this.music)
                 this.beep();
@@ -313,7 +330,7 @@ class TabIndexManager {
         } else {
             return false;
         }*/
-       
+
         /*function isElementFocusable(element: HTMLInputElement) {
            
             //element.tabIndex !== -1 && 

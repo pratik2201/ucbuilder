@@ -108,8 +108,12 @@ export class RowInfo<K = any> {
     } else {
       if (hasDefaultValue) this._isSelectable = this._isSelectableDefault;
     }
-    if (this.element != undefined)
-      this.element.style.pointerEvents = (!this._isSelectable) ? 'none' : 'all';
+    if (this.hasElementSet) {
+      //this.element.style.pointerEvents = (!this._isSelectable) ? 'none' : 'all';
+      if (this._isSelectable)
+        this.element.setAttribute('inert', 'true');
+      else this.element.removeAttribute('inert');
+    }
   }
   public get isDisabled() {
     return !this._isSelectable;

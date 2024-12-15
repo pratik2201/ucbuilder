@@ -5,77 +5,58 @@ import { GenerateMode } from "ucbuilder/lib/datasources/NodeHandler";
 export class EditorManage<K> {
     source: SourceManage<K>;
 
-    constructor() {}
+    constructor() { }
     init(_source: SourceManage<K>) {
         this.source = _source;
-        
     }
     onReachRow(row: RowInfo<K>) {
         let resEvents = TabIndexManager.Events;
         let cfg = this.source.info;
         let src = this.source;
-        let evt = src.Events;
+        let onDemandNewItem = src.Events.onDemandNewItem;
         let curRow = cfg.currentItem;
-        
         let tEnterNode: TabContainerClearNode = {
             target: row.element,
             callback: () => {
                 let bRInfo: RowInfo<any>;
-                //let srclen = src.length;
-                let cIndex = cfg.currentIndex;
-                if (curRow==undefined || curRow.index == row.index && evt.onDemandNewItem != undefined) {
-                    debugger;
+                if (TabIndexManager.status == 'forward' && onDemandNewItem != undefined) {
                     src.ArrangingContents = true;
-                    let nIndex = cIndex;
-                    this.pushNew(evt.onDemandNewItem(nIndex),nIndex);
+                    let nIndex = row.index;
+                    this.pushNew(onDemandNewItem(nIndex), nIndex);
                     src.scrollbar.refreshScrollSize();
                     bRInfo = SourceManage.getRow(src[nIndex]);
-                    src.generator.refresh({setTabIndex:true});
-                    // if (bRInfo.index >= srclen) {
-                    src.nodes.generate(bRInfo.index, GenerateMode.before,row.element);
-
-                    cfg.currentIndex = bRInfo.index;
+                    src.nodes.generate(nIndex, GenerateMode.before, row.element);
+                    src.generator.refresh({ setTabIndex: true });
+                    cfg.currentIndex = nIndex;
                     src.info.setPos();
-                    // }
-
-                    //console.log([bRInfo.index,bRInfo.element]);
-
-                    // cfg.moveNext(undefined, 1);
                     TabIndexManager.moveNext(bRInfo.element);
                     TabIndexManager.breakTheLoop = true;
                     TabIndexManager.music = false;
                     src.scrollbar.refreshScrollbarSilantly();
                     src.ArrangingContents = false;
-
-                    //console.log(bRInfo.element);
-
-                } else {
-
-                    cfg.moveNext(undefined, 1);
-                    bRInfo = SourceManage.getRow(src[cfg.bottomIndex]);
-                    TabIndexManager.moveNext(bRInfo.element);
-                    TabIndexManager.breakTheLoop = true;
-                    TabIndexManager.music = false;
-                    src.scrollbar.refreshScrollbarSilantly();
+                    return true;
                 }
                 return true;
             }
         };
         resEvents.onContainerTopEnter.push(tEnterNode);
     }
-    pushNew(row:K,at:number) {
+    pushNew(row: K, at: number) {
         this.source.splice(at, 0, row);
         let nr = this.source.StickRow(row);
-        this.source.generator.refresh();
+
     }
+    bLeaveNode: TabContainerClearNode;
+    tEnterNode: TabContainerClearNode;
+    tLeaveNode: TabContainerClearNode;
     onDamand() {
         let resEvents = TabIndexManager.Events;
-
+        let _this = this;
         let src = this.source;
         let cfg = src.info;
         let evt = src.Events;
         let lstEle = cfg.container;
-       /* let bLeaveNode: TabContainerClearNode = {
+        this.bLeaveNode = {
             target: lstEle,
             callback: () => {
                 let bRInfo: RowInfo<any>;
@@ -84,28 +65,18 @@ export class EditorManage<K> {
                 if (cIndex == srclen - 1 && evt.onDemandNewItem != undefined) {
                     src.ArrangingContents = true;
                     let nIndex = cIndex + 1;
-                    this.pushNew(evt.onDemandNewItem(cIndex),cIndex);
+                    this.pushNew(evt.onDemandNewItem(cIndex), nIndex);
                     src.scrollbar.refreshScrollSize();
                     bRInfo = SourceManage.getRow(src[nIndex]);
-                    src.generator.refresh();
-                    // if (bRInfo.index >= srclen) {
-                    src.nodes.generate(bRInfo.index, GenerateMode.append);
-
-                    cfg.currentIndex = bRInfo.index;
+                    src.nodes.generate(nIndex, GenerateMode.append);
+                    src.generator.refresh({ setTabIndex: true });
+                    cfg.currentIndex = nIndex;
                     src.info.setPos();
-                    // }
-
-                    //console.log([bRInfo.index,bRInfo.element]);
-
-                    // cfg.moveNext(undefined, 1);
                     TabIndexManager.moveNext(bRInfo.element);
                     TabIndexManager.breakTheLoop = true;
                     TabIndexManager.music = false;
                     src.scrollbar.refreshScrollbarSilantly();
                     src.ArrangingContents = false;
-
-                    //console.log(bRInfo.element);
-
                 } else {
 
                     cfg.moveNext(undefined, 1);
@@ -117,21 +88,21 @@ export class EditorManage<K> {
                 }
             }
         };
-        resEvents.onContainerBottomLeave.push(bLeaveNode);
-        */
-        /*let tEnterNode: TabContainerClearNode = {
+        resEvents.onContainerBottomLeave.push(this.bLeaveNode);
+
+        this.tEnterNode = {
             target: lstEle,
             callback: () => {
                 //cfg.top = 0;
                 cfg.currentIndex = cfg.defaultIndex;
                 cfg.setPos();
                 TabIndexManager.moveNext(lstEle);
-                return true;
+                //return true;
             }
         };
-        resEvents.onContainerTopEnter.push(tEnterNode);*/
+        resEvents.onContainerTopEnter.push(this.tEnterNode);
 
-        let tLeaveNode: TabContainerClearNode = {
+        this.tLeaveNode = {
             target: lstEle,
             callback: () => {
                 if (cfg.currentIndex == cfg.defaultIndex) return;
@@ -139,19 +110,22 @@ export class EditorManage<K> {
                 src.scrollbar.refreshScrollbarSilantly();
             }
         };
-        resEvents.onContainerTopLeave.push(tLeaveNode);
+        resEvents.onContainerTopLeave.push(this.tLeaveNode);
 
         let refuc = this.source.info.refUC;
         if (refuc != undefined) {
             refuc.ucExtends.Events.afterClose.on(() => {
-                //resEvents.onContainerBottomLeave.RemoveMultiple(bLeaveNode);
-               // resEvents.onContainerTopEnter.RemoveMultiple(tEnterNode);
-                resEvents.onContainerTopLeave.RemoveMultiple(tLeaveNode);
+                _this.stopEditor();
             });
         }
         //src.EditorMode = true;
     }
-
+    stopEditor() {
+        let resEvents = TabIndexManager.Events;
+        resEvents.onContainerBottomLeave.RemoveMultiple(this.bLeaveNode);
+        resEvents.onContainerTopEnter.RemoveMultiple(this.tEnterNode);
+        resEvents.onContainerTopLeave.RemoveMultiple(this.tLeaveNode);
+    }
     indexing() {
         //let ar = this.main.ll_view.children;
         //for (let i = 0; i < ar.length; i++) ar[i].setAttribute('x-tabindex', '' + i);
