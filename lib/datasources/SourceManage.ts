@@ -508,7 +508,7 @@ export class SourceManage<K> extends Array<K> {
   static ACCESS_KEY = uniqOpt.guid;
 
   Events = {
-    onDemandNewItem: undefined as (index:number) => K,
+    onDemandNewItem: undefined as () => K,
     onChangeHiddenCount: new CommonEvent<(topHiddenCount: number, bottomHiddenCount: number) => void>(),
     onUpdate: new CommonEvent<(arrayLen: number, fillRecommand: boolean) => void>(),
     //onCompleteUserSide: new CommonEvent<(src: K[], indexCounter: number) => void>(),
