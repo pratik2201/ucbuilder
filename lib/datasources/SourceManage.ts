@@ -65,6 +65,10 @@ export class RowInfo<K = any> {
     category.FullSample.RemoveMultiple(this.row);
     category.OriginalSource.RemoveMultiple(this.row);
     category.TopStickyRows.RemoveMultiple(this.row);
+    for (let i = 0, len = category.others.length; i < len; i++)
+      category.others[i].RemoveMultiple(this.row);
+    
+    //category.TopStickyRows.RemoveMultiple(this.row);
     main.RemoveMultiple(this.row);
     if (main.isLoaded) {
       main.generator.refresh({ setTabIndex: true });
@@ -163,6 +167,7 @@ export class SourceManage<K> extends Array<K> {
     TopStickyRows: [] as K[],
     DefaultRows: [] as K[],
     FilteredSource: [] as K[],
+    others:new Array<K[]>(),
     isFiltered: false as boolean,
     startWithBeginIndex: -1,
     startWithEndIndex: -1,

@@ -76,7 +76,7 @@ export class EditorManage<K> {
                     TabIndexManager.moveNext(bRInfo.element);
                     TabIndexManager.breakTheLoop = true;
                     TabIndexManager.music = false;
-                    console.log('here');
+                    //console.log('here');
                     
                     src.scrollbar.refreshScrollbarSilantly();
                 }
