@@ -310,7 +310,8 @@ export class SourceManage<K> extends Array<K> {
 
   StickRow(obj: K): RowInfo<K> {
     let akey = SourceManage.ACCESS_KEY;
-    let rInfo: RowInfo<K> = obj[akey] ?? new RowInfo();
+    if (obj[akey] != undefined) return obj[akey];
+    let rInfo: RowInfo<K> = new RowInfo();
     obj[akey] = rInfo;
     rInfo.row = obj;
     rInfo.main = this;
@@ -378,6 +379,8 @@ export class SourceManage<K> extends Array<K> {
   }
   isLoaded = false;
   ihaveCompletedByMySide(fillRecommand = true) {
+    //console.log(['called',this.length]);
+    
     /*let len = this.length;
      let ctg = this.category;
      ctg.OriginalSource.length = 0;

@@ -62,7 +62,7 @@ export class EditorManage<K> {
                     if (!Number.isInteger(nIndex)) debugger;
 
                     bRInfo = SourceManage.getRow(src[nIndex]);
-                    src.nodes.generate(nIndex, GenerateMode.append);
+                    //src.nodes.generate(nIndex, GenerateMode.append);
                     src.info.setPos(nIndex,true);
                     src.generator.refresh({ setTabIndex: true });
                     TabIndexManager.moveNext(bRInfo.element);
@@ -72,10 +72,12 @@ export class EditorManage<K> {
                     src.ArrangingContents = false;
                 } else {
                     cfg.moveNext(undefined, 1);
-                    bRInfo = SourceManage.getRow(src[cfg.bottomIndex]);
+                    bRInfo = cfg.currentItem;//SourceManage.getRow(src[cfg.bottomIndex]);
                     TabIndexManager.moveNext(bRInfo.element);
                     TabIndexManager.breakTheLoop = true;
                     TabIndexManager.music = false;
+                    console.log('here');
+                    
                     src.scrollbar.refreshScrollbarSilantly();
                 }
             }
