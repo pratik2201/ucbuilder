@@ -18,6 +18,14 @@ class {=name}_TEMPLATE extends TemplateNode{
 }
 `{/loopcls}`
 
+
+
+export const cMap_{=src.name}: {`
+    {loopcls=designer.templetes}`
+    {=name}?: {=name}_ELEMENT_MAP;`
+    {/loopcls}`
+} = {};
+
 export class {=designer.className } extends Template {
     /** {=src.mainFileRootPath}
      *  AUTO RENAMING IS DEPEND ON `_FILE_PATH` SO KEEP YOUR SELF FAR FROM THIS :-)
