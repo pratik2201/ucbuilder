@@ -312,7 +312,7 @@ class TabIndexManager {
     static allowNodePattern: RegExp = /INPUT|SELECT|BUTTON|TEXTAREA/i;
     static isVisaulyAppeared(hte: HTMLElement) {
         if (hte == undefined) return false;
-        return hte.offsetWidth > 0 && hte.offsetHeight > 0
+        return hte.offsetWidth > 0 && hte.offsetHeight > 0 && !hte.hasAttribute('inert');
     }
     static isFocusableElement(hte: HTMLElement): boolean {
         let isVisaulyAppeared = this.isVisaulyAppeared(hte);
