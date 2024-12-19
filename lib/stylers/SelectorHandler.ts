@@ -6,8 +6,8 @@ import { RootPathRow } from "ucbuilder/global/findAndReplace";
 export const scopeSelectorOptions: ScopeSelectorOptions = {
     selectorText: "",
     scopeSelectorText: "",
-    parent_stamp: "",
-    parent_stamp_value: undefined,
+    //parent_stamp?: "",
+    //parent_stamp_value?: undefined,
     root: undefined,
     isForRoot:false,
     hiddens: {
@@ -33,8 +33,6 @@ export interface HiddenScopeNode {
 export interface ScopeSelectorOptions {
     selectorText: string;
     scopeSelectorText?: string;
-    parent_stamp: string;
-    parent_stamp_value?: string;
     isForRoot:boolean,
     root:RootPathRow,
     hiddens?: HiddenScopeNode
@@ -81,9 +79,8 @@ export class SelectorHandler {
             // console.log(_this.main.children);
            // debugger;
             if (counter == 0) {
-                console.log([scopeOpt.parent_stamp, scopeOpt.parent_stamp_value, scopeOpt.scopeSelectorText]);
+                //console.log([scopeOpt.parent_stamp, scopeOpt.parent_stamp_value, scopeOpt.scopeSelectorText]);
                 console.log(this.main);
-
             }
 
             //debugger;
@@ -235,85 +232,65 @@ export class SelectorHandler {
         return dbl.join("::");
     }
 
-    parseScopeSeperator_sub(scopeOpt: ScopeSelectorOptions): string {
-        scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions), scopeOpt);
-        let oldSelector = scopeOpt.selectorText;
-        let _this = this;
-        let _main = this.main;
-        let rtrn: string = "";
-        let changed: boolean = false;
-        let trimedVal: string = "";
-        let calltime: number = 0;
-        let preText: string = "";
-        let postText: string = "";
-        let rVal: string = "";
-        //if (selectorText.startsWithI('[SELF_]:focus-within title-text')) debugger;
-        scopeOpt.selectorText.split(",").forEach((s: string) => {
-            changed = false;
-            trimedVal = s.trim();
-            calltime = 0;
-            if (trimedVal == "[SELF_]") {
-                changed = true;
-                calltime++;
-                rVal = `${scopeOpt.scopeSelectorText} ${_main.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_main.uniqStamp}"]`;  //UNIQUE_STAMP ,_main.stamp  <-- i changed dont know why
-            } else {
-                //  console.log(trimedVal);
-                // console.log(trimedVal.split(' '));
+    // parseScopeSeperator_sub(scopeOpt: ScopeSelectorOptions): string {
+    //     scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions), scopeOpt);
+    //     let oldSelector = scopeOpt.selectorText;
+    //     let _this = this;
+    //     let _main = this.main;
+    //     let rtrn: string = "";
+    //     let changed: boolean = false;
+    //     let trimedVal: string = "";
+    //     let calltime: number = 0;
+    //     let preText: string = "";
+    //     let postText: string = "";
+    //     let rVal: string = "";
+    //     scopeOpt.selectorText.split(",").forEach((s: string) => {
+    //         changed = false;
+    //         trimedVal = s.trim();
+    //         calltime = 0;
+    //         if (trimedVal == "[SELF_]") {
+    //             changed = true;
+    //             calltime++;
+    //             rVal = `${scopeOpt.scopeSelectorText} ${_main.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_main.uniqStamp}"]`;  //UNIQUE_STAMP ,_main.stamp  <-- i changed dont know why
+    //         } else {
+    //             rVal = trimedVal.replace(
+    //                 /\[SELF_]/gm,
+    //                 (match: string, offset: any, input_string: string) => {
+    //                     changed = true;
+    //                     calltime++;
+    //                     if (calltime == 1) {
+    //                         if (trimedVal.startsWith("[SELF_]")) {
+    //                             return `${scopeOpt.scopeSelectorText} [${ATTR_OF.UC.ALL}="${_main.uniqStamp}"]`;  //UNIQUE_STAMP ,_main.stamp  <-- i changed dont know why
+    //                         } else {
+    //                             preText = scopeOpt.scopeSelectorText + " ";
+    //                             return `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
+    //                         }
+    //                     } else {
+    //                         preText = scopeOpt.scopeSelectorText;
+    //                         return `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
+    //                     }
+    //                     return match;
+    //                 }
+    //             );
+    //         }
+    //         if (!changed) {
+    //             if (scopeOpt.parent_stamp_value != undefined) {
+    //                 let dbl: string[] = trimedVal.split(/ *:: */);
+    //                 let sngl: string[] = dbl[0].split(/ *: */);
+    //                 sngl[0] += `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
+    //                 dbl[0] = sngl.join(":");
+    //                 rVal = dbl.join("::");
+    //             } else {
+    //                 rVal = trimedVal;
+    //             }
+    //             preText = scopeOpt.scopeSelectorText + " ";
+    //         }
+    //         rtrn += preText + "" + rVal + "" + postText + ",";
+    //     });
 
-                // trimedVal.split(' ').forEach((val) => {
-                //   changed = true;
-                //   calltime++;
-                //   console.log(val);
+    //     rtrn = rtrn.slice(0, -1);
+    //     console.log([oldSelector, rtrn]);
 
-                //   if (calltime == 1) {
-                //     /*if (trimedVal.startsWith("[SELF_]")) {
-                //       return `${scopeSelectorText} ${_main.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_main.uniqStamp}"]`; 
-                //     }*/
-                //   }
-                // })
-                rVal = trimedVal.replace(
-                    /\[SELF_]/gm,
-                    (match: string, offset: any, input_string: string) => {
-                        changed = true;
-                        calltime++;
-
-                        /*if (trimedVal == "[SELF_]") {
-                          return `${scopeSelectorText} ${_main.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_main.uniqStamp}"]`;  //UNIQUE_STAMP ,_main.stamp  <-- i changed dont know why
-                        } else {*/
-                        if (calltime == 1) {
-                            if (trimedVal.startsWith("[SELF_]")) {
-                                return `${scopeOpt.scopeSelectorText} [${ATTR_OF.UC.ALL}="${_main.uniqStamp}"]`;  //UNIQUE_STAMP ,_main.stamp  <-- i changed dont know why
-                            } else {
-                                preText = scopeOpt.scopeSelectorText + " ";
-                                return `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
-                            }
-                        } else {
-                            preText = scopeOpt.scopeSelectorText;
-                            return `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
-                        }
-                        /*}*/
-                        return match;
-                    }
-                );
-            }
-            if (!changed) {
-                if (scopeOpt.parent_stamp_value != undefined) {
-                    let dbl: string[] = trimedVal.split(/ *:: */);
-                    let sngl: string[] = dbl[0].split(/ *: */);
-                    sngl[0] += `[${scopeOpt.parent_stamp}="${scopeOpt.parent_stamp_value}"]`;
-                    dbl[0] = sngl.join(":");
-                    rVal = dbl.join("::");
-                } else {
-                    rVal = trimedVal;
-                }
-                preText = scopeOpt.scopeSelectorText + " ";
-            }
-            rtrn += preText + "" + rVal + "" + postText + ",";
-        });
-
-        rtrn = rtrn.slice(0, -1);
-        console.log([oldSelector, rtrn]);
-
-        return rtrn;
-    }
+    //     return rtrn;
+    // }
 }

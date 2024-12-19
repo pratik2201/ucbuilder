@@ -24,6 +24,11 @@ export class {=designer.className } extends Usercontrol {
         /** {=src.mainFileRootPath} */
         return intenseGenerator.generateUC(this.FILE_PATH,pera,...args) as {=src.name};
     }
+    get(id:{=designer.getterFunk }) {
+        return this.ucExtends.find(`[id="${id}"]`)[0];
+    }
+
+
     `{loop=designer.controls}``
         {switch=type}`
             `[case=none]

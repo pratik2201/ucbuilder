@@ -48,13 +48,13 @@ export class commonParser {
 
         //FileDataBank.readFile()
 
-        let code = (htmlContents == undefined) ? FileDataBank.readFile(_row.src.html.fullPath, {            
+        let code = (htmlContents == undefined) ? FileDataBank.readFile(_row.src.html.fullPath, {
             reloadData: true,
         }) : htmlContents;
         let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
 
         try {
-            
+
             if (code.trim() != '') {
                 this.formHT = code.$() as HTMLElement;
                 let xAt = this.formHT.getAttribute('x-at');
@@ -69,7 +69,7 @@ export class commonParser {
 <!-- DONT MODIFY "x-at" ATTRIBUTE -->
 </wrapper>`;
                 } else {
-                   code = `<wrapper  searchstatus="{=.searchStatus}" aria-disabled="{=.isDisabled}" x-at="${_row.src.mainFileRootPath}"  >
+                    code = `<wrapper  searchstatus="{=.searchStatus}" aria-disabled="{=.isDisabled}" x-at="${_row.src.mainFileRootPath}"  >
 <!-- DONT MODIFY "x-at" ATTRIBUTE FROM PRIMARY FILE -->
 </wrapper>`
                 }
@@ -107,7 +107,7 @@ export class commonParser {
 </wrapper>`;
                 }
                 let cntHT = template.htmlContents.$() as HTMLElement;
-                let _htEleAr = Array.from(cntHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
+                let _htEleAr = Array.from(cntHT.querySelectorAll(`[${propOpt.ATTR.X_NAME}]`));
                 _htEleAr.forEach(e => {
                     let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY) as ScopeType;
                     if (scope == undefined)
@@ -127,7 +127,14 @@ export class commonParser {
             });
         } else {
             _row.designer.baseClassName = "Usercontrol";
-            let elem = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]`));
+            let elem = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.X_NAME}]`));
+            let accessKeys = `"`+Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESSIBLE_KEY}]`))
+                                    .map(s => s.getAttribute(propOpt.ATTR.ACCESSIBLE_KEY))
+                                    .distinct().join(`" | "`)+`"`;
+            _row.designer.getterFunk = accessKeys;
+           
+            
+
             let im = _row.designer.importClasses;
             let aliceNumber = 0;
             aliceNumber = this.fillDefImports('Usercontrol', 'ucbuilder/Usercontrol', aliceNumber, im);
@@ -135,7 +142,7 @@ export class commonParser {
             aliceNumber = this.fillDefImports('UcOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
             aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/lib/stylers/StylerRegs', aliceNumber, im);
             elem.forEach((ele) => {
-                let nameAttr = ele.getAttribute(propOpt.ATTR.ACCESS_KEY);
+                let nameAttr = ele.getAttribute(propOpt.ATTR.X_NAME);
                 let nodeName = ele.nodeName;
                 let scope = ele.getAttribute(propOpt.ATTR.SCOPE_KEY) as ScopeType;
                 if (scope == undefined)

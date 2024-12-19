@@ -42,6 +42,7 @@ export class {=designer.className } extends Template {
         return intenseGenerator.generateTPT(this.FILE_PATH,pera) as {=src.name};
     }
 
+    
     `{looptpt=designer.templetes} 
     `    
     public {=name}:{=name}_TEMPLATE; 

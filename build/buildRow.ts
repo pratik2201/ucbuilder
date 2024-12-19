@@ -46,6 +46,7 @@ export interface CommonRow {
         extType: string;
         baseClassName: string;
         className: string;
+        getterFunk: string;
         templetes: Template[];
         controls: Control[];
         importClasses: ImportClassNode[];
@@ -64,6 +65,7 @@ export const commonRow: CommonRow = {
     designer: {
         extType: "",
         baseClassName: "",
+        getterFunk:"",
         className: "",
         templetes: [],
         controls: [],

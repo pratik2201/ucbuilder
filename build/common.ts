@@ -240,7 +240,8 @@ export const propOpt = {
     ATTR: {
         FILE_STAMP: "file-stamp",
         BASE_OBJECT: "base_object",
-        ACCESS_KEY: "x-name",
+        X_NAME: "x-name",
+        ACCESSIBLE_KEY: "id",
         TEMPLETE_DEFAULT: "primary",
         TEMPLETE_ACCESS_KEY: "x-tname",
         SCOPE_KEY: "x-scope",

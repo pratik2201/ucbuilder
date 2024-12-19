@@ -239,8 +239,8 @@ export class StylerRegs {
           return `${_this.selectorHandler.parseScopeSeperator({
             selectorText: sel,
             scopeSelectorText: _params.scopeSelectorText,
-            parent_stamp: pstamp_key,
-            parent_stamp_value: pstamp_val,
+            /*parent_stamp: pstamp_key,
+            parent_stamp_value: pstamp_val,*/
             root: _curRoot,
             isForRoot:_params.isForRoot
           })}{${styleContent}}`;

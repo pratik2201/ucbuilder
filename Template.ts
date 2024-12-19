@@ -41,7 +41,7 @@ export class Template {
           fInfo.parse(element.getAttribute("x-from"));
           mainFilePath = fInfo.fullPath;
           callback({
-            name: element.getAttribute(propOpt.ATTR.ACCESS_KEY),
+            name: element.getAttribute(propOpt.ATTR.X_NAME),
             mainFilePath: mainFilePath,
             htmlContents: FileDataBank.readFile(mainFilePath + ".html",{}),
             cssContents: FileDataBank.readFile(mainFilePath + ".scss",{}),
@@ -361,7 +361,7 @@ export class TemplateNode {
         specific.forEach((itmpath) => {
           if (!(itmpath in childs)) {
             let ele = fromElement.querySelector(
-              `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+              `[${propOpt.ATTR.X_NAME}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
             ) as HTMLElement;
             fillObj(itmpath, ele);
           }
@@ -370,11 +370,11 @@ export class TemplateNode {
         let uniqStamp = uExt.extended.stampRow.uniqStamp;
         let eleAr = Array.from(
           fromElement.querySelectorAll(
-            `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+            `[${propOpt.ATTR.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
           )
         ) as HTMLElement[];
         eleAr.forEach((ele) => {
-          fillObj(ele.getAttribute(propOpt.ATTR.ACCESS_KEY), ele);
+          fillObj(ele.getAttribute(propOpt.ATTR.X_NAME), ele);
         });
       }
       function fillObj(itmpath: string, htEle: HTMLElement) {

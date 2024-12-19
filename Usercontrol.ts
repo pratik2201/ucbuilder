@@ -448,19 +448,20 @@ export class Usercontrol {
                 let fromElement = uExt.wrapperHT;
                 let uniqStamp = uExt.stampRow.uniqStamp;
                 if (specific != undefined) {
-                    specific.forEach(itmpath => {
+                    for (let i = 0, len = specific.length; i < len; i++) {
+                        const itmpath = specific[i];
                         if (!(itmpath in childs)) {
-                            let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`) as HTMLElement; // old one `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+                            let ele = fromElement.querySelector(`[${propOpt.ATTR.X_NAME}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`) as HTMLElement; // old one `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
                             //let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}']${ATTR_OF.setParent(uniqStamp)}`) as HTMLElement; 
                             fillObj(itmpath, ele);
                         }
-                    });
+                    }
                 } else {
-                    let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
-                    //let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.ACCESS_KEY}]${ATTR_OF.setParent(uniqStamp)}`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
-                    eleAr.forEach((ele) => {
-                        fillObj(ele.getAttribute(propOpt.ATTR.ACCESS_KEY), ele);
-                    });
+                    let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+                    for (let i = 0, len = eleAr.length; i < len; i++) {
+                        const ele = eleAr[i];
+                        fillObj(ele.getAttribute(propOpt.ATTR.X_NAME), ele);
+                    }
                 }
                 function fillObj(itmpath: string, htEle: HTMLElement): void {
                     if (htEle != undefined)
