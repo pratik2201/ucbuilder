@@ -85,7 +85,7 @@ export class RowGenerator<K> {
 
     refresh(args: { setTabIndex?: boolean } = { setTabIndex: false }) {
         let src = this.source,
-            akey = SourceManage.ACCESS_KEY,
+            akey = SourceManage.ROW_ACCESS_KEY,
             cfg = this.config;
         cfg.length = cfg.height = cfg.width = 0;
         if (src.length == 0) { return; }

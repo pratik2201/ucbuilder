@@ -1,11 +1,12 @@
-import { Usercontrol } from 'ucbuilder/Usercontrol';
-import { Template } from 'ucbuilder/Template';
-import { codeFileInfo } from 'ucbuilder/build/codeFileInfo';
-import { newObjectOpt } from 'ucbuilder/global/objectOpt';
+import { Usercontrol } from "ucbuilder/Usercontrol";
+import { Template } from "ucbuilder/Template";
+import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
+import { uniqOpt } from "ucbuilder/build/common";
 
 export type UCGenerateMode = "client" | "designer";
-export type UcStates = "normal" | "dock" | "minimize" | "maximize";
-
+export type UcStates = "normal" | "dock" | "minimize" | "maximize";             
+export const ROW_ACCESS_KEY = uniqOpt.guid;
 /*export interface RootPathRow {
     id: number,
     path: string,

@@ -1,8 +1,7 @@
 
 import { loopRegs } from "ucbuilder/build/regs/process/loopRegs";
 import { switchRegs } from "ucbuilder/build/regs/process/switchRegs";
-import { objectOpt } from "ucbuilder/build/common";
-import { patternMatcher } from "ucbuilder/build/regs/patternMatcher";
+
 import { SourceManage } from "ucbuilder/lib/datasources/SourceManage";
 
 class regsManage {
@@ -57,6 +56,7 @@ class regsManage {
         return this._GET_CELL_VAL(node, res);
     }
     tText = undefined;
+    
     /**
      * 
      * @param {string} content 
@@ -72,11 +72,20 @@ class regsManage {
         ): string => {
             if (cellName.startsWith(".")) {
                 if (cellName == ".") return node;
-                else return ''+objectOpt.getValByNameSpace(node[SourceManage.ACCESS_KEY], cellName.substring(1));   
-            } else return ''+objectOpt.getValByNameSpace(node, cellName);            
+                else {
+                    return '' + regsManage.getValByNameSpace(node[SourceManage.ROW_ACCESS_KEY], cellName.substring(1));
+                }
+            } else return ''+regsManage.getValByNameSpace(node, cellName);            
         });
     }
-
+    static getValByNameSpace(obj: object, str: string): object {
+        let ars = str.split('.');
+        try {
+            for (let i = 0,len=ars.length; i < len; i++) 
+                obj = obj[ars[i]];      
+            return obj;
+        } catch { return undefined; }
+    }
 }
 
 export { regsManage };
