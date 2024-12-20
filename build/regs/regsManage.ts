@@ -3,7 +3,6 @@ import { loopRegs } from "ucbuilder/build/regs/process/loopRegs";
 import { switchRegs } from "ucbuilder/build/regs/process/switchRegs";
 import { ROW_ACCESS_KEY } from "ucbuilder/enumAndMore";
 
-import { SourceManage } from "ucbuilder/lib/datasources/SourceManage";
 
 class regsManage {
     private switchRgx: switchRegs;
