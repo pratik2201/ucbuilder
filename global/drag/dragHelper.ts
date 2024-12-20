@@ -1,4 +1,5 @@
-import { uniqOpt, controlOpt, objectOpt, arrayOpt } from "ucbuilder/build/common";
+import { controlOpt, objectOpt, arrayOpt } from "ucbuilder/build/common";
+import { uniqOpt } from "ucbuilder/enumAndMore";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { transferDataNode,TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";

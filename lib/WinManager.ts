@@ -1,4 +1,5 @@
-import { uniqOpt, controlOpt } from 'ucbuilder/build/common';
+import { controlOpt } from 'ucbuilder/build/common';
+import { uniqOpt } from "ucbuilder/enumAndMore";
 import { FocusManager } from 'ucbuilder/lib/focusManage';
 import { Usercontrol } from 'ucbuilder/Usercontrol';
 

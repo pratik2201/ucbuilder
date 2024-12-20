@@ -2,27 +2,30 @@ import { Usercontrol } from "ucbuilder/Usercontrol";
 import { Template } from "ucbuilder/Template";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
-import { uniqOpt } from "ucbuilder/build/common";
+import crypto from "crypto";
 
 export type UCGenerateMode = "client" | "designer";
-export type UcStates = "normal" | "dock" | "minimize" | "maximize";             
+export type UcStates = "normal" | "dock" | "minimize" | "maximize";  
+   
+export const uniqOpt = {
+    get guid(): string {
+        return crypto.randomBytes(16).toString('hex');
+    },
+    get guidAs_(): string {
+        return crypto.randomBytes(16).toString('hex');
+    },
+    randomNo(min: number = 0, max: number = 1000000): number {
+        let difference = max - min;
+        let rand = Math.random();
+        rand = Math.floor(rand * difference);
+        rand = rand + min;
+        return rand;
+    },
+};
+
+
+        
 export const ROW_ACCESS_KEY = uniqOpt.guid;
-/*export interface RootPathRow {
-    id: number,
-    path: string,
-    alices: string, 
-    index: number, // -1
-    isAlreadyFullPath: boolean, // false
-    cssVars: {key:string,value:string}[],
-}
-export const rootPathRow: RootPathRow = {
-    id: -1,
-    path: '',
-    alices:'', 
-    index: -1,
-    isAlreadyFullPath: false,
-    cssVars: [],
-}*/
 
 
 
@@ -139,5 +142,3 @@ export const tptOptions: TptOptions = {
     source: newObjectOpt.clone<SourceOptions>(sourceOptions),
     accessName:'',
 };
-
-

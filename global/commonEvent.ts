@@ -1,4 +1,5 @@
-import { arrayOpt, uniqOpt, objectOpt } from "ucbuilder/build/common";
+import { arrayOpt, objectOpt } from "ucbuilder/build/common";
+import { uniqOpt } from "ucbuilder/enumAndMore";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 
 interface EventRecord {

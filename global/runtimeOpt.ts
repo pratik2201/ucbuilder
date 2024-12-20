@@ -6,7 +6,7 @@
     return rand;
 }*/
 
-import { uniqOpt } from "ucbuilder/build/common";
+import { uniqOpt } from "ucbuilder/enumAndMore";
 
 export const GLOBAL_OPTIONS: {
     tabindexes: {

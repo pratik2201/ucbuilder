@@ -4,6 +4,7 @@ import { SourceProperties } from "ucbuilder/lib/datasources/PropertiesHandler";
 import { SourceScrollHandler } from "ucbuilder/lib/datasources/ScrollHandler";
 import { RowInfo, SourceIndexElementAttr, SourceManage } from "ucbuilder/lib/datasources/SourceManage";
 import { Size } from "ucbuilder/global/drawing/shapes";
+import { ROW_ACCESS_KEY } from "ucbuilder/enumAndMore";
 
 export class RowGenerator<K> {
     source: SourceManage<K>;
@@ -85,7 +86,7 @@ export class RowGenerator<K> {
 
     refresh(args: { setTabIndex?: boolean } = { setTabIndex: false }) {
         let src = this.source,
-            akey = SourceManage.ROW_ACCESS_KEY,
+            akey = ROW_ACCESS_KEY,
             cfg = this.config;
         cfg.length = cfg.height = cfg.width = 0;
         if (src.length == 0) { return; }

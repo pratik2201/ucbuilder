@@ -1,4 +1,5 @@
-import { controlOpt, uniqOpt, strOpt } from "ucbuilder/build/common";
+import { controlOpt, strOpt } from "ucbuilder/build/common";
+import { uniqOpt } from "ucbuilder/enumAndMore";
 import { KeyboardKeys } from "ucbuilder/lib/hardware";
 
 export class ElementEditor {

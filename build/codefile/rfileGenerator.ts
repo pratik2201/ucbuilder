@@ -1,7 +1,8 @@
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { CommonRow } from "ucbuilder/build/buildRow";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
-import { objectOpt, uniqOpt } from "ucbuilder/build/common";
+import { objectOpt } from "ucbuilder/build/common";
+import { uniqOpt } from "ucbuilder/enumAndMore";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import fs from "fs";

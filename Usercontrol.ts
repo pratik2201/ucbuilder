@@ -1,5 +1,6 @@
 
-import { propOpt, objectOpt, controlOpt, uniqOpt } from "ucbuilder/build/common";
+import { propOpt, objectOpt, controlOpt } from "ucbuilder/build/common";
+import { uniqOpt } from "ucbuilder/enumAndMore";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { UCGenerateMode, ucOptions, UcOptions, UcStates, WhatToDoWithTargetElement } from "ucbuilder/enumAndMore";

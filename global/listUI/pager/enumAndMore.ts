@@ -1,4 +1,5 @@
-import { uniqOpt, objectOpt } from "ucbuilder/build/common";
+import { objectOpt } from "ucbuilder/build/common";
+import { uniqOpt } from "ucbuilder/enumAndMore";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 export type PageType = "pager" | "simple";
 export type ScrollerType = "Horizontal" | "Vertical";

@@ -1,5 +1,4 @@
 import { readFileSync, writeFileSync, existsSync, unlinkSync } from "fs";
-import crypto from "crypto";
 
 export const numOpt = {
     addFloat(actualNum: number): number {
@@ -470,21 +469,6 @@ export const objectOpt = {
         return obj[key]!=undefined;
         //return key in obj;
     }
-}
-export const uniqOpt = {
-    get guid(): string {
-        return crypto.randomBytes(16).toString('hex');
-    },
-    get guidAs_(): string {
-        return crypto.randomBytes(16).toString('hex');
-    },
-    randomNo(min: number = 0, max: number = 1000000): number {
-        let difference = max - min;
-        let rand = Math.random();
-        rand = Math.floor(rand * difference);
-        rand = rand + min;
-        return rand;
-    },
 }
 /*export enum ExtensionType {
     none = "none",

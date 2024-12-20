@@ -10,7 +10,7 @@
  */
 import { jqFeatures } from "ucbuilder/global/jqFeatures";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
-import { uniqOpt } from "ucbuilder/build/common";
+import { uniqOpt } from "ucbuilder/enumAndMore";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { RootPathParam, rootPathParam } from "ucbuilder/enumAndMore";

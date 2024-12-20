@@ -1,4 +1,4 @@
-import { uniqOpt } from "ucbuilder/build/common";
+import { ROW_ACCESS_KEY, uniqOpt } from "ucbuilder/enumAndMore";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { TemplateNode } from "ucbuilder/Template";
 import { ResultAnalyser, SearchableItemNode } from "ucbuilder/lib/datasources/ResultAnalyser";
@@ -191,13 +191,13 @@ export class SourceManage<K> extends Array<K> {
     }
     else {
       let row = this[index];
-      let rInfo = row[SourceManage.ROW_ACCESS_KEY];
+      let rInfo = row[ROW_ACCESS_KEY];
       return (rInfo != undefined) ? rInfo : this.StickRow(row);
       //return r!=undefined?r:this.StickRow(r);
     }
   }
   get CurrentRow(): RowInfo<K> {
-    return this[this.info.currentIndex][SourceManage.ROW_ACCESS_KEY];
+    return this[this.info.currentIndex][ROW_ACCESS_KEY];
   }
   static getRow<K>(obj: K): RowInfo<K> {
     if (obj == undefined) {
@@ -205,12 +205,12 @@ export class SourceManage<K> extends Array<K> {
       debugger;
       return undefined;
     }
-    return obj[SourceManage.ROW_ACCESS_KEY];
+    return obj[ROW_ACCESS_KEY];
   }
   private mutedRInfos: RowInfo[] = [];
   mute() {
     let ar = this.category.FullSample;
-    let akey = SourceManage.ROW_ACCESS_KEY;
+    let akey = ROW_ACCESS_KEY;
     let muteAr = this.mutedRInfos;
     muteAr.length = 0;
     for (let i = 0, len = ar.length; i < len; i++) {
@@ -219,7 +219,7 @@ export class SourceManage<K> extends Array<K> {
     }
   }
   unmute() {
-    let akey = SourceManage.ROW_ACCESS_KEY;
+    let akey = ROW_ACCESS_KEY;
     let muteAr = this.mutedRInfos;
     for (let i = 0, len = muteAr.length; i < len; i++) {
       let rInf = muteAr[i];
@@ -233,14 +233,14 @@ export class SourceManage<K> extends Array<K> {
       debugger;
       return undefined;
     }
-    let rInfo = row[SourceManage.ROW_ACCESS_KEY];
+    let rInfo = row[ROW_ACCESS_KEY];
     return (rInfo != undefined) ? rInfo : this.StickRow(row);
   }
   setRow(index: number, val: RowInfo<K>) {
     let row = this[index];
     if (row) {
       //let obj = row[SourceManage.ACCESS_KEY] as RowInfo<K>;
-      row[SourceManage.ROW_ACCESS_KEY] = val;
+      row[ROW_ACCESS_KEY] = val;
     }
   }
 
@@ -254,7 +254,7 @@ export class SourceManage<K> extends Array<K> {
     let len = length ? length : this.length;
 
 
-    let i = topIndex, h = 0, size = 0, rInfo: RowInfo<K>, akey = SourceManage.ROW_ACCESS_KEY,
+    let i = topIndex, h = 0, size = 0, rInfo: RowInfo<K>, akey = ROW_ACCESS_KEY,
       gen = this.generator;
     for (; i <= len - 1; /*  i++; */) {
       rInfo = this.getRowByObj(this[i]);
@@ -279,7 +279,7 @@ export class SourceManage<K> extends Array<K> {
   getTopIndex(botomIndex: number, containerHeight: number, { overflowed = false }: { length?: number, overflowed?: boolean }): { index: number, size: number, status: IndexType } {
     let i = botomIndex;
     if (containerHeight == 0) return { index: botomIndex, size: 0, status: 'undefined' };
-    let h = 0, size = 0, rInfo: RowInfo<K>, akey = SourceManage.ROW_ACCESS_KEY,
+    let h = 0, size = 0, rInfo: RowInfo<K>, akey = ROW_ACCESS_KEY,
       gen = this.generator;
     for (; i >= 0;) {
       rInfo = this[i][akey] as RowInfo<K>;
@@ -314,7 +314,7 @@ export class SourceManage<K> extends Array<K> {
 
 
   StickRow(obj: K): RowInfo<K> {
-    let akey = SourceManage.ROW_ACCESS_KEY;
+    let akey = ROW_ACCESS_KEY;
     if (obj[akey] != undefined) return obj[akey];
     let rInfo: RowInfo<K> = new RowInfo();
     obj[akey] = rInfo;
@@ -324,7 +324,7 @@ export class SourceManage<K> extends Array<K> {
     return rInfo;
   }
   doIndexing(setAttr = true) {
-    let akey = SourceManage.ROW_ACCESS_KEY;
+    let akey = ROW_ACCESS_KEY;
     if (!setAttr)
       for (let i = 0, len = this.length; i < len; i++)
         (this[i][akey] as RowInfo<K>).index = i;
@@ -337,7 +337,7 @@ export class SourceManage<K> extends Array<K> {
       }
   }
   makeAllElementsCssDisplay(display: 'none' | 'block' = 'none') {
-    let akey = SourceManage.ROW_ACCESS_KEY;
+    let akey = ROW_ACCESS_KEY;
     let ar = this.category.FullSample;
     for (let i = 0, len = ar.length; i < len; i++) {
       let rInf = (ar[i][akey] as RowInfo<K>);
@@ -346,7 +346,7 @@ export class SourceManage<K> extends Array<K> {
     }
   }
   doElementIndexing() {
-    let akey = SourceManage.ROW_ACCESS_KEY;
+    let akey = ROW_ACCESS_KEY;
     let ar = this.category.FullSample;
     for (let i = 0, len = ar.length; i < len; i++)
       (ar[i][akey] as RowInfo<K>).elementIndex = i;
@@ -370,7 +370,7 @@ export class SourceManage<K> extends Array<K> {
     [...ctg.TopStickyRows, ...ctg.DefaultRows, ...ctg.OriginalSource].fillInto(ctg.FullSample);
     ctg.FullSample.fillInto(this);
     this.clearFilter();
-    let skey = SourceManage.ROW_ACCESS_KEY;
+    let skey = ROW_ACCESS_KEY;
     let ar = ctg.FullSample;
     for (let i = 0, flen = ar.length; i < flen; i++) {
       let rInfo = ar[i][skey] as RowInfo<K>;
@@ -450,7 +450,7 @@ export class SourceManage<K> extends Array<K> {
       this.category.startWithEndIndex = -1;
   }
   clearFilter() {
-    let akey = SourceManage.ROW_ACCESS_KEY;
+    let akey = ROW_ACCESS_KEY;
     let anl = this.analyser;
     let ar = this.category.FullSample;
     for (let i = 0, len = ar.length; i < len; i++) {
@@ -492,7 +492,7 @@ export class SourceManage<K> extends Array<K> {
   }
   callToFill() {
     let len = this.length;
-    let akey = SourceManage.ROW_ACCESS_KEY;
+    let akey = ROW_ACCESS_KEY;
     //console.log('callto fill');
     
     //this.sort((a, b) => (a[akey] as RowInfo).elementIndex - (b[akey] as RowInfo).elementIndex);
@@ -513,8 +513,7 @@ export class SourceManage<K> extends Array<K> {
   }
 
   ArrangingContents = false;
-  static ROW_ACCESS_KEY = uniqOpt.guid;
-
+  
   Events = {
     onDemandNewItem: undefined as () => K,
     onChangeHiddenCount: new CommonEvent<(topHiddenCount: number, bottomHiddenCount: number) => void>(),

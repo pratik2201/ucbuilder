@@ -1,6 +1,7 @@
 
 import { loopRegs } from "ucbuilder/build/regs/process/loopRegs";
 import { switchRegs } from "ucbuilder/build/regs/process/switchRegs";
+import { ROW_ACCESS_KEY } from "ucbuilder/enumAndMore";
 
 import { SourceManage } from "ucbuilder/lib/datasources/SourceManage";
 
@@ -73,7 +74,7 @@ class regsManage {
             if (cellName.startsWith(".")) {
                 if (cellName == ".") return node;
                 else {
-                    return '' + regsManage.getValByNameSpace(node[SourceManage.ROW_ACCESS_KEY], cellName.substring(1));
+                    return '' + regsManage.getValByNameSpace(node[ROW_ACCESS_KEY], cellName.substring(1));
                 }
             } else return ''+regsManage.getValByNameSpace(node, cellName);            
         });
