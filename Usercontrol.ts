@@ -384,7 +384,14 @@ export class Usercontrol {
         _windowstate: 'normal' as UcStates,
         get windowstate() { return this._windowstate; },
         set windowstate(state: UcStates) { this._windowstate = state; this.Events.winStateChanged.fire([state]); },
-
+        getChildsRefByMainPath: (_mainfileRootpath: string): Usercontrol[] => {
+            let _ext = this.ucExtends;
+            return _ext.dependant.filter(s => s.ucExtends.fileInfo.mainFileRootPath.equalIgnoreCase(_mainfileRootpath));
+        },
+        getFirstChildRefByMainPath: (_mainfileRootpath: string): Usercontrol => {
+            let _ext = this.ucExtends;
+            return _ext.dependant.find(s => s.ucExtends.fileInfo.mainFileRootPath.equalIgnoreCase(_mainfileRootpath));
+        },
         options: {
             ucExt: () => this.ucExtends,
         },
