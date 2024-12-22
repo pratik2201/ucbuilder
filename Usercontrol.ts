@@ -434,7 +434,14 @@ export class Usercontrol {
                     WinManager.pop();
                 _ext.Events.afterClose.fire();
                 //if (!_ext.keepReference) {
-                for (const key in _this) _this[key] = null;
+                     // Clear all properties of the Usercontrol instance after a delay
+                    setTimeout(() => {
+                        for (const key in _this) {
+                            //if (_this.hasOwnProperty(key)) {
+                                _this[key] = undefined;
+                            //}
+                        }
+                    }, 0); // Adjust the delay as needed
                 //}
                 return true;
             }
