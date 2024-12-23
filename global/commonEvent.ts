@@ -41,11 +41,14 @@ export class CommonEvent<F extends (...arg: any) => void> {
      * @param stamp 
      * @returns 
      */
-    on(callback: F,uc?:Usercontrol, stamp: string = uniqOpt.guid): string {
+    on(callback: F, uc?: Usercontrol, makeSureOnlyOneCallbackShouldUse = false, stamp: string = uniqOpt.guid): string {
         if (this.isSingleEvent) this._eventList = [];
         this.onCounter++;
         let index = this._eventList.length;
         let _this = this;
+        if (makeSureOnlyOneCallbackShouldUse && this._eventList.findIndex(s => s.callback === callback) != -1)
+            return;
+        
         this._eventList.push({
             callback: callback as Function,
             stamp: stamp
@@ -70,9 +73,9 @@ export class CommonEvent<F extends (...arg: any) => void> {
     }
 
     off(callback: Function): void {
-        let fIndex: number = this._eventList.findIndex(s => s.callback === callback);
-        if (fIndex != -1) {
-            this._eventList.RemoveAtMultiple(fIndex);
+        let fEvent = this._eventList.find(s => s.callback === callback);
+        if (fEvent != undefined) {
+            this._eventList.RemoveMultiple(fEvent);
             this.Events.onChangeEventList();
         }
     }
