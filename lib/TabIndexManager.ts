@@ -238,15 +238,21 @@ class TabIndexManager {
                 break;
             }
         }
+        
         return res;
     }
     static moveNext(target: HTMLElement, goAhead: boolean = false) {
-        let _this = this;
+        let _this = this;        
         this.status = 'forward';
         if (!target.isConnected) return;
         let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;
-        if (!this.isVisaulyAppeared(target)) goAhead = true;
+        if (!this.isVisaulyAppeared(target)) 
+            goAhead = true;
+        
+        if (goAhead && this._HELLO_KON(target, this.Events.onContainerBottomLeave)) return;  
+      //  if (this._HELLO_KON(target, this.Events.onContainerTopEnter)) return;  //  <------ REMOVE THIS CODE IF ANY BUG
+
         let childFirstElement = goAhead ? undefined : this.getDirectElement(target, 0);
         if (childFirstElement != undefined) { // IF FIRST CHILD TAB-INDEX EXIST
             if (this._HELLO_KON(childFirstElement, this.Events.onContainerTopEnter)) return;
@@ -264,14 +270,15 @@ class TabIndexManager {
             let parent = this.getDirectParent(target);
             if (parent == null) return;
             let ele = this.getDirectElement(parent, tIndex);
+            if (this._HELLO_KON(ele, this.Events.onContainerTopEnter)) return;
             if (this.isFocusableElement(ele)) {   // IF NEXT ELEMENT IS TEXTBOX
                 this.focusTo(ele);
             } else {    // IF NEXT ELEMENT HAS CHILD ELEMENT
                 if (ele != undefined) { // IF NEXT ELEMENT EXIST      
-                    if (this._HELLO_KON(ele, this.Events.onContainerTopEnter)) return;
+                    
                     this.moveNext(ele);
                 } else { // ELSE
-                    if (this._HELLO_KON(parent, this.Events.onContainerBottomLeave)) return;
+                    //if (this._HELLO_KON(parent, this.Events.onContainerBottomLeave)) return;
                    /* let evt = this.Events.onContainerBottomLeave;
                     let _obj = evt.find(s => s.target == parent);
                     if (_obj != undefined) if (_obj.callback() === true) return;*/
