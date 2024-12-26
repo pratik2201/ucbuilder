@@ -3,7 +3,6 @@ import { Template } from "ucbuilder/Template";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import crypto from "crypto";
-
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";  
    
@@ -11,6 +10,7 @@ export const uniqOpt = {
     get guid(): string {
         return crypto.randomBytes(16).toString('hex');
     },
+    
     get guidAs_(): string {
         return crypto.randomBytes(16).toString('hex');
     },
