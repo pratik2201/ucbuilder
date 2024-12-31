@@ -99,7 +99,10 @@ export class CompoundFocus {
         this.unbind();
         this.blur(e);
     }
-    onDownAllowedCallback = (e: MouseEvent): boolean => { return false; };
+    onDownAllowedCallback = (e: MouseEvent): boolean => {
+        return false;
+        //this.allowdList.includes(e.target as HTMLElement);
+    };
     winFocusin = (e: MouseEvent) => {
         if (this.onDownAllowedCallback(e) === true) {
             TabIndexManager.stopFurther(e);
