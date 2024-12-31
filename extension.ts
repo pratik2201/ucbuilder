@@ -18,7 +18,6 @@ interface EventTarget  {
 interface HTMLElement extends EventTarget {}
 interface Element extends EventTarget { }
 interface HTMLInputElement {
-    capitalizeHandle():void,
     getSelectedValue(): string,
 }
 interface HTMLTextAreaElement extends HTMLInputElement {

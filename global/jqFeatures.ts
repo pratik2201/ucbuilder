@@ -427,7 +427,7 @@ class jqFeatures {
         this.doCommonDomProto(Element.prototype);
         this.doCommonDomProto(EventTarget.prototype);
 
-        const _capitalizeHandle = function () {
+        /*const _capitalizeHandle = function () {
             let child = this as HTMLTextAreaElement;
             child.addEventListener('beforeinput', (e) => { 'keyup'
                 var textBox = event.target as HTMLInputElement;
@@ -439,7 +439,7 @@ class jqFeatures {
             });
         }
         HTMLInputElement.prototype.capitalizeHandle = _capitalizeHandle;
-        HTMLTextAreaElement.prototype.capitalizeHandle = _capitalizeHandle;
+        HTMLTextAreaElement.prototype.capitalizeHandle = _capitalizeHandle;*/
 
         const _getSelectedValuee = function (): string {
             let child = this as HTMLInputElement;
