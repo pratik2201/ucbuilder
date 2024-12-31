@@ -3,8 +3,7 @@
     "node_modules"
   ],
   "include": [
-    "."
-  ],
+    "."  ],
   "compileOnSave": true,
   "compilerOptions": {
     "target": "es2016",

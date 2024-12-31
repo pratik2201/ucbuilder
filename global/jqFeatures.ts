@@ -3,7 +3,6 @@ import { looping } from "ucbuilder/build/common";
 import { uniqOpt } from "ucbuilder/enumAndMore";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
-import { UcExtra } from "ucbuilder/lib/UcExtra";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 
 
