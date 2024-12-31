@@ -429,11 +429,11 @@ class jqFeatures {
         /*const _capitalizeHandle = function () {
             let child = this as HTMLTextAreaElement;
             child.addEventListener('beforeinput', (e) => { 'keyup'
-                var textBox = event.target as HTMLInputElement;
-                var start = textBox.selectionStart;
-                var end = textBox.selectionEnd;
-                textBox.value = UcExtra.getAdvanceTextBeforeInput(e).toCamelCase();//textBox.value.toCamelCase();
-                textBox.setSelectionRange(start+1, end+1);
+                var spring-box = event.target as HTMLInputElement;
+                var start = spring-box.selectionStart;
+                var end = spring-box.selectionEnd;
+                spring-box.value = UcExtra.getAdvanceTextBeforeInput(e).toCamelCase();//spring-box.value.toCamelCase();
+                spring-box.setSelectionRange(start+1, end+1);
                 e.preventDefault();
             });
         }
