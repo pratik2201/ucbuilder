@@ -5,7 +5,9 @@ interface EventTarget  {
     find(selector: string, exclude?: string): HTMLElement[],
     fireEvent<K extends keyof HTMLElementEventMap>(eventName: K, bubble?: boolean, cancable?: boolean): void,
     delete(): void,
-    
+    data(): any;
+    data(key: string): any;
+    data(key: string, val: any): void;
     stamp(): string,
     contain(child:EventTarget):boolean,
     parseUc(uc:any):HTMLElement|HTMLElement[],
