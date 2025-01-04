@@ -1,4 +1,17 @@
 type SVGElements = SVGElement & SVGLineElement & SVGRectElement & SVGCircleElement & SVGEllipseElement;
+export interface IPartlySize {
+    padding?: { left: number, right: number, top: number, bottom: number },
+    border?: { left: number, right: number, top: number, bottom: number },
+    size?: { width: number, height: number }
+    paddingWidth?: number,
+    paddingHeight?: number,
+    sizePaddingWidth?: number,
+    sizePaddingHeight?: number,
+    borderWidth?: number,
+    borderHeight?: number,
+    fullWidth?: number,
+    fullHeight?: number,
+}
 export class Point {
     x: number = 0;
     y: number = 0;
@@ -197,6 +210,34 @@ export class Size {
             width: this.getFullWidth(elestyle),
             height: this.getFullHeight(elestyle),
         }
+    }
+    static getPartylySize = (elestyle: CSSStyleDeclaration) => {
+        let rtrn: IPartlySize = {};
+        rtrn.size = { width: parseFloat(elestyle.width), height: parseFloat(elestyle.height) };
+        rtrn.padding = {
+            left: parseFloat(elestyle.paddingLeft),
+            right: parseFloat(elestyle.paddingRight),
+            top: parseFloat(elestyle.paddingTop),
+            bottom: parseFloat(elestyle.paddingBottom),
+        }
+        rtrn.border = {
+            left: parseFloat(elestyle.borderLeftWidth),
+            right: parseFloat(elestyle.borderRightWidth),
+            top: parseFloat(elestyle.borderTopWidth),
+            bottom: parseFloat(elestyle.borderBottomWidth),
+        }
+        let sz = rtrn.size;
+        let pdg = rtrn.padding;
+        let brd = rtrn.border;
+        rtrn.paddingWidth = pdg.left + pdg.right;
+        rtrn.paddingHeight = pdg.top + pdg.bottom;
+        rtrn.sizePaddingWidth = sz.width + rtrn.paddingWidth;
+        rtrn.sizePaddingHeight = sz.height + rtrn.paddingHeight;
+        rtrn.borderWidth = brd.left + brd.right;
+        rtrn.borderHeight = brd.left + brd.right;
+        rtrn.fullWidth = rtrn.sizePaddingWidth + rtrn.borderWidth;
+        rtrn.fullHeight = rtrn.sizePaddingHeight + rtrn.borderHeight;
+        return rtrn;
     }
     static getFullHeight = (elestyle: CSSStyleDeclaration): number => {
         return (parseFloat(elestyle.height)
