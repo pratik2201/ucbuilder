@@ -50,7 +50,7 @@ export const ATTR_OF = {
         UC_STAMP: "uc" + uniqOpt.randomNo(),
         CLASS_PARENT: "parent" + uniqOpt.randomNo(),
         CLASS_ROOT: "root" + uniqOpt.randomNo(),
-
+        CSSStyleDeclarations: 'CSSStyleDeclarations_' + uniqOpt.randomNo(),
 
         //PARENT_STAMP: "parent" + uniqOpt.randomNo(),
         // UNIQUE_STAMP: "uniq" + uniqOpt.randomNo(),

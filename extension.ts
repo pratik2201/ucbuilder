@@ -12,6 +12,7 @@ interface EventTarget  {
     contain(child:EventTarget):boolean,
     parseUc(uc:any):HTMLElement|HTMLElement[],
     data(key?: string, value?: any): any
+    currentStyles(): CSSStyleDeclaration;
     is(target: any): boolean,    
     $(): HTMLElement,
     on<K extends keyof HTMLElementEventMap>(eventList: K, handlerCallback: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void,

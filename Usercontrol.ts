@@ -103,7 +103,6 @@ export class Usercontrol {
         wrapperHT: undefined as HTMLElement,
         isDialogBox: false as boolean,
         keepVisible: false as boolean,
-        keepReference: false as boolean,
         parentDependantIndex: -1 as number,
         dependant: [] as Usercontrol[],
         isForm: false,
@@ -239,6 +238,7 @@ export class Usercontrol {
                 }
             }
             ucExt.Events.beforeClose.on(({ prevent }) => {
+                //if(ucExt.keepReference)
                 for (let i = ucExt.dependant.length - 1; i >= 0; i--) {
                     ucExt.dependant[i]?.ucExtends.destruct();
                 }
@@ -295,6 +295,8 @@ export class Usercontrol {
                 ext.visibility : ext.PARENT.ucExtends.visibility;
         },
 
+        //keepReference: false as boolean,
+
         show: ({ at = undefined, decision = undefined, }:
             { at?: HTMLElement, decision?: WhatToDoWithTargetElement, visibility?: ucVisibility } = {}) => {
             let _extend = this.ucExtends;
@@ -334,6 +336,7 @@ export class Usercontrol {
             afterClose?: () => void,
         } = {}): void => {
             let _extends = this.ucExtends;
+            let alreadyLoadedBefore = _extends.isDialogBox;
             _extends.isDialogBox = true;
             let loadAt = _extends.loadAt;// as WhatToDoWithTargetElement;
             if (loadAt.element == undefined) {
@@ -364,7 +367,8 @@ export class Usercontrol {
             if (_extends.dialogForm == undefined)
                 _extends.dialogForm = this;
             //}, 1);
-            _extends.Events.loaded.fire();
+            if(!alreadyLoadedBefore)
+                _extends.Events.loaded.fire();
             if (!defaultFocusAt) {
                 TabIndexManager.moveNext(_extends.self);
             } else {
@@ -442,7 +446,7 @@ export class Usercontrol {
                             //}
                         }
                     }, 0); // Adjust the delay as needed
-                //}
+               // }
                 return true;
             }
             return false;

@@ -4,6 +4,7 @@ import { uniqOpt } from "ucbuilder/enumAndMore";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { Usercontrol } from "ucbuilder/Usercontrol";
+import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 
 
 
@@ -292,6 +293,7 @@ class jqFeatures {
     }
 
     static regsMng: regsManage = new regsManage();
+    
     private static doCommonDomProto(commonPrototype: any): void {
         commonPrototype.bindEventWithUC = function (event, handler, parentUc: Usercontrol, options) {
             this.addEventListener(event, handler, options);
@@ -299,6 +301,15 @@ class jqFeatures {
                 this.removeEventListener(event, handler);
             });
         };
+        commonPrototype.currentStyles = function () {
+            let ele = this as HTMLElement;
+            let css = ele.data(ATTR_OF.UC.CSSStyleDeclarations) as CSSStyleDeclaration;
+            if (css == undefined) {
+                css = window.getComputedStyle(ele);
+                ele.data(ATTR_OF.UC.CSSStyleDeclarations, css);
+            }
+            return css;
+        }
         commonPrototype.parseUc = function (val: Usercontrol) {
             if (val) {
                 return val.ucExtends.passElement(this);

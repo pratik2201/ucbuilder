@@ -319,13 +319,22 @@ class TabIndexManager {
     static allowNodePattern: RegExp = /INPUT|SELECT|BUTTON|TEXTAREA/i;
     static isVisaulyAppeared(hte: HTMLElement) {
         if (hte == undefined) return false;
-        return hte.offsetWidth > 0 && hte.offsetHeight > 0 && !hte.hasAttribute('inert');
+        let isVisible = true;
+        isVisible = hte.currentStyles().visibility == 'visible';
+        /*let v = hte.checkVisibility;
+        if (v) {
+            isVisible = v({
+                visibilityProperty: true
+            });
+        }*/
+        return hte.offsetWidth > 0 && hte.offsetHeight > 0 && isVisible && !hte.hasAttribute('inert');
     }
     static isFocusableElement(hte: HTMLElement): boolean {
         let isVisaulyAppeared = this.isVisaulyAppeared(hte);
         if (!isVisaulyAppeared) return false;
         let element = hte as HTMLInputElement;
-        let orCondition = (element.nodeName.match(this.allowNodePattern) != null || element.getAttribute('contenteditable') == 'true');
+        let orCondition = (element.nodeName.match(this.allowNodePattern) != null ||
+            element.getAttribute('contenteditable') == 'true');
         return !element.disabled && orCondition;
         /*if (htEle == undefined) return false;
         let style = window.getComputedStyle(htEle);
