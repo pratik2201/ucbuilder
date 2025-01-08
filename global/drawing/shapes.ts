@@ -7,6 +7,8 @@ export interface IPartlySize {
     paddingHeight?: number,
     sizePaddingWidth?: number,
     sizePaddingHeight?: number,
+    paddingBorderHeight?: number,
+    paddingBorderWidth?: number,
     borderWidth?: number,
     borderHeight?: number,
     fullWidth?: number,
@@ -235,6 +237,8 @@ export class Size {
         rtrn.sizePaddingHeight = sz.height + rtrn.paddingHeight;
         rtrn.borderWidth = brd.left + brd.right;
         rtrn.borderHeight = brd.left + brd.right;
+        rtrn.paddingBorderHeight = rtrn.paddingWidth + rtrn.borderWidth;
+        rtrn.paddingBorderWidth = rtrn.paddingHeight + rtrn.borderHeight;
         rtrn.fullWidth = rtrn.sizePaddingWidth + rtrn.borderWidth;
         rtrn.fullHeight = rtrn.sizePaddingHeight + rtrn.borderHeight;
         return rtrn;
