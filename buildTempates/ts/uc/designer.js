@@ -33,7 +33,7 @@ export class {=designer.className } extends Usercontrol {
         {switch=type}`
             `[case=none]
         `
-    {=scope} {=name}: {=proto};
+    {=scope} {=name}: {=proto}{=generic};
         `
         [/case]`
         `[case=.tpt]`

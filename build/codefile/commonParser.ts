@@ -44,7 +44,7 @@ export class commonParser {
         let _this = this;
         _row.src = new codeFileInfo(codeFileInfo.getExtType(filePath));
         if (!_row.src.parseUrl(filePath)) return undefined;
-
+        let onSelect_xName = _this.bldr.Event.onSelect_xName;
 
         //FileDataBank.readFile()
 
@@ -107,18 +107,24 @@ export class commonParser {
 </wrapper>`;
                 }
                 let cntHT = template.htmlContents.$() as HTMLElement;
-                let _htEleAr = Array.from(cntHT.querySelectorAll(`[${propOpt.ATTR.X_NAME}]`));
-                _htEleAr.forEach(e => {
-                    let scope = e.getAttribute(propOpt.ATTR.SCOPE_KEY) as ScopeType;
+                const elements = Array.from(cntHT.querySelectorAll(`[${propOpt.ATTR.X_NAME}]`));
+                for (let i = 0, iObj = elements, len = iObj.length; i < len; i++) {
+                    const element = iObj[i];
+                    onSelect_xName.fire([element as HTMLElement, _row]);
+                    let scope = element.getAttribute(propOpt.ATTR.SCOPE_KEY) as ScopeType;
                     if (scope == undefined)
                         scope = 'public';
+                    let _generic = element.getAttribute('x-generic');
+                    _generic = _generic == null ? '' : '<' + _generic + '>';
                     controls.push({
-                        name: e.getAttribute("x-name"),
-                        nodeName: e.nodeName,
-                        proto: objectOpt.getClassName(e),
+                        name: element.getAttribute("x-name"),
+                        nodeName: element.nodeName,
+                        generic: _generic,
+                        proto: objectOpt.getClassName(element),
                         scope: scope,
-                    })
-                });
+                    });
+                }
+
                 tpts.push({
                     name: template.name,
                     scope: "public",
@@ -127,13 +133,14 @@ export class commonParser {
             });
         } else {
             _row.designer.baseClassName = "Usercontrol";
-            let elem = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.X_NAME}]`));
-            let accessKeys = `"`+Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESSIBLE_KEY}]`))
-                                    .map(s => s.getAttribute(propOpt.ATTR.ACCESSIBLE_KEY))
-                                    .distinct().join(`" | "`)+`"`;
+
+            const elements = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.X_NAME}]`));
+            let accessKeys = `"` + Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESSIBLE_KEY}]`))
+                .map(s => s.getAttribute(propOpt.ATTR.ACCESSIBLE_KEY))
+                .distinct().join(`" | "`) + `"`;
             _row.designer.getterFunk = accessKeys;
-           
-            
+
+
 
             let im = _row.designer.importClasses;
             let aliceNumber = 0;
@@ -141,37 +148,26 @@ export class commonParser {
             aliceNumber = this.fillDefImports('intenseGenerator', 'ucbuilder/intenseGenerator', aliceNumber, im);
             aliceNumber = this.fillDefImports('UcOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
             aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/lib/stylers/StylerRegs', aliceNumber, im);
-            elem.forEach((ele) => {
-                let nameAttr = ele.getAttribute(propOpt.ATTR.X_NAME);
-                let nodeName = ele.nodeName;
-                let scope = ele.getAttribute(propOpt.ATTR.SCOPE_KEY) as ScopeType;
+            for (let i = 0, iObj = elements, len = iObj.length; i < len; i++) {
+                const element = iObj[i];
+                onSelect_xName.fire([element as HTMLElement, _row]);
+                let nameAttr = element.getAttribute(propOpt.ATTR.X_NAME);
+                let nodeName = element.nodeName;
+                let scope = element.getAttribute(propOpt.ATTR.SCOPE_KEY) as ScopeType;
                 if (scope == undefined)
                     scope = 'public';
-                let proto = Object.getPrototypeOf(ele).constructor.name;
-
-
-                if (ele.hasAttribute("x-from")) {
-
-                    let _subpath = ele.getAttribute("x-from");
-
+                let proto = Object.getPrototypeOf(element).constructor.name;
+                let _generic = element.getAttribute('x-generic');
+                _generic = _generic == null ? '' : '<' + _generic + '>';
+                if (element.hasAttribute("x-from")) {
+                    let _subpath = element.getAttribute("x-from");
                     let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath));
                     uFInf.parseUrl(_subpath);
-                    //if(_row.src.fullPathWithoutExt.includes())
-                    //console.log(_row.src);
-
-                    /* let fItem = this.pathReplacement.find(s => s.findPath.equalIgnoreCase(uFInf.mainFileRootPath));
-                     if (fItem!=undefined) {
-                         ele.setAttribute('x-from', fItem.replaceWith);
-                         _row.htmlFile.content = this.formHT.outerHTML;
-                         _row.htmlFile.reGenerate = true;
-                     }*/
-
-                    //console.log(_subpath);
-                    //console.log(uFInf.mainFileRootPath);
                     if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {
                         let ctrlNode: Control = {
                             name: nameAttr,
                             proto: proto,
+                            generic: _generic,
                             scope: scope,
                             type: uFInf.extCode,
                             nodeName: uFInf.name,
@@ -184,12 +180,13 @@ export class commonParser {
                     _row.designer.controls.push({
                         name: nameAttr,
                         proto: proto,
+                        generic: _generic,
                         scope: scope,
                         type: 'none',
                         nodeName: nodeName,
                     });
                 }
-            });
+            }
             //  console.log(_row.src.codeSrc.rootPath);
             //  console.log(im);
 

@@ -4,6 +4,7 @@ export interface Control {
     name: string;
     type?: SpecialExtType;
     scope: ScopeType;
+    generic?:string,
     proto: string;
     importedClass?: ImportClassNode;
     src?: codeFileInfo;
@@ -12,6 +13,7 @@ export interface Control {
 export const control: Control = {
     name: "",
     type: 'none',
+    generic:'',
     scope: "public",
     proto: "",
     importedClass:undefined,

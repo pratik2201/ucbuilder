@@ -7,6 +7,8 @@ import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { fileWatcher } from "ucbuilder/build/fileWatcher";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
+import { CommonEvent } from "ucbuilder/global/commonEvent";
+import { CommonRow } from "ucbuilder/build/buildRow";
 
 export class builder {
     static ignoreDirs: string[] = [];
@@ -26,7 +28,9 @@ export class builder {
         this.init();
         this.filewatcher = new fileWatcher(this);
     }
-
+    Event = {
+        onSelect_xName: new CommonEvent<(ele: HTMLElement,row:CommonRow) => void>()
+    }
     init() {
         this.commonMng = new commonParser(this);
     }

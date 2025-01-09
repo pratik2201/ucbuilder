@@ -8,7 +8,7 @@ import { {=src.name} } from '{=src.mainFileRootPath}';
     
 `{loopcls=designer.templetes}` 
 
-type {=name}_ELEMENT_MAP = {`{loopctr=controls}`{=name} : {=proto},`{/loopctr}`}
+type {=name}_ELEMENT_MAP = {`{loopctr=controls}`{=name} : {=proto}{=generic},`{/loopctr}`}
 class {=name}_TEMPLATE extends TemplateNode{
     constructor(tpt:Template) { super(tpt);   }
    
