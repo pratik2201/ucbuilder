@@ -106,6 +106,22 @@ class TabIndexManager {
         document.addEventListener('keydown', (ev: KeyboardEvent) => {
             let code = ev.keyCode;
             switch (code) {
+                case KeyboardKeys.BackSpace:
+                    let constructorName = Object.getPrototypeOf(ev.target).constructor.name;
+
+                    switch (constructorName) {
+                        case 'HTMLTextAreaElement':
+                        case 'HTMLInputElement':
+                            let ele = ev.target as HTMLTextAreaElement & HTMLInputElement;
+                            let _val = ele.value;
+                            if (_val == '' || _val == ele.getSelectedValue()) {
+                                this.movePrev(ev.target as HTMLElement);
+                                this.status = 'none';
+                                ev.preventDefault();
+                            }
+                            return;
+                    }
+                    break;
                 case KeyboardKeys.Enter:
                     //console.log(Object.getPrototypeOf(ev.target).constructor.name);
                     if (Object.getPrototypeOf(ev.target).constructor.name == 'HTMLTextAreaElement') {
@@ -169,7 +185,7 @@ class TabIndexManager {
 
     static movePrev(target: HTMLElement, goAhead: boolean = false) {
         let _this = this;
-        
+
         this.status = 'backword';
         let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;
@@ -178,9 +194,9 @@ class TabIndexManager {
             if (tIndex == -1) { //  IF REACHED TO 0 TAB INDEX;
                 let parent = this.getDirectParent(target);
                 if (this._HELLO_KON(parent, this.Events.onContainerTopLeave)) return;
-               /* let evt = this.Events.onContainerTopLeave;
-                let _obj = evt.find(s => s.target == parent);
-                if (_obj != undefined) if (_obj.callback() === true) return;*/
+                /* let evt = this.Events.onContainerTopLeave;
+                 let _obj = evt.find(s => s.target == parent);
+                 if (_obj != undefined) if (_obj.callback() === true) return;*/
                 this.movePrev(parent, true);
             } else if (tIndex < -1) {  //  IF IN THE AIR    ,-)
             } else {
@@ -238,20 +254,20 @@ class TabIndexManager {
                 break;
             }
         }
-        
+
         return res;
     }
     static moveNext(target: HTMLElement, goAhead: boolean = false) {
-        let _this = this;        
+        let _this = this;
         this.status = 'forward';
         if (!target.isConnected) return;
         let tIndex = parseInt(target.getAttribute('x-tabindex'));
         if (tIndex == null) return;
-        if (!this.isVisaulyAppeared(target)) 
+        if (!this.isVisaulyAppeared(target))
             goAhead = true;
-        
-        if (goAhead && this._HELLO_KON(target, this.Events.onContainerBottomLeave)) return;  
-      //  if (this._HELLO_KON(target, this.Events.onContainerTopEnter)) return;  //  <------ REMOVE THIS CODE IF ANY BUG
+
+        if (goAhead && this._HELLO_KON(target, this.Events.onContainerBottomLeave)) return;
+        //  if (this._HELLO_KON(target, this.Events.onContainerTopEnter)) return;  //  <------ REMOVE THIS CODE IF ANY BUG
 
         let childFirstElement = goAhead ? undefined : this.getDirectElement(target, 0);
         if (childFirstElement != undefined) { // IF FIRST CHILD TAB-INDEX EXIST
@@ -275,13 +291,13 @@ class TabIndexManager {
                 this.focusTo(ele);
             } else {    // IF NEXT ELEMENT HAS CHILD ELEMENT
                 if (ele != undefined) { // IF NEXT ELEMENT EXIST      
-                    
+
                     this.moveNext(ele);
                 } else { // ELSE
                     //if (this._HELLO_KON(parent, this.Events.onContainerBottomLeave)) return;
-                   /* let evt = this.Events.onContainerBottomLeave;
-                    let _obj = evt.find(s => s.target == parent);
-                    if (_obj != undefined) if (_obj.callback() === true) return;*/
+                    /* let evt = this.Events.onContainerBottomLeave;
+                     let _obj = evt.find(s => s.target == parent);
+                     if (_obj != undefined) if (_obj.callback() === true) return;*/
                     this.moveNext(parent, true);   // GO TO PARENT CONTAINER AND MOVE NEXT TAB-INDEX
                 }
             }
