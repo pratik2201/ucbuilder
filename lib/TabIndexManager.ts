@@ -306,7 +306,8 @@ class TabIndexManager {
 
     static getDirectParent(element) { return this.getClosest(element); }
     static getDirectElement(container: HTMLElement, index: number): HTMLElement {
-        return (Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`)).filter(s => container.is(this.getClosest(s))) as HTMLElement[])[0];
+        return (Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`))
+            .filter(s => container.is(this.getClosest(s))) as HTMLElement[])[0];
     }
 
     static focusTo(htele: HTMLElement) {
@@ -343,7 +344,7 @@ class TabIndexManager {
                 visibilityProperty: true
             });
         }*/
-        return hte.offsetWidth > 0 && hte.offsetHeight > 0 && isVisible && !hte.hasAttribute('inert');
+        return hte.offsetWidth > 0 && hte.offsetHeight > 0 && isVisible && hte.closest('[inert]')==null//;;!hte.hasAttribute('inert');
     }
     static isFocusableElement(hte: HTMLElement): boolean {
         let isVisaulyAppeared = this.isVisaulyAppeared(hte);
