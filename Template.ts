@@ -317,12 +317,12 @@ export class TemplateNode {
       tptExt.Events.onDataExport = (data) =>
         param0.parentUc.ucExtends.Events.onDataExport(data);
       //htEle.remove();
-      htEle = this.extended.generateNode({});
+      /*htEle = this.extended.generateNode({});
       document.body.appendChild(htEle);
       this.extended.size.setBy.style(window.getComputedStyle(htEle));
      //console.log(this.extended.size);
       this.extended.sampleNode = htEle;
-      htEle.remove();
+      htEle.remove();*/
     },
     sampleNode:undefined as HTMLElement,
     Events: {
