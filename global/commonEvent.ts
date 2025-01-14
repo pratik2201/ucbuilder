@@ -63,7 +63,6 @@ export class CommonEvent<F extends (...arg: any) => void> {
         this.Events.onChangeEventList();
         return stamp;
     }
-
     removeByStamp(stamp: string): void {
         let fIndex: number = this._eventList.findIndex(s => s.stamp === stamp);
         if (fIndex != -1) {

@@ -329,8 +329,9 @@ export class Usercontrol {
             _extend.visibility = 'visible';
             //return undefined as Usercontrol
         },
-        showDialog: ({ defaultFocusAt = undefined, afterClose = undefined }: {
+        showDialog: ({ defaultFocusAt = undefined, keepCurrentVisible = true, afterClose = undefined }: {
             at?: HTMLElement,
+            keepCurrentVisible?: boolean,
             decision?: WhatToDoWithTargetElement,
             defaultFocusAt?: HTMLElement,
             afterClose?: () => void,
@@ -338,6 +339,9 @@ export class Usercontrol {
             let _extends = this.ucExtends;
             let alreadyLoadedBefore = _extends.isDialogBox;
             _extends.isDialogBox = true;
+            let _parentExt = _extends.PARENT.ucExtends;
+            let _oldParentVisibleValue = _parentExt.keepVisible;
+            _parentExt.keepVisible = keepCurrentVisible;
             let loadAt = _extends.loadAt;// as WhatToDoWithTargetElement;
             if (loadAt.element == undefined) {
                 loadAt.element = _extends.fileInfo.rootInfo.defaultLoadAt;
@@ -359,15 +363,18 @@ export class Usercontrol {
             //_extends.passElement(WinManager.transperency);
             //_extends.wrapperHT.before(WinManager.transperency);
 
-
+            _extends.Events.afterClose.on(() => {
+                _extends.PARENT.ucExtends.keepVisible = _oldParentVisibleValue;
+            });
             if (afterClose)
                 _extends.Events.afterClose.on(afterClose);
+           
             // setTimeout(() => {
 
             if (_extends.dialogForm == undefined)
                 _extends.dialogForm = this;
             //}, 1);
-            if(!alreadyLoadedBefore)
+            if (!alreadyLoadedBefore)
                 _extends.Events.loaded.fire();
             if (!defaultFocusAt) {
                 TabIndexManager.moveNext(_extends.self);
@@ -438,15 +445,15 @@ export class Usercontrol {
                     WinManager.pop();
                 _ext.Events.afterClose.fire();
                 //if (!_ext.keepReference) {
-                     // Clear all properties of the Usercontrol instance after a delay
-                    setTimeout(() => {
-                        for (const key in _this) {
-                            //if (_this.hasOwnProperty(key)) {
-                                _this[key] = undefined;
-                            //}
-                        }
-                    }, 0); // Adjust the delay as needed
-               // }
+                // Clear all properties of the Usercontrol instance after a delay
+                setTimeout(() => {
+                    for (const key in _this) {
+                        //if (_this.hasOwnProperty(key)) {
+                        _this[key] = undefined;
+                        //}
+                    }
+                }, 0); // Adjust the delay as needed
+                // }
                 return true;
             }
             return false;
