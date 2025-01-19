@@ -293,7 +293,7 @@ class jqFeatures {
     }
 
     static regsMng: regsManage = new regsManage();
-    
+
     private static doCommonDomProto(commonPrototype: any): void {
         commonPrototype.bindEventWithUC = function (event, handler, parentUc: Usercontrol, options) {
             this.addEventListener(event, handler, options);
@@ -340,20 +340,20 @@ class jqFeatures {
                 i++;
             return i;
         }
-       /* (function (supported){
-            if (supported) return;
-            Object.defineProperty(window.Node.prototype, 'isConnected', {get})
-            function get() {
-              return document.contains(this);
-            }
-          })('isConnected' in window.Node.prototype);*/
-        commonPrototype.selector = function (rootEle:HTMLElement): string {
+        /* (function (supported){
+             if (supported) return;
+             Object.defineProperty(window.Node.prototype, 'isConnected', {get})
+             function get() {
+               return document.contains(this);
+             }
+           })('isConnected' in window.Node.prototype);*/
+        commonPrototype.selector = function (rootEle: HTMLElement): string {
             let elm: HTMLElement = this;
             if (elm.tagName === "BODY") return "BODY";
             const names: string[] = [];
             while (elm.parentElement && elm.tagName !== "BODY") {
                 if (rootEle != undefined && elm === rootEle) break;
-                names.unshift(elm.tagName+":nth-child(" + (elm.index()+1) + ")");
+                names.unshift(elm.tagName + ":nth-child(" + (elm.index() + 1) + ")");
                 elm = elm.parentElement;
             }
             return names.join(">");
@@ -526,7 +526,21 @@ class jqFeatures {
                 to.push(from[i]);
 
         }
-        
+        Array.prototype.fillIntoMultiple = function (to: Array<[]>, clearTarget = false) {
+            let from = this as [];
+            if (clearTarget) {
+                for (let i = 0, iObj = to, ilen = iObj.length; i < ilen; i++) {
+                    iObj[i].length = 0;
+                }
+            }
+            for(let i=0,iObj=from,ilen=iObj.length   ;   i < ilen   ;   i++){ 
+                const iItem = iObj[i];
+                for(let j=0,jObj=to,jlen=jObj.length   ;   j < jlen   ;   j++){ 
+                    jObj[j].push(iItem);
+                }
+            }
+
+        }
         SVGElement.prototype.data = function (key?: string, value?: any): any {
             switch (arguments.length) {
                 case 0:
@@ -657,9 +671,9 @@ class jqFeatures {
                 charlist = "\s";
             return this.replace(new RegExp("" + charlist + "$", 'ig'), "");
         }
-        String.prototype.toFilePath = function (trim=true): string {
+        String.prototype.toFilePath = function (trim = true): string {
             let ns = this.replace(/[\\\/]+/gi, "/");
-            return trim?ns._trim_("/"):ns;
+            return trim ? ns._trim_("/") : ns;
         }
         String.prototype.getDriveFromPath = function (): string | undefined {
             let r = this.match(/^[\w]+?:+/gi);
