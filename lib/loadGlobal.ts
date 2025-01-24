@@ -88,6 +88,7 @@ export class LoadGlobal {
         if (reloadDesign)
             if (rw.elementHT != undefined)
                 rw.elementHT.delete();
+       
         switch (rw.finfo.partlyInfo.type) {
             case ".css":
             case ".scss":

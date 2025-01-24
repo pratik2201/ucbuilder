@@ -2,7 +2,7 @@ import { codefileHandler } from "ucbuilder/build/codefileHandler";
 import { propOpt } from "ucbuilder/build/common";
 import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
 import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
-import { LoadGlobal } from "ucbuilder/global/loadGlobal";
+import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 export class ResourcesUC {

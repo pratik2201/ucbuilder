@@ -2,7 +2,7 @@ import { propOpt, strOpt, pathInfo } from "ucbuilder/build/common";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { FilterContent } from "ucbuilder/global/filterContent";
-import { LoadGlobal } from "ucbuilder/global/loadGlobal";
+import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { userControlStampRow, UserControlStamp, } from "ucbuilder/lib/UserControlStamp";

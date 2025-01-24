@@ -1,6 +1,6 @@
 
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
-import { LoadGlobal } from "ucbuilder/global/loadGlobal";
+import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
 import { patternList, StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
 
 export class ThemeCssHandler {

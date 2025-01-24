@@ -7,7 +7,7 @@ import { UCGenerateMode, ucOptions, UcOptions, UcStates, WhatToDoWithTargetEleme
 import { PassElementOptions, UserControlStamp, userControlStampRow } from "ucbuilder/lib/UserControlStamp";
 import { SessionManager } from "ucbuilder/lib/SessionManager";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
-import { LoadGlobal } from "ucbuilder/global/loadGlobal";
+import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";

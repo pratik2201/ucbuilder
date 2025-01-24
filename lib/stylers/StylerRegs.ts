@@ -1,6 +1,6 @@
 import { AliceManager } from "ucbuilder/build/codefile/aliceManager";
 import { uniqOpt } from "ucbuilder/enumAndMore";
-import { LoadGlobal } from "ucbuilder/global/loadGlobal";
+import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { openCloser } from "ucbuilder/global/openCloser";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
