@@ -22,6 +22,8 @@ interface HTMLElement extends EventTarget {}
 interface Element extends EventTarget { }
 interface HTMLInputElement {
     getSelectedValue(): string,
+    set maskedValue(value: string),
+    get maskedValue():string,
 }
 interface HTMLTextAreaElement extends HTMLInputElement {
 }
