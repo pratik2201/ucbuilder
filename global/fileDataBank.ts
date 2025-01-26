@@ -65,6 +65,7 @@ class FileDataBank {
 
     static readFile(path: string, {
         reloadData = false,
+        dontDoAnything = false,
         isFullPath = true,
         replaceContentWithKeys = false,
     } = {}): string {
@@ -75,7 +76,7 @@ class FileDataBank {
             fing.parse(path, true);
             fullPath = fing.fullPath;
         }
-
+        if (dontDoAnything) return readFileSync(fullPath, 'binary');
         if (!existsSync(fullPath)) return undefined;
 
         let data = this.source.find(s => s.path == fullPath);
