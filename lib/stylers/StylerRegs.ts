@@ -25,6 +25,9 @@ export type VariableList = { [key: string]: string };
   rootExcludePattern: RegExp;
 }*/
 
+//   /\@import\s*([\"'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/
+
+
 export const patternList/*: PatternList */ = {
   globalFinderPathPattern: /path=(["'`])([\s\S]*?)\1/gim,
   globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
@@ -33,7 +36,9 @@ export const patternList/*: PatternList */ = {
   SINGLELINE_COMMENT_REGS:  /\/\/.*/mg,
   SPACE_REMOVER_REGS:/(;|,|:|{|})[\n\r ]*/gi,
   subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gim,
-  themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
+  //themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
+  themeCSSLoader: /\@(import|use)\s*([\"'`])((?:\\.|(?!\2)[^\\])*)\2\s*;/gim,
+
   stylesFilterPattern: /(animation-name|\$[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
   varValuePrinterPattern: /(-[lgit]-\w+)\s*(.*?)--/gim ,    //       /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
   varValueGetterPattern: /(\$[lgit]-\w+)\:(.*?)\;/gim,            //      /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,

@@ -14,7 +14,7 @@ export class ThemeCssHandler {
             patternList.themeCSSLoader,
             (match: string, code: string, quationMark: string, path: string, offset: any, input_string: string) => {
                 switch (code) {
-                    case "theme":
+                    case "use":
                         //if (path.indexOf('voucherexpenseitem.tpt@ledger')!=-1) debugger;
                         let themecontents = FileDataBank.readFile(path, {
                             isFullPath: false,
@@ -22,7 +22,7 @@ export class ThemeCssHandler {
                         });
                         themecontents = _this.match(themecontents);
                         return themecontents;
-                    case "css":
+                    case "import":
                         let isGoodToAdd: boolean = LoadGlobal.isGoodToPush(path);
                         if (isGoodToAdd) {
                             let cssContents: string = _this.main.parseStyleSeperator_sub({
