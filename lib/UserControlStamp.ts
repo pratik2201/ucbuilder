@@ -111,13 +111,10 @@ export class UserControlStamp {
     }
 
     static reload(rtrn: userControlStampRow, callback: StringExchangerCallback, param0: SourceOptions) {
-        rtrn.content = rtrn.content.replace(/^\s*<([\w\.:-]*?)([\S\s]*?)<\/\1>\s*$/g,
-            (match: string, otag: string, contents: string, ctag: string) => {
-                /*switch (param0.nodeNameAs) {
-                    case 'targetElement': rtrn.styler.nodeName = param0.targetElementNodeName; break;
-                    case 'wrapper': rtrn.styler.nodeName = otag; break;
-                }*/
 
+        
+        rtrn.content = rtrn.content.replace(/^\s*<([\w\.:-]*?)([\S\s]*?)<\/\1>\s*$/g,
+            (match: string, otag: string, contents: string, ctag: string) => {                
                 rtrn.styler.nodeName = otag;
                 let newNodeName: string = rtrn.styler.nodeName;
                 return `<${newNodeName} ${ATTR_OF.UC.ALL}="${rtrn.uniqStamp}"  ${contents}</${newNodeName}>`; //   x-tabindex="-1"
@@ -132,8 +129,6 @@ export class UserControlStamp {
             rtrn.dataHT.setAttribute('x-tabindex', '-1');
             rtrn.content = rtrn.dataHT.outerHTML;
         }
-
-        // if (!rtrn.dataHT.hasAttribute('x-allowtabindex'))
-        //     rtrn.dataHT.setAttribute('x-allowtabindex', '0');
+        
     }
 }
