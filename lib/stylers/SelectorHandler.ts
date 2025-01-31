@@ -152,7 +152,7 @@ export class SelectorHandler {
                 hasUcFound = (sub_styler != undefined);
                 if (hasUcFound) {
                     styler = sub_styler;
-                    let nnode = `${styler.nodeName}[WRAPPER="${styler.uniqStamp}"]`;
+                    let nnode = `${styler.nodeName}[WRAPPER="${styler.LOCAL_STAMP_KEY}"]`;
                     let key = _this.KEY(hiddens);
                     kvNode = key;
                     hiddens.list[kvNode] = { value: nnode };
@@ -189,18 +189,18 @@ export class SelectorHandler {
             switch (len) {
                 case 1:
                     if (fsel.startsWith('[SELF_]'))
-                        splitted[0] = fsel.replace('[SELF_]',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.uniqStamp}"]`);  //`WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
+                        splitted[0] = fsel.replace('[SELF_]',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`);  //`WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
                     else {
                     
-                        splitted[0] = this.setStamp_shu_____(fsel,  '^', styler.uniqStamp+'_');  //ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
+                        splitted[0] = this.setStamp_shu_____(fsel,  '^', styler.LOCAL_STAMP_KEY+'_');  //ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
                     }
                     break;
                 default:
                     if (fsel.startsWith('[SELF_]'))
-                        splitted[0] = fsel.replace('[SELF_]',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.uniqStamp}"]` );  //   // `WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
+                        splitted[0] = fsel.replace('[SELF_]',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]` );  //   // `WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
                     else {
                         fsel = splitted[len - 1];
-                        splitted[len - 1] = this.setStamp_shu_____(fsel, '^', styler.uniqStamp + '_');  // ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
+                        splitted[len - 1] = this.setStamp_shu_____(fsel, '^', styler.LOCAL_STAMP_KEY + '_');  // ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
                     }
                     break;
             }

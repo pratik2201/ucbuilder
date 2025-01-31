@@ -187,7 +187,7 @@ export class TemplateNode {
     setCSS_templateVar:(varList:VariableList/*,key: string, value: string*/)=> {
       StylerRegs.__VAR.SETVALUE(
         varList,
-        this.extended.stampRow.styler.stamp,
+        this.extended.stampRow.styler.TEMPLATE_STAMP_KEY,
         "t",
         this.extended.parentUc.ucExtends.self
       );
@@ -195,7 +195,7 @@ export class TemplateNode {
     setCSS_localVar:(varList:VariableList/*,key: string, value: string*/)=> {
       StylerRegs.__VAR.SETVALUE(
         varList,
-        this.extended.stampRow.styler.uniqStamp,
+        this.extended.stampRow.styler.LOCAL_STAMP_KEY,
         "l",
         this.extended.parentUc.ucExtends.self
       );
@@ -212,16 +212,16 @@ export class TemplateNode {
     
     getCSS_globalVar:(key: string)=> {
       return document.body.style.getPropertyValue(
-        StylerRegs.__VAR.getKeyName(key, ''+this.extended.stampRow.styler.rootInfo.id, "g")
+        StylerRegs.__VAR.getKeyName(key, ''+this.extended.stampRow.styler.ROOT_STAMP_KEY, "g")
       );
     },
     getCSS_templateVar:(key: string)=> {
       return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-        StylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.stamp, "t")
+        StylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.TEMPLATE_STAMP_KEY, "t")
       );
     }, getCSS_localVar:(key: string)=> {
       return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-        StylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.uniqStamp, "l")
+        StylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.LOCAL_STAMP_KEY, "l")
       );
     },
     getCSS_internalVar:(key: string)=> {

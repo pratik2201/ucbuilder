@@ -33,7 +33,7 @@ export class ThemeCssHandler {
                             });
                             LoadGlobal.pushRow({
                                 url: path,
-                                stamp: _this.main.uniqStamp, //this.stamp  <-- i changed dont know why
+                                stamp: _this.main.LOCAL_STAMP_KEY, //this.stamp  <-- i changed dont know why
                                  cssContents: cssContents,
                                  reloadDesign: false,
                                 });

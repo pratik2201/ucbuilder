@@ -1,13 +1,13 @@
 import { AliceManager } from "ucbuilder/build/codefile/aliceManager";
 import { uniqOpt } from "ucbuilder/enumAndMore";
-import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
 import { openCloser } from "ucbuilder/global/openCloser";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
-import { scopeSelectorOptions, ScopeSelectorOptions, SelectorHandler } from "ucbuilder/lib/stylers/SelectorHandler";
+import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
 import { RootAndExcludeHandler } from "ucbuilder/lib/stylers/RootAndExcludeHandler";
+import { SelectorHandler } from "ucbuilder/lib/stylers/SelectorHandler";
 import { ThemeCssHandler } from "ucbuilder/lib/stylers/ThemeCssHandler";
 export type VariableList = { [key: string]: string };
 
@@ -83,7 +83,7 @@ export class StylerRegs {
         if (_data != undefined) {
           LoadGlobal.pushRow({
             url: _stylepath,
-            stamp: styler.stamp,
+            stamp: styler.TEMPLATE_STAMP_KEY,
             cssContents: styler.parseStyleSeperator_sub({ data: _data }),
           });
         }
@@ -91,8 +91,9 @@ export class StylerRegs {
       callback();
     });
   }
-  stamp: string = "";
-  uniqStamp: string = "";
+  TEMPLATE_STAMP_KEY: string = "";
+  LOCAL_STAMP_KEY: string = "";
+  get ROOT_STAMP_KEY() { return "" + this.rootInfo.id; }
   controlName: string = '';
   static stampNo: number = 0;
   static stampCallTimes: number = 0;
@@ -112,8 +113,8 @@ export class StylerRegs {
     if (generateStamp)
       StylerRegs.stampNo++;
 
-    this.stamp = "" + StylerRegs.stampNo;
-    this.uniqStamp = "" + StylerRegs.stampCallTimes;
+    this.TEMPLATE_STAMP_KEY = "" + StylerRegs.stampNo;
+    this.LOCAL_STAMP_KEY = "" + StylerRegs.stampCallTimes;
     this.nodeName = "f" + uniqOpt.randomNo();
     this.selectorHandler = new SelectorHandler(this);
     this.rootAndExcludeHandler = new RootAndExcludeHandler(this);
@@ -177,7 +178,7 @@ export class StylerRegs {
     _params.callCounter++;
     let externalStyles: string[] = [];
     let pstamp_key: string = ''; //ATTR_OF.UC.PARENT_STAMP;
-    let pstamp_val: string = _this.uniqStamp;  // _this.stamp  <-- i changed dont know why
+    let pstamp_val: string = _this.LOCAL_STAMP_KEY;  // _this.stamp  <-- i changed dont know why
     let _curRoot: RootPathRow = _this.rootInfo;
     if (_params.isForRoot) {
       //pstamp_key = ATTR_OF.UC.ROOT_STAMP;
@@ -304,7 +305,7 @@ export class StylerRegs {
             changed = false;
             let trimSelector: string = selectorText.trim();
             if (trimSelector.startsWith("@keyframes")) {
-              return `${trimSelector}_${this.uniqStamp}{${styleContent}} `;
+              return `${trimSelector}_${this.LOCAL_STAMP_KEY}{${styleContent}} `;
             } else {
               selectorText.replace(
                 patternList.subUcFatcher,
@@ -324,7 +325,7 @@ export class StylerRegs {
                           parent_stamp_value: pstamp_val,
                           root:_curRoot,
                           isForRoot:_params.isForRoot
-                        })*/`WRAPPER[${ATTR_OF.UC.ALL}='${this.uniqStamp}'] `
+                        })*/`WRAPPER[${ATTR_OF.UC.ALL}='${this.LOCAL_STAMP_KEY}'] `
                         : _params.scopeSelectorText;
 
                     let css: string = tree.parseStyleSeperator_sub({
@@ -362,10 +363,10 @@ export class StylerRegs {
             uniqId = '' + _curRoot.id;
             break;
           case "t":
-            uniqId = this.stamp;
+            uniqId = this.TEMPLATE_STAMP_KEY;
             break;
           case "l":
-            uniqId = this.uniqStamp;
+            uniqId = this.LOCAL_STAMP_KEY;
             break;
         }
         return StylerRegs.__VAR.GETVALUE(
@@ -391,11 +392,11 @@ export class StylerRegs {
             uniqId = '' + _curRoot.id;
             break;
           case "t":
-            uniqId = this.stamp;
+            uniqId = this.TEMPLATE_STAMP_KEY;
             tarEle = _this.wrapperHT;
             break;
           case "l":
-            uniqId = this.uniqStamp;
+            uniqId = this.LOCAL_STAMP_KEY;
             tarEle = _this.wrapperHT;
             break;
           default: return match;
@@ -411,7 +412,7 @@ export class StylerRegs {
         let ky: string = key.toLowerCase().trim();
         switch (ky) {
           case "animation-name":
-            return `${key}: ${value.trimEnd()}_${this.uniqStamp}; `;
+            return `${key}: ${value.trimEnd()}_${this.LOCAL_STAMP_KEY}; `;
           default:
             let scope: string = ky.charAt(1);
             let __ky = ky.substring(3).trim();
@@ -426,7 +427,7 @@ export class StylerRegs {
               case "t":
                 StylerRegs.__VAR.SETVALUE(
                   { __ky: value },
-                  this.stamp,
+                  this.TEMPLATE_STAMP_KEY,
                   scope,
                   _params.localNodeElement
                 );
@@ -434,7 +435,7 @@ export class StylerRegs {
               case "l":
                 StylerRegs.__VAR.SETVALUE(
                   { __ky: value },
-                  this.uniqStamp,
+                  this.LOCAL_STAMP_KEY,
                   scope,
                   _params.localNodeElement
                 );

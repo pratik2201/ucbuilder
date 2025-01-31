@@ -144,11 +144,11 @@ export class Usercontrol {
 
         setCSS_globalVar: (varList: VariableList /*key: string, value: string*/): void => {
             let _this = this.ucExtends;
-            StylerRegs.__VAR.SETVALUE(varList, '' + _this.stampRow.styler.rootInfo.id, 'g');
+            StylerRegs.__VAR.SETVALUE(varList, '' + _this.stampRow.styler.ROOT_STAMP_KEY, 'g');
         },
         setCSS_localVar: (varList: VariableList /*key: string, value: string*/): void => {
             let _this = this.ucExtends;
-            StylerRegs.__VAR.SETVALUE(varList, _this.stampRow.styler.uniqStamp, 'l', _this.self);
+            StylerRegs.__VAR.SETVALUE(varList, _this.stampRow.styler.LOCAL_STAMP_KEY, 'l', _this.self);
         },
         setCSS_internalVar: (varList: VariableList/*key: string, value: string*/): void => {
             let _this = this.ucExtends;
@@ -156,7 +156,7 @@ export class Usercontrol {
         },
         getCSS_globalVar: (key: string): string => {
             let _this = this.ucExtends;
-            return document.body.style.getPropertyValue(StylerRegs.__VAR.getKeyName(key, '' + _this.stampRow.styler.rootInfo.id, 'g'));
+            return document.body.style.getPropertyValue(StylerRegs.__VAR.getKeyName(key, '' + _this.stampRow.styler.ROOT_STAMP_KEY, 'g'));
         },
         getCSS_localVar: (key: string, localEle: HTMLElement): string => {
             let _this = this.ucExtends;
