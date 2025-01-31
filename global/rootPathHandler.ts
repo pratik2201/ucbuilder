@@ -51,9 +51,9 @@ export class rootPathHandler {
         let result = this.checkStatus(pathAlicesLower, rootDirectoryOf.rootDir);
         switch (result) {
             case "newRegister":
-                //replaceAlicesWith = strOpt.trim__(replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase(), '/');
-            //console.log(param2.addIntoFileDataBankAlso);
-            //console.log([projectName,rootDirectoryOf.rootDir]);
+                // replaceAlicesWith = strOpt.trim__(replaceAlicesWith.replace(/[\\/]{1,}/g, "/").toLowerCase(), '/');
+                // console.log(param2.addIntoFileDataBankAlso);
+                // console.log([projectName,rootDirectoryOf.rootDir]);
             
                 if (param2.addIntoFileDataBankAlso) {
                     (async () => {
@@ -90,7 +90,7 @@ export class rootPathHandler {
                     alices: projectName,
                     isAlreadyFullPath: false,
                     pathType: "none",
-                    cssVars: [],
+                    //cssVars: [],
                     outputDirectory: '',
                     index: -1,
                     location: rootDirectoryOf,
@@ -102,7 +102,7 @@ export class rootPathHandler {
                         textToFind: strOpt.cleanTextForRegs(projectName),
                         replaceWith: rootDirectoryOf.rootDir,
                         //replaceLowerCaseText: rootDirectoryOf.rootDir.toLowerCase().trim(),
-                        cssVars: [],
+                        //cssVars: [],
                     }
                 }
                 /* let record: ReplaceTextRow;

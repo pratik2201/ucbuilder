@@ -5,7 +5,7 @@ export interface ReplaceTextRow {
     originalFinderText: string;
     textToFind: string;
     replaceWith: string;
-    cssVars?: { key: string, value: string }[];
+    //cssVars?: { key: string, value: string }[];
 }
 export type LocationType = "root" | "out" | "designer";
 /*export interface LocationOf {
@@ -17,14 +17,13 @@ export const rootDirectoryOf: LocationOf = {
     outDir: "/",
     designerDir: "/",
     rootDir: "",
-
 };*/
 export const replaceTextRow: ReplaceTextRow = {
     id: 0,
     originalFinderText: "",
     textToFind: "",
     replaceWith: "",
-    cssVars: [],
+    //cssVars: [],
 };
 
 
@@ -42,7 +41,7 @@ export interface RootPathRow {
     location: UcConfig,
     tInfo: ReplaceTextRow,
 
-    cssVars: { key: string, value: string }[],
+    //cssVars: { key: string, value: string }[],
 }
 
 export const rootPathRow: RootPathRow = {
@@ -66,7 +65,7 @@ export const rootPathRow: RootPathRow = {
         originalFinderText: "",
         textToFind: "",
         replaceWith: "",
-        cssVars: [],
+        //cssVars: [],
     },
-    cssVars: [],
+    //cssVars: [],
 }

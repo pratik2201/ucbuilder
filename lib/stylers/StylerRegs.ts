@@ -30,7 +30,7 @@ export type VariableList = { [key: string]: string };
 
 export const patternList/*: PatternList */ = {
   globalFinderPathPattern: /path=(["'`])([\s\S]*?)\1/gim,
-  globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
+  //globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
   MULTILINE_COMMENT_REGS: /\/\*([\s\S]*?)\*\//gi,
   SINGLELINE_COMMENT_REGS:  /\/\/.*/mg,
@@ -83,8 +83,8 @@ export class StylerRegs {
         if (_data != undefined) {
           LoadGlobal.pushRow({
             url: _stylepath,
-            cssContents: styler.parseStyleSeperator_sub({ data: _data }),
             stamp: styler.stamp,
+            cssContents: styler.parseStyleSeperator_sub({ data: _data }),
           });
         }
       });
@@ -124,7 +124,7 @@ export class StylerRegs {
   themeCssHandler: ThemeCssHandler;
   cssVars: { key: string; value: string }[] = [];
 
-  LoadGlobalPath(data: string): void {
+  /*LoadGlobalPath(data: string): void {
     let _this = this;
     data.replace(
       patternList.globalFinderPathPattern,
@@ -139,19 +139,20 @@ export class StylerRegs {
         return "";
       }
     );
-  }
+  }*/
 
   parseStyle(data: string): string {
     let _this = this;
-
-    let rtrn: string = data.replace(
+    let rtrn: string = data;
+    
+    /*let rtrn: string = data.replace(
       patternList.globalFinderPattern,
       (match: string, escapeChar: string, contents: string, offset: any, input_string: string) => {
         if (escapeChar === `\\`) return match;
         _this.LoadGlobalPath(contents);
         return "";
       }
-    );
+    );*/
 
     rtrn = rtrn.replace(
       patternList.styleTagSelector,

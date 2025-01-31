@@ -1,6 +1,6 @@
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
-import { pathInfo, controlOpt } from "ucbuilder/build/common";
-import { sourceOptions, SourceOptions, StringExchangerCallback } from "ucbuilder/enumAndMore";
+import { controlOpt, pathInfo } from "ucbuilder/build/common";
+import { SourceOptions, StringExchangerCallback } from "ucbuilder/enumAndMore";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
@@ -111,8 +111,24 @@ export class UserControlStamp {
     }
 
     static reload(rtrn: userControlStampRow, callback: StringExchangerCallback, param0: SourceOptions) {
-
+       /* rtrn.content = rtrn.content.replace(/^\s*<([\w\.:-]*?)([\S\s]*?)<\/\1>\s*$/g,
+            (match: string, otag: string, contents: string, ctag: string) => {                
+                rtrn.styler.nodeName = otag;
+                let newNodeName: string = rtrn.styler.nodeName;
+                return `<${newNodeName} ${ATTR_OF.UC.ALL}="${rtrn.uniqStamp}"  ${contents}</${newNodeName}>`; //   x-tabindex="-1"
+            });*/
         
+        rtrn.content = rtrn.styler.parseStyle(rtrn.content);        
+        if (callback != undefined) rtrn.content = callback(rtrn.content);
+        rtrn.dataHT = rtrn.content.$();
+        rtrn.styler.nodeName = rtrn.dataHT.nodeName;
+        rtrn.dataHT.setAttribute(ATTR_OF.UC.ALL, rtrn.uniqStamp);
+        rtrn.content = rtrn.dataHT.outerHTML;
+        if (!rtrn.dataHT.hasAttribute('x-tabindex')) {
+            rtrn.dataHT.setAttribute('x-tabindex', '-1');
+        }
+
+        /*
         rtrn.content = rtrn.content.replace(/^\s*<([\w\.:-]*?)([\S\s]*?)<\/\1>\s*$/g,
             (match: string, otag: string, contents: string, ctag: string) => {                
                 rtrn.styler.nodeName = otag;
@@ -128,7 +144,7 @@ export class UserControlStamp {
         if (!rtrn.dataHT.hasAttribute('x-tabindex')) {
             rtrn.dataHT.setAttribute('x-tabindex', '-1');
             rtrn.content = rtrn.dataHT.outerHTML;
-        }
+        }*/
         
     }
 }

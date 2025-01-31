@@ -34,9 +34,9 @@ export class ThemeCssHandler {
                             LoadGlobal.pushRow({
                                 url: path,
                                 stamp: _this.main.uniqStamp, //this.stamp  <-- i changed dont know why
-                                reloadDesign: false,
-                                cssContents: cssContents,
-                            });
+                                 cssContents: cssContents,
+                                 reloadDesign: false,
+                                });
                         }
                         return "";
                 }
