@@ -231,7 +231,7 @@ export class TemplateNode {
     },
     generateContent: (jsonRow: {}): string => {
       let _this = this.extended;
-      let dta = _this.stampRow.content;
+      let dta = _this.stampRow.htmlContent;
       dta = _this.Events.beforeGenerateContent(dta, jsonRow);
       dta = _this.regsMng.parse(jsonRow, dta);
       dta = _this.Events.onGenerateContent(dta, jsonRow);

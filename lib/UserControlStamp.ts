@@ -4,11 +4,12 @@ import { SourceOptions, StringExchangerCallback } from "ucbuilder/enumAndMore";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
-export interface PassElementOptions {
+import { StampGenerator } from "ucbuilder/lib/samping/StampGenerator";
+export interface IPassElementOptions {
     applySubTree?: boolean;
     skipTopEle?: boolean;
 }
-const passElementOptions: PassElementOptions = {
+const PassElementOptions: IPassElementOptions = {
     applySubTree: true,
     skipTopEle: false
 }
@@ -17,31 +18,26 @@ export class userControlStampRow {
     get stamp(): string { return this.styler.TEMPLATE_STAMP_KEY; }
     get uniqStamp(): string { return this.styler.LOCAL_STAMP_KEY; }
     styler: StylerRegs;
-    content: string = "";
+    htmlContent: string = "";
     dataHT: HTMLElement;
     fUniq: string = "";
     isOurElement(ele: HTMLElement): boolean {
         return ele.getAttribute(ATTR_OF.UC.ALL).startsWith(this.uniqStamp);
     }
-    passElement = <A = HTMLElement | HTMLElement[]>(ele: A, options?: PassElementOptions): string[] => {
-        let option = Object.assign(Object.assign({}, passElementOptions), options);
+    passElement = <A = HTMLElement | HTMLElement[]>(ele: A, options?: IPassElementOptions): string[] => {
+        let option = Object.assign(Object.assign({}, PassElementOptions), options);
         let stamplist: string[] = [];
         let stmpTxt: string = this.stamp;
         let stmpUnq: string = this.uniqStamp;
-        if (this.cInfo.rootInfo == undefined)
-            console.log(this.cInfo);
+        //if (this.cInfo.rootInfo == undefined)
+        //    console.log(this.cInfo);
         let stmpRt = '' + this.cInfo.rootInfo.id;
-
-        //let ar: NodeListOf<HTMLElement> = ele.querySelectorAll("*");
         let ar = controlOpt.getArray(ele);
-        for (let index = 0; index < ar.length; index++) {
-            let element: HTMLElement = ar[index];
-
+        for(let i=0,iObj=ar,ilen=iObj.length   ;   i < ilen   ;   i++){ 
+            const element: HTMLElement = iObj[i];        
             if (!option.skipTopEle) {
                 element.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
-                //element.classList.add(...ATTR_OF.getParent(stmpUnq, stmpRt));
             }
-
             //element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
             // element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
             //element.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
@@ -49,7 +45,7 @@ export class userControlStampRow {
                 element.querySelectorAll("*")
                     .forEach((s) => {
                         s.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
-                       // s.classList.add(...ATTR_OF.getParent(stmpUnq, stmpRt));
+                        // s.classList.add(...ATTR_OF.getParent(stmpUnq, stmpRt));
                         //s.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
                         // s.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
                         //s.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
@@ -60,9 +56,8 @@ export class userControlStampRow {
     }
 }
 export class UserControlStamp {
-    static stampNo: number = 0;
     static source: userControlStampRow[] = [];
-    static stampCallTimes: number = 0;
+
     /*static params:SourceOptions = {
         fInfo: undefined as codeFileInfo | undefined,
         reloadDesign: false,
@@ -72,36 +67,42 @@ export class UserControlStamp {
     }*/
 
     static getStamp(param0: SourceOptions, generateStamp = true): userControlStampRow {
-        this.stampCallTimes++;
         let rtrn: userControlStampRow | undefined = undefined;
         let lwrName: string = param0.cfInfo.html.rootPath.toLowerCase();
+        let _StampGenerator = StampGenerator.generate({
+            stampKeys: param0.cfInfo.html.rootPath,
+            root: param0.cfInfo.rootInfo
+        });
+        _StampGenerator.generateSource(undefined, {});
         if (param0.templateName != "") lwrName += "@" + param0.templateName;
         let pathtofind: string = lwrName + "_" + param0.reloadKey;
         let sindex: number = this.source.findIndex(s => s.fUniq == pathtofind);
         if (sindex == -1) {
-            this.stampNo++;
             rtrn = new userControlStampRow();
             rtrn.styler = new StylerRegs(param0.cfInfo.rootInfo, generateStamp);
             rtrn.fUniq = pathtofind;
             rtrn.cInfo = param0.cfInfo;
             if (param0.htmlContents != undefined) {
-                rtrn.content = param0.htmlContents;
+                rtrn.htmlContent = param0.htmlContents;
                 this.reload(rtrn, param0.beforeContentAssign, param0);
             } else {
-                rtrn.content = FileDataBank.readFile(param0.cfInfo.html.fullPath);
+                rtrn.htmlContent = FileDataBank.readFile(param0.cfInfo.html.fullPath);
                 this.reload(rtrn, param0.beforeContentAssign, param0);
             }
             this.source.push(rtrn);
         } else {
             if (param0.reloadDesign) {
                 rtrn = this.source[sindex];
-                rtrn.content = param0.htmlContents != undefined ? param0.htmlContents : pathInfo.readFile(rtrn.cInfo.html.fullPath);
+                rtrn.htmlContent =
+                    param0.htmlContents != undefined ?
+                        param0.htmlContents :
+                        pathInfo.readFile(rtrn.cInfo.html.fullPath);
                 this.reload(rtrn, param0.beforeContentAssign, param0);
             } else {
                 rtrn = this.source[sindex];
                 if (param0.beforeContentAssign != undefined) {
-                    rtrn.content = param0.beforeContentAssign(rtrn.content);
-                    rtrn.dataHT = rtrn.content.$();
+                    rtrn.htmlContent = param0.beforeContentAssign(rtrn.htmlContent);
+                    rtrn.dataHT = rtrn.htmlContent.$();
                 }
             }
         }
@@ -109,19 +110,19 @@ export class UserControlStamp {
     }
 
     static reload(rtrn: userControlStampRow, callback: StringExchangerCallback, param0: SourceOptions) {
-       /* rtrn.content = rtrn.content.replace(/^\s*<([\w\.:-]*?)([\S\s]*?)<\/\1>\s*$/g,
-            (match: string, otag: string, contents: string, ctag: string) => {                
-                rtrn.styler.nodeName = otag;
-                let newNodeName: string = rtrn.styler.nodeName;
-                return `<${newNodeName} ${ATTR_OF.UC.ALL}="${rtrn.uniqStamp}"  ${contents}</${newNodeName}>`; //   x-tabindex="-1"
-            });*/
-        
-        rtrn.content = rtrn.styler.parseStyle(rtrn.content);        
-        if (callback != undefined) rtrn.content = callback(rtrn.content);
-        rtrn.dataHT = rtrn.content.$();
+        /* rtrn.content = rtrn.content.replace(/^\s*<([\w\.:-]*?)([\S\s]*?)<\/\1>\s*$/g,
+             (match: string, otag: string, contents: string, ctag: string) => {                
+                 rtrn.styler.nodeName = otag;
+                 let newNodeName: string = rtrn.styler.nodeName;
+                 return `<${newNodeName} ${ATTR_OF.UC.ALL}="${rtrn.uniqStamp}"  ${contents}</${newNodeName}>`; //   x-tabindex="-1"
+             });*/
+
+        rtrn.htmlContent = rtrn.styler.parseStyle(rtrn.htmlContent);
+        if (callback != undefined) rtrn.htmlContent = callback(rtrn.htmlContent);
+        rtrn.dataHT = rtrn.htmlContent.$();
         rtrn.styler.nodeName = rtrn.dataHT.nodeName;
         rtrn.dataHT.setAttribute(ATTR_OF.UC.ALL, rtrn.uniqStamp);
-        rtrn.content = rtrn.dataHT.outerHTML;
+        rtrn.htmlContent = rtrn.dataHT.outerHTML;
         if (!rtrn.dataHT.hasAttribute('x-tabindex')) {
             rtrn.dataHT.setAttribute('x-tabindex', '-1');
         }
@@ -143,6 +144,6 @@ export class UserControlStamp {
             rtrn.dataHT.setAttribute('x-tabindex', '-1');
             rtrn.content = rtrn.dataHT.outerHTML;
         }*/
-        
+
     }
 }

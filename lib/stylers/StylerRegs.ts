@@ -67,19 +67,15 @@ export class StylerRegs {
   static pushPublicStyles(callback: () => void): void {
     import("ucbuilder/ResourcesUC").then(({ ResourcesUC }) => {
       rootPathHandler.source.forEach((row: RootPathRow) => {
-        let _stylepath: string = row.tInfo.replaceWith + "/styles.scss"; //row.tInfo.replaceLowerCaseText + "/styles.scss";
-        //console.log('==>'+_stylepath);
-
+        let _stylepath: string = row.tInfo.replaceWith + "/styles.scss";
         let node: RootPathRow = row;//rootPathHandler.convertToRow(row, true);
         node.isAlreadyFullPath = true;
         let styler: StylerRegs = new StylerRegs(node, true);
         ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
-
         let _data: string = FileDataBank.readFile(_stylepath, {
           isFullPath: false,
           replaceContentWithKeys: true
         });
-
         if (_data != undefined) {
           LoadGlobal.pushRow({
             url: _stylepath,

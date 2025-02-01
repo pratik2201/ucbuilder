@@ -1,21 +1,19 @@
-
-import { propOpt, objectOpt, controlOpt } from "ucbuilder/build/common";
-import { uniqOpt } from "ucbuilder/enumAndMore";
-import { FilterContent } from "ucbuilder/global/filterContent";
-import { CommonEvent } from "ucbuilder/global/commonEvent";
-import { UCGenerateMode, ucOptions, UcOptions, UcStates, WhatToDoWithTargetElement } from "ucbuilder/enumAndMore";
-import { PassElementOptions, UserControlStamp, userControlStampRow } from "ucbuilder/lib/UserControlStamp";
-import { SessionManager } from "ucbuilder/lib/SessionManager";
-import { FileDataBank } from "ucbuilder/global/fileDataBank";
-import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
-import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { ResourcesUC } from "ucbuilder/ResourcesUC";
-import { newObjectOpt } from "ucbuilder/global/objectOpt";
-import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
+import { objectOpt, propOpt } from "ucbuilder/build/common";
+import { UCGenerateMode, UcOptions, UcStates, uniqOpt, WhatToDoWithTargetElement } from "ucbuilder/enumAndMore";
+import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
-import { WinManager } from "ucbuilder/lib/WinManager";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { FilterContent } from "ucbuilder/global/filterContent";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
+import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
+import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
+import { SessionManager } from "ucbuilder/lib/SessionManager";
+import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
+import { IPassElementOptions, UserControlStamp, userControlStampRow } from "ucbuilder/lib/UserControlStamp";
+import { WinManager } from "ucbuilder/lib/WinManager";
+import { ResourcesUC } from "ucbuilder/ResourcesUC";
 /*export enum ucVisibility{
     inherit = 0,
     visible = 1,
@@ -180,13 +178,15 @@ export class Usercontrol {
             ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true) as HTMLElement;
             //console.log(param0.targetElement.nodeName);
             ucExt.stampRow.styler.controlName = param0.accessName;
+            //console.log(ucExt.fileInfo.mainFilePath+":"+param0.accessName);
+            
             if (ucExt.isForm) {
                 ucExt.PARENT = this;
                 ucExt.form = this;
                 ResourcesUC.styler
                     .pushChild(
                         ucExt.fileInfo.mainFilePath,
-                        ucExt.stampRow.styler, 'WRAPPER'); // param0.targetElement.nodeName
+                        ucExt.stampRow.styler, param0.accessName); // param0.targetElement.nodeName
                 // param0.wrapperHT.appendChild(ucExt.wrapperHT);
             } else {
                 ucExt.form = param0.parentUc.ucExtends.form;
@@ -194,7 +194,7 @@ export class Usercontrol {
                 ucExt.PARENT.ucExtends.stampRow.styler
                     .pushChild(
                         ucExt.fileInfo.mainFilePath,
-                        ucExt.stampRow.styler, 'WRAPPER');  // param0.targetElement.nodeName
+                        ucExt.stampRow.styler, param0.accessName);  // param0.targetElement.nodeName
 
                 ucExt.stampRow.styler.parent = ucExt.PARENT.ucExtends.stampRow.styler;
                 if (param0.targetElement) {
@@ -458,7 +458,7 @@ export class Usercontrol {
             }
             return false;
         },
-        passElement: <A = HTMLElement | HTMLElement[]>(ele: A, options?: PassElementOptions): A => {
+        passElement: <A = HTMLElement | HTMLElement[]>(ele: A, options?: IPassElementOptions): A => {
             let uExt = this.ucExtends;
             uExt.stampRow.passElement(ele, options);
             return ele;
