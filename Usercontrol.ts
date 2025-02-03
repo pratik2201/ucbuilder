@@ -14,11 +14,13 @@ import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
 import { IPassElementOptions, UserControlStamp, userControlStampRow } from "ucbuilder/lib/UserControlStamp";
 import { WinManager } from "ucbuilder/lib/WinManager";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
+import { SourceNode, StampGenerator, StampNode } from "ucbuilder/lib/samping/StampGenerator";
 /*export enum ucVisibility{
     inherit = 0,
     visible = 1,
     hidden = 2
 }*/
+
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export class Usercontrol {
 
@@ -97,14 +99,17 @@ export class Usercontrol {
         dialogForm: undefined as Usercontrol,
         PARENT: undefined as Usercontrol,
         session: new SessionManager(),
-        stampRow: undefined as userControlStampRow,
+        //stampRow: undefined as userControlStampRow,
+        //stampNode: undefined as StampNode,
+        srcNode: undefined as SourceNode,
+        get stampNode() { return (this.sourceNode as SourceNode).main; },
         wrapperHT: undefined as HTMLElement,
         isDialogBox: false as boolean,
         keepVisible: false as boolean,
         parentDependantIndex: -1 as number,
         dependant: [] as Usercontrol[],
         isForm: false,
-        get formExtends() { return this.form.ucExtends; },
+        get formExtends() { return (this.form as Usercontrol).ucExtends; },
         get self(): HTMLElement { return this.wrapperHT; },
         set caption(text: string) {
             this.designer.setCaption(text);
@@ -112,7 +117,7 @@ export class Usercontrol {
         find: (skey: string): HTMLElement[] => {
             let ar = skey.split(',');
             let _this = this.ucExtends;
-            let uniqStamp = _this.stampRow.uniqStamp;
+            let uniqStamp = _this.srcNode.uniqStamp;
             ar = ar.map((s) => {
                 s = FilterContent.select_inline_filter(s, uniqStamp);
                 return s;
@@ -142,11 +147,11 @@ export class Usercontrol {
 
         setCSS_globalVar: (varList: VariableList /*key: string, value: string*/): void => {
             let _this = this.ucExtends;
-            StylerRegs.__VAR.SETVALUE(varList, '' + _this.stampRow.styler.ROOT_STAMP_KEY, 'g');
+            StylerRegs.__VAR.SETVALUE(varList, '' + _this.srcNode.styler.ROOT_STAMP_KEY, 'g');
         },
         setCSS_localVar: (varList: VariableList /*key: string, value: string*/): void => {
             let _this = this.ucExtends;
-            StylerRegs.__VAR.SETVALUE(varList, _this.stampRow.styler.LOCAL_STAMP_KEY, 'l', _this.self);
+            StylerRegs.__VAR.SETVALUE(varList, _this.srcNode.styler.LOCAL_STAMP_KEY, 'l', _this.self);
         },
         setCSS_internalVar: (varList: VariableList/*key: string, value: string*/): void => {
             let _this = this.ucExtends;
@@ -154,7 +159,7 @@ export class Usercontrol {
         },
         getCSS_globalVar: (key: string): string => {
             let _this = this.ucExtends;
-            return document.body.style.getPropertyValue(StylerRegs.__VAR.getKeyName(key, '' + _this.stampRow.styler.ROOT_STAMP_KEY, 'g'));
+            return document.body.style.getPropertyValue(StylerRegs.__VAR.getKeyName(key, '' + _this.srcNode.styler.ROOT_STAMP_KEY, 'g'));
         },
         getCSS_localVar: (key: string, localEle: HTMLElement): string => {
             let _this = this.ucExtends;
@@ -174,29 +179,45 @@ export class Usercontrol {
 
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             //param0.source.addTabIndex = ucExt.isForm;
-            ucExt.stampRow = UserControlStamp.getStamp(param0.source);
-            ucExt.wrapperHT = ucExt.stampRow.dataHT.cloneNode(true) as HTMLElement;
+            let stmpNode = StampGenerator.generate({
+                stampKeys: ucExt.fileInfo.mainFileRootPath,
+                root: ucExt.fileInfo.rootInfo
+            });
+
+            // if (ucExt.fileInfo.mainFileRootPath.endsWithI('ListView.uc')) debugger;
+            let res = stmpNode.stamp.generateSource('', {
+                htmlFilePath: ucExt.fileInfo.html.fullPath
+            });
+
+            ucExt.srcNode = res.srcNode;
+            if (!res.hasHTMLContentExists)
+                res.srcNode.loadHTML(param0.source.beforeContentAssign);
+
+            //console.log([ucExt.fileInfo.mainFileRootPath,res.hasHTMLContentExists]);
+
+            //ucExt.stampRow = UserControlStamp.getStamp(param0.source);
+            ucExt.wrapperHT = ucExt.srcNode.dataHT.cloneNode(true) as HTMLElement;
             //console.log(param0.targetElement.nodeName);
-            ucExt.stampRow.styler.controlName = param0.accessName;
+            ucExt.srcNode.styler.controlName = param0.accessName;
             //console.log(ucExt.fileInfo.mainFilePath+":"+param0.accessName);
-            
+
             if (ucExt.isForm) {
                 ucExt.PARENT = this;
                 ucExt.form = this;
                 ResourcesUC.styler
                     .pushChild(
                         ucExt.fileInfo.mainFilePath,
-                        ucExt.stampRow.styler, param0.accessName); // param0.targetElement.nodeName
+                        ucExt.srcNode.styler, param0.accessName); // param0.targetElement.nodeName
                 // param0.wrapperHT.appendChild(ucExt.wrapperHT);
             } else {
                 ucExt.form = param0.parentUc.ucExtends.form;
                 ucExt.PARENT = param0.parentUc;
-                ucExt.PARENT.ucExtends.stampRow.styler
+                ucExt.PARENT.ucExtends.srcNode.styler
                     .pushChild(
                         ucExt.fileInfo.mainFilePath,
-                        ucExt.stampRow.styler, param0.accessName);  // param0.targetElement.nodeName
+                        ucExt.srcNode.styler, param0.accessName);  // param0.targetElement.nodeName
 
-                ucExt.stampRow.styler.parent = ucExt.PARENT.ucExtends.stampRow.styler;
+                ucExt.srcNode.styler.parent = ucExt.PARENT.ucExtends.srcNode.styler;
                 if (param0.targetElement) {
                     ucExt.initalComponents.elements = param0.targetElement.children;
                     if (param0.decisionForTargerElement == 'replace')
@@ -249,34 +270,45 @@ export class Usercontrol {
             if (ucExt.dialogForm == undefined && pucExt.dialogForm != undefined)
                 ucExt.dialogForm = pucExt.dialogForm;
             ucExt.initalComponents.stageHT = ucExt.wrapperHT;
-            //ucExt.wrapperHT.setAttribute(ATTR_OF.UC.UC_STAMP+"__", ucExt.stampRow.uniqStamp);
+            //ucExt.wrapperHT.setAttribute(ATTR_OF.UC.UC_STAMP+"__", ucExt.srcNode.uniqStamp);
             //console.log(ucExt.wrapperHT.children);
 
 
-            ucExt.wrapperHT.setAttribute(ATTR_OF.UC.ALL, ucExt.stampRow.uniqStamp);
-            //ucExt.wrapperHT.classList.add(ATTR_OF.getUc(ucExt.stampRow.uniqStamp));
+            ucExt.wrapperHT.setAttribute(ATTR_OF.UC.ALL, ucExt.srcNode.uniqStamp);
+            //ucExt.wrapperHT.classList.add(ATTR_OF.getUc(ucExt.srcNode.uniqStamp));
         },
         resizerObserver: undefined as ResizeObserver,
         finalizeInit: (param0: UcOptions): void => {
             let ext = this.ucExtends;
-            param0.source.cssContents = ext.stampRow.styler.parseStyleSeperator_sub(
+            if (!ext.srcNode.cssCode.hasContent) {
+                ext.srcNode.cssCode.load({
+                    content: FileDataBank.readFile(ext.fileInfo.style.fullPath, { replaceContentWithKeys: true }),
+                });
+                ext.srcNode.cssCode.content = ext.srcNode.styler.parseStyleSeperator_sub({
+                    data: ext.srcNode.cssCode.originalContent,
+                    localNodeElement: ext.self,
+                });
+            } 
+            ext.srcNode.loadCSS();    
+            /*param0.source.cssContents = ext.srcNode.styler.parseStyleSeperator_sub(
                 {
                     data: (param0.source.cssContents == undefined ?
                         FileDataBank.readFile(ext.fileInfo.style.fullPath, { replaceContentWithKeys: true })
                         :
                         param0.source.cssContents),
                     localNodeElement: ext.self,
-                    cssVarStampKey: ext.cssVarStampKey
+                    //cssVarStampKey: ext.cssVarStampKey
                 });
-            //setTimeout(() => {
+            console.log((param0.source.cssContents==ext.srcNode.cssCode.content));
+            
             LoadGlobal.pushRow({
                 url: ext.fileInfo.style.rootPath,
-                stamp: ext.stampRow.stamp,
+                stamp: ext.srcNode.stamp,
                 reloadDesign: param0.source.reloadDesign,
                 reloadKey: param0.source.reloadKey,
-                cssContents: param0.source.cssContents
+                cssContents: ext.srcNode.cssCode.content
             });
-            //}, 1);
+            */
             ext.Events.afterInitlize.fire();
         },
         loadAt: {
@@ -368,7 +400,7 @@ export class Usercontrol {
             });
             if (afterClose)
                 _extends.Events.afterClose.on(afterClose);
-           
+
             // setTimeout(() => {
 
             if (_extends.dialogForm == undefined)
@@ -460,7 +492,7 @@ export class Usercontrol {
         },
         passElement: <A = HTMLElement | HTMLElement[]>(ele: A, options?: IPassElementOptions): A => {
             let uExt = this.ucExtends;
-            uExt.stampRow.passElement(ele, options);
+            uExt.srcNode.passElement(ele, options);
             return ele;
         },
         designer: {
@@ -472,7 +504,7 @@ export class Usercontrol {
                 let childs: { [key: string]: HTMLElement } = {};
                 let uExt = this.ucExtends;
                 let fromElement = uExt.wrapperHT;
-                let uniqStamp = uExt.stampRow.uniqStamp;
+                let uniqStamp = uExt.srcNode.uniqStamp;
                 if (specific != undefined) {
                     for (let i = 0, len = specific.length; i < len; i++) {
                         const itmpath = specific[i];

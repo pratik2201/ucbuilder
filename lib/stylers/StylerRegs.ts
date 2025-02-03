@@ -52,7 +52,7 @@ export interface StyleSeperatorOptions {
   isForRoot?: boolean,
   _rootinfo?: RootPathRow,
   localNodeElement?: HTMLElement,
-  cssVarStampKey?: string,
+  //cssVarStampKey?: string,
 }
 const styleSeperatorOptions: StyleSeperatorOptions = {
   data: "",
@@ -61,7 +61,7 @@ const styleSeperatorOptions: StyleSeperatorOptions = {
   isForRoot: false,
   _rootinfo: Object.assign({}, rootPathRow),
   localNodeElement: undefined,
-  cssVarStampKey: "",
+  //cssVarStampKey: "",
 };
 export class StylerRegs {
   static pushPublicStyles(callback: () => void): void {

@@ -33,8 +33,8 @@ export class userControlStampRow {
         //    console.log(this.cInfo);
         let stmpRt = '' + this.cInfo.rootInfo.id;
         let ar = controlOpt.getArray(ele);
-        for(let i=0,iObj=ar,ilen=iObj.length   ;   i < ilen   ;   i++){ 
-            const element: HTMLElement = iObj[i];        
+        for (let i = 0, iObj = ar, ilen = iObj.length; i < ilen; i++) {
+            const element: HTMLElement = iObj[i];
             if (!option.skipTopEle) {
                 element.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
             }
@@ -69,11 +69,19 @@ export class UserControlStamp {
     static getStamp(param0: SourceOptions, generateStamp = true): userControlStampRow {
         let rtrn: userControlStampRow | undefined = undefined;
         let lwrName: string = param0.cfInfo.html.rootPath.toLowerCase();
-        let _StampGenerator = StampGenerator.generate({
-            stampKeys: param0.cfInfo.html.rootPath,
+        /*let _StampGenerator = StampGenerator.generate({
+            stampKeys: param0.cfInfo.mainFileRootPath,
             root: param0.cfInfo.rootInfo
         });
-        _StampGenerator.generateSource(undefined, {});
+       let srcNode = _StampGenerator.generateSource(param0.templateName, {
+            htmlContent: param0.htmlContents,
+            htmlFilePath: param0.cfInfo.html.fullPath,
+        });
+        srcNode.loadHTML(param0.beforeContentAssign);*/
+        //console.log(srcNode);
+
+        //console.log([srcNode.htmlCode.originalContent,srcNode.main]);
+
         if (param0.templateName != "") lwrName += "@" + param0.templateName;
         let pathtofind: string = lwrName + "_" + param0.reloadKey;
         let sindex: number = this.source.findIndex(s => s.fUniq == pathtofind);

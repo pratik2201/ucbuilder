@@ -12,12 +12,13 @@ import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { FileInfo, codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { Size } from "ucbuilder/global/drawing/shapes";
-interface TptTextObjectNode<K>{
+import { SourceNode, StampGenerator } from "ucbuilder/lib/samping/StampGenerator";
+interface TptTextObjectNode<K> {
   content: string,
-  row:K
+  row: K
 }
 export class Template {
-  static extractArgs = (args:any) => newObjectOpt.extractArguments(args);
+  static extractArgs = (args: any) => newObjectOpt.extractArguments(args);
   static getTemplates = {
     /**
      * @param  htmlContents content
@@ -33,7 +34,7 @@ export class Template {
           name: propOpt.ATTR.TEMPLETE_DEFAULT,
           mainFilePath: mainFilePath,
           htmlContents: htmlContents,
-          cssContents: FileDataBank.readFile(mainFilePath + ".scss",{}),
+          cssContents: FileDataBank.readFile(mainFilePath + ".scss", {}),
         });
       } else {
         tList.forEach((element) => {
@@ -43,8 +44,8 @@ export class Template {
           callback({
             name: element.getAttribute(propOpt.ATTR.X_NAME),
             mainFilePath: mainFilePath,
-            htmlContents: FileDataBank.readFile(mainFilePath + ".html",{}),
-            cssContents: FileDataBank.readFile(mainFilePath + ".scss",{}),
+            htmlContents: FileDataBank.readFile(mainFilePath + ".html", {}),
+            cssContents: FileDataBank.readFile(mainFilePath + ".scss", {}),
           });
         });
       }
@@ -75,7 +76,7 @@ export class Template {
      */
     byHTMLFilePath(htmlFilePath: string, returnArray = true) {
       let mainFilePath = strOpt.trim_(htmlFilePath, ".html");
-      let htmlContents = FileDataBank.readFile(mainFilePath + ".html",{});
+      let htmlContents = FileDataBank.readFile(mainFilePath + ".html", {});
       return this.byContents(htmlContents, mainFilePath, returnArray);
     },
     /**
@@ -103,7 +104,7 @@ export class Template {
      */
     loopDirectory(
       filepath: string,
-      callback: (row: TemplatePathOptions) => void = (row) => {}
+      callback: (row: TemplatePathOptions) => void = (row) => { }
     ) {
       let fs = require("fs");
       filepath = filepath.toLowerCase();
@@ -119,13 +120,13 @@ export class Template {
           let extLessFileName = strOpt.trim_(filename, ".html");
           let tp = strOpt._trim(extLessFileName, fnm);
           tp = tp.trim();
-          let row = Object.assign({},templatePathOptions);
+          let row = Object.assign({}, templatePathOptions);
           row.name = tp != "" ? tp._trim(".") : propOpt.ATTR.TEMPLETE_DEFAULT;
           row.mainFilePath = pathInfo.cleanPath(
             fpart.dirPath + extLessFileName
           );
-          row.htmlContents = FileDataBank.readFile(row.mainFilePath + ".html",{});
-          row.cssContents = FileDataBank.readFile(row.mainFilePath + ".scss",{});
+          row.htmlContents = FileDataBank.readFile(row.mainFilePath + ".html", {});
+          row.cssContents = FileDataBank.readFile(row.mainFilePath + ".scss", {});
           callback(row);
         }
       });
@@ -136,14 +137,14 @@ export class Template {
     Template._CSS_VAR_STAMP++;
     StylerRegs.stampNo++;
     this.extended.cssVarStampKey = "t" + Template._CSS_VAR_STAMP;
-  } 
-  
+  }
+
   extended = {
-    
+
     wholeCSS: "",
     fileStamp: "",
     _templeteNode: undefined,
-    stampRow: undefined as userControlStampRow,
+   // stampRow: undefined as userControlStampRow,
     parentUc: undefined as Usercontrol,
     regsMng: new regsManage(),
 
@@ -171,37 +172,40 @@ export class TemplateNode {
     fileStamp: "",
     cssVarStampKey: "0",
     main: undefined as Template,
+    srcNode: undefined as SourceNode,
+    get stampNode() { return (this.sourceNode as SourceNode).main; },
     stampRow: undefined as userControlStampRow,
+
     parentUc: undefined as Usercontrol,
-    wrapper:undefined as HTMLElement,
+    wrapper: undefined as HTMLElement,
     size: new Size(),
     regsMng: new regsManage(),
-    setCSS_globalVar(varList:VariableList/*,key: string, value: string*/) {
-      
+    setCSS_globalVar(varList: VariableList/*,key: string, value: string*/) {
+
       StylerRegs.__VAR.SETVALUE(
         varList,
-        ''+this.stampRow.styler.rootInfo.id,
+        '' + this.srcNode.styler.rootInfo.id,
         "g"
       );
     },
-    setCSS_templateVar:(varList:VariableList/*,key: string, value: string*/)=> {
+    setCSS_templateVar: (varList: VariableList/*,key: string, value: string*/) => {
       StylerRegs.__VAR.SETVALUE(
         varList,
-        this.extended.stampRow.styler.TEMPLATE_STAMP_KEY,
+        this.extended.srcNode.styler.TEMPLATE_STAMP_KEY,
         "t",
         this.extended.parentUc.ucExtends.self
       );
     },
-    setCSS_localVar:(varList:VariableList/*,key: string, value: string*/)=> {
+    setCSS_localVar: (varList: VariableList/*,key: string, value: string*/) => {
       StylerRegs.__VAR.SETVALUE(
         varList,
-        this.extended.stampRow.styler.LOCAL_STAMP_KEY,
+        this.extended.srcNode.styler.LOCAL_STAMP_KEY,
         "l",
         this.extended.parentUc.ucExtends.self
       );
     },
-    setCSS_internalVar:(varList:VariableList/*,key: string, value: string*/)=>  {
-     
+    setCSS_internalVar: (varList: VariableList/*,key: string, value: string*/) => {
+
       StylerRegs.__VAR.SETVALUE(
         varList,
         StylerRegs.internalKey,
@@ -209,29 +213,29 @@ export class TemplateNode {
         this.extended.parentUc.ucExtends.self
       );
     },
-    
-    getCSS_globalVar:(key: string)=> {
+
+    getCSS_globalVar: (key: string) => {
       return document.body.style.getPropertyValue(
-        StylerRegs.__VAR.getKeyName(key, ''+this.extended.stampRow.styler.ROOT_STAMP_KEY, "g")
+        StylerRegs.__VAR.getKeyName(key, '' + this.extended.srcNode.styler.ROOT_STAMP_KEY, "g")
       );
     },
-    getCSS_templateVar:(key: string)=> {
+    getCSS_templateVar: (key: string) => {
       return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-        StylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.TEMPLATE_STAMP_KEY, "t")
+        StylerRegs.__VAR.getKeyName(key, this.extended.srcNode.styler.TEMPLATE_STAMP_KEY, "t")
       );
-    }, getCSS_localVar:(key: string)=> {
+    }, getCSS_localVar: (key: string) => {
       return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-        StylerRegs.__VAR.getKeyName(key, this.extended.stampRow.styler.LOCAL_STAMP_KEY, "l")
+        StylerRegs.__VAR.getKeyName(key, this.extended.srcNode.styler.LOCAL_STAMP_KEY, "l")
       );
     },
-    getCSS_internalVar:(key: string)=> {
+    getCSS_internalVar: (key: string) => {
       return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
         StylerRegs.__VAR.getKeyName(key, StylerRegs.internalKey, "i")
       );
     },
     generateContent: (jsonRow: {}): string => {
       let _this = this.extended;
-      let dta = _this.stampRow.htmlContent;
+      let dta = _this.srcNode.htmlCode.content;
       dta = _this.Events.beforeGenerateContent(dta, jsonRow);
       dta = _this.regsMng.parse(jsonRow, dta);
       dta = _this.Events.onGenerateContent(dta, jsonRow);
@@ -243,13 +247,13 @@ export class TemplateNode {
       let dta = _this.generateContent(jsonRow) as string;
       let element = dta.$();
       //console.log(_this.stampRow);
-      
-      _this.stampRow.passElement(element,{ skipTopEle:true });
+
+      _this.srcNode.passElement(element, { skipTopEle: true });
 
       _this.Events.onGenerateNode(element, jsonRow);
       return element;
     },
-    
+
     initializecomponent: (
       _args: TptOptions,
       tptPathOpt: TemplatePathOptions,
@@ -261,8 +265,8 @@ export class TemplateNode {
       let param0 = Object.assign(toj, _args);
       // let param0 = newObjectOpt.copyProps(_args, tptOptions);
       _args.source.cfInfo.parseUrl(tptPathOpt.mainFilePath);
-     // console.log(ATTR_OF.UC.UNIQUE_STAMP);
-      
+      // console.log(ATTR_OF.UC.UNIQUE_STAMP);
+
       if (tptname !== propOpt.ATTR.TEMPLETE_DEFAULT) {
         let fpath = param0.source.cfInfo.html.rootPath;
         fpath = strOpt.trim_(fpath, ".html", ".scss");
@@ -271,43 +275,55 @@ export class TemplateNode {
         param0.source.cfInfo.style.parse(fpath + ".scss", false);
       }
       param0.source.templateName = tptPathOpt.name;
-   //   debugger;
-      tptExt.stampRow = UserControlStamp.getStamp(param0.source,false);
-      let htEle = tptExt.stampRow.dataHT;
-     
-      Array.from(tptExt.stampRow.dataHT.attributes)
+      let stmpNode = StampGenerator.generate({
+        stampKeys: param0.source.cfInfo.mainFilePath,
+        root: param0.source.cfInfo.rootInfo
+      });
+
+      // if (ucExt.fileInfo.mainFileRootPath.endsWithI('ListView.uc')) debugger;
+      let res = stmpNode.stamp.generateSource(tptPathOpt.name, {
+        htmlFilePath: param0.source.cfInfo.html.fullPath
+      });
+      tptExt.srcNode = res.srcNode;
+      if (!res.hasHTMLContentExists)
+        res.srcNode.loadHTML(param0.source.beforeContentAssign);
+      //   debugger;
+      //tptExt.stampRow = UserControlStamp.getStamp(param0.source, false);
+      let htEle = tptExt.srcNode.dataHT;
+
+      Array.from(tptExt.srcNode.dataHT.attributes)
         .filter((s) => s.nodeName.toLowerCase().startsWith("x.temp-"))
         .forEach((s) => htEle.removeAttribute(s.nodeName));
 
       let eleHT = param0.elementHT;
       tptExt.parentUc = param0.parentUc;
-      tptExt.stampRow.styler.wrapperHT = tptExt.parentUc.ucExtends.wrapperHT;
-      tptExt.stampRow.styler.parent = tptExt.parentUc.ucExtends.stampRow.styler;
-      tptExt.stampRow.styler.controlName = param0.accessName;
-      
+      tptExt.srcNode.styler.wrapperHT = tptExt.parentUc.ucExtends.wrapperHT;
+      tptExt.srcNode.styler.parent = tptExt.parentUc.ucExtends.srcNode.styler;
+      tptExt.srcNode.styler.controlName = param0.accessName;
+
       if (tptExt.parentUc != undefined)
-        tptExt.parentUc.ucExtends.stampRow.styler.pushChild(
+        tptExt.parentUc.ucExtends.srcNode.styler.pushChild(
           param0.source.cfInfo.mainFilePath +
-            "" +
-            (param0.source.templateName == ""
-              ? ""
-              : "@" + param0.source.templateName),
-          tptExt.stampRow.styler,
+          "" +
+          (param0.source.templateName == ""
+            ? ""
+            : "@" + param0.source.templateName),
+          tptExt.srcNode.styler,
           eleHT.nodeName
         );
 
-      tptPathOpt.cssContents = tptExt.stampRow.styler.parseStyleSeperator_sub({
-        data:(tptPathOpt.cssContents == undefined) ?
-            FileDataBank.readFile(param0.source.cfInfo.style.fullPath,{replaceContentWithKeys:true})
+      tptPathOpt.cssContents = tptExt.srcNode.styler.parseStyleSeperator_sub({
+        data: (tptPathOpt.cssContents == undefined) ?
+          FileDataBank.readFile(param0.source.cfInfo.style.fullPath, { replaceContentWithKeys: true })
           :
-            tptPathOpt.cssContents,
+          tptPathOpt.cssContents,
         localNodeElement: tptExt.parentUc.ucExtends.self,
-        cssVarStampKey: tptExt.main.extended.cssVarStampKey,
+        //cssVarStampKey: tptExt.main.extended.cssVarStampKey,
       });
 
       LoadGlobal.pushRow({
         url: param0.source.cfInfo.style.rootPath,
-        stamp: tptExt.stampRow.stamp,
+        stamp: tptExt.srcNode.stamp,
         reloadDesign: param0.source.reloadDesign,
         reloadKey: param0.source.reloadKey,
         cssContents: tptPathOpt.cssContents,
@@ -324,12 +340,12 @@ export class TemplateNode {
       this.extended.sampleNode = htEle;
       htEle.remove();*/
     },
-    sampleNode:undefined as HTMLElement,
+    sampleNode: undefined as HTMLElement,
     Events: {
       //onGettingContent: (jsonRow: any) => { return this.extended.stampRow.content; },
-      beforeGenerateContent:(content: string, jsonRow: any)=>content,
-      onGenerateContent:(content: string, jsonRow: any)=>content,
-      onGenerateNode: (mainNode: HTMLElement, jsonRow: any) => {},
+      beforeGenerateContent: (content: string, jsonRow: any) => content,
+      onGenerateContent: (content: string, jsonRow: any) => content,
+      onGenerateNode: (mainNode: HTMLElement, jsonRow: any) => { },
 
       onDataExport: (data: TransferDataNode) => {
         return false;
@@ -344,7 +360,7 @@ export class TemplateNode {
       let ar = skey.split(",");
       let ext = this.extended;
       let q = "";
-      let uniqStamp = ext.stampRow.uniqStamp;
+      let uniqStamp = ext.srcNode.uniqStamp;
       ar = ar.map((s) => {
         s = FilterContent.select_inline_filter(s, uniqStamp);
         return s;
@@ -357,7 +373,7 @@ export class TemplateNode {
       let uExt = this;
       let fromElement = fromHT;
       if (specific != undefined) {
-        let uniqStamp = uExt.extended.stampRow.uniqStamp;
+        let uniqStamp = uExt.extended.srcNode.uniqStamp;
         specific.forEach((itmpath) => {
           if (!(itmpath in childs)) {
             let ele = fromElement.querySelector(
@@ -367,7 +383,7 @@ export class TemplateNode {
           }
         });
       } else {
-        let uniqStamp = uExt.extended.stampRow.uniqStamp;
+        let uniqStamp = uExt.extended.srcNode.uniqStamp;
         let eleAr = Array.from(
           fromElement.querySelectorAll(
             `[${propOpt.ATTR.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`

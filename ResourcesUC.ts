@@ -5,6 +5,7 @@ import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
 import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
+import { SourceNode, StampGenerator } from "ucbuilder/lib/samping/StampGenerator";
 export class ResourcesUC {
     static styler = new StylerRegs();
     static rendrarCounter = 0;
@@ -29,6 +30,7 @@ export class ResourcesUC {
             
             TabIndexManager.init();
             LoadGlobal.init();
+            SourceNode.init();
             StylerRegs.pushPublicStyles(callback);
             ///FocusManager.init();
             this.isInitBefore = true;
