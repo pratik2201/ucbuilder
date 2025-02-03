@@ -12,7 +12,7 @@ import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { FileInfo, codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { Size } from "ucbuilder/global/drawing/shapes";
-import { SourceNode, StampGenerator } from "ucbuilder/lib/samping/StampGenerator";
+import { SourceNode, StampGenerator, StampNode } from "ucbuilder/lib/samping/StampGenerator";
 interface TptTextObjectNode<K> {
   content: string,
   row: K
@@ -144,7 +144,7 @@ export class Template {
     wholeCSS: "",
     fileStamp: "",
     _templeteNode: undefined,
-   // stampRow: undefined as userControlStampRow,
+    // stampRow: undefined as userControlStampRow,
     parentUc: undefined as Usercontrol,
     regsMng: new regsManage(),
 
@@ -281,14 +281,26 @@ export class TemplateNode {
       });
 
       // if (ucExt.fileInfo.mainFileRootPath.endsWithI('ListView.uc')) debugger;
-      let res = stmpNode.stamp.generateSource(tptPathOpt.name, {
+
+      /*let res = stmpNode.stamp.generateSource(tptPathOpt.name, {
         htmlFilePath: param0.source.cfInfo.html.fullPath
       });
       tptExt.srcNode = res.srcNode;
       if (!res.hasHTMLContentExists)
-        res.srcNode.loadHTML(param0.source.beforeContentAssign);
+        res.srcNode.loadHTML(param0.source.beforeContentAssign);*/
+      tptExt.srcNode = StampNode.registerSoruce(
+      {
+        key: param0.source.cfInfo.mainFileRootPath + "@" + tptPathOpt.name,
+        accessName: tptPathOpt.name,
+        root: param0.source.cfInfo.rootInfo
+      });
+      let isAlreadyExist = tptExt.srcNode.htmlCode.load({ path: param0.source.cfInfo.html.fullPath });
+      if (!isAlreadyExist)
+        tptExt.srcNode.loadHTML(param0.source.beforeContentAssign);
+
       //   debugger;
       //tptExt.stampRow = UserControlStamp.getStamp(param0.source, false);
+
       let htEle = tptExt.srcNode.dataHT;
 
       Array.from(tptExt.srcNode.dataHT.attributes)

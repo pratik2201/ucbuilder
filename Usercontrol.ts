@@ -179,19 +179,22 @@ export class Usercontrol {
 
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             //param0.source.addTabIndex = ucExt.isForm;
-            let stmpNode = StampGenerator.generate({
+            /*let stmpNode = StampNode.generateSource({
                 stampKeys: ucExt.fileInfo.mainFileRootPath,
-                root: ucExt.fileInfo.rootInfo
+                root: ucExt.fileInfo.rootInfo,
+                htmlFilePath: ucExt.fileInfo.html.fullPath
             });
+
 
             // if (ucExt.fileInfo.mainFileRootPath.endsWithI('ListView.uc')) debugger;
             let res = stmpNode.stamp.generateSource('', {
                 htmlFilePath: ucExt.fileInfo.html.fullPath
-            });
+            });*/
 
-            ucExt.srcNode = res.srcNode;
-            if (!res.hasHTMLContentExists)
-                res.srcNode.loadHTML(param0.source.beforeContentAssign);
+            ucExt.srcNode = StampNode.registerSoruce({ key: ucExt.fileInfo.style.rootPath, root: ucExt.fileInfo.rootInfo });
+            let isAlreadyExist = ucExt.srcNode.htmlCode.load({ path: ucExt.fileInfo.html.fullPath });
+            if (!isAlreadyExist)
+                ucExt.srcNode.loadHTML(param0.source.beforeContentAssign);
 
             //console.log([ucExt.fileInfo.mainFileRootPath,res.hasHTMLContentExists]);
 
@@ -288,8 +291,8 @@ export class Usercontrol {
                     data: ext.srcNode.cssCode.originalContent,
                     localNodeElement: ext.self,
                 });
-            } 
-            ext.srcNode.loadCSS();    
+            }
+            ext.srcNode.loadCSS();
             /*param0.source.cssContents = ext.srcNode.styler.parseStyleSeperator_sub(
                 {
                     data: (param0.source.cssContents == undefined ?
@@ -307,8 +310,7 @@ export class Usercontrol {
                 reloadDesign: param0.source.reloadDesign,
                 reloadKey: param0.source.reloadKey,
                 cssContents: ext.srcNode.cssCode.content
-            });
-            */
+            });*/
             ext.Events.afterInitlize.fire();
         },
         loadAt: {
@@ -479,6 +481,7 @@ export class Usercontrol {
                 //if (!_ext.keepReference) {
                 // Clear all properties of the Usercontrol instance after a delay
                 setTimeout(() => {
+                    _ext.srcNode.release();
                     for (const key in _this) {
                         //if (_this.hasOwnProperty(key)) {
                         _this[key] = undefined;

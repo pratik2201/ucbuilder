@@ -16,13 +16,10 @@ export interface ISourceNode {
     cssCode: CodeNode;
     htmlCode: CodeNode;
     styler: StylerRegs;
+    myObjectKey?: string;
     main: StampNode;
 }
-export interface IStampNode {
-    rootFilePath: string;
-    main: StampGenerator;
-    childs: { [key: string]: ISourceNode; }
-}
+
 interface ICodeNode {
     path: string;
     hasContent: boolean;
@@ -56,14 +53,20 @@ export class CodeNode implements ICodeNode {
     }
 }
 export class SourceNode implements ISourceNode {
+    isNewSource = true;
+    counter = 0;
     get stamp(): string { return this.styler.TEMPLATE_STAMP_KEY; }
     get uniqStamp(): string { return this.styler.LOCAL_STAMP_KEY; }
+    myObjectKey: string = "";
+    accessKey: string = '';
     cssCode: CodeNode = new CodeNode();
-    main: StampNode;
     htmlCode: CodeNode = new CodeNode();
     styler: StylerRegs;
+    main: StampNode;
     dataHT: HTMLElement;
     styleHT: HTMLStyleElement;
+    rootFilePath: string = '';
+    root: RootPathRow;
 
     static resourcesHT: HTMLElement = document.createElement("programres");
     static init() {
@@ -77,7 +80,7 @@ export class SourceNode implements ISourceNode {
         let stmpUnq: string = this.uniqStamp;
         //if (this.cInfo.rootInfo == undefined)
         //    console.log(this.cInfo);
-        let stmpRt = '' + this.main.root.id;
+        let stmpRt = '' + this.root.id;
         let ar = controlOpt.getArray(ele);
         for (let i = 0, iObj = ar, ilen = iObj.length; i < ilen; i++) {
             const element: HTMLElement = iObj[i];
@@ -105,7 +108,7 @@ export class SourceNode implements ISourceNode {
         this.styleHT = document.createElement("style");
         this.styleHT.type = "text/css";
         this.styleHT.setAttribute("rel", 'stylesheet');
-        this.styleHT.setAttribute("path", this.main.rootFilePath);
+        this.styleHT.setAttribute("path", this.rootFilePath);
         this.styleHT.setAttribute("fUniq", this.uniqStamp);
         this.styleHT.setAttribute("stamp", this.stamp);
         this.styleHT.innerHTML = this.cssCode.content;
@@ -122,57 +125,9 @@ export class SourceNode implements ISourceNode {
             this.dataHT.setAttribute('x-tabindex', '-1');
         }
     }
-}
-export class StampNode implements IStampNode {
-    rootFilePath: string = '';
-    main: StampGenerator;
-    root: RootPathRow;
-    dataHT: HTMLElement;
-    childs: { [key: string]: SourceNode; } = {};
-    generateSource(key: string = "", { htmlFilePath, cssFilePath, htmlContent, cssContent }: {
-        htmlFilePath?: string,
-        htmlContent?: string,
-        cssFilePath?: string,
-        cssContent?: string,
-    }): { hasHTMLContentExists: boolean, hasCSSContentExists: boolean, isHtmlUpdated: boolean, isCssUpdated: boolean, srcNode: SourceNode } {
-        let rtrn: { hasHTMLContentExists: boolean, hasCSSContentExists: boolean, isHtmlUpdated: boolean, isCssUpdated: boolean, srcNode: SourceNode };
-        rtrn = {
-            isHtmlUpdated: false,
-            hasHTMLContentExists: false,
-            hasCSSContentExists: false,
-            isCssUpdated: false,
-            srcNode: this.childs[key]
-        };
-        let hasHtml = htmlContent != undefined || htmlFilePath != undefined;
-        let hasCss = cssContent != undefined || cssFilePath != undefined;
-        if (rtrn.srcNode == undefined) {
-            rtrn.srcNode = new SourceNode();
-            let srcn = rtrn.srcNode;
-            srcn.styler = new StylerRegs(rootPathHandler.getInfo(this.rootFilePath),);
-            srcn.main = this;
-            if (hasHtml) {
-                rtrn.hasHTMLContentExists = srcn.htmlCode.load({ content: htmlContent, path: htmlFilePath });
-                rtrn.isHtmlUpdated = true;
-            }
-            if (hasCss) {
-                rtrn.hasCSSContentExists = srcn.cssCode.load({ content: cssContent, path: cssFilePath });
-                rtrn.isCssUpdated = true;
-            }
-            this.childs[key] = srcn;
-        } else {
-            let srcn = rtrn.srcNode;
-            if (hasHtml) {
-                rtrn.hasHTMLContentExists = srcn.htmlCode.load({ content: htmlContent, path: htmlFilePath });
-                rtrn.isHtmlUpdated = true;
-            }
-            if (hasCss) {
-                rtrn.hasCSSContentExists = srcn.cssCode.load({ content: cssContent, path: cssFilePath });
-                rtrn.isCssUpdated = true;
-            }
-        }
-        return rtrn;
+    release() {
+        StampNode.deregisterSource(this.myObjectKey);
     }
-
 }
 export interface IStampArgs {
     stampKeys: string;
@@ -183,6 +138,95 @@ export interface IStampArgs {
     cssContent?: string;
     htmlContent?: string;
 }
+export class StampNode {
+    static main: StampGenerator;
+    static dataHT: HTMLElement;
+    static GetKey(key: string, alice: string) { return key + "@" + alice; }
+    static childs: { [key: string]: SourceNode; } = {};
+    static registerSoruce({ key, accessName = '', root }: {
+        key: string, accessName?: string, root: RootPathRow
+    }): SourceNode {
+        let myObjectKey = key; //this.GetKey(key, alices);
+        let rtrn: SourceNode = this.childs[myObjectKey];
+        if (rtrn == undefined) {
+            rtrn = new SourceNode();
+//rtrn.main = this;
+            rtrn.styler = new StylerRegs(root,);
+            rtrn.root = root;
+            rtrn.myObjectKey = myObjectKey;
+            rtrn.accessKey = accessName;
+            this.childs[myObjectKey] = rtrn;
+        } else rtrn.isNewSource = false;
+        rtrn.counter++;
+        console.log([myObjectKey, rtrn.counter]);
+        return rtrn;
+    }
+    static deregisterSource(key: string) {
+        let myObjectKey = key;
+        let rtrn: SourceNode = this.childs[myObjectKey];
+        if (rtrn != undefined) {
+            rtrn.counter--;
+            console.log([key, rtrn.counter]);
+
+        }
+    }
+    /*static generateHtml(): {
+        hasContentExists: boolean,
+        isUpdated: boolean,
+        srcNode: SourceNode
+    } {
+        let rtrn: { isNew: boolean, hasHTMLContentExists: boolean, hasCSSContentExists: boolean, isHtmlUpdated: boolean, isCssUpdated: boolean, srcNode: SourceNode };
+    }*/
+    static generateSource(/*key: string = "", { htmlFilePath, cssFilePath, htmlContent, cssContent }: {
+        htmlFilePath?: string,
+        htmlContent?: string,
+        cssFilePath?: string,
+        cssContent?: string,
+    }*/args: IStampArgs): { hasHTMLContentExists: boolean, hasCSSContentExists: boolean, isHtmlUpdated: boolean, isCssUpdated: boolean, srcNode: SourceNode } {
+        let rtrn: { isNew: boolean, hasHTMLContentExists: boolean, hasCSSContentExists: boolean, isHtmlUpdated: boolean, isCssUpdated: boolean, srcNode: SourceNode };
+        let mySourceKey = args.stampKeys + "@" + args.alices;
+        rtrn = {
+            isNew: true,
+            isHtmlUpdated: false,
+            hasHTMLContentExists: false,
+            hasCSSContentExists: false,
+            isCssUpdated: false,
+            srcNode: this.childs[mySourceKey]
+        };
+        let hasHtml = args.htmlContent != undefined || args.htmlFilePath != undefined;
+        let hasCss = args.cssContent != undefined || args.cssFilePath != undefined;
+        if (rtrn.srcNode == undefined) {
+            rtrn.isNew = true;
+            rtrn.srcNode = new SourceNode();
+            let srcn = rtrn.srcNode;
+            srcn.styler = new StylerRegs(rootPathHandler.getInfo(srcn.rootFilePath),);
+            srcn.main = this;
+            if (hasHtml) {
+                rtrn.hasHTMLContentExists = srcn.htmlCode.load({ content: args.htmlContent, path: args.htmlFilePath });
+                rtrn.isHtmlUpdated = true;
+            }
+            if (hasCss) {
+                rtrn.hasCSSContentExists = srcn.cssCode.load({ content: args.cssContent, path: args.cssFilePath });
+                rtrn.isCssUpdated = true;
+            }
+            this.childs[mySourceKey] = srcn;
+        } else {
+            rtrn.isNew = false;
+            let srcn = rtrn.srcNode;
+            if (hasHtml) {
+                rtrn.hasHTMLContentExists = srcn.htmlCode.load({ content: args.htmlContent, path: args.htmlFilePath });
+                rtrn.isHtmlUpdated = true;
+            }
+            if (hasCss) {
+                rtrn.hasCSSContentExists = srcn.cssCode.load({ content: args.cssContent, path: args.cssFilePath });
+                rtrn.isCssUpdated = true;
+            }
+        }
+        return rtrn;
+    }
+
+}
+
 export class StampGenerator {
     static source: StampNode[] = [];
     static generate(args: IStampArgs): {
@@ -193,21 +237,21 @@ export class StampGenerator {
             stamp: StampNode,
             isNew: boolean
         };
-        rtrn = {
-            stamp: undefined,
-            isNew: true
-        }
-        rtrn.stamp = this.source.find(s => s.rootFilePath == args.stampKeys);
-        rtrn.isNew = rtrn.stamp == undefined;
-        if (rtrn.isNew) {
-            let stmp = new StampNode();
-            stmp = new StampNode();
-            stmp.main = this;
-            stmp.rootFilePath = args.stampKeys;
-            stmp.root = args.root;
-            this.source.push(stmp);
-            rtrn.stamp = stmp;
-        }
+        /* rtrn = {
+             stamp: undefined,
+             isNew: true
+         }
+         rtrn.stamp = this.source.find(s => s.rootFilePath == args.stampKeys);
+         rtrn.isNew = rtrn.stamp == undefined;
+         if (rtrn.isNew) {
+             let stmp = new StampNode();
+             stmp = new StampNode();
+             stmp.main = this;
+             stmp.rootFilePath = args.stampKeys;
+             stmp.root = args.root;
+             this.source.push(stmp);
+             rtrn.stamp = stmp;
+         }*/
         //console.log(this.source);
 
         //console.log(UserControlStamp.source.length);
