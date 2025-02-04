@@ -7,7 +7,7 @@ import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { SourceNode, StampNode } from "ucbuilder/lib/stylers/StampGenerator";
+import { SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
 import { SessionManager } from "ucbuilder/lib/SessionManager";
 import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";

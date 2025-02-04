@@ -2,7 +2,7 @@
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { RootPathRow } from "ucbuilder/global/findAndReplace";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
-import { StampNode } from "ucbuilder/lib/stylers/StampGenerator";
+import { StampNode } from "ucbuilder/lib/StampGenerator";
 import { patternList, StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
 
 export class ThemeCssHandler {

@@ -1,7 +1,7 @@
 import { codefileHandler } from "ucbuilder/build/codefileHandler";
 import { propOpt } from "ucbuilder/build/common";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
-import { SourceNode } from "ucbuilder/lib/stylers/StampGenerator";
+import { SourceNode } from "ucbuilder/lib/StampGenerator";
 import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
 import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
 import { Usercontrol } from "ucbuilder/Usercontrol";

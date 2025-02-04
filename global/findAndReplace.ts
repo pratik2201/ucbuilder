@@ -1,4 +1,4 @@
-import { SourceNode } from "ucbuilder/lib/stylers/StampGenerator";
+import { SourceNode } from "ucbuilder/lib/StampGenerator";
 import { UcConfig } from "ucbuilder/start";
 
 export interface ReplaceTextRow {

@@ -8,7 +8,7 @@ import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { SourceNode, StampGenerator, StampNode } from "ucbuilder/lib/stylers/StampGenerator";
+import { SourceNode, StampGenerator, StampNode } from "ucbuilder/lib/StampGenerator";
 import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { userControlStampRow } from "ucbuilder/lib/UserControlStamp";
 import { Usercontrol } from "ucbuilder/Usercontrol";
@@ -262,7 +262,7 @@ export class TemplateNode {
       _args.source.cfInfo = new codeFileInfo(".tpt");
       let toj = Object.assign({}, tptOptions);
       let param0 = Object.assign(toj, _args);
-      // let param0 = newObjectOpt.copyProps(_args, tptOptions);
+      
       _args.source.cfInfo.parseUrl(tptPathOpt.mainFilePath);
       // console.log(ATTR_OF.UC.UNIQUE_STAMP);
 

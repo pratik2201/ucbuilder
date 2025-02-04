@@ -4,7 +4,7 @@ import { SourceOptions, StringExchangerCallback } from "ucbuilder/enumAndMore";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
-import { StampGenerator } from "ucbuilder/lib/stylers/StampGenerator";
+import { StampGenerator } from "ucbuilder/lib/StampGenerator";
 export interface IPassElementOptions {
     applySubTree?: boolean;
     skipTopEle?: boolean;

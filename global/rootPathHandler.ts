@@ -4,7 +4,7 @@ import { rootPathParam, RootPathParam } from 'ucbuilder/enumAndMore';
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { builder } from "ucbuilder/build/builder";
 import { UcConfig } from "ucbuilder/start";
-import { StampNode } from "ucbuilder/lib/stylers/StampGenerator";
+import { StampNode } from "ucbuilder/lib/StampGenerator";
 
 export class rootPathHandler {
 

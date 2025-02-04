@@ -5,7 +5,7 @@ import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
 import { openCloser } from "ucbuilder/global/openCloser";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { StampNode } from "ucbuilder/lib/stylers/StampGenerator";
+import { StampNode } from "ucbuilder/lib/StampGenerator";
 import { RootAndExcludeHandler } from "ucbuilder/lib/stylers/RootAndExcludeHandler";
 import { SelectorHandler } from "ucbuilder/lib/stylers/SelectorHandler";
 import { ThemeCssHandler } from "ucbuilder/lib/stylers/ThemeCssHandler";
