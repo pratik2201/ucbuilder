@@ -7,14 +7,12 @@ import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
+import { SourceNode, StampNode } from "ucbuilder/lib/stylers/StampGenerator";
 import { SessionManager } from "ucbuilder/lib/SessionManager";
 import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
-import { IPassElementOptions, UserControlStamp, userControlStampRow } from "ucbuilder/lib/UserControlStamp";
+import { IPassElementOptions } from "ucbuilder/lib/UserControlStamp";
 import { WinManager } from "ucbuilder/lib/WinManager";
-import { ResourcesUC } from "ucbuilder/ResourcesUC";
-import { SourceNode, StampGenerator, StampNode } from "ucbuilder/lib/samping/StampGenerator";
 /*export enum ucVisibility{
     inherit = 0,
     visible = 1,
@@ -107,7 +105,7 @@ export class Usercontrol {
         isDialogBox: false as boolean,
         keepVisible: false as boolean,
         parentDependantIndex: -1 as number,
-        dependant: [] as Usercontrol[],
+        dependant: [] as Usercontrol[],        
         isForm: false,
         get formExtends() { return (this.form as Usercontrol).ucExtends; },
         get self(): HTMLElement { return this.wrapperHT; },
@@ -207,7 +205,7 @@ export class Usercontrol {
             if (ucExt.isForm) {
                 ucExt.PARENT = this;
                 ucExt.form = this;
-                ResourcesUC.styler
+                ucExt.fileInfo.rootInfo.stampSRC.styler
                     .pushChild(
                         ucExt.fileInfo.mainFilePath,
                         ucExt.srcNode.styler, param0.accessName); // param0.targetElement.nodeName
@@ -267,7 +265,7 @@ export class Usercontrol {
                     ucExt.dependant[i]?.ucExtends.destruct();
                 }
                 pucExt.dependant[ucExt.parentDependantIndex] = undefined;
-            })
+            });
             ucExt.Events.onDataExport = (data) =>
                 pucExt.Events.onDataExport(data);
             if (ucExt.dialogForm == undefined && pucExt.dialogForm != undefined)
@@ -472,8 +470,8 @@ export class Usercontrol {
             let res = { prevent: false };
             let _this = this;
             let _ext = _this.ucExtends;
-            _ext.Events.beforeClose.fire([res]);
             if (!res.prevent) {
+                _ext.Events.beforeClose.fire([res]);
                 _ext.wrapperHT.delete();
                 if (_ext.isDialogBox)
                     WinManager.pop();

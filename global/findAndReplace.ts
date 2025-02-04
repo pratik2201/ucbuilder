@@ -1,3 +1,4 @@
+import { SourceNode } from "ucbuilder/lib/stylers/StampGenerator";
 import { UcConfig } from "ucbuilder/start";
 
 export interface ReplaceTextRow {
@@ -34,6 +35,7 @@ export interface RootPathRow {
     path: string,
     alices: string,
     index: number,
+    stampSRC: SourceNode;
     isAlreadyFullPath: boolean,
     defaultLoadAt?: HTMLElement,
     pathType: PathType,
@@ -51,6 +53,7 @@ export const rootPathRow: RootPathRow = {
     index: -1,
     outputDirectory: '',
     pathType: "none",
+    stampSRC:undefined,
     isAlreadyFullPath: false,
     location: {
         projectName: '',

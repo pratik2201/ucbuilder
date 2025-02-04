@@ -1,6 +1,8 @@
 
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
-import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
+import { RootPathRow } from "ucbuilder/global/findAndReplace";
+import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
+import { StampNode } from "ucbuilder/lib/stylers/StampGenerator";
 import { patternList, StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
 
 export class ThemeCssHandler {
@@ -23,7 +25,24 @@ export class ThemeCssHandler {
                         themecontents = _this.match(themecontents);
                         return themecontents;
                     case "import":
-                        let isGoodToAdd: boolean = LoadGlobal.isGoodToPush(path);
+                        console.log(path);
+                        let node: RootPathRow = rootPathHandler.getInfo(path);//rootPathHandler.convertToRow(row, true);
+                        node.isAlreadyFullPath = true;
+                        let stpSrc = StampNode.registerSoruce({
+                            key: path,
+                            root: node,
+                            accessName: '',
+                        });
+                        if (!stpSrc.cssCode.hasContent) {
+                            stpSrc.cssCode.load({
+                                content: FileDataBank.readFile(path, { replaceContentWithKeys: true }),
+                            });
+                            stpSrc.cssCode.content = stpSrc.styler.parseStyleSeperator_sub({
+                                data: stpSrc.cssCode.originalContent,
+                            });
+                        }
+                        stpSrc.loadCSS();
+                        /*let isGoodToAdd: boolean = LoadGlobal.isGoodToPush(path);
                         if (isGoodToAdd) {
                             let cssContents: string = _this.main.parseStyleSeperator_sub({
                                 data: FileDataBank.readFile(path, {
@@ -37,7 +56,7 @@ export class ThemeCssHandler {
                                  cssContents: cssContents,
                                  reloadDesign: false,
                                 });
-                        }
+                        }*/
                         return "";
                 }
             }

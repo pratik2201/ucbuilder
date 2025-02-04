@@ -1,13 +1,14 @@
 import { codefileHandler } from "ucbuilder/build/codefileHandler";
 import { propOpt } from "ucbuilder/build/common";
+import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
+import { SourceNode } from "ucbuilder/lib/stylers/StampGenerator";
 import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
 import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
-import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
 import { Usercontrol } from "ucbuilder/Usercontrol";
-import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
-import { SourceNode, StampGenerator } from "ucbuilder/lib/samping/StampGenerator";
 export class ResourcesUC {
-    static styler = new StylerRegs();
+    //static styler = new StylerRegs();
+    //static stamp: StampNode;
+     
     static rendrarCounter = 0;
     /** @type {{}}  */
     static resources: {} = {};
@@ -15,7 +16,6 @@ export class ResourcesUC {
 
     /** @param {HTMLElement} element @returns {Usercontrol} */
     static getBaseObject(element: HTMLElement): Usercontrol {
-
         return element.data(propOpt.ATTR.BASE_OBJECT);
     }
 
@@ -29,7 +29,7 @@ export class ResourcesUC {
             
             
             TabIndexManager.init();
-            LoadGlobal.init();
+            //LoadGlobal.init();
             SourceNode.init();
             StylerRegs.pushPublicStyles(callback);
             ///FocusManager.init();

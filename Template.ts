@@ -1,18 +1,17 @@
-import { propOpt, strOpt, pathInfo } from "ucbuilder/build/common";
+import { codeFileInfo, FileInfo } from "ucbuilder/build/codeFileInfo";
+import { pathInfo, propOpt, strOpt } from "ucbuilder/build/common";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
+import { TemplatePathOptions, templatePathOptions, tptOptions, TptOptions } from "ucbuilder/enumAndMore";
+import { TransferDataNode } from "ucbuilder/global/drag/transferation";
+import { Size } from "ucbuilder/global/drawing/shapes";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { FilterContent } from "ucbuilder/global/filterContent";
-import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
-import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
-import { userControlStampRow, UserControlStamp, } from "ucbuilder/lib/UserControlStamp";
-import { Usercontrol } from "ucbuilder/Usercontrol";
-import { tptOptions, TemplatePathOptions, templatePathOptions, TptOptions } from "ucbuilder/enumAndMore";
-import { TransferDataNode } from "ucbuilder/global/drag/transferation";
-import { FileInfo, codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
-import { Size } from "ucbuilder/global/drawing/shapes";
-import { SourceNode, StampGenerator, StampNode } from "ucbuilder/lib/samping/StampGenerator";
+import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
+import { SourceNode, StampGenerator, StampNode } from "ucbuilder/lib/stylers/StampGenerator";
+import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
+import { userControlStampRow } from "ucbuilder/lib/UserControlStamp";
+import { Usercontrol } from "ucbuilder/Usercontrol";
 interface TptTextObjectNode<K> {
   content: string,
   row: K
@@ -289,11 +288,11 @@ export class TemplateNode {
       if (!res.hasHTMLContentExists)
         res.srcNode.loadHTML(param0.source.beforeContentAssign);*/
       tptExt.srcNode = StampNode.registerSoruce(
-      {
-        key: param0.source.cfInfo.mainFileRootPath + "@" + tptPathOpt.name,
-        accessName: tptPathOpt.name,
-        root: param0.source.cfInfo.rootInfo
-      });
+        {
+          key: param0.source.cfInfo.mainFileRootPath + "@" + tptPathOpt.name,
+          accessName: tptPathOpt.name,
+          root: param0.source.cfInfo.rootInfo
+        });
       let isAlreadyExist = tptExt.srcNode.htmlCode.load({ path: param0.source.cfInfo.html.fullPath });
       if (!isAlreadyExist)
         tptExt.srcNode.loadHTML(param0.source.beforeContentAssign);
@@ -323,8 +322,21 @@ export class TemplateNode {
           tptExt.srcNode.styler,
           eleHT.nodeName
         );
-
-      tptPathOpt.cssContents = tptExt.srcNode.styler.parseStyleSeperator_sub({
+      if (!tptExt.srcNode.cssCode.hasContent) {
+        tptExt.srcNode.cssCode.content = tptExt.srcNode.styler.parseStyleSeperator_sub({
+          data: (tptPathOpt.cssContents == undefined) ?
+            FileDataBank.readFile(param0.source.cfInfo.style.fullPath, { replaceContentWithKeys: true })
+            :
+            tptPathOpt.cssContents,
+          localNodeElement: tptExt.parentUc.ucExtends.self,
+          //cssVarStampKey: tptExt.main.extended.cssVarStampKey,
+        });
+        tptExt.srcNode.loadCSS();
+      }
+      tptExt.parentUc.ucExtends.Events.beforeClose.on(({ prevent }) => {
+        tptExt.srcNode.release();
+      });
+      /*tptPathOpt.cssContents = tptExt.srcNode.styler.parseStyleSeperator_sub({
         data: (tptPathOpt.cssContents == undefined) ?
           FileDataBank.readFile(param0.source.cfInfo.style.fullPath, { replaceContentWithKeys: true })
           :
@@ -339,7 +351,7 @@ export class TemplateNode {
         reloadDesign: param0.source.reloadDesign,
         reloadKey: param0.source.reloadKey,
         cssContents: tptPathOpt.cssContents,
-      });
+      });*/
 
       tptExt.main.extended.wholeCSS += tptPathOpt.cssContents;
       tptExt.Events.onDataExport = (data) =>
@@ -366,6 +378,11 @@ export class TemplateNode {
       onDataImport: (data: TransferDataNode) => {
         return false;
       },
+    },
+    destruct: () => {
+      let _this = this;
+      let _ext = _this.extended;
+      _ext.srcNode.release();
     },
     find: (skey: string, fromHT: HTMLElement) => {
       let exp = /(["=> \w\[\]-^|#~$*.+]*)(::|:)([-\w\(\)]+)/g;

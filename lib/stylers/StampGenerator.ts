@@ -108,9 +108,9 @@ export class SourceNode implements ISourceNode {
         this.styleHT = document.createElement("style");
         this.styleHT.type = "text/css";
         this.styleHT.setAttribute("rel", 'stylesheet');
-        this.styleHT.setAttribute("path", this.rootFilePath);
+        /*this.styleHT.setAttribute("objKey", this.myObjectKey);
         this.styleHT.setAttribute("fUniq", this.uniqStamp);
-        this.styleHT.setAttribute("stamp", this.stamp);
+        this.styleHT.setAttribute("stamp", this.stamp);*/
         this.styleHT.innerHTML = this.cssCode.content;
         SourceNode.resourcesHT.appendChild(this.styleHT);
     }
@@ -126,7 +126,15 @@ export class SourceNode implements ISourceNode {
         }
     }
     release() {
-        StampNode.deregisterSource(this.myObjectKey);
+        if (StampNode.deregisterSource(this.myObjectKey)) {
+            this.styleHT.remove();
+            this.dataHT =
+                this.cssCode =
+                this.htmlCode =
+                this.styleHT = undefined;
+
+            delete StampNode.childs[this.myObjectKey];
+        }
     }
 }
 export interface IStampArgs {
@@ -150,7 +158,7 @@ export class StampNode {
         let rtrn: SourceNode = this.childs[myObjectKey];
         if (rtrn == undefined) {
             rtrn = new SourceNode();
-//rtrn.main = this;
+            //rtrn.main = this;
             rtrn.styler = new StylerRegs(root,);
             rtrn.root = root;
             rtrn.myObjectKey = myObjectKey;
@@ -158,17 +166,18 @@ export class StampNode {
             this.childs[myObjectKey] = rtrn;
         } else rtrn.isNewSource = false;
         rtrn.counter++;
-        console.log([myObjectKey, rtrn.counter]);
+        //console.log([myObjectKey, rtrn.counter]);
         return rtrn;
     }
-    static deregisterSource(key: string) {
+    static deregisterSource(key: string): boolean {
+        let result = false;
         let myObjectKey = key;
         let rtrn: SourceNode = this.childs[myObjectKey];
         if (rtrn != undefined) {
             rtrn.counter--;
-            console.log([key, rtrn.counter]);
-
+            result = (rtrn.counter == 0);
         }
+        return result;
     }
     /*static generateHtml(): {
         hasContentExists: boolean,

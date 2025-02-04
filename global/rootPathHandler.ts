@@ -4,6 +4,7 @@ import { rootPathParam, RootPathParam } from 'ucbuilder/enumAndMore';
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { builder } from "ucbuilder/build/builder";
 import { UcConfig } from "ucbuilder/start";
+import { StampNode } from "ucbuilder/lib/stylers/StampGenerator";
 
 export class rootPathHandler {
 
@@ -82,7 +83,7 @@ export class rootPathHandler {
                         .addAlias(projectName, (rootDirectoryOf.rootDir + "/" + rootDirectoryOf.outDir).toFilePath());
 
                 }
-
+               
                 let rnode: RootPathRow;
                 rnode = {
                     id: this.source.length,
@@ -90,6 +91,7 @@ export class rootPathHandler {
                     alices: projectName,
                     isAlreadyFullPath: false,
                     pathType: "none",
+                    stampSRC:undefined,
                     //cssVars: [],
                     outputDirectory: '',
                     index: -1,

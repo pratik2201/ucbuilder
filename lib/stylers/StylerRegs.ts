@@ -5,10 +5,11 @@ import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
 import { openCloser } from "ucbuilder/global/openCloser";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { LoadGlobal } from "ucbuilder/lib/loadGlobal";
+import { StampNode } from "ucbuilder/lib/stylers/StampGenerator";
 import { RootAndExcludeHandler } from "ucbuilder/lib/stylers/RootAndExcludeHandler";
 import { SelectorHandler } from "ucbuilder/lib/stylers/SelectorHandler";
 import { ThemeCssHandler } from "ucbuilder/lib/stylers/ThemeCssHandler";
+
 export type VariableList = { [key: string]: string };
 
 /*interface PatternList {
@@ -33,14 +34,14 @@ export const patternList/*: PatternList */ = {
   //globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
   MULTILINE_COMMENT_REGS: /\/\*([\s\S]*?)\*\//gi,
-  SINGLELINE_COMMENT_REGS:  /\/\/.*/mg,
-  SPACE_REMOVER_REGS:/(;|,|:|{|})[\n\r ]*/gi,
+  SINGLELINE_COMMENT_REGS: /\/\/.*/mg,
+  SPACE_REMOVER_REGS: /(;|,|:|{|})[\n\r ]*/gi,
   subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gim,
   //themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   themeCSSLoader: /\@(import|use)\s*([\"'`])((?:\\.|(?!\2)[^\\])*)\2\s*;/gim,
 
   stylesFilterPattern: /(animation-name|\$[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
-  varValuePrinterPattern: /(-[lgit]-\w+)\s*(.*?)--/gim ,    //       /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
+  varValuePrinterPattern: /(-[lgit]-\w+)\s*(.*?)--/gim,    //       /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
   varValueGetterPattern: /(\$[lgit]-\w+)\:(.*?)\;/gim,            //      /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
   scopeSelector: /\[SELF_]/gm,
   rootExcludePattern: /(\w*)(:root|:exclude)/gi,
@@ -68,11 +69,26 @@ export class StylerRegs {
     import("ucbuilder/ResourcesUC").then(({ ResourcesUC }) => {
       rootPathHandler.source.forEach((row: RootPathRow) => {
         let _stylepath: string = row.tInfo.replaceWith + "/styles.scss";
+
         let node: RootPathRow = row;//rootPathHandler.convertToRow(row, true);
         node.isAlreadyFullPath = true;
-        let styler: StylerRegs = new StylerRegs(node, true);
-        ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
-        let _data: string = FileDataBank.readFile(_stylepath, {
+        node.stampSRC = StampNode.registerSoruce({
+          key: _stylepath,
+          root: node,
+          accessName: node.alices,
+        });
+        if (!node.stampSRC.cssCode.hasContent) {
+          node.stampSRC.cssCode.load({
+            content: FileDataBank.readFile(_stylepath, { replaceContentWithKeys: true }),
+          });
+          node.stampSRC.cssCode.content = node.stampSRC.styler.parseStyleSeperator_sub({
+            data: node.stampSRC.cssCode.originalContent,
+          });
+        }
+        node.stampSRC.loadCSS();
+        //let styler: StylerRegs = new StylerRegs(node, true);
+        //ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
+        /*et _data: string = FileDataBank.readFile(_stylepath, {
           isFullPath: false,
           replaceContentWithKeys: true
         });
@@ -82,7 +98,7 @@ export class StylerRegs {
             stamp: styler.TEMPLATE_STAMP_KEY,
             cssContents: styler.parseStyleSeperator_sub({ data: _data }),
           });
-        }
+        }*/
       });
       callback();
     });
@@ -114,7 +130,7 @@ export class StylerRegs {
     this.nodeName = "f" + uniqOpt.randomNo();
     this.selectorHandler = new SelectorHandler(this);
     this.rootAndExcludeHandler = new RootAndExcludeHandler(this);
-    this.themeCssHandler= new ThemeCssHandler(this);
+    this.themeCssHandler = new ThemeCssHandler(this);
   }
   selectorHandler: SelectorHandler;
   rootAndExcludeHandler: RootAndExcludeHandler;
@@ -141,7 +157,7 @@ export class StylerRegs {
   parseStyle(data: string): string {
     let _this = this;
     let rtrn: string = data;
-    
+
     /*let rtrn: string = data.replace(
       patternList.globalFinderPattern,
       (match: string, escapeChar: string, contents: string, offset: any, input_string: string) => {
@@ -167,7 +183,7 @@ export class StylerRegs {
 
   parseStyleSeperator_sub(_args: StyleSeperatorOptions): string {
     let _this = this;
-  
+
     if (_args.data == undefined) return "";
     let _params = Object.assign(Object.assign({}, styleSeperatorOptions), _args);
 
@@ -182,8 +198,8 @@ export class StylerRegs {
       //pstamp_val = '' + _curRoot.id;
     }
     let rtrn: string = _params.data.replace(patternList.MULTILINE_COMMENT_REGS, "");
-     rtrn = rtrn.replace(patternList.SINGLELINE_COMMENT_REGS , "");
-    
+    rtrn = rtrn.replace(patternList.SINGLELINE_COMMENT_REGS, "");
+
     rtrn = _this.themeCssHandler.match(rtrn);
 
     /*rtrn = rtrn.replace(
@@ -229,23 +245,23 @@ export class StylerRegs {
       rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
         let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
-       
+
         if (excludeContentList.length == 0) {
-          
+
           let sel = '';
           selectorText = selectorText.replace(/(.*?)([^;]*?)$/gim, (m, extraText, slctr) => {
             extraTextAtBegining += " " + extraText;
             sel += slctr;
             return '';
           });
-          sel = sel.trim();         
+          sel = sel.trim();
           return `${_this.selectorHandler.parseScopeSeperator({
             selectorText: sel,
             scopeSelectorText: _params.scopeSelectorText,
             /*parent_stamp: pstamp_key,
             parent_stamp_value: pstamp_val,*/
             root: _curRoot,
-            isForRoot:_params.isForRoot
+            isForRoot: _params.isForRoot
           })}{${styleContent}}`;
         } else {
           let changed: boolean = false;
@@ -258,7 +274,7 @@ export class StylerRegs {
           //     patternList.rootExcludePattern,
           //     (match: string, rootAlices: string, nmode: string) => {
           //       console.log(match);
-               
+
           //       switch (nmode) {
           //         case ":root":
           //          if (rootAlices == undefined || rootAlices == '') {
@@ -353,7 +369,7 @@ export class StylerRegs {
         let scope: string = ky.charAt(1);
         let uniqId: string = StylerRegs.internalKey;
         //console.log(['printer',patternList.varValuePrinterPattern,varName,defaultVal,match]);
-        
+
         switch (scope) {
           case "g":
             uniqId = '' + _curRoot.id;
@@ -376,8 +392,8 @@ export class StylerRegs {
     rtrn = rtrn.replace(
       patternList.varValueGetterPattern,
       (match: string, varName: string, value: string) => {
-      //  console.log(['getter',varName,value,match]);
-        
+        //  console.log(['getter',varName,value,match]);
+
         let ky: string = varName;//.toLowerCase();
         let scope: string = ky.charAt(1);
         let uniqId: string = StylerRegs.internalKey;
@@ -477,12 +493,12 @@ export class StylerRegs {
     },
 
     GETVALUE: (key: string, uniqId: string, code: string, defaultVal: string): string => {
-     
-      
+
+
       return ` var(${this.__VAR.getKeyName(key, uniqId, code)},${defaultVal}) `;
     },
   };
-  
+
 
   pushChild(path: string, node: StylerRegs, nodeName: string): void {
     let key: string = path.toLowerCase();
