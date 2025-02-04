@@ -12,22 +12,7 @@ const PassElementOptions: IPassElementOptions = {
     applySubTree: true,
     skipTopEle: false
 }
-export interface ISourceNode {
-    cssCode: CodeNode;
-    htmlCode: CodeNode;
-    styler: StylerRegs;
-    myObjectKey?: string;
-    main: StampNode;
-}
-
-interface ICodeNode {
-    path: string;
-    hasContent: boolean;
-    hasLoadedByPath: boolean;
-    originalContent: string;
-    content: string;
-}
-export class CodeNode implements ICodeNode {
+export class CodeNode {
     content: string;
     hasContent: boolean = false;
     hasLoadedByPath: boolean;
@@ -52,7 +37,7 @@ export class CodeNode implements ICodeNode {
         }
     }
 }
-export class SourceNode implements ISourceNode {
+export class SourceNode {
     isNewSource = true;
     counter = 0;
     get stamp(): string { return this.styler.TEMPLATE_STAMP_KEY; }
@@ -62,7 +47,7 @@ export class SourceNode implements ISourceNode {
     cssCode: CodeNode = new CodeNode();
     htmlCode: CodeNode = new CodeNode();
     styler: StylerRegs;
-    main: StampNode;
+
     dataHT: HTMLElement;
     styleHT: HTMLStyleElement;
     rootFilePath: string = '';
@@ -137,29 +122,20 @@ export class SourceNode implements ISourceNode {
         }
     }
 }
-export interface IStampArgs {
-    stampKeys: string;
-    alices?: string;
-    root: RootPathRow;
-    cssFilePath?: string;
-    htmlFilePath?: string;
-    cssContent?: string;
-    htmlContent?: string;
-}
 export class StampNode {
-    static main: StampGenerator;
     static dataHT: HTMLElement;
     static GetKey(key: string, alice: string) { return key + "@" + alice; }
     static childs: { [key: string]: SourceNode; } = {};
-    static registerSoruce({ key, accessName = '', root }: {
-        key: string, accessName?: string, root: RootPathRow
+    static registerSoruce({ key, accessName = '', root, generateStamp = true }: {
+        key: string, accessName?: string, root: RootPathRow,
+        generateStamp?: boolean,
     }): SourceNode {
         let myObjectKey = key; //this.GetKey(key, alices);
         let rtrn: SourceNode = this.childs[myObjectKey];
         if (rtrn == undefined) {
             rtrn = new SourceNode();
             //rtrn.main = this;
-            rtrn.styler = new StylerRegs(root,);
+            rtrn.styler = new StylerRegs(root,generateStamp);
             rtrn.root = root;
             rtrn.myObjectKey = myObjectKey;
             rtrn.accessKey = accessName;
@@ -179,91 +155,5 @@ export class StampNode {
         }
         return result;
     }
-    /*static generateHtml(): {
-        hasContentExists: boolean,
-        isUpdated: boolean,
-        srcNode: SourceNode
-    } {
-        let rtrn: { isNew: boolean, hasHTMLContentExists: boolean, hasCSSContentExists: boolean, isHtmlUpdated: boolean, isCssUpdated: boolean, srcNode: SourceNode };
-    }*/
-    static generateSource(/*key: string = "", { htmlFilePath, cssFilePath, htmlContent, cssContent }: {
-        htmlFilePath?: string,
-        htmlContent?: string,
-        cssFilePath?: string,
-        cssContent?: string,
-    }*/args: IStampArgs): { hasHTMLContentExists: boolean, hasCSSContentExists: boolean, isHtmlUpdated: boolean, isCssUpdated: boolean, srcNode: SourceNode } {
-        let rtrn: { isNew: boolean, hasHTMLContentExists: boolean, hasCSSContentExists: boolean, isHtmlUpdated: boolean, isCssUpdated: boolean, srcNode: SourceNode };
-        let mySourceKey = args.stampKeys + "@" + args.alices;
-        rtrn = {
-            isNew: true,
-            isHtmlUpdated: false,
-            hasHTMLContentExists: false,
-            hasCSSContentExists: false,
-            isCssUpdated: false,
-            srcNode: this.childs[mySourceKey]
-        };
-        let hasHtml = args.htmlContent != undefined || args.htmlFilePath != undefined;
-        let hasCss = args.cssContent != undefined || args.cssFilePath != undefined;
-        if (rtrn.srcNode == undefined) {
-            rtrn.isNew = true;
-            rtrn.srcNode = new SourceNode();
-            let srcn = rtrn.srcNode;
-            srcn.styler = new StylerRegs(rootPathHandler.getInfo(srcn.rootFilePath),);
-            srcn.main = this;
-            if (hasHtml) {
-                rtrn.hasHTMLContentExists = srcn.htmlCode.load({ content: args.htmlContent, path: args.htmlFilePath });
-                rtrn.isHtmlUpdated = true;
-            }
-            if (hasCss) {
-                rtrn.hasCSSContentExists = srcn.cssCode.load({ content: args.cssContent, path: args.cssFilePath });
-                rtrn.isCssUpdated = true;
-            }
-            this.childs[mySourceKey] = srcn;
-        } else {
-            rtrn.isNew = false;
-            let srcn = rtrn.srcNode;
-            if (hasHtml) {
-                rtrn.hasHTMLContentExists = srcn.htmlCode.load({ content: args.htmlContent, path: args.htmlFilePath });
-                rtrn.isHtmlUpdated = true;
-            }
-            if (hasCss) {
-                rtrn.hasCSSContentExists = srcn.cssCode.load({ content: args.cssContent, path: args.cssFilePath });
-                rtrn.isCssUpdated = true;
-            }
-        }
-        return rtrn;
-    }
-
 }
 
-export class StampGenerator {
-    static source: StampNode[] = [];
-    static generate(args: IStampArgs): {
-        stamp: StampNode,
-        isNew: boolean
-    } {
-        let rtrn: {
-            stamp: StampNode,
-            isNew: boolean
-        };
-        /* rtrn = {
-             stamp: undefined,
-             isNew: true
-         }
-         rtrn.stamp = this.source.find(s => s.rootFilePath == args.stampKeys);
-         rtrn.isNew = rtrn.stamp == undefined;
-         if (rtrn.isNew) {
-             let stmp = new StampNode();
-             stmp = new StampNode();
-             stmp.main = this;
-             stmp.rootFilePath = args.stampKeys;
-             stmp.root = args.root;
-             this.source.push(stmp);
-             rtrn.stamp = stmp;
-         }*/
-        //console.log(this.source);
-
-        //console.log(UserControlStamp.source.length);
-        return rtrn;
-    }
-}

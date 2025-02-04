@@ -8,9 +8,8 @@ import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { SourceNode, StampGenerator, StampNode } from "ucbuilder/lib/StampGenerator";
+import { SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
 import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
-import { userControlStampRow } from "ucbuilder/lib/UserControlStamp";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 interface TptTextObjectNode<K> {
   content: string,
@@ -142,21 +141,20 @@ export class Template {
 
     wholeCSS: "",
     fileStamp: "",
-    _templeteNode: undefined,
-    // stampRow: undefined as userControlStampRow,
+    _templeteNode: undefined as TemplateNode,
     parentUc: undefined as Usercontrol,
     regsMng: new regsManage(),
 
     cssVarStampKey: "0",
 
     setCSS_globalVar(key: string, value: string) {
-      this._templeteNode.extended.setCSS_globalVar(key, value);
+      (this._templeteNode as TemplateNode).extended.setCSS_globalVar({ key: value });
     },
     setCSS_localVar(key: string, value: string) {
-      this._templeteNode.extended.setCSS_localVar(key, value);
+      (this._templeteNode as TemplateNode).extended.setCSS_localVar({ key: value });
     },
     setCSS_internalVar(key: string, value: string) {
-      this._templeteNode.extended.setCSS_internalVar(key, value);
+      (this._templeteNode as TemplateNode).extended.setCSS_internalVar({ key: value });
     },
   };
 }
@@ -172,8 +170,6 @@ export class TemplateNode {
     cssVarStampKey: "0",
     main: undefined as Template,
     srcNode: undefined as SourceNode,
-    get stampNode() { return (this.sourceNode as SourceNode).main; },
-    stampRow: undefined as userControlStampRow,
 
     parentUc: undefined as Usercontrol,
     wrapper: undefined as HTMLElement,
@@ -262,7 +258,8 @@ export class TemplateNode {
       _args.source.cfInfo = new codeFileInfo(".tpt");
       let toj = Object.assign({}, tptOptions);
       let param0 = Object.assign(toj, _args);
-      
+      //console.log(toj);
+
       _args.source.cfInfo.parseUrl(tptPathOpt.mainFilePath);
       // console.log(ATTR_OF.UC.UNIQUE_STAMP);
 
@@ -274,10 +271,10 @@ export class TemplateNode {
         param0.source.cfInfo.style.parse(fpath + ".scss", false);
       }
       param0.source.templateName = tptPathOpt.name;
-      let stmpNode = StampGenerator.generate({
+      /*let stmpNode = StampGenerator.generate({
         stampKeys: param0.source.cfInfo.mainFilePath,
         root: param0.source.cfInfo.rootInfo
-      });
+      });*/
 
       // if (ucExt.fileInfo.mainFileRootPath.endsWithI('ListView.uc')) debugger;
 

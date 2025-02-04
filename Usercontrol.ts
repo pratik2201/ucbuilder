@@ -7,11 +7,10 @@ import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
 import { SessionManager } from "ucbuilder/lib/SessionManager";
+import { IPassElementOptions, SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
 import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
-import { IPassElementOptions } from "ucbuilder/lib/UserControlStamp";
 import { WinManager } from "ucbuilder/lib/WinManager";
 /*export enum ucVisibility{
     inherit = 0,
@@ -100,7 +99,7 @@ export class Usercontrol {
         //stampRow: undefined as userControlStampRow,
         //stampNode: undefined as StampNode,
         srcNode: undefined as SourceNode,
-        get stampNode() { return (this.sourceNode as SourceNode).main; },
+       
         wrapperHT: undefined as HTMLElement,
         isDialogBox: false as boolean,
         keepVisible: false as boolean,

@@ -64,8 +64,6 @@ export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
 export type StringExchangerCallback = (content: string) => string;
 export interface SourceOptions {
     cfInfo?: codeFileInfo;
-    //nodeNameAs: WrapperNodeNameAs;
-    targetElementNodeName: string;
     templateName: string;
     reloadKey: string;
     reloadDesign: boolean;
@@ -74,8 +72,6 @@ export interface SourceOptions {
     beforeContentAssign: StringExchangerCallback;
 }
 export const sourceOptions: SourceOptions = {
-    //nodeNameAs: 'wrapper',
-    targetElementNodeName: "as",
     templateName: "",
     reloadKey: "",
     reloadDesign: false,

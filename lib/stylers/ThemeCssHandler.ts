@@ -25,7 +25,7 @@ export class ThemeCssHandler {
                         themecontents = _this.match(themecontents);
                         return themecontents;
                     case "import":
-                        console.log(path);
+                        //console.log(path);
                         let node: RootPathRow = rootPathHandler.getInfo(path);//rootPathHandler.convertToRow(row, true);
                         node.isAlreadyFullPath = true;
                         let stpSrc = StampNode.registerSoruce({
