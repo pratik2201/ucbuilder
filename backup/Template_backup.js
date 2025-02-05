@@ -18,6 +18,54 @@ interface TptTextObjectNode<K> {
 export class Template {
   static extractArgs = (args: any) => newObjectOpt.extractArguments(args);
   static getTemplates = {
+    /*
+     * @param  htmlContents content
+     * @param   mainFilePath main html file path
+     * @param {(node:TemplatePathOptions)=>{}} callback call each templateNode
+     loopThrough(htmlContents: string, mainFilePath: string, callback: (node: TemplatePathOptions) => void) {
+      let mainTag: HTMLElement = document.createElement("pre");
+      mainTag.innerHTML = htmlContents;
+      let tList = mainTag.querySelectorAll(":scope > [x-from]");
+      if (tList.length == 0) {
+        callback({
+          name: propOpt.ATTR.TEMPLETE_DEFAULT,
+          mainFilePath: mainFilePath,
+          htmlContents: htmlContents,
+          cssContents: FileDataBank.readFile(mainFilePath + ".scss", {}),
+        });
+      } else {
+        tList.forEach((element) => {
+          let fInfo = new FileInfo();
+          fInfo.parse(element.getAttribute("x-from"));
+          mainFilePath = fInfo.fullPath;
+          callback({
+            name: element.getAttribute(propOpt.ATTR.X_NAME),
+            mainFilePath: mainFilePath,
+            htmlContents: FileDataBank.readFile(mainFilePath + ".html", {}),
+            cssContents: FileDataBank.readFile(mainFilePath + ".scss", {}),
+          });
+        });
+      }
+    },
+     * @param {string} htmlContents content
+     * @param {string} mainFilePath main html file path
+     * @returns {TemplatePathOptions[] & {}}
+      
+    byContents(htmlContents: string, mainFilePath: string, returnArray = true) {
+      if (returnArray === true) {
+        let rtrnAr: TemplatePathOptions[] = [];
+        this.loopThrough(htmlContents, mainFilePath, (node) => {
+          rtrnAr.push(node);
+        });
+        return rtrnAr;
+      } else {
+        let rtrnObj: { [key: string]: TemplatePathOptions } = {};
+        this.loopThrough(htmlContents, mainFilePath, (node) => {
+          rtrnObj[node.name] = node;
+        });
+        return rtrnObj;
+      }
+    },*/
     /**
      * @param {string} htmlFilePath
      * @returns {TemplatePathOptions[] & {}}
@@ -93,7 +141,24 @@ export class Template {
   }
 
   extended = {
-    parentUc: undefined as Usercontrol,    
+
+    //wholeCSS: "",
+    //fileStamp: "",
+   // _templeteNode: undefined as TemplateNode,
+    parentUc: undefined as Usercontrol,
+    //regsMng: new regsManage(),
+
+    //cssVarStampKey: "0",
+
+    /*setCSS_globalVar(key: string, value: string) {
+      (this._templeteNode as TemplateNode).extended.setCSS_globalVar({ key: value });
+    },
+    setCSS_localVar(key: string, value: string) {
+      (this._templeteNode as TemplateNode).extended.setCSS_localVar({ key: value });
+    },
+    setCSS_internalVar(key: string, value: string) {
+      (this._templeteNode as TemplateNode).extended.setCSS_internalVar({ key: value });
+    },*/
   };
 }
 export class TemplateNode {
@@ -104,14 +169,14 @@ export class TemplateNode {
   }
   //static _CSS_VAR_STAMP = 0;
   extended = {
-   // fileStamp: "",
+    fileStamp: "",
    // cssVarStampKey: "0",
     main: undefined as Template,
     srcNode: undefined as SourceNode,
 
     parentUc: undefined as Usercontrol,
-   // wrapper: undefined as HTMLElement,
-  //  size: new Size(),
+    wrapper: undefined as HTMLElement,
+    size: new Size(),
     regsMng: new regsManage(),
     setCSS_globalVar(varList: VariableList/*,key: string, value: string*/) {
 
@@ -208,7 +273,20 @@ export class TemplateNode {
         param0.source.cfInfo.html.parse(fpath + ".html", false);
         param0.source.cfInfo.style.parse(fpath + ".scss", false);
       }
-      param0.source.templateName = tptPathOpt.name;      
+      param0.source.templateName = tptPathOpt.name;
+      /*let stmpNode = StampGenerator.generate({
+        stampKeys: param0.source.cfInfo.mainFilePath,
+        root: param0.source.cfInfo.rootInfo
+      });*/
+
+      // if (ucExt.fileInfo.mainFileRootPath.endsWithI('ListView.uc')) debugger;
+
+      /*let res = stmpNode.stamp.generateSource(tptPathOpt.name, {
+        htmlFilePath: param0.source.cfInfo.html.fullPath
+      });
+      tptExt.srcNode = res.srcNode;
+      if (!res.hasHTMLContentExists)
+        res.srcNode.loadHTML(param0.source.beforeContentAssign);*/
       tptExt.srcNode = StampNode.registerSoruce(
         {
           key: param0.source.cfInfo.mainFileRootPath + "@" + tptPathOpt.name,
@@ -218,6 +296,9 @@ export class TemplateNode {
       let isAlreadyExist = tptExt.srcNode.htmlCode.load({ path: param0.source.cfInfo.html.fullPath });
       if (!isAlreadyExist)
         tptExt.srcNode.loadHTML(param0.source.beforeContentAssign);
+
+      //   debugger;
+      //tptExt.stampRow = UserControlStamp.getStamp(param0.source, false);
 
       let htEle = tptExt.srcNode.dataHT;
 
@@ -255,9 +336,33 @@ export class TemplateNode {
       tptExt.parentUc.ucExtends.Events.beforeClose.on(({ prevent }) => {
         tptExt.srcNode.release();
       });
-     
+      /*tptPathOpt.cssContents = tptExt.srcNode.styler.parseStyleSeperator_sub({
+        data: (tptPathOpt.cssContents == undefined) ?
+          FileDataBank.readFile(param0.source.cfInfo.style.fullPath, { replaceContentWithKeys: true })
+          :
+          tptPathOpt.cssContents,
+        localNodeElement: tptExt.parentUc.ucExtends.self,
+        //cssVarStampKey: tptExt.main.extended.cssVarStampKey,
+      });
+
+      LoadGlobal.pushRow({
+        url: param0.source.cfInfo.style.rootPath,
+        stamp: tptExt.srcNode.stamp,
+        reloadDesign: param0.source.reloadDesign,
+        reloadKey: param0.source.reloadKey,
+        cssContents: tptPathOpt.cssContents,
+      });*/
+
+      //tptExt.main.extended.wholeCSS += tptPathOpt.cssContents;
       tptExt.Events.onDataExport = (data) =>
-        param0.parentUc.ucExtends.Events.onDataExport(data);      
+        param0.parentUc.ucExtends.Events.onDataExport(data);
+      //htEle.remove();
+      /*htEle = this.extended.generateNode({});
+      document.body.appendChild(htEle);
+      this.extended.size.setBy.style(window.getComputedStyle(htEle));
+     //console.log(this.extended.size);
+      this.extended.sampleNode = htEle;
+      htEle.remove();*/
     },
     sampleNode: undefined as HTMLElement,
     Events: {
@@ -289,7 +394,7 @@ export class TemplateNode {
         s = FilterContent.select_inline_filter(s, uniqStamp);
         return s;
       });
-      return Array.from(fromHT.querySelectorAll(ar.join(",")));
+      return Array.from(ext.wrapper.querySelectorAll(ar.join(",")));
     },
     getAllControls: (specific: string[], fromHT: HTMLElement) => {
       if (fromHT == undefined) return;
@@ -322,6 +427,29 @@ export class TemplateNode {
         else console.warn("empty-controls-returned");
       }
       return childs;
+    },
+
+    templeteList: {},
+    fillTemplates: (mainNode: HTMLElement) => {
+      let ext = this.extended;
+      ext.templeteList = {};
+      let nodes = mainNode.querySelectorAll(
+        `:scope > [${propOpt.ATTR.TEMPLETE_ACCESS_KEY}]`
+      );
+      if (nodes.length == 0) {
+        ext.templeteList[propOpt.ATTR.TEMPLETE_DEFAULT] = mainNode.outerHTML;
+      } else {
+        let mNode = mainNode.cloneNode(true) as HTMLElement;
+        mNode.innerHTML = "";
+        nodes.forEach((node) => {
+          let role = node.getAttribute(propOpt.ATTR.TEMPLETE_ACCESS_KEY);
+          let roleLwr = role.toLowerCase();
+          if (!(roleLwr in ext.templeteList)) {
+            mNode.innerHTML = node.innerHTML;
+            ext.templeteList[role] = mNode.outerHTML;
+          }
+        });
+      }
     },
   };
 }

@@ -84,10 +84,21 @@ class dataManager {
         return this.getId(ele1).id === this.getId(ele2).id;
     }
 
-    initElement(target: HTMLElement): void {
-        target.querySelectorAll('*').forEach((ele) => {
-            this.getId(ele as HTMLElement);
-        });
+    initElement(target: HTMLElement & HTMLElement[]): void {
+        if (target.length == undefined) {
+            [target, target.querySelectorAll('*')].forEach((ele) => {
+                this.getId(ele as HTMLElement);
+            });
+        } else {
+            for (let i = 0, iObj = target, ilen = iObj.length; i < ilen; i++){ 
+                target = iObj[i] as any;
+                [target, target.querySelectorAll('*')].forEach((ele) => {
+                    this.getId(ele as HTMLElement);
+                });
+                
+            }
+            
+        }
     }
 
     setEvent<K extends keyof HTMLElementEventMap>(element: HTMLElement, eventName: K, key: string, handler: (this: HTMLDivElement, ev: HTMLElementEventMap[K]) => any): void {
@@ -581,11 +592,17 @@ class jqFeatures {
                 hasReplaced: hasReplaced
             }
         }
-        String.prototype.$ = function (): HTMLElement {
+        String.prototype.$ = function (): HTMLElement&HTMLElement[] {
             var div = document.createElement('pre');
             div.innerHTML = this.trim();
-            jqFeatures.data.initElement(div.firstChild as HTMLElement);
-            return div.firstChild as HTMLElement;
+            if (div.children.length == 1) {
+                jqFeatures.data.initElement(div.firstChild as any);
+                return div.firstChild as any;
+            } else {
+                let ar = Array.from(div.children);
+                jqFeatures.data.initElement(ar as any);
+                return ar as any;
+            }
         }
 
         String.prototype.parseUc = function <T = Usercontrol>(val: T): string {

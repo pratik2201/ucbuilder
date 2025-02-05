@@ -1,7 +1,7 @@
 import { commonGenerator } from "ucbuilder/build/codefile/commonGenerator";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { commonRow, CommonRow, Control, ImportClassNode } from "ucbuilder/build/buildRow.js";
-import { buildOptions, objectOpt, propOpt, ScopeType } from "ucbuilder/build/common";
+import { buildOptions, objectOpt, propOpt, ScopeType, SpecialExtEnum } from "ucbuilder/build/common";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { AliceManager } from "ucbuilder/build/codefile/aliceManager";
@@ -51,7 +51,7 @@ export class commonParser {
         let code = (htmlContents == undefined) ? FileDataBank.readFile(_row.src.html.fullPath, {
             reloadData: true,
         }) : htmlContents;
-        let isUserControl = _row.src.extCode == buildOptions.extType.Usercontrol;
+        let isUserControl = _row.src.extCode == SpecialExtEnum.uc;
 
         try {
 

@@ -1,15 +1,17 @@
 import fs from "fs";
-import { CommonRow } from "ucbuilder/build/buildRow.js";
-import { regsManage } from "ucbuilder/build/regs/regsManage.js";
-import { buildOptions, pathInfo, SpecialExtType } from "ucbuilder/build/common";
-import { FileDataBank } from "ucbuilder/global/fileDataBank";
-import { rfileGenerator } from "ucbuilder/build/codefile/rfileGenerator";
 import path from "path";
-import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
+import { CommonRow } from "ucbuilder/build/buildRow.js";
+import { SpecialExtType } from "ucbuilder/build/common";
+import { regsManage } from "ucbuilder/build/regs/regsManage.js";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
 
 interface CodeFilesNode {
     DESIGNER: string,
     CODE: string,
+    STYLE: string,
+}
+interface TNode {
+    HTML: string,
     STYLE: string,
 }
 interface BaseTypeNode {

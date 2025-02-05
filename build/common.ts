@@ -475,10 +475,11 @@ export const objectOpt = {
     Usercontrol = ".uc",
     template = ".tpt",
 }*/
-export type SpecialExtType = "none" | ".uc" | ".tpt";
+export type SpecialExtType = "none" | ".uc" | ".tpt"|  ".t" ;
 export function getSpecialExtTypeValue(_val:  string):SpecialExtType {
     switch (_val) {
         case SpecialExtEnum.uc: return '.uc';
+        case SpecialExtEnum.t: return '.t';        
         case SpecialExtEnum.tpt: return '.tpt';
         default: return 'none';
     }
@@ -487,14 +488,11 @@ export enum SpecialExtEnum {
     none = "none",
     uc = ".uc",
     tpt = ".tpt",
+    t = ".t",
 }
 export type ScopeType = "private" | "protected" | "package" | "public";
 export const buildOptions = {
-    extType: {
-        none: "none",
-        Usercontrol: ".uc",
-        template: ".tpt",
-    },
+    
     ignoreDirs: [
         'ucbuilder/node_modules',
         'ucbuilder/.vscode',

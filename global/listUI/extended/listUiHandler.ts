@@ -48,13 +48,13 @@ export class listUiHandler {
     }
     public set itemTemplate(value: TemplateNode) {
         this._itemTemplate = value;
-        let _itemSize = this.nodes.itemSize;        
+       /* let _itemSize = this.nodes.itemSize;        
         let s = value.extended.size;
         
         setTimeout(() => {
             _itemSize.height = s.height;
             _itemSize.width = s.width;
-        });
+        });*/
     }
 
     

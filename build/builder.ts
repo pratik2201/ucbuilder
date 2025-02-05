@@ -1,14 +1,11 @@
 import * as fs from "fs";
-import { commonParser } from "ucbuilder/build/codefile/commonParser";
-import { buildOptions, SpecialExtEnum, SpecialExtType, pathInfo, SourceCodeNode } from "ucbuilder/build/common";
-import { codeFileInfo, FileInfo, FileNameInfo, htmlFileNode } from "ucbuilder/build/codeFileInfo";
 import * as path from "path";
-import { ResourcesUC } from "ucbuilder/ResourcesUC";
-import { FileDataBank } from "ucbuilder/global/fileDataBank";
-import { fileWatcher } from "ucbuilder/build/fileWatcher";
-import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
-import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { CommonRow } from "ucbuilder/build/buildRow";
+import { codeFileInfo, FileInfo } from "ucbuilder/build/codeFileInfo";
+import { commonParser } from "ucbuilder/build/codefile/commonParser";
+import { SourceCodeNode, SpecialExtEnum } from "ucbuilder/build/common";
+import { fileWatcher } from "ucbuilder/build/fileWatcher";
+import { CommonEvent } from "ucbuilder/global/commonEvent";
 
 export class builder {
     static ignoreDirs: string[] = [];

@@ -57,12 +57,13 @@ export class {=designer.className } extends Template {
         
         //fargs = fargs[fargs.length-1] as TptOptions;
         let ext = this.extended;
-        let tpts = Template.getTemplates.byDirectory(fargs.source.cfInfo.code.fullPath,false);
+        let tpts = Template.getTemplates.byDirectory(fargs.source.cfInfo.code.fullPath, false);
+        Template.getTemplates.byHTMLFilePath(fargs.source.cfInfo.html.fullPath,false);
         `{looptpt=designer.templetes} 
         `
         
-        ext._templeteNode = new {=name}_TEMPLATE(this);
-        this.{=name} = ext._templeteNode as {=name}_TEMPLATE;
+        // ext._templeteNode = new {=name}_TEMPLATE(this);
+        this.{=name } = new {=name }_TEMPLATE(this); // ext._templeteNode as {=name}_TEMPLATE;
         this.{=name}.extended.initializecomponent(fargs,tpts['{=name}'],"{=name}"); 
        `{/looptpt}`
 

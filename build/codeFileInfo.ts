@@ -1,4 +1,4 @@
-import { pathInfo, strOpt, buildOptions, FilePartlyInfo, SpecialExtType, getSpecialExtTypeValue } from "ucbuilder/build/common";
+import { FilePartlyInfo, getSpecialExtTypeValue, pathInfo, SpecialExtType, strOpt } from "ucbuilder/build/common";
 import { LocationType, RootPathRow } from "ucbuilder/global/findAndReplace";
 //import {  RootPathRow } from "ucbuilder/enumAndMore";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";

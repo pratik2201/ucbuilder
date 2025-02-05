@@ -34,7 +34,7 @@ interface Number{
     toAlphabate():string
 }
 interface String {
-    $(): HTMLElement,
+    $(): HTMLElement&HTMLElement[],
     parseUc<T = import("ucbuilder/Usercontrol").Usercontrol>(uc: T): string,
     /**
      * @param trim default `true` this will remove first and last '/' from this string
