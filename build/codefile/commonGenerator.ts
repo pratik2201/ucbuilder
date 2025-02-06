@@ -4,6 +4,7 @@ import { CommonRow } from "ucbuilder/build/buildRow.js";
 import { SpecialExtType } from "ucbuilder/build/common";
 import { regsManage } from "ucbuilder/build/regs/regsManage.js";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
+import { compileTemplate, TemplateMaker } from "ucbuilder/build/regs/TemplateMaker";
 
 interface CodeFilesNode {
     DESIGNER: string,
@@ -68,11 +69,14 @@ export class commonGenerator {
     designerTMPLT: { [key: string]: string } = {};
     codefileTMPLT: { [key: string]: string } = {};
     styleTMPLT: { [key: string]: string } = {};
-
+    tMaker = compileTemplate;
+    dTpt = '' as string;
     constructor() {
         this.rgxManage = new regsManage();
+        this.dTpt = FileDataBank.readFile('ucbuilder/buildTempates/ts/uc/designer.php', { isFullPath:false, replaceContentWithKeys: false });
+        
     }
- 
+
     Events = {
         onDemandDesignerFile: (type: 'js' | 'ts', extType: SpecialExtType) => {
             return this._CodeFilesNode(type, extType).DESIGNER;
@@ -101,10 +105,13 @@ export class commonGenerator {
             const row = this.rows[i];
             let srctype = row.src.rootInfo.location.type;
             let uctype = row.src.extCode;
-            
+
             commonGenerator.ensureDirectoryExistence(row.src.designer.fullPath);
             _data = _this.generateNew(row, _this.Events.onDemandDesignerFile(srctype, uctype));
             fs.writeFileSync(row.src.designer.fullPath, _data);
+            let tcode = _this.tMaker(this.dTpt)(row);
+            console.log(tcode);
+            
 
             if (row.htmlFile.reGenerate)
                 fs.writeFileSync(`${row.src.html.fullPath}`, row.htmlFile.content);
@@ -123,7 +130,7 @@ export class commonGenerator {
                 }
             }
         }
-        
+
     }
 
     getDesignerCode(rw: CommonRow) {

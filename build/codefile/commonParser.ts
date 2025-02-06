@@ -96,7 +96,7 @@ export class commonParser {
             let subTemplates = Template.getTemplates.byDirectory(filePath) as TemplatePathOptions[];
             let tpts = _row.designer.templetes;
             subTemplates.forEach(template => {
-                let rolelwr = template.name;
+                let rolelwr = template.accessKey;
                 if (tpts.findIndex(s => s.name.equalIgnoreCase(rolelwr)) != -1) return;
                 let controls: Control[] = [];
                 /*if (_row.htmlFile.reGenerate)
@@ -126,7 +126,7 @@ export class commonParser {
                 }
 
                 tpts.push({
-                    name: template.name,
+                    name: template.accessKey,
                     scope: "public",
                     controls: controls
                 });

@@ -113,15 +113,15 @@ export const ucOptions: UcOptions = {
 
 
 export interface TemplatePathOptions {
-    name: string;
-    mainFilePath: string;
+    accessKey: string;
+    objectKey: string;
     htmlContents: string;
     cssContents: string;
     mainTpt?: Template;
 }
 export const templatePathOptions: TemplatePathOptions = {
-    name: "",
-    mainFilePath: "",
+    accessKey: "",
+    objectKey: "",
     htmlContents: "",
     cssContents: "",
 };

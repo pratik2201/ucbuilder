@@ -1,0 +1,95 @@
+<?php for(let i=0;i<designer.importClasses;i++){ ?>
+    import { <?=importText?> } from '<?=url?>';
+<?php } ?>
+/**
+ *  code filename must same and case sensitive with classname 
+ */
+import { <?=src.name?> } from '<?=src.mainFileRootPath?>';
+
+
+export class <?=designer.className ?> extends Usercontrol {    
+    /**  <?=src.mainFileRootPath?>
+     *  AUTO RENAMING IS DEPEND ON `_FILE_PATH` SO KEEP YOUR SELF FAR FROM THIS :-)
+     */
+    private static _FILE_PATH = '<?=src.mainFileRootPath?>';//window.atob('<?=src.mainFileRootPath_btoa?>');
+    public static get FILE_PATH() {
+        return Designer._FILE_PATH;
+    }
+    static get designerToCode(): string {
+        return Usercontrol.designerToCode;
+    }
+    static setCSS_globalVar (varList:VariableList /*key: string, value: string*/): void  {
+        intenseGenerator.setCSS_globalVar(varList,this.FILE_PATH);
+    }
+    static Create(pera: UcOptions, ...args: any[]): <?=src.name ?> { 
+        /** <?=src.mainFileRootPath?> */
+        return intenseGenerator.generateUC(this.FILE_PATH,pera,...args) as <?=src.name?>;
+    }
+    get(id:<?=designer.getterFunk ?>) {
+        return this.ucExtends.find(`[id="${id}"]`)[0];
+    }
+
+    <?php 
+        for(let i=0;i<designer.importClasses;i++){
+            switch(designer.controls){ 
+                      case "none": ?>
+                    <?=scope?> <?=name?>: <?=proto?><?=generic?>;
+                <?php break;?>
+                <?php case ".tpt": ?>
+                    <?=scope?> <?=name?>: import('<?=src.mainFileRootPath?>').<?=src.name?>;
+                <?php break;?>
+                <?php case ".js": ?>
+                    <?=scope?> <?=name?>: import('<?=src.mainFileRootPath?>').<?=src.name?>;
+                <?php break;?>
+    <?php      }
+        } ?>
+    
+    constructor(){ super(); }
+    initializecomponent(argsLst: IArguments, form: <?=src.name?>) {
+        let fargs = Usercontrol.extractArgs(arguments);
+        let args = fargs[fargs.length-1] as UcOptions;
+        let ucExt = this.ucExtends;
+        
+        ucExt.initializecomponent(args);        
+        let CONTROLS = ucExt.designer.getAllControls();
+        
+        <?php 
+        for(let i=0;i<designer.controls;i++){
+            switch(type){  
+                 case "none": ?>
+                    this.<?=name?> = CONTROLS.<?=name?> as <?=proto?>;
+                <?php   break; ?>
+                <?php case ".tpt": ?>
+                    this.<?=name ?> = <?=importedClass.objText?>.Create({ 
+                        parentUc: this, 
+                        accessName:"<?=name?>" , 
+                        elementHT :CONTROLS.<?=name?> 
+                    });
+                <?php   break; ?>
+                <?php case ".uc": ?>
+                    this.<?=name?> = <?=importedClass.objText?>.Create({ 
+                            parentUc : this, 
+                            mode:args.mode,
+                            accessName:"<?=name?>" , 
+                            session:{
+                                loadBySession:args.session.loadBySession,
+                                uniqueIdentity:"<?=name?>" , 
+                                addNodeToParentSession:true,
+                            },   
+                            decisionForTargerElement:'replace',
+                            targetElement : CONTROLS.<?=name?> 
+                        });
+                    this.<?=name ?>.ucExtends.show();
+                <?php   break; ?>
+
+        <?php  }
+        }
+        ?>
+        
+        ucExt.finalizeInit(args);
+        ucExt.session.prepareForAutoLoadIfExist();
+        if (args.loadAt) args.loadAt.appendChild(ucExt.wrapperHT);
+       
+        Usercontrol.assignPropertiesFromDesigner(form);
+    }
+}
