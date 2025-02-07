@@ -56,7 +56,7 @@ export class <?=designer.className ?> extends Template {
         //fargs = fargs[fargs.length-1] as TptOptions;
         let ext = this.extended;
         let tpts = Template.getTemplates.byDirectory(fargs.source.cfInfo.code.fullPath, false);
-        let mtpt = Template.byHTMLFilePath(fargs.source.cfInfo.html.fullPath,false);
+        let mtpt = Template.byHTMLFileObject(fargs.source.cfInfo);
         console.log(tpts);
         console.log(mtpt);
         console.log("--");

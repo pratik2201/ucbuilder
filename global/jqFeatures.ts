@@ -90,14 +90,14 @@ class dataManager {
                 this.getId(ele as HTMLElement);
             });
         } else {
-            for (let i = 0, iObj = target, ilen = iObj.length; i < ilen; i++){ 
+            for (let i = 0, iObj = target, ilen = iObj.length; i < ilen; i++) {
                 target = iObj[i] as any;
                 [target, target.querySelectorAll('*')].forEach((ele) => {
                     this.getId(ele as HTMLElement);
                 });
-                
+
             }
-            
+
         }
     }
 
@@ -544,9 +544,9 @@ class jqFeatures {
                     iObj[i].length = 0;
                 }
             }
-            for(let i=0,iObj=from,ilen=iObj.length   ;   i < ilen   ;   i++){ 
+            for (let i = 0, iObj = from, ilen = iObj.length; i < ilen; i++) {
                 const iItem = iObj[i];
-                for(let j=0,jObj=to,jlen=jObj.length   ;   j < jlen   ;   j++){ 
+                for (let j = 0, jObj = to, jlen = jObj.length; j < jlen; j++) {
                     jObj[j].push(iItem);
                 }
             }
@@ -592,7 +592,7 @@ class jqFeatures {
                 hasReplaced: hasReplaced
             }
         }
-        String.prototype.$ = function (): HTMLElement&HTMLElement[] {
+        String.prototype.$ = function (): HTMLElement & HTMLElement[] {
             var div = document.createElement('pre');
             div.innerHTML = this.trim();
             if (div.children.length == 1) {
@@ -691,6 +691,18 @@ class jqFeatures {
         String.prototype.toFilePath = function (trim = true): string {
             let ns = this.replace(/[\\\/]+/gi, "/");
             return trim ? ns._trim_("/") : ns;
+        }
+        String.prototype.removeExtension = function (extList: string[]): string {
+            let str = this as string;
+            let ptr: string, reg: string, flag: string = "g";
+            if (extList != undefined) {
+                ptr = extList.join('|');
+                //let reg = `/(?:\.(?:${ptr}))*$/`;
+                reg = "\\.(${ptr})$";
+            } else {
+                reg = "\\.[^.]+";
+            }
+            return  str.replace( new RegExp(reg, flag), "");
         }
         String.prototype.getDriveFromPath = function (): string | undefined {
             let r = this.match(/^[\w]+?:+/gi);

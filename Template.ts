@@ -22,18 +22,20 @@ export class Template {
       isSeperatePathSpecified: false,
       name: undefined as string,
       xpath: undefined as string,
+      relative: undefined as string,
       htmlpath: undefined as string,
       csspath: undefined as string,
     };
     if (iele.nodeName == 'TPT' && iele.hasAttribute('x-name')) {
       rtrn.xpath = iele.getAttribute('x-path');
       rtrn.name = iele.getAttribute('x-name');
+      rtrn.relative = iele.getAttribute('x-relative');
       rtrn.htmlpath = iele.getAttribute('html-path');
       rtrn.csspath = iele.getAttribute('css-path');
       if (rtrn.csspath != null && rtrn.htmlpath != null) {
         rtrn.valid = true;
         rtrn.isSeperatePathSpecified = true;
-      } else if (rtrn.xpath != null) {
+      } else if (rtrn.xpath != null || rtrn.relative != null) {
         rtrn.valid = true;
         rtrn.isSeperatePathSpecified = false;
       }
@@ -48,68 +50,127 @@ export class Template {
       cssPath: cspath + '.scss'
     };
   }
-  static getTemplateOptionByElement(iele: HTMLElement): TemplatePathOptions | undefined {
-    let stts = this.getTemplateStatus(iele);
+  static getTemplateOptionByElement(iele: HTMLElement, cinfo: codeFileInfo): TemplatePathOptions | undefined {
+    //let stts = this.getTemplateStatus(iele);
     let rtrn: TemplatePathOptions = {
       accessKey: 'primary',
       objectKey: undefined,
-      mainTpt: undefined,
-      cssContents: undefined,
-      htmlContents: undefined,
     };
-    if (stts.valid) {
+    let name = iele.getAttribute('x-name');
+    if (name != null && iele.nodeName == 'X:TEMPLATE') {
+      let partinfo = cinfo.partInfo;
+      let csspath = '';
+      let htmlpath = '';
+      let isHTMLFullpath = undefined as boolean;
+      let isCSSFullpath = undefined as boolean;
+      let xrelativeChild = iele.getAttribute('x-relative-child');
+      let xrelative = iele.getAttribute('x-relative');
+      let xpath = iele.getAttribute('x-path');
+      let xhtmlpath = iele.getAttribute('x-htmlpath');
+      let xcsspath = iele.getAttribute('x-csspath');
+      if (xrelativeChild != null) {
+        xrelativeChild = xrelativeChild.removeExtension();
+        csspath = cinfo.mainFileRootPath.removeExtension() + '/' + xrelativeChild + '.scss';
+        htmlpath = cinfo.mainFilePath.removeExtension() + '/' + xrelativeChild + '.html';
+        isCSSFullpath = false; isHTMLFullpath = true;
+      } else if (xrelative != null) {
+        xrelative = xrelative.removeExtension();
+        csspath = partinfo.sortDirPath + '/' + xrelative + '.scss';
+        htmlpath = partinfo.dirPath + '/' + xrelative + '.html';
+        isCSSFullpath = false; isHTMLFullpath = true;
+      } else if (xpath != null) {
+        xpath = xpath.removeExtension();
+        csspath = xpath + '.scss';
+        htmlpath = xpath + '.html';
+        isCSSFullpath = false; isHTMLFullpath = false;
+      } else if (xhtmlpath != null && xcsspath != null) {
+        xhtmlpath = xhtmlpath.removeExtension(['html']);
+        xcsspath = xcsspath.removeExtension(['scss']);
+        csspath = xhtmlpath + '.scss';
+        htmlpath = xcsspath + '.html';
+        isCSSFullpath = false; isHTMLFullpath = false;
+      } else  return rtrn;      
+      rtrn.objectKey = csspath;
+      rtrn.accessKey = name;
+      rtrn.cssContents = FileDataBank.readFile(csspath, { isFullPath: isCSSFullpath, replaceContentWithKeys: true });
+      rtrn.htmlContents = FileDataBank.readFile(htmlpath, { isFullPath: isHTMLFullpath, });
+    } else {
+      rtrn.objectKey = cinfo.style.rootPath;
+      rtrn.cssContents = FileDataBank.readFile(cinfo.style.fullPath, { replaceContentWithKeys: true });
+      rtrn.htmlContents = iele.outerHTML;
+    }
+    /*iele.getAttribute('x-name');
+    iele.getAttribute('x-relative-child');
+    iele.getAttribute('x-relative');
+    iele.getAttribute('x-path');
+    iele.getAttribute('x-htmlpath');
+    iele.getAttribute('x-csspath');*/
+
+    /*if (stts.valid) {
       rtrn.accessKey = stts.name;
       let htpath = stts.xpath;
       let cspath = stts.xpath;
       if (stts.isSeperatePathSpecified) {
         htpath = stts.htmlpath;
         cspath = stts.csspath;
+      } else {
+        if (stts.relative != null) {
+          htpath = cinfo.partInfo.dirPath + '/' + stts.relative + '.html';
+          cspath = cinfo.partInfo.dirPath + '/' + stts.relative + '.scss';
+          htpath = htpath.toFilePath(true);
+          cspath = cspath.toFilePath(true);
+          console.log(htpath, cspath);
+
+        }
       }
       let c = this.fillContent(htpath, cspath);
       rtrn.htmlContents = FileDataBank.readFile(c.htmlPath, { isFullPath: false });
       rtrn.objectKey = c.cssPath;
       rtrn.cssContents = FileDataBank.readFile(c.cssPath, { isFullPath: false, replaceContentWithKeys: true });
-    }
+    }*/
     return rtrn;
   }
-  private static GetTemplatePathOptionsArray(htmlFilePath: string): TemplatePathOptions[] {
-    let data = FileDataBank.readFile(htmlFilePath, {});
+  private static GetTemplatePathOptionsArray(cinfo: codeFileInfo): TemplatePathOptions[] {
+    let data = FileDataBank.readFile(cinfo.html.fullPath, {});
     let ele = data.$();
     let rtrn: TemplatePathOptions[] = [];
     if (ele.length != undefined) {
       for (let i = 0, iObj = ele, ilen = iObj.length; i < ilen; i++) {
         const iele = iObj[i];
-        let rs = Template.getTemplateOptionByElement(iele);
-        if (rs.objectKey != undefined) {
+        let rs = Template.getTemplateOptionByElement(iele, cinfo);
+        rtrn.push(rs);
+        /*if (rs.objectKey != undefined) {
           rtrn.push(rs);
         } else {
-          let c = Template.fillContent(htmlFilePath, htmlFilePath);
+          let c = Template.fillContent(cinfo.html.rootPath, cinfo.html.rootPath);
           rtrn.push({
             accessKey: 'primary',
             htmlContents: iele.outerHTML,
-            cssContents: FileDataBank.readFile(c.cssPath, { isFullPath: false, replaceContentWithKeys: true }),
-            objectKey: c.cssPath,
+            cssContents: FileDataBank.readFile(cinfo.style.fullPath, { isFullPath: true, replaceContentWithKeys: true }),
+            objectKey: cinfo.style.rootPath,
             mainTpt: undefined,
           });
-        }
+        }*/
       }
     } else {
-      let c = Template.fillContent(htmlFilePath, htmlFilePath);
+      let rs = Template.getTemplateOptionByElement(ele, cinfo);
+      rtrn.push(rs);
+      /*let c = Template.fillContent(cinfo.html.fullPath, cinfo.html.fullPath);
       rtrn.push({
         accessKey: 'primary',
         htmlContents: ele.outerHTML,
-        cssContents: FileDataBank.readFile(c.cssPath, { isFullPath: false, replaceContentWithKeys: true }),
-        objectKey: c.cssPath,
+        cssContents: FileDataBank.readFile(cinfo.style.fullPath, { isFullPath: false, replaceContentWithKeys: true }),
+        objectKey: cinfo.style.rootPath,
         mainTpt: undefined,
-      });
+      });*/
     }
     return rtrn;
     /*let mainFilePath = strOpt.trim_(htmlFilePath, ".html");
     let htmlContents = FileDataBank.readFile(mainFilePath + ".html", {});
     return this.byContents(htmlContents, mainFilePath, returnArray);*/
   }
-  static byHTMLFileObject(htmlFilePath: string, returnArray = true): { [key: string]: TemplatePathOptions } {
-    let ar = Template.GetTemplatePathOptionsArray(htmlFilePath);
+  static byHTMLFileObject(cinfo: codeFileInfo): { [key: string]: TemplatePathOptions } {
+    let ar = Template.GetTemplatePathOptionsArray(cinfo);
     let robj: { [key: string]: TemplatePathOptions } = {};
     for (let i = 0, iObj = ar, ilen = iObj.length; i < ilen; i++) {
       const itpt = iObj[i];
@@ -117,12 +178,12 @@ export class Template {
     }
     return robj;
   }
-  static byHTMLFilePath(htmlFilePath: string, returnArray = true): TemplatePathOptions[] {
-    return Template.GetTemplatePathOptionsArray(htmlFilePath);
+  static byHTMLFileArray(cinfo: codeFileInfo): TemplatePathOptions[] {
+    return Template.GetTemplatePathOptionsArray(cinfo);
   }
   static getTemplates = {
 
-    
+
     /**
      * @param {string} htmlFilePath
      * @returns {TemplatePathOptions[] & {}}

@@ -66,23 +66,30 @@ class FileDataBank {
     static readFile(path: string, {
         reloadData = false,
         dontDoAnything = false,
-        isFullPath = true,
+        isFullPath = undefined,
+        cinfo = undefined,
         replaceContentWithKeys = false,
-    } = {}): string {
-       
+    }: {
+        reloadData?: boolean,
+        dontDoAnything?: boolean,
+        isFullPath?: boolean,
+        replaceContentWithKeys?: boolean,
+        cinfo?: FileInfo
+    }): string {
+
         let fullPath = path/*.toLowerCase()*/.trim();
-        if (!isFullPath) {
-            let fing = new FileInfo();
-            fing.parse(path, true);
-            fullPath = fing.fullPath;
+        if (isFullPath == undefined || isFullPath == false) {
+            cinfo = new FileInfo();
+            cinfo.parse(path, true);
+            fullPath = cinfo.fullPath;
         }
         if (dontDoAnything) return readFileSync(fullPath, 'binary');
         if (!existsSync(fullPath)) return undefined;
 
         let data = this.source.find(s => s.path == fullPath);
 
-       // console.log(path);
-        
+        // console.log(path);
+
         if (data != undefined) {
             if (!reloadData)
                 return replaceContentWithKeys ? data.content : data.originalContent;

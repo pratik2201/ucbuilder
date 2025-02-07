@@ -39,7 +39,8 @@ interface String {
     /**
      * @param trim default `true` this will remove first and last '/' from this string
      */
-    toFilePath(trim?:boolean): string,
+    toFilePath(trim?: boolean): string,
+    removeExtension(extList?: string[]):string,
     replaceAllWithResult(find:string,replace:string): {result:string,hasReplaced:boolean},
     escapeRegs():string,
     getDriveFromPath():string|undefined,

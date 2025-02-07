@@ -94,7 +94,12 @@ export class commonParser {
             aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/lib/stylers/StylerRegs', aliceNumber, im);
             _row.designer.baseClassName = "Template";
           
-            let subTemplates = Template.byHTMLFilePath(_row.src.html.fullPath);
+            //let subTemplates = Template.byHTMLFileArray(_row.src.html.fullPath,true);
+            let subTemplates = Template.getTemplates.byDirectory(_row.src.html.fullPath,true) as TemplatePathOptions[];
+            console.log(subTemplates);
+            console.log(Template.byHTMLFileArray(_row.src));
+            console.log('-----------------');
+            
             let tpts = _row.designer.templetes;
             subTemplates.forEach(template => {
                 let rolelwr = template.accessKey;
@@ -108,6 +113,7 @@ export class commonParser {
 </wrapper>`;
                 }
                 let cntHT = template.htmlContents.$() as HTMLElement;
+                if (cntHT['length'] != undefined) cntHT = cntHT[0];
                 const elements = Array.from(cntHT.querySelectorAll(`[${propOpt.ATTR.X_NAME}]`));
                 for (let i = 0, iObj = elements, len = iObj.length; i < len; i++) {
                     const element = iObj[i];

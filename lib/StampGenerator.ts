@@ -29,7 +29,7 @@ export class CodeNode {
             return hasAlreadyLoaded;
         }
         if (path != undefined) {
-            this.originalContent = FileDataBank.readFile(path);
+            this.originalContent = FileDataBank.readFile(path,{});
             this.hasContent = true;
             this.hasLoadedByPath = true;
             //   this.onContentLoaded();
