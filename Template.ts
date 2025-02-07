@@ -89,7 +89,7 @@ export class Template {
         csspath = xhtmlpath + '.scss';
         htmlpath = xcsspath + '.html';
         isCSSFullpath = false; isHTMLFullpath = false;
-      } else  return rtrn;      
+      } else return rtrn;
       rtrn.objectKey = csspath;
       rtrn.accessKey = name;
       rtrn.cssContents = FileDataBank.readFile(csspath, { isFullPath: isCSSFullpath, replaceContentWithKeys: true });
@@ -367,7 +367,10 @@ export class TemplateNode {
           accessName: tptPathOpt.accessKey,
           root: param0.source.cfInfo.rootInfo
         });
-      let isAlreadyExist = tptExt.srcNode.htmlCode.load({ path: param0.source.cfInfo.html.fullPath });
+      let isAlreadyExist = tptExt.srcNode.htmlCode.load({
+        //path: param0.source.cfInfo.html.fullPath
+        content: tptPathOpt.htmlContents
+      });
       if (!isAlreadyExist)
         tptExt.srcNode.loadHTML(param0.source.beforeContentAssign);
 
@@ -395,13 +398,16 @@ export class TemplateNode {
         );
       if (!tptExt.srcNode.cssCode.hasContent) {
         tptExt.srcNode.cssCode.content = tptExt.srcNode.styler.parseStyleSeperator_sub({
+          data: tptPathOpt.cssContents,
+          localNodeElement: tptExt.parentUc.ucExtends.self,
+        }); /*tptExt.srcNode.styler.parseStyleSeperator_sub({
           data: (tptPathOpt.cssContents == undefined) ?
             FileDataBank.readFile(param0.source.cfInfo.style.fullPath, { replaceContentWithKeys: true })
             :
             tptPathOpt.cssContents,
           localNodeElement: tptExt.parentUc.ucExtends.self,
           //cssVarStampKey: tptExt.main.extended.cssVarStampKey,
-        });
+        });*/
         tptExt.srcNode.loadCSS();
       }
       tptExt.parentUc.ucExtends.Events.beforeClose.on(({ prevent }) => {

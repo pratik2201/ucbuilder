@@ -55,11 +55,11 @@ export class <?=designer.className ?> extends Template {
         
         //fargs = fargs[fargs.length-1] as TptOptions;
         let ext = this.extended;
-        let tpts = Template.getTemplates.byDirectory(fargs.source.cfInfo.code.fullPath, false);
-        let mtpt = Template.byHTMLFileObject(fargs.source.cfInfo);
+        let tpts = Template.byHTMLFileObject(fargs.source.cfInfo);//Template.getTemplates.byDirectory(fargs.source.cfInfo.code.fullPath, false);
+        /*let mtpt = Template.byHTMLFileObject(fargs.source.cfInfo);
         console.log(tpts);
         console.log(mtpt);
-        console.log("--");
+        console.log("--");*/
         <?php for(let j=0;j<designer.templetes.length;j++){ let $tpt=designer.templetes[j]; ?>
         // ext._templeteNode = new <?=$tpt.name?>_TEMPLATE(this);
         this.<?=$tpt.name ?> = new <?=$tpt.name ?>_TEMPLATE(this); // ext._templeteNode as <?=$tpt.name?>_TEMPLATE;

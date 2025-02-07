@@ -52,16 +52,32 @@ export class commonParser {
             reloadData: true,
         }) : htmlContents;
         let isUserControl = _row.src.extCode == SpecialExtEnum.uc;
-
+        let isMultipleElement = false;
+        let primaryChild:HTMLElement=undefined;
+        fullHT: HTMLElement = undefined;
         try {
 
             if (code.trim() != '') {
-                this.formHT = code.$() as HTMLElement;
-                let xAt = this.formHT.getAttribute('x-at');
-                if (xAt == null || !xAt.equalIgnoreCase(_row.src.mainFileRootPath)) {
-                    this.formHT.setAttribute('x-at', _row.src.mainFileRootPath);
-                    _row.htmlFile.content = this.formHT.outerHTML;
-                    _row.htmlFile.reGenerate = true;
+                this.formHT = code.$();
+                primaryChild = this.formHT;
+                if (this.formHT['length'] != undefined) {
+                    isMultipleElement = true;
+                    let mht = this.formHT as any as HTMLElement[];
+                    let xAt = mht[0].getAttribute('x-at');
+                    primaryChild = mht[0];
+                    if (xAt == null || !xAt.equalIgnoreCase(_row.src.mainFileRootPath)) {
+                        mht[0].setAttribute('x-at', _row.src.mainFileRootPath);                        
+                        _row.htmlFile.content = mht.map(s=>s.outerHTML).join('');
+                        _row.htmlFile.reGenerate = true;
+                    }
+                } else {
+                    let xAt = this.formHT.getAttribute('x-at');
+                    if (xAt == null || !xAt.equalIgnoreCase(_row.src.mainFileRootPath)) {
+                        this.formHT.setAttribute('x-at', _row.src.mainFileRootPath);
+                        _row.htmlFile.content = this.formHT.outerHTML;
+                        _row.htmlFile.reGenerate = true;
+                    }
+
                 }
             } else {
                 if (isUserControl) {
@@ -74,14 +90,17 @@ export class commonParser {
 </wrapper>`
                 }
                 this.formHT = code.$() as HTMLElement;
+                primaryChild = this.formHT;
                 _row.htmlFile.content = code;
                 _row.htmlFile.reGenerate = true;
             }
-        } catch {
+        } catch (ex) {
+            console.log(ex);
+
             return undefined;
         }
 
-        this.aliceMng.fillAlices(this.formHT);
+        this.aliceMng.fillAlices(primaryChild);
         _row.designer.className =
             _row.codefile.baseClassName = "Designer";
         _row.codefile.className = _row.src.name;
@@ -93,13 +112,13 @@ export class commonParser {
             aliceNumber = this.fillDefImports('TptOptions, templatePathOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
             aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/lib/stylers/StylerRegs', aliceNumber, im);
             _row.designer.baseClassName = "Template";
-          
-            //let subTemplates = Template.byHTMLFileArray(_row.src.html.fullPath,true);
-            let subTemplates = Template.getTemplates.byDirectory(_row.src.html.fullPath,true) as TemplatePathOptions[];
+
+           // let arTpt = Template.byHTMLFileArray(_row.src);
+            let subTemplates = Template.byHTMLFileArray(_row.src); //Template.getTemplates.byDirectory(_row.src.html.fullPath, true) as TemplatePathOptions[];
+            /*console.log(arTpt);
             console.log(subTemplates);
-            console.log(Template.byHTMLFileArray(_row.src));
-            console.log('-----------------');
-            
+            console.log('-----------------');*/
+
             let tpts = _row.designer.templetes;
             subTemplates.forEach(template => {
                 let rolelwr = template.accessKey;
