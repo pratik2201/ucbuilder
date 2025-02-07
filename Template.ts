@@ -40,11 +40,24 @@ export class Template {
     }
     return rtrn;
   }
+  static fillContent(htpath: string, cspath: string) {
+    htpath = htpath.trimText_('.html').trimText_('.scss');
+    cspath = cspath.trimText_('.scss').trimText_('.html');
+    return {
+      htmlPath: htpath + '.html',
+      cssPath: cspath + '.scss'
+    };
+  }
   static getTemplateOptionByElement(iele: HTMLElement): TemplatePathOptions | undefined {
     let stts = this.getTemplateStatus(iele);
-    let rtrn: TemplatePathOptions;
+    let rtrn: TemplatePathOptions = {
+      accessKey: 'primary',
+      objectKey: undefined,
+      mainTpt: undefined,
+      cssContents: undefined,
+      htmlContents: undefined,
+    };
     if (stts.valid) {
-      rtrn = {} as any;
       rtrn.accessKey = stts.name;
       let htpath = stts.xpath;
       let cspath = stts.xpath;
@@ -52,36 +65,64 @@ export class Template {
         htpath = stts.htmlpath;
         cspath = stts.csspath;
       }
-      htpath = htpath.trim_('.html') + '.html';
-      cspath = cspath.trim_('.scss') + '.scss';
-      rtrn.htmlContents = FileDataBank.readFile(htpath, {});
-      rtrn.objectKey = cspath;
-      rtrn.cssContents = FileDataBank.readFile(cspath, { replaceContentWithKeys: true });
+      let c = this.fillContent(htpath, cspath);
+      rtrn.htmlContents = FileDataBank.readFile(c.htmlPath, { isFullPath: false });
+      rtrn.objectKey = c.cssPath;
+      rtrn.cssContents = FileDataBank.readFile(c.cssPath, { isFullPath: false, replaceContentWithKeys: true });
     }
     return rtrn;
   }
-  static getTemplates = {
-    /**
-     * @param {string} htmlFilePath
-     * @returns {TemplatePathOptions[] & {}}
-     */
-    byHTMLFilePath(htmlFilePath: string, returnArray = true) {
-      let data = FileDataBank.readFile(htmlFilePath, {});
-      let ele = data.$();
-      if (ele.length != undefined) {
-        for (let i = 0, iObj = ele, ilen = iObj.length; i < ilen; i++) {
-          const iele = iObj[i];
-          let rs = Template.getTemplateOptionByElement(iele);
-          
+  private static GetTemplatePathOptionsArray(htmlFilePath: string): TemplatePathOptions[] {
+    let data = FileDataBank.readFile(htmlFilePath, {});
+    let ele = data.$();
+    let rtrn: TemplatePathOptions[] = [];
+    if (ele.length != undefined) {
+      for (let i = 0, iObj = ele, ilen = iObj.length; i < ilen; i++) {
+        const iele = iObj[i];
+        let rs = Template.getTemplateOptionByElement(iele);
+        if (rs.objectKey != undefined) {
+          rtrn.push(rs);
+        } else {
+          let c = Template.fillContent(htmlFilePath, htmlFilePath);
+          rtrn.push({
+            accessKey: 'primary',
+            htmlContents: iele.outerHTML,
+            cssContents: FileDataBank.readFile(c.cssPath, { isFullPath: false, replaceContentWithKeys: true }),
+            objectKey: c.cssPath,
+            mainTpt: undefined,
+          });
         }
-      } else {
-
       }
+    } else {
+      let c = Template.fillContent(htmlFilePath, htmlFilePath);
+      rtrn.push({
+        accessKey: 'primary',
+        htmlContents: ele.outerHTML,
+        cssContents: FileDataBank.readFile(c.cssPath, { isFullPath: false, replaceContentWithKeys: true }),
+        objectKey: c.cssPath,
+        mainTpt: undefined,
+      });
+    }
+    return rtrn;
+    /*let mainFilePath = strOpt.trim_(htmlFilePath, ".html");
+    let htmlContents = FileDataBank.readFile(mainFilePath + ".html", {});
+    return this.byContents(htmlContents, mainFilePath, returnArray);*/
+  }
+  static byHTMLFileObject(htmlFilePath: string, returnArray = true): { [key: string]: TemplatePathOptions } {
+    let ar = Template.GetTemplatePathOptionsArray(htmlFilePath);
+    let robj: { [key: string]: TemplatePathOptions } = {};
+    for (let i = 0, iObj = ar, ilen = iObj.length; i < ilen; i++) {
+      const itpt = iObj[i];
+      robj[itpt.accessKey] = itpt;
+    }
+    return robj;
+  }
+  static byHTMLFilePath(htmlFilePath: string, returnArray = true): TemplatePathOptions[] {
+    return Template.GetTemplatePathOptionsArray(htmlFilePath);
+  }
+  static getTemplates = {
 
-      /*let mainFilePath = strOpt.trim_(htmlFilePath, ".html");
-      let htmlContents = FileDataBank.readFile(mainFilePath + ".html", {});
-      return this.byContents(htmlContents, mainFilePath, returnArray);*/
-    },
+    
     /**
      * @param {string} htmlFilePath
      * @returns {TemplatePathOptions[] & {}}

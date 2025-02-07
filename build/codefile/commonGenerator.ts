@@ -41,13 +41,13 @@ export class commonGenerator {
         },
         TS: {
             TPT: {
-                CODE: FileDataBank.readFile('ucbuilder/buildTempates/ts/tpt/codefile.js', { isFullPath: false, }),
-                DESIGNER: FileDataBank.readFile('ucbuilder/buildTempates/ts/tpt/designer.js', { isFullPath: false, }),
+                CODE: FileDataBank.readFile('ucbuilder/buildTempates/ts/tpt/codefile.php', { isFullPath: false, }),
+                DESIGNER: FileDataBank.readFile('ucbuilder/buildTempates/ts/tpt/designer.php', { isFullPath: false, replaceContentWithKeys: false }),
                 STYLE: FileDataBank.readFile('ucbuilder/buildTempates/ts/tpt/styles.css', { isFullPath: false, }),
             },
             UC: {
-                CODE: FileDataBank.readFile('ucbuilder/buildTempates/ts/uc/codefile.js', { isFullPath: false, }),
-                DESIGNER: FileDataBank.readFile('ucbuilder/buildTempates/ts/uc/designer.js', { isFullPath: false, }),
+                CODE: FileDataBank.readFile('ucbuilder/buildTempates/ts/uc/codefile.php', { isFullPath: false, }),
+                DESIGNER: FileDataBank.readFile('ucbuilder/buildTempates/ts/uc/designer.php', { isFullPath: false, replaceContentWithKeys: false }),
                 STYLE: FileDataBank.readFile('ucbuilder/buildTempates/ts/uc/styles.css', { isFullPath: false, }),
             },
         }
@@ -70,11 +70,11 @@ export class commonGenerator {
     codefileTMPLT: { [key: string]: string } = {};
     styleTMPLT: { [key: string]: string } = {};
     tMaker = compileTemplate;
-    dTpt = '' as string;
+    //dTpt = '' as string;
     constructor() {
         this.rgxManage = new regsManage();
-        this.dTpt = FileDataBank.readFile('ucbuilder/buildTempates/ts/uc/designer.php', { isFullPath:false, replaceContentWithKeys: false });
-        
+      //  this.dTpt = 
+
     }
 
     Events = {
@@ -107,21 +107,39 @@ export class commonGenerator {
             let uctype = row.src.extCode;
 
             commonGenerator.ensureDirectoryExistence(row.src.designer.fullPath);
-            _data = _this.generateNew(row, _this.Events.onDemandDesignerFile(srctype, uctype));
+
+            /*_data = _this.generateNew(row, _this.Events.onDemandDesignerFile(srctype, uctype));
             fs.writeFileSync(row.src.designer.fullPath, _data);
             let tcode = _this.tMaker(this.dTpt)(row);
-            console.log(tcode);
-            
+            console.log(tcode);*/
+            if (uctype == '.uc')
+                _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.UC.DESIGNER)(row);
+            else if (uctype == '.tpt') 
+                _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.TPT.DESIGNER)(row);
+            else _data = _this.generateNew(row, _this.Events.onDemandDesignerFile(srctype, uctype));
+
+            fs.writeFileSync(row.src.designer.fullPath, _data);
+           // let tcode = _this.tMaker(this.dTpt)(row);
 
             if (row.htmlFile.reGenerate)
                 fs.writeFileSync(`${row.src.html.fullPath}`, row.htmlFile.content);
 
             if (!fs.existsSync(row.src.code.fullPath)) {
-                _data = _this.generateNew(row, _this.Events.onDemandCodeFile(srctype, uctype));
+                if (uctype == '.uc')
+                    _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.UC.CODE)(row);
+                else if (uctype == '.tpt') 
+                    _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.TPT.CODE)(row);
+                else _data = _this.generateNew(row, _this.Events.onDemandDesignerFile(srctype, uctype));
+               // _data = _this.generateNew(row, _this.Events.onDemandCodeFile(srctype, uctype));
                 fs.writeFileSync(row.src.code.fullPath, _data);
             }
             if (!fs.existsSync(row.src.style.fullPath)) {
-                _data = _this.generateNew(row, _this.Events.onDemandStyleFile(srctype, uctype));
+                //_data = _this.generateNew(row, _this.Events.onDemandStyleFile(srctype, uctype));                
+                if (uctype == '.uc')
+                    _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.UC.STYLE)(row);
+                else if (uctype == '.tpt') 
+                    _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.TPT.STYLE)(row);
+                else _data = _this.generateNew(row, _this.Events.onDemandDesignerFile(srctype, uctype));
                 fs.writeFileSync(row.src.style.fullPath, _data);
                 if (row.src.extCode == ".tpt") {
                     let commonCssFile = `${row.src.mainFilePath}.common.scss`;

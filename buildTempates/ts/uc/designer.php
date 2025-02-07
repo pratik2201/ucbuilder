@@ -1,6 +1,5 @@
 <?php for(let i=0;i<designer.importClasses.length;i++){ let $rw=designer.importClasses[i]; ?>
-    import { <?=$rw.importText?> } from '<?=$rw.url?>';
-<?php } ?>
+import { <?=$rw.importText?> } from '<?=$rw.url?>';<?php } ?>
 /**
  *  code filename must same and case sensitive with classname 
  */
@@ -33,14 +32,14 @@ export class <?=designer.className ?> extends Usercontrol {
         for(let i=0;i<designer.controls.length;i++){  let $rw=designer.controls[i];
             switch($rw.type){ ?> 
                 <?php case "none": ?>
-                    <?=$rw.scope?> <?=$rw.name?>: <?=$rw.proto?><?=$rw.generic?>;
-                <?php break;?>
+                    <?=$rw.scope?>&nbsp;<?=$rw.name?>: <?=$rw.proto?><?=$rw.generic?>;
+    <?php break;?>
                 <?php case ".tpt": ?>
-                    <?=$rw.scope?> <?=$rw.name?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
-                <?php break;?>
-                <?php case ".js": ?>
-                    <?=$rw.scope?> <?=$rw.name?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
-                <?php break; ?>
+                    <?=$rw.scope?>&nbsp;<?=$rw.name?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
+    <?php break;?>
+                <?php case ".uc": ?>
+                    <?=$rw.scope?>&nbsp;<?=$rw.name?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
+    <?php break; ?>
     <?php      }
         } ?>
     
@@ -57,30 +56,27 @@ export class <?=designer.className ?> extends Usercontrol {
         for(let i=0;i<designer.controls.length;i++){  let $rw=designer.controls[i];
             switch($rw.type){ ?>
                 <?php case "none": ?>
-                    this.<?=$rw.name?> = CONTROLS.<?=$rw.name?> as <?=$rw.proto?>;
-                <?php   break; ?>
+        this.<?=$rw.name?> = CONTROLS.<?=$rw.name?> as <?=$rw.proto?>;<?php   break; ?>
                 <?php case ".tpt": ?>
-                    this.<?=$rw.name ?> = <?=$rw.importedClass.objText?>.Create({ 
-                        parentUc: this, 
-                        accessName:"<?=$rw.name?>" , 
-                        elementHT :CONTROLS.<?=$rw.name?> 
-                    });
-                <?php   break; ?>
+        this.<?=$rw.name ?> = <?=$rw.importedClass.objText?>.Create({ 
+            parentUc: this, 
+            accessName:"<?=$rw.name?>" , 
+            elementHT :CONTROLS.<?=$rw.name?> 
+        });<?php   break; ?>
                 <?php case ".uc": ?>
-                    this.<?=$rw.name?> = <?=$rw.importedClass.objText?>.Create({ 
-                            parentUc : this, 
-                            mode:args.mode,
-                            accessName:"<?=$rw.name?>" , 
-                            session:{
-                                loadBySession:args.session.loadBySession,
-                                uniqueIdentity:"<?=$rw.name?>" , 
-                                addNodeToParentSession:true,
-                            },   
-                            decisionForTargerElement:'replace',
-                            targetElement : CONTROLS.<?=$rw.name?> 
-                        });
-                    this.<?=$rw.name ?>.ucExtends.show();
-                <?php   break;  
+        this.<?=$rw.name?> = <?=$rw.importedClass.objText?>.Create({ 
+                parentUc : this, 
+                mode:args.mode,
+                accessName:"<?=$rw.name?>" , 
+                session:{
+                    loadBySession:args.session.loadBySession,
+                    uniqueIdentity:"<?=$rw.name?>" , 
+                    addNodeToParentSession:true,
+                },   
+                decisionForTargerElement:'replace',
+                targetElement : CONTROLS.<?=$rw.name?> 
+            });
+        this.<?=$rw.name ?>.ucExtends.show();<?php   break;  
 
             }
         }

@@ -93,7 +93,8 @@ export class commonParser {
             aliceNumber = this.fillDefImports('TptOptions, templatePathOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
             aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/lib/stylers/StylerRegs', aliceNumber, im);
             _row.designer.baseClassName = "Template";
-            let subTemplates = Template.getTemplates.byDirectory(filePath) as TemplatePathOptions[];
+          
+            let subTemplates = Template.byHTMLFilePath(_row.src.html.fullPath);
             let tpts = _row.designer.templetes;
             subTemplates.forEach(template => {
                 let rolelwr = template.accessKey;

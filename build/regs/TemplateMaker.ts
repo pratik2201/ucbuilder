@@ -48,7 +48,7 @@ export function compileTemplate(template: string): Function {
         jsCode += `output.push(${JSON.stringify(template.slice(lastIndex))});\n`;
     }
 
-    jsCode += `\n} return output.join("");`;
+    jsCode += `\n} return output.join("").replace(/&nbsp;/g,' ');`;
 
     try {
         const renderFn = new Function("context", jsCode);
