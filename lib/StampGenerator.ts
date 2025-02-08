@@ -104,11 +104,15 @@ export class SourceNode {
         if (callback != undefined) this.htmlCode.content = callback(this.htmlCode.content);
         this.dataHT = this.htmlCode.content.$();
         this.styler.nodeName = this.dataHT.nodeName;
-        this.dataHT.setAttribute(ATTR_OF.UC.ALL, this.uniqStamp);
-        this.htmlCode.content = this.dataHT.outerHTML;
-        if (!this.dataHT.hasAttribute('x-tabindex')) {
-            this.dataHT.setAttribute('x-tabindex', '-1');
-        }
+
+        //if (this.dataHT['length'] != undefined) {
+            this.dataHT.setAttribute(ATTR_OF.UC.ALL, this.uniqStamp);
+            this.htmlCode.content = this.dataHT.outerHTML;
+            if (!this.dataHT.hasAttribute('x-tabindex')) {
+                this.dataHT.setAttribute('x-tabindex', '-1');
+               // this.htmlCode.content = this.htmlCode.content.replace
+            }
+       // }
     }
     release() {
         if (StampNode.deregisterSource(this.myObjectKey)) {

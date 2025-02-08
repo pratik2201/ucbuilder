@@ -1,6 +1,7 @@
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { propOpt } from "ucbuilder/build/common";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
+import { TemplateMaker } from "ucbuilder/build/regs/TemplateMaker";
 import { ITemplatePathOptions, ITptOptions, TptOptions } from "ucbuilder/enumAndMore";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
@@ -16,7 +17,7 @@ interface TptTextObjectNode<K> {
 }
 export class Template {
   static extractArgs = (args: any) => newObjectOpt.extractArguments(args);
-  
+
   static getTemplateOptionByElement(iele: HTMLElement, cinfo: codeFileInfo): ITemplatePathOptions | undefined {
     //let stts = this.getTemplateStatus(iele);
     let rtrn: ITemplatePathOptions = {
@@ -105,11 +106,18 @@ export class Template {
       for (let i = 0, iObj = ele, ilen = iObj.length; i < ilen; i++) {
         const iele = iObj[i];
         let rs = Template.getTemplateOptionByElement(iele, cinfo);
-        rtrn.push(rs);        
+        rtrn.push(rs);
       }
     } else {
-      let rs = Template.getTemplateOptionByElement(ele, cinfo);
-      rtrn.push(rs);      
+      let rs: ITemplatePathOptions = {
+        accessKey: 'primary',
+        objectKey: cinfo.style.rootPath,
+        cssContents: FileDataBank.readFile(cinfo.style.fullPath, { replaceContentWithKeys: true }),
+        htmlContents: data,
+      };
+      rtrn.push(rs);
+      /*let rs = Template.getTemplateOptionByElement(ele, cinfo);
+      rtrn.push(rs); */
     }
     return rtrn;
     /*let mainFilePath = strOpt.trim_(htmlFilePath, ".html");
@@ -128,7 +136,7 @@ export class Template {
   static GetArrayOfTemplate(cinfo: codeFileInfo): ITemplatePathOptions[] {
     return Template.GetTemplatePathOptionsArray(cinfo);
   }
-  
+
   constructor() {
     //Template._CSS_VAR_STAMP++;
     StylerRegs.stampNo++;
@@ -213,11 +221,12 @@ export class TemplateNode {
       let _this = this.extended;
       let dta = _this.srcNode.htmlCode.content;
       dta = _this.Events.beforeGenerateContent(dta, jsonRow);
-      dta = _this.regsMng.parse(jsonRow, dta);
+      //dta = _this.regsMng.parse(jsonRow, dta);
+      dta = _this.tmaker.compileTemplate(dta)(jsonRow);
       dta = _this.Events.onGenerateContent(dta, jsonRow);
       return dta;
     },
-
+    tmaker: new TemplateMaker(),
     generateNode: (jsonRow: {}): HTMLElement => {
       let _this = this.extended;
       let dta = _this.generateContent(jsonRow) as string;
@@ -244,7 +253,7 @@ export class TemplateNode {
           key: tptPathOpt.objectKey + "@" + tptPathOpt.accessKey,
           accessName: tptPathOpt.accessKey,
           root: param0.cfInfo.rootInfo,
-          generateStamp:false
+          generateStamp: false
         });
       let isAlreadyExist = tptExt.srcNode.htmlCode.load(tptPathOpt.htmlContents);
       if (!isAlreadyExist)

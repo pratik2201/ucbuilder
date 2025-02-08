@@ -18,7 +18,7 @@ export class TemplateMaker {
 
             // Handle `<?= expression ?>`
             if (tag === "<?=") {
-                jsCode += `output.push(${code.trim()});\n`;
+                jsCode += `try{output.push(${code});}catch{output.push(undefined);}\n`;
             }
             // Handle `<?php ... ?>` or `<? ... ?>`
             else {
