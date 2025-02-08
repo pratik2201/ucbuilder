@@ -1,7 +1,7 @@
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
-import { pathInfo, propOpt, strOpt } from "ucbuilder/build/common";
+import { propOpt } from "ucbuilder/build/common";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
-import { TemplatePathOptions, templatePathOptions, tptOptions, TptOptions } from "ucbuilder/enumAndMore";
+import { ITemplatePathOptions, ITptOptions, TptOptions } from "ucbuilder/enumAndMore";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { FilterContent } from "ucbuilder/global/filterContent";
@@ -16,43 +16,10 @@ interface TptTextObjectNode<K> {
 }
 export class Template {
   static extractArgs = (args: any) => newObjectOpt.extractArguments(args);
-  static getTemplateStatus(iele: HTMLElement) {
-    let rtrn = {
-      valid: false,
-      isSeperatePathSpecified: false,
-      name: undefined as string,
-      xpath: undefined as string,
-      relative: undefined as string,
-      htmlpath: undefined as string,
-      csspath: undefined as string,
-    };
-    if (iele.nodeName == 'TPT' && iele.hasAttribute('x-name')) {
-      rtrn.xpath = iele.getAttribute('x-path');
-      rtrn.name = iele.getAttribute('x-name');
-      rtrn.relative = iele.getAttribute('x-relative');
-      rtrn.htmlpath = iele.getAttribute('html-path');
-      rtrn.csspath = iele.getAttribute('css-path');
-      if (rtrn.csspath != null && rtrn.htmlpath != null) {
-        rtrn.valid = true;
-        rtrn.isSeperatePathSpecified = true;
-      } else if (rtrn.xpath != null || rtrn.relative != null) {
-        rtrn.valid = true;
-        rtrn.isSeperatePathSpecified = false;
-      }
-    }
-    return rtrn;
-  }
-  static fillContent(htpath: string, cspath: string) {
-    htpath = htpath.trimText_('.html').trimText_('.scss');
-    cspath = cspath.trimText_('.scss').trimText_('.html');
-    return {
-      htmlPath: htpath + '.html',
-      cssPath: cspath + '.scss'
-    };
-  }
-  static getTemplateOptionByElement(iele: HTMLElement, cinfo: codeFileInfo): TemplatePathOptions | undefined {
+  
+  static getTemplateOptionByElement(iele: HTMLElement, cinfo: codeFileInfo): ITemplatePathOptions | undefined {
     //let stts = this.getTemplateStatus(iele);
-    let rtrn: TemplatePathOptions = {
+    let rtrn: ITemplatePathOptions = {
       accessKey: 'primary',
       objectKey: undefined,
     };
@@ -130,114 +97,38 @@ export class Template {
     }*/
     return rtrn;
   }
-  private static GetTemplatePathOptionsArray(cinfo: codeFileInfo): TemplatePathOptions[] {
+  private static GetTemplatePathOptionsArray(cinfo: codeFileInfo): ITemplatePathOptions[] {
     let data = FileDataBank.readFile(cinfo.html.fullPath, {});
     let ele = data.$();
-    let rtrn: TemplatePathOptions[] = [];
+    let rtrn: ITemplatePathOptions[] = [];
     if (ele.length != undefined) {
       for (let i = 0, iObj = ele, ilen = iObj.length; i < ilen; i++) {
         const iele = iObj[i];
         let rs = Template.getTemplateOptionByElement(iele, cinfo);
-        rtrn.push(rs);
-        /*if (rs.objectKey != undefined) {
-          rtrn.push(rs);
-        } else {
-          let c = Template.fillContent(cinfo.html.rootPath, cinfo.html.rootPath);
-          rtrn.push({
-            accessKey: 'primary',
-            htmlContents: iele.outerHTML,
-            cssContents: FileDataBank.readFile(cinfo.style.fullPath, { isFullPath: true, replaceContentWithKeys: true }),
-            objectKey: cinfo.style.rootPath,
-            mainTpt: undefined,
-          });
-        }*/
+        rtrn.push(rs);        
       }
     } else {
       let rs = Template.getTemplateOptionByElement(ele, cinfo);
-      rtrn.push(rs);
-      /*let c = Template.fillContent(cinfo.html.fullPath, cinfo.html.fullPath);
-      rtrn.push({
-        accessKey: 'primary',
-        htmlContents: ele.outerHTML,
-        cssContents: FileDataBank.readFile(cinfo.style.fullPath, { isFullPath: false, replaceContentWithKeys: true }),
-        objectKey: cinfo.style.rootPath,
-        mainTpt: undefined,
-      });*/
+      rtrn.push(rs);      
     }
     return rtrn;
     /*let mainFilePath = strOpt.trim_(htmlFilePath, ".html");
     let htmlContents = FileDataBank.readFile(mainFilePath + ".html", {});
     return this.byContents(htmlContents, mainFilePath, returnArray);*/
   }
-  static byHTMLFileObject(cinfo: codeFileInfo): { [key: string]: TemplatePathOptions } {
+  static GetObjectOfTemplate(cinfo: codeFileInfo): { [key: string]: ITemplatePathOptions } {
     let ar = Template.GetTemplatePathOptionsArray(cinfo);
-    let robj: { [key: string]: TemplatePathOptions } = {};
+    let robj: { [key: string]: ITemplatePathOptions } = {};
     for (let i = 0, iObj = ar, ilen = iObj.length; i < ilen; i++) {
       const itpt = iObj[i];
       robj[itpt.accessKey] = itpt;
     }
     return robj;
   }
-  static byHTMLFileArray(cinfo: codeFileInfo): TemplatePathOptions[] {
+  static GetArrayOfTemplate(cinfo: codeFileInfo): ITemplatePathOptions[] {
     return Template.GetTemplatePathOptionsArray(cinfo);
   }
-  static getTemplates = {
-
-
-    /**
-     * @param {string} htmlFilePath
-     * @returns {TemplatePathOptions[] & {}}
-     */
-    byDirectory(jsFilepath: string, returnArray = true) {
-      if (returnArray) {
-        let rtrnAr: TemplatePathOptions[] = [];
-        this.loopDirectory(jsFilepath, (row) => {
-          rtrnAr.push(row);
-        });
-        return rtrnAr;
-      } else {
-        let rtrnObj: { [key: string]: TemplatePathOptions } = {};
-        this.loopDirectory(jsFilepath, (node: TemplatePathOptions) => {
-          rtrnObj[node.accessKey] = node;
-        });
-        return rtrnObj;
-      }
-    },
-    /**
-     * @param {string} filepath
-     * @returns {TemplatePathOptions[] & {}}
-     */
-    loopDirectory(
-      filepath: string,
-      callback: (row: TemplatePathOptions) => void = (row) => { }
-    ) {
-      let fs = require("fs");
-      filepath = filepath.toLowerCase();
-      let fpart = pathInfo.getFileInfoPartly(filepath);
-      let DirectoryContents = fs.readdirSync(fpart.dirPath + "/");
-      DirectoryContents.forEach((filename) => {
-        filename = filename.toLowerCase();
-        if (
-          filename.endsWith(".html") &&
-          filename.startsWith(fpart.fileName + ".tpt")
-        ) {
-          let fnm = fpart.fileName + ".tpt";
-          let extLessFileName = strOpt.trim_(filename, ".html");
-          let tp = strOpt._trim(extLessFileName, fnm);
-          tp = tp.trim();
-          let row = Object.assign({}, templatePathOptions);
-          row.accessKey = tp != "" ? tp._trim(".") : propOpt.ATTR.TEMPLETE_DEFAULT;
-          row.objectKey = pathInfo.cleanPath(
-            fpart.dirPath + extLessFileName
-          );
-          row.htmlContents = FileDataBank.readFile(row.objectKey + ".html", {});
-          row.cssContents = FileDataBank.readFile(row.objectKey + ".scss", {});
-          callback(row);
-        }
-      });
-    },
-  };
-  //static _CSS_VAR_STAMP = 0;
+  
   constructor() {
     //Template._CSS_VAR_STAMP++;
     StylerRegs.stampNo++;
@@ -340,32 +231,31 @@ export class TemplateNode {
     },
 
     initializecomponent: (
-      _args: TptOptions,
-      tptPathOpt: TemplatePathOptions,
+      _args: ITptOptions,
+      tptPathOpt: ITemplatePathOptions,
       tptname: string
     ) => {
       let tptExt = this.extended;
-      _args.source.cfInfo = new codeFileInfo(".tpt");
-      let toj = Object.assign({}, tptOptions);
+      //_args.cfInfo = new codeFileInfo(".tpt");
+      let toj = Object.assign({}, TptOptions);
       let param0 = Object.assign(toj, _args);
       //console.log(toj);
-
-      _args.source.cfInfo.parseUrl(tptPathOpt.objectKey);
-      // console.log(ATTR_OF.UC.UNIQUE_STAMP);
-
+      /*
+      _args.cfInfo.parseUrl(tptPathOpt.objectKey);
       if (tptname !== propOpt.ATTR.TEMPLETE_DEFAULT) {
-        let fpath = param0.source.cfInfo.html.rootPath;
+        let fpath = param0.cfInfo.html.rootPath;
         fpath = strOpt.trim_(fpath, ".html", ".scss");
         fpath += "." + tptname;
-        param0.source.cfInfo.html.parse(fpath + ".html", false);
-        param0.source.cfInfo.style.parse(fpath + ".scss", false);
-      }
-      param0.source.templateName = tptPathOpt.accessKey;
+        param0.cfInfo.html.parse(fpath + ".html", false);
+        param0.cfInfo.style.parse(fpath + ".scss", false);
+      }*/
+      param0.source.accessKey = tptPathOpt.accessKey;
       tptExt.srcNode = StampNode.registerSoruce(
         {
-          key: param0.source.cfInfo.mainFileRootPath + "@" + tptPathOpt.accessKey,
+          key: tptPathOpt.objectKey + "@" + tptPathOpt.accessKey,
           accessName: tptPathOpt.accessKey,
-          root: param0.source.cfInfo.rootInfo
+          root: param0.cfInfo.rootInfo,
+          generateStamp:false
         });
       let isAlreadyExist = tptExt.srcNode.htmlCode.load({
         //path: param0.source.cfInfo.html.fullPath
@@ -384,15 +274,15 @@ export class TemplateNode {
       tptExt.parentUc = param0.parentUc;
       tptExt.srcNode.styler.wrapperHT = tptExt.parentUc.ucExtends.wrapperHT;
       tptExt.srcNode.styler.parent = tptExt.parentUc.ucExtends.srcNode.styler;
-      tptExt.srcNode.styler.controlName = param0.accessName;
+      tptExt.srcNode.styler.controlName = tptPathOpt.accessKey;
 
       if (tptExt.parentUc != undefined)
         tptExt.parentUc.ucExtends.srcNode.styler.pushChild(
-          param0.source.cfInfo.mainFilePath +
+          param0.cfInfo.mainFilePath +
           "" +
-          (param0.source.templateName == ""
+          (param0.source.accessKey == ""
             ? ""
-            : "@" + param0.source.templateName),
+            : "@" + param0.source.accessKey),
           tptExt.srcNode.styler,
           eleHT.nodeName
         );

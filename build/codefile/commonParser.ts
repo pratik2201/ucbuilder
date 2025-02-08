@@ -7,7 +7,7 @@ import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { AliceManager } from "ucbuilder/build/codefile/aliceManager";
 import { Template } from "ucbuilder/Template";
 import { builder } from "ucbuilder/build/builder";
-import { TemplatePathOptions } from "ucbuilder/enumAndMore";
+import { ITemplatePathOptions } from "ucbuilder/enumAndMore";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 
 export class commonParser {
@@ -109,12 +109,12 @@ export class commonParser {
             let aliceNumber = 0;
             aliceNumber = this.fillDefImports('Template, TemplateNode', 'ucbuilder/Template', aliceNumber, im);
             aliceNumber = this.fillDefImports('intenseGenerator', 'ucbuilder/intenseGenerator', aliceNumber, im);
-            aliceNumber = this.fillDefImports('TptOptions, templatePathOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
+            aliceNumber = this.fillDefImports('ITptOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
             aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/lib/stylers/StylerRegs', aliceNumber, im);
             _row.designer.baseClassName = "Template";
 
            // let arTpt = Template.byHTMLFileArray(_row.src);
-            let subTemplates = Template.byHTMLFileArray(_row.src); //Template.getTemplates.byDirectory(_row.src.html.fullPath, true) as TemplatePathOptions[];
+            let subTemplates = Template.GetArrayOfTemplate(_row.src); //Template.getTemplates.byDirectory(_row.src.html.fullPath, true) as TemplatePathOptions[];
             /*console.log(arTpt);
             console.log(subTemplates);
             console.log('-----------------');*/
@@ -172,7 +172,7 @@ export class commonParser {
             let aliceNumber = 0;
             aliceNumber = this.fillDefImports('Usercontrol', 'ucbuilder/Usercontrol', aliceNumber, im);
             aliceNumber = this.fillDefImports('intenseGenerator', 'ucbuilder/intenseGenerator', aliceNumber, im);
-            aliceNumber = this.fillDefImports('UcOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
+            aliceNumber = this.fillDefImports('IUcOptions', 'ucbuilder/enumAndMore', aliceNumber, im);
             aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/lib/stylers/StylerRegs', aliceNumber, im);
             for (let i = 0, iObj = elements, len = iObj.length; i < len; i++) {
                 const element = iObj[i];

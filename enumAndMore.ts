@@ -62,30 +62,39 @@ export const sessionOptions: SessionOptions = {
 
 export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
 export type StringExchangerCallback = (content: string) => string;
-export interface SourceOptions {
-    cfInfo?: codeFileInfo;
-    templateName: string;
-    reloadKey: string;
-    reloadDesign: boolean;
+export interface ISourceOptions {
+    
+    accessKey: string;
     htmlContents?: string;
     cssContents?: string;
     beforeContentAssign: StringExchangerCallback;
 }
-export const sourceOptions: SourceOptions = {
-    templateName: "",
-    reloadKey: "",
-    reloadDesign: false,
+export const SourceOptions: ISourceOptions = {
+    accessKey: "",
     beforeContentAssign: (content) => {
         return content;
     },
 };
 
+export interface ITemplatePathOptions {
+    accessKey: string;
+    objectKey: string;
+    htmlContents?: string;
+    cssContents?: string;
+}
+export const TemplatePathOptions: ITemplatePathOptions = {
+    accessKey: "",
+    objectKey: "",
+    htmlContents: "",
+    cssContents: "",
+};
 export type WhatToDoWithTargetElement = "waitForDecision" | "replace" | "append" | "prepend";
 
-export interface UcOptions {
+export interface IUcOptions {
+    cfInfo?: codeFileInfo;
     mode?: UCGenerateMode;
     session?: SessionOptions;
-    source?: SourceOptions;
+    source?: ISourceOptions;
     parentUc?: Usercontrol;
     accessName?:string,
     events?: {
@@ -96,11 +105,11 @@ export interface UcOptions {
     targetElement?: HTMLElement;
     loadAt?: HTMLElement;
 }
-export const ucOptions: UcOptions = {
+export const UcOptions: IUcOptions = {
     mode: 'client',
     accessName: '',
     session: newObjectOpt.clone<SessionOptions>(sessionOptions),
-    source: newObjectOpt.clone<SourceOptions>(sourceOptions),
+    source: newObjectOpt.clone<ISourceOptions>(SourceOptions),
     //loadAt: document.body,
     decisionForTargerElement:'waitForDecision',
     events: {
@@ -111,30 +120,14 @@ export const ucOptions: UcOptions = {
 };
 
 
-
-export interface TemplatePathOptions {
-    accessKey: string;
-    objectKey: string;
-    htmlContents?: string;
-    cssContents?: string;
-    mainTpt?: Template;
-}
-export const templatePathOptions: TemplatePathOptions = {
-    accessKey: "",
-    objectKey: "",
-    htmlContents: "",
-    cssContents: "",
-};
-
-
-
-export interface TptOptions {
+export interface ITptOptions {
+    cfInfo?: codeFileInfo;
     elementHT?: HTMLElement;
-    source?: SourceOptions;
+    source?: ISourceOptions;
     accessName?:string,
     parentUc?: Usercontrol;
 }
-export const tptOptions: TptOptions = {
-    source: newObjectOpt.clone<SourceOptions>(sourceOptions),
+export const TptOptions: ITptOptions = {
+    source: newObjectOpt.clone<ISourceOptions>(SourceOptions),
     accessName:'',
 };

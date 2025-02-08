@@ -20,7 +20,7 @@ export class <?=designer.className ?> extends Usercontrol {
     static setCSS_globalVar (varList:VariableList /*key: string, value: string*/): void  {
         intenseGenerator.setCSS_globalVar(varList,this.FILE_PATH);
     }
-    static Create(pera: UcOptions, ...args: any[]): <?=src.name ?> { 
+    static Create(pera: IUcOptions, ...args: any[]): <?=src.name ?> { 
         /** <?=src.mainFileRootPath?> */
         return intenseGenerator.generateUC(this.FILE_PATH,pera,...args) as <?=src.name?>;
     }
@@ -46,7 +46,7 @@ export class <?=designer.className ?> extends Usercontrol {
     constructor(){ super(); }
     initializecomponent(argsLst: IArguments, form: <?=src.name?>) {
         let fargs = Usercontrol.extractArgs(arguments);
-        let args = fargs[fargs.length-1] as UcOptions;
+        let args = fargs[fargs.length-1] as IUcOptions;
         let ucExt = this.ucExtends;
         
         ucExt.initializecomponent(args);        

@@ -2,7 +2,7 @@ import { Usercontrol } from "ucbuilder/Usercontrol";
 import { Template } from "ucbuilder/Template";
 import { TemplateNode } from "ucbuilder/Template";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
-import { UcOptions, ucOptions, TptOptions, tptOptions, WrapperNodeNameAs } from "ucbuilder/enumAndMore";
+import { IUcOptions, UcOptions, ITptOptions, TptOptions, WrapperNodeNameAs } from "ucbuilder/enumAndMore";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { objectOpt, propOpt } from "ucbuilder/build/common";
 import { UcRendarer } from "ucbuilder/build/UcRendarer";
@@ -14,10 +14,10 @@ class intenseGenerator {
     static setCSS_globalVar(varList:VariableList,  _path: string): void  {        
         StylerRegs.__VAR.SETVALUE(varList, '' + rootPathHandler.getInfo(_path).id, 'g');
     }
-    static generateUC<T = string>(path: T, pera: UcOptions, ...args: any[]): Usercontrol {
-        let param0: UcOptions = newObjectOpt.copyProps(pera, ucOptions);
+    static generateUC<T = string>(path: T, pera: IUcOptions, ...args: any[]): Usercontrol {
+        let param0: IUcOptions = newObjectOpt.copyProps(pera, UcOptions);
         let row = ResourcesUC.codefilelist.getObj(path as string);
-        param0.source.cfInfo = row.codefileObj;
+        param0.cfInfo = row.codefileObj;
         let toSend = [];
         toSend.push(...args, param0);
         let classObj = row.obj; //Object.values(row.obj)[0] as any;
@@ -33,11 +33,11 @@ class intenseGenerator {
 
     }
 
-    static generateTPT(path: string, pera: TptOptions, ...args: any[]): Template {
+    static generateTPT(path: string, pera: ITptOptions, ...args: any[]): Template {
         //let param0: TptOptions = newObjectOpt.copyProps(pera, TptOptions);
-        let param0: TptOptions = Object.assign(pera, tptOptions);
+        let param0: ITptOptions = Object.assign(pera, TptOptions);
         let row = ResourcesUC.codefilelist.getObj(path);
-        param0.source.cfInfo = row.codefileObj;
+        param0.cfInfo = row.codefileObj;
         if (param0.elementHT == undefined) {
             let tname = row.codefileObj.name;
             param0.elementHT =

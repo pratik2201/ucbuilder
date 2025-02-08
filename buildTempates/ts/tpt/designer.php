@@ -38,30 +38,26 @@ export class <?=designer.className ?> extends Template {
     static setCSS_globalVar (varList:VariableList): void  {
         intenseGenerator.setCSS_globalVar(varList,this.FILE_PATH);
     }
-    static Create(pera: TptOptions): <?=src.name?> { 
+    static Create(pera: ITptOptions): <?=src.name?> { 
         return intenseGenerator.generateTPT(this.FILE_PATH,pera) as <?=src.name?>;
     }
 
-    
+     
     <?php for(let j=0;j<designer.templetes.length;j++){ let $tpt=designer.templetes[j]; ?>
     public&nbsp;<?=$tpt.name?>:<?=$tpt.name?>_TEMPLATE;<?php } ?>
 
     constructor(args:IArguments){    
         super();    
         let aargs = Template.extractArgs(arguments);
-        let fargs = aargs[aargs.length - 1] as TptOptions;
+        let fargs = aargs[aargs.length - 1] as ITptOptions;
         this.extended.parentUc = fargs.parentUc;
         //let fargs = Template.extractArgs(arguments) as TptOptions;
         
         //fargs = fargs[fargs.length-1] as TptOptions;
         let ext = this.extended;
-        let tpts = Template.byHTMLFileObject(fargs.source.cfInfo);//Template.getTemplates.byDirectory(fargs.source.cfInfo.code.fullPath, false);
-        /*let mtpt = Template.byHTMLFileObject(fargs.source.cfInfo);
-        console.log(tpts);
-        console.log(mtpt);
-        console.log("--");*/
+        let tpts = Template.GetObjectOfTemplate(fargs.cfInfo);
+       
         <?php for(let j=0;j<designer.templetes.length;j++){ let $tpt=designer.templetes[j]; ?>
-        // ext._templeteNode = new <?=$tpt.name?>_TEMPLATE(this);
         this.<?=$tpt.name ?> = new <?=$tpt.name ?>_TEMPLATE(this); // ext._templeteNode as <?=$tpt.name?>_TEMPLATE;
         this.<?=$tpt.name?>.extended.initializecomponent(fargs,tpts['<?=$tpt.name?>'],"<?=$tpt.name?>"); 
         <?php } ?>

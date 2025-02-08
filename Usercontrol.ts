@@ -1,6 +1,6 @@
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { objectOpt, propOpt } from "ucbuilder/build/common";
-import { UCGenerateMode, UcOptions, UcStates, uniqOpt, WhatToDoWithTargetElement } from "ucbuilder/enumAndMore";
+import { UCGenerateMode, IUcOptions, UcStates, uniqOpt, WhatToDoWithTargetElement } from "ucbuilder/enumAndMore";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
@@ -25,7 +25,7 @@ export class Usercontrol {
     static HiddenSpace: HTMLElement = document.createElement('hspc' + uniqOpt.randomNo());
 
     static extractArgs = (args: IArguments) => newObjectOpt.extractArguments(args);
-    static UcOptionsStc: UcOptions;
+    static UcOptionsStc: IUcOptions;
     static setChildValueByNameSpace(obj: {}, namespace: string, valToAssign: string): boolean {
         return objectOpt.setChildValueByNameSpace(obj, namespace, valToAssign);
     }
@@ -167,12 +167,12 @@ export class Usercontrol {
             return _this.self.style.getPropertyValue(StylerRegs.__VAR.getKeyName(key, StylerRegs.internalKey, 'i'));
         },
         cssVarStampKey: '0',
-        initializecomponent: (param0: UcOptions): void => {
+        initializecomponent: (param0: IUcOptions): void => {
             let ucExt = this.ucExtends;
             ucExt.mode = param0.mode;
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
-            ucExt.fileInfo = param0.source.cfInfo;
+            ucExt.fileInfo = param0.cfInfo;
 
             ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             //param0.source.addTabIndex = ucExt.isForm;
@@ -188,7 +188,10 @@ export class Usercontrol {
                 htmlFilePath: ucExt.fileInfo.html.fullPath
             });*/
 
-            ucExt.srcNode = StampNode.registerSoruce({ key: ucExt.fileInfo.style.rootPath, root: ucExt.fileInfo.rootInfo });
+            ucExt.srcNode = StampNode.registerSoruce({
+                key: ucExt.fileInfo.style.rootPath,
+                root: ucExt.fileInfo.rootInfo
+            });
             let isAlreadyExist = ucExt.srcNode.htmlCode.load({ path: ucExt.fileInfo.html.fullPath });
             if (!isAlreadyExist)
                 ucExt.srcNode.loadHTML(param0.source.beforeContentAssign);
@@ -278,7 +281,7 @@ export class Usercontrol {
             //ucExt.wrapperHT.classList.add(ATTR_OF.getUc(ucExt.srcNode.uniqStamp));
         },
         resizerObserver: undefined as ResizeObserver,
-        finalizeInit: (param0: UcOptions): void => {
+        finalizeInit: (param0: IUcOptions): void => {
             let ext = this.ucExtends;
             if (!ext.srcNode.cssCode.hasContent) {
                 ext.srcNode.cssCode.load({
