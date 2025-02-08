@@ -34,9 +34,9 @@ export class ThemeCssHandler {
                             accessName: '',
                         });
                         if (!stpSrc.cssCode.hasContent) {
-                            stpSrc.cssCode.load({
-                                content: FileDataBank.readFile(path, { replaceContentWithKeys: true }),
-                            });
+                            stpSrc.cssCode.load(
+                                FileDataBank.readFile(path, { replaceContentWithKeys: true })
+                            );
                             stpSrc.cssCode.content = stpSrc.styler.parseStyleSeperator_sub({
                                 data: stpSrc.cssCode.originalContent,
                             });

@@ -103,7 +103,6 @@ export interface IUcOptions {
 
     decisionForTargerElement?: WhatToDoWithTargetElement;
     targetElement?: HTMLElement;
-    loadAt?: HTMLElement;
 }
 export const UcOptions: IUcOptions = {
     mode: 'client',
@@ -124,10 +123,10 @@ export interface ITptOptions {
     cfInfo?: codeFileInfo;
     elementHT?: HTMLElement;
     source?: ISourceOptions;
-    accessName?:string,
+   // accessName?:string,
     parentUc?: Usercontrol;
 }
 export const TptOptions: ITptOptions = {
     source: newObjectOpt.clone<ISourceOptions>(SourceOptions),
-    accessName:'',
+   // accessName:'',
 };

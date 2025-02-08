@@ -236,19 +236,8 @@ export class TemplateNode {
       tptname: string
     ) => {
       let tptExt = this.extended;
-      //_args.cfInfo = new codeFileInfo(".tpt");
       let toj = Object.assign({}, TptOptions);
       let param0 = Object.assign(toj, _args);
-      //console.log(toj);
-      /*
-      _args.cfInfo.parseUrl(tptPathOpt.objectKey);
-      if (tptname !== propOpt.ATTR.TEMPLETE_DEFAULT) {
-        let fpath = param0.cfInfo.html.rootPath;
-        fpath = strOpt.trim_(fpath, ".html", ".scss");
-        fpath += "." + tptname;
-        param0.cfInfo.html.parse(fpath + ".html", false);
-        param0.cfInfo.style.parse(fpath + ".scss", false);
-      }*/
       param0.source.accessKey = tptPathOpt.accessKey;
       tptExt.srcNode = StampNode.registerSoruce(
         {
@@ -257,10 +246,7 @@ export class TemplateNode {
           root: param0.cfInfo.rootInfo,
           generateStamp:false
         });
-      let isAlreadyExist = tptExt.srcNode.htmlCode.load({
-        //path: param0.source.cfInfo.html.fullPath
-        content: tptPathOpt.htmlContents
-      });
+      let isAlreadyExist = tptExt.srcNode.htmlCode.load(tptPathOpt.htmlContents);
       if (!isAlreadyExist)
         tptExt.srcNode.loadHTML(param0.source.beforeContentAssign);
 

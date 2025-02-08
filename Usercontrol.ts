@@ -99,12 +99,12 @@ export class Usercontrol {
         //stampRow: undefined as userControlStampRow,
         //stampNode: undefined as StampNode,
         srcNode: undefined as SourceNode,
-       
+
         wrapperHT: undefined as HTMLElement,
         isDialogBox: false as boolean,
         keepVisible: false as boolean,
         parentDependantIndex: -1 as number,
-        dependant: [] as Usercontrol[],        
+        dependant: [] as Usercontrol[],
         isForm: false,
         get formExtends() { return (this.form as Usercontrol).ucExtends; },
         get self(): HTMLElement { return this.wrapperHT; },
@@ -192,7 +192,7 @@ export class Usercontrol {
                 key: ucExt.fileInfo.style.rootPath,
                 root: ucExt.fileInfo.rootInfo
             });
-            let isAlreadyExist = ucExt.srcNode.htmlCode.load({ path: ucExt.fileInfo.html.fullPath });
+            let isAlreadyExist = ucExt.srcNode.htmlCode.load(FileDataBank.readFile(ucExt.fileInfo.html.fullPath, { isFullPath: true }));
             if (!isAlreadyExist)
                 ucExt.srcNode.loadHTML(param0.source.beforeContentAssign);
 
@@ -284,9 +284,9 @@ export class Usercontrol {
         finalizeInit: (param0: IUcOptions): void => {
             let ext = this.ucExtends;
             if (!ext.srcNode.cssCode.hasContent) {
-                ext.srcNode.cssCode.load({
-                    content: FileDataBank.readFile(ext.fileInfo.style.fullPath, { replaceContentWithKeys: true }),
-                });
+                ext.srcNode.cssCode.load(
+                    FileDataBank.readFile(ext.fileInfo.style.fullPath, { replaceContentWithKeys: true })
+                );
                 ext.srcNode.cssCode.content = ext.srcNode.styler.parseStyleSeperator_sub({
                     data: ext.srcNode.cssCode.originalContent,
                     localNodeElement: ext.self,

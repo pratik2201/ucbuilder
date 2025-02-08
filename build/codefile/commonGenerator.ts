@@ -4,7 +4,7 @@ import { CommonRow } from "ucbuilder/build/buildRow.js";
 import { SpecialExtType } from "ucbuilder/build/common";
 import { regsManage } from "ucbuilder/build/regs/regsManage.js";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
-import { compileTemplate, TemplateMaker } from "ucbuilder/build/regs/TemplateMaker";
+import {  TemplateMaker } from "ucbuilder/build/regs/TemplateMaker";
 
 interface CodeFilesNode {
     DESIGNER: string,
@@ -69,7 +69,7 @@ export class commonGenerator {
     designerTMPLT: { [key: string]: string } = {};
     codefileTMPLT: { [key: string]: string } = {};
     styleTMPLT: { [key: string]: string } = {};
-    tMaker = compileTemplate;
+    tMaker = new TemplateMaker();
     //dTpt = '' as string;
     constructor() {
         this.rgxManage = new regsManage();
@@ -113,9 +113,9 @@ export class commonGenerator {
             let tcode = _this.tMaker(this.dTpt)(row);
             console.log(tcode);*/
             if (uctype == '.uc')
-                _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.UC.DESIGNER)(row);
+                _data = _this.tMaker.compileTemplate(this.DEFAULT_TEMPLEATES.TS.UC.DESIGNER)(row);
             else if (uctype == '.tpt') 
-                _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.TPT.DESIGNER)(row);
+                _data = _this.tMaker.compileTemplate(this.DEFAULT_TEMPLEATES.TS.TPT.DESIGNER)(row);
             else _data = _this.generateNew(row, _this.Events.onDemandDesignerFile(srctype, uctype));
 
             fs.writeFileSync(row.src.designer.fullPath, _data);
@@ -126,9 +126,9 @@ export class commonGenerator {
 
             if (!fs.existsSync(row.src.code.fullPath)) {
                 if (uctype == '.uc')
-                    _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.UC.CODE)(row);
+                    _data = _this.tMaker.compileTemplate(this.DEFAULT_TEMPLEATES.TS.UC.CODE)(row);
                 else if (uctype == '.tpt') 
-                    _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.TPT.CODE)(row);
+                    _data = _this.tMaker.compileTemplate(this.DEFAULT_TEMPLEATES.TS.TPT.CODE)(row);
                 else _data = _this.generateNew(row, _this.Events.onDemandDesignerFile(srctype, uctype));
                // _data = _this.generateNew(row, _this.Events.onDemandCodeFile(srctype, uctype));
                 fs.writeFileSync(row.src.code.fullPath, _data);
@@ -136,9 +136,9 @@ export class commonGenerator {
             if (!fs.existsSync(row.src.style.fullPath)) {
                 //_data = _this.generateNew(row, _this.Events.onDemandStyleFile(srctype, uctype));                
                 if (uctype == '.uc')
-                    _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.UC.STYLE)(row);
+                    _data = _this.tMaker.compileTemplate(this.DEFAULT_TEMPLEATES.TS.UC.STYLE)(row);
                 else if (uctype == '.tpt') 
-                    _data = _this.tMaker(this.DEFAULT_TEMPLEATES.TS.TPT.STYLE)(row);
+                    _data = _this.tMaker.compileTemplate(this.DEFAULT_TEMPLEATES.TS.TPT.STYLE)(row);
                 else _data = _this.generateNew(row, _this.Events.onDemandDesignerFile(srctype, uctype));
                 fs.writeFileSync(row.src.style.fullPath, _data);
                 if (row.src.extCode == ".tpt") {

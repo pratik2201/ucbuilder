@@ -84,8 +84,6 @@ export class <?=designer.className ?> extends Usercontrol {
         
         ucExt.finalizeInit(args);
         ucExt.session.prepareForAutoLoadIfExist();
-        if (args.loadAt) args.loadAt.appendChild(ucExt.wrapperHT);
-       
         Usercontrol.assignPropertiesFromDesigner(form);
     }
 }

@@ -19,22 +19,22 @@ export class CodeNode {
     originalContent: string;
     path: string;
     //onContentLoaded: () => {};
-    load({ path, content }: { path?: string, content?: string }): boolean {
+    load(original_content:string/*{ path, content }: { path?: string,*content?: string }*/): boolean {
         let hasAlreadyLoaded = this.hasContent;
-        if (content != undefined) {
-            this.originalContent = content;
+        if (original_content != undefined) {
+            this.originalContent = original_content;
             this.hasContent = true;
             this.hasLoadedByPath = false;
             // this.onContentLoaded();
             return hasAlreadyLoaded;
         }
-        if (path != undefined) {
+        /*if (path != undefined) {
             this.originalContent = FileDataBank.readFile(path,{});
             this.hasContent = true;
             this.hasLoadedByPath = true;
             //   this.onContentLoaded();
             return hasAlreadyLoaded;
-        }
+        }*/
     }
 }
 export class SourceNode {

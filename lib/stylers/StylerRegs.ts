@@ -78,9 +78,7 @@ export class StylerRegs {
           accessName: node.alices,
         });
         if (!node.stampSRC.cssCode.hasContent) {
-          node.stampSRC.cssCode.load({
-            content: FileDataBank.readFile(_stylepath, { replaceContentWithKeys: true }),
-          });
+          node.stampSRC.cssCode.load(FileDataBank.readFile(_stylepath, { replaceContentWithKeys: true }));
           node.stampSRC.cssCode.content = node.stampSRC.styler.parseStyleSeperator_sub({
             data: node.stampSRC.cssCode.originalContent,
           });
