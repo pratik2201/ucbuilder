@@ -19,7 +19,7 @@ export class CodeNode {
     originalContent: string;
     path: string;
     //onContentLoaded: () => {};
-    load(original_content:string/*{ path, content }: { path?: string,*content?: string }*/): boolean {
+    load(original_content: string/*{ path, content }: { path?: string,*content?: string }*/): boolean {
         let hasAlreadyLoaded = this.hasContent;
         if (original_content != undefined) {
             this.originalContent = original_content;
@@ -100,19 +100,19 @@ export class SourceNode {
         SourceNode.resourcesHT.appendChild(this.styleHT);
     }
     loadHTML(callback = (s: string) => s) {
-        this.htmlCode.content = this.styler.parseStyle(this.htmlCode.originalContent);
-        if (callback != undefined) this.htmlCode.content = callback(this.htmlCode.content);
-        this.dataHT = this.htmlCode.content.$();
+        let htCode = this.htmlCode;
+        htCode.content = this.styler.parseStyle(htCode.originalContent);
+        if (callback != undefined) htCode.content = callback(htCode.content);
+        this.dataHT = htCode.content.$();
         this.styler.nodeName = this.dataHT.nodeName;
+        this.dataHT.setAttribute(ATTR_OF.UC.ALL, this.uniqStamp);
+        htCode.content = this.dataHT.outerHTML;
+        if (!this.dataHT.hasAttribute('x-tabindex')) {
+            this.dataHT.setAttribute('x-tabindex', '-1');
+        }
+        htCode.content = this.dataHT.outerHTML;
+        htCode.content = htCode.content.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
 
-        //if (this.dataHT['length'] != undefined) {
-            this.dataHT.setAttribute(ATTR_OF.UC.ALL, this.uniqStamp);
-            this.htmlCode.content = this.dataHT.outerHTML;
-            if (!this.dataHT.hasAttribute('x-tabindex')) {
-                this.dataHT.setAttribute('x-tabindex', '-1');
-               // this.htmlCode.content = this.htmlCode.content.replace
-            }
-       // }
     }
     release() {
         if (StampNode.deregisterSource(this.myObjectKey)) {
@@ -139,7 +139,7 @@ export class StampNode {
         if (rtrn == undefined) {
             rtrn = new SourceNode();
             //rtrn.main = this;
-            rtrn.styler = new StylerRegs(root,generateStamp);
+            rtrn.styler = new StylerRegs(root, generateStamp);
             rtrn.root = root;
             rtrn.myObjectKey = myObjectKey;
             rtrn.accessKey = accessName;
