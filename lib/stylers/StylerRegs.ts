@@ -1,6 +1,5 @@
 import { AliceManager } from "ucbuilder/build/codefile/aliceManager";
 import { uniqOpt } from "ucbuilder/enumAndMore";
-import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
 import { openCloser } from "ucbuilder/global/openCloser";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
@@ -9,6 +8,7 @@ import { StampNode } from "ucbuilder/lib/StampGenerator";
 import { RootAndExcludeHandler } from "ucbuilder/lib/stylers/RootAndExcludeHandler";
 import { SelectorHandler } from "ucbuilder/lib/stylers/SelectorHandler";
 import { ThemeCssHandler } from "ucbuilder/lib/stylers/ThemeCssHandler";
+import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
 
 export type VariableList = { [key: string]: string };
 
@@ -40,7 +40,7 @@ export const patternList/*: PatternList */ = {
   //themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   themeCSSLoader: /\@(import|use)\s*([\"'`])((?:\\.|(?!\2)[^\\])*)\2\s*;/gim,
 
-  stylesFilterPattern: /(animation-name|\$[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
+  stylesFilterPattern: /(animation-name|-[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
   varValuePrinterPattern: /(-[lgit]-\w+)\s*(.*?)--/gim,    //       /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
   varValueGetterPattern: /(\$[lgit]-\w+)\:(.*?)\;/gim,            //      /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
   scopeSelector: /\[SELF_]/gm,
@@ -65,6 +65,23 @@ const styleSeperatorOptions: StyleSeperatorOptions = {
   //cssVarStampKey: "",
 };
 export class StylerRegs {
+  static __VAR = {
+    getKeyName: (key: string, uniqId: string, code: string): string => {
+        return `--${key}${uniqId}${code}`;
+    },
+
+    SETVALUE: (vlst: VariableList,/*key: string,*/ uniqId: string, code: string, /*value: string,*/ tarEle: HTMLElement = document.body): void => {
+        let style = tarEle.style;
+        for (const [key, value] of Object.entries(vlst)) {
+            style.setProperty(this.__VAR.getKeyName(key, uniqId, code), value);
+        }
+        return;
+    },
+
+    GETVALUE: (key: string, uniqId: string, code: string, defaultVal: string): string => {
+        return ` var(${this.__VAR.getKeyName(key, uniqId, code)},${defaultVal}) `;
+    },
+};
   static pushPublicStyles(callback: () => void): void {
     import("ucbuilder/ResourcesUC").then(({ ResourcesUC }) => {
       rootPathHandler.source.forEach((row: RootPathRow) => {
@@ -131,7 +148,9 @@ export class StylerRegs {
     this.selectorHandler = new SelectorHandler(this);
     this.rootAndExcludeHandler = new RootAndExcludeHandler(this);
     this.themeCssHandler = new ThemeCssHandler(this);
+    this.varHandler = new CssVariableHandler(this);
   }
+  varHandler: CssVariableHandler;
   selectorHandler: SelectorHandler;
   rootAndExcludeHandler: RootAndExcludeHandler;
   themeCssHandler: ThemeCssHandler;
@@ -185,6 +204,8 @@ export class StylerRegs {
     let _this = this;
 
     if (_args.data == undefined) return "";
+
+    //console.log([_args.isForRoot,_args._rootinfo]);
     let _params = Object.assign(Object.assign({}, styleSeperatorOptions), _args);
 
     _params.callCounter++;
@@ -192,11 +213,15 @@ export class StylerRegs {
     let pstamp_key: string = ''; //ATTR_OF.UC.PARENT_STAMP;
     let pstamp_val: string = _this.LOCAL_STAMP_KEY;  // _this.stamp  <-- i changed dont know why
     let _curRoot: RootPathRow = _this.rootInfo;
-    if (_params.isForRoot) {
+   
+    
+    /*if (_params.isForRoot) {
       //pstamp_key = ATTR_OF.UC.ROOT_STAMP;
       _curRoot = (_params._rootinfo == undefined) ? _this.rootInfo : _params._rootinfo;
       //pstamp_val = '' + _curRoot.id;
     }
+    console.log([_curRoot]);*/
+    
     let rtrn: string = _params.data.replace(patternList.MULTILINE_COMMENT_REGS, "");
     rtrn = rtrn.replace(patternList.SINGLELINE_COMMENT_REGS, "");
 
@@ -362,34 +387,9 @@ export class StylerRegs {
     /// console.log(extraTextAtBegining);
     rtrn = extraTextAtBegining + '' + rtrn;
     //debugger;
-    rtrn = rtrn.replace(
-      patternList.varValuePrinterPattern,
-      (match: string, varName: string, defaultVal: string) => {
-        let ky: string = varName;//.toLowerCase();
-        let scope: string = ky.charAt(1);
-        let uniqId: string = StylerRegs.internalKey;
-        //console.log(['printer',patternList.varValuePrinterPattern,varName,defaultVal,match]);
-
-        switch (scope) {
-          case "g":
-            uniqId = '' + _curRoot.id;
-            break;
-          case "t":
-            uniqId = this.TEMPLATE_STAMP_KEY;
-            break;
-          case "l":
-            uniqId = this.LOCAL_STAMP_KEY;
-            break;
-        }
-        return StylerRegs.__VAR.GETVALUE(
-          ky.substring(3).trim(),
-          uniqId,
-          scope,
-          defaultVal
-        ) /*+ ';'*/;
-      }
-    );
-    rtrn = rtrn.replace(
+    
+    rtrn = this.varHandler.handlerVariable(rtrn);
+    /*rtrn = rtrn.replace(
       patternList.varValueGetterPattern,
       (match: string, varName: string, value: string) => {
         //  console.log(['getter',varName,value,match]);
@@ -416,8 +416,8 @@ export class StylerRegs {
         let key = ky.substring(3).trim();
         StylerRegs.__VAR.SETVALUE({ [key]: value }, uniqId, scope, tarEle);
         return '';
-      }
-    );
+      
+    );}*/
     rtrn = rtrn.replace(
       patternList.stylesFilterPattern,
       (match: string, key: string, value: string) => {
@@ -478,26 +478,7 @@ export class StylerRegs {
     };
   }*/
 
-  static __VAR = {
-    getKeyName: (key: string, uniqId: string, code: string): string => {
-      return `--${key}${uniqId}${code}`;
-    },
 
-    SETVALUE: (vlst: VariableList,/*key: string,*/ uniqId: string, code: string, /*value: string,*/ tarEle: HTMLElement = document.body): void => {
-      let style = tarEle.style;
-      for (const [key, value] of Object.entries(vlst)) {
-        style.setProperty(this.__VAR.getKeyName(key, uniqId, code), value);
-      }
-
-      return;
-    },
-
-    GETVALUE: (key: string, uniqId: string, code: string, defaultVal: string): string => {
-
-
-      return ` var(${this.__VAR.getKeyName(key, uniqId, code)},${defaultVal}) `;
-    },
-  };
 
 
   pushChild(path: string, node: StylerRegs, accessKey: string): void {

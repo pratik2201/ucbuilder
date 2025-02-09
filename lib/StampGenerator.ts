@@ -70,13 +70,14 @@ export class SourceNode {
     cssObj: { [key: string]: StyleCodeNode } = {};
     pushCSSByContent(key: string, cssContent: string, localNodeElement?: HTMLElement) {
         let csnd = this.cssObj[key];
+        let ccontent = this.styler.parseStyleSeperator_sub({
+            data: cssContent,
+            localNodeElement: localNodeElement,
+        })
         if (csnd == undefined) {
             let newcssCode: StyleCodeNode = new StyleCodeNode();
             newcssCode.originalContent = cssContent;
-            newcssCode.content = this.styler.parseStyleSeperator_sub({
-                data: newcssCode.originalContent,
-                localNodeElement: localNodeElement,
-            });
+            newcssCode.content = ccontent;
             this.cssObj[key] = newcssCode;
         }
     }

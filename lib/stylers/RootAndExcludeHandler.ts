@@ -76,6 +76,7 @@ export class RootAndExcludeHandler {
                                     rootAlices  // `@${rootAlices}:`
                                 ); 
                                 if (rInfo != undefined) {
+                                    
                                     externalStyles.push(
                                         _this.main.parseStyleSeperator_sub({
                                             data: _params.scopeSelectorText + styleContent,
