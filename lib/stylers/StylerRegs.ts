@@ -77,13 +77,15 @@ export class StylerRegs {
           root: node,
           accessName: node.alices,
         });
-        if (!node.stampSRC.cssCode.hasContent) {
+        node.stampSRC.pushCSS(_stylepath, document.body);
+
+        /*if (!node.stampSRC.cssCode.hasContent) {
           node.stampSRC.cssCode.load(FileDataBank.readFile(_stylepath, { replaceContentWithKeys: true }));
           node.stampSRC.cssCode.content = node.stampSRC.styler.parseStyleSeperator_sub({
             data: node.stampSRC.cssCode.originalContent,
           });
         }
-        node.stampSRC.loadCSS();
+        node.stampSRC.loadCSS();*/
         //let styler: StylerRegs = new StylerRegs(node, true);
         //ResourcesUC.styler.pushChild(node.alices, styler, node.alices);
         /*et _data: string = FileDataBank.readFile(_stylepath, {
@@ -498,11 +500,11 @@ export class StylerRegs {
   };
 
 
-  pushChild(path: string, node: StylerRegs, nodeName: string): void {
+  pushChild(path: string, node: StylerRegs, accessKey: string): void {
     let key: string = path.toLowerCase();
     let sreg: StylerRegs = this.children.find((s: StylerRegs) => s.path == key);
     if (sreg == undefined) {
-      node.alices = nodeName.toLowerCase();
+      node.alices = accessKey.toLowerCase();
       node.path = key;
       node.parent = this;
       this.children.push(node);

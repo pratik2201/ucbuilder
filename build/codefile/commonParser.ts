@@ -9,6 +9,7 @@ import { Template } from "ucbuilder/Template";
 import { builder } from "ucbuilder/build/builder";
 import { ITemplatePathOptions } from "ucbuilder/enumAndMore";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
+import { TemplateMaker } from "ucbuilder/build/regs/TemplateMaker";
 
 export class commonParser {
 
@@ -51,6 +52,7 @@ export class commonParser {
         let code = (htmlContents == undefined) ? FileDataBank.readFile(_row.src.html.fullPath, {
             reloadData: true,
         }) : htmlContents;
+       
         let isUserControl = _row.src.extCode == SpecialExtEnum.uc;
         let isMultipleElement = false;
         let primaryChild:HTMLElement=undefined;
@@ -58,7 +60,7 @@ export class commonParser {
         try {
 
             if (code.trim() != '') {
-                this.formHT = code.$();
+                this.formHT = code.PHP_ESC().$();
                 primaryChild = this.formHT;
                 if (this.formHT['length'] != undefined) {
                     isMultipleElement = true;
@@ -67,14 +69,14 @@ export class commonParser {
                     primaryChild = mht[0];
                     if (xAt == null || !xAt.equalIgnoreCase(_row.src.mainFileRootPath)) {
                         mht[0].setAttribute('x-at', _row.src.mainFileRootPath);                        
-                        _row.htmlFile.content = mht.map(s=>s.outerHTML).join('');
+                        _row.htmlFile.content = mht.map(s=>s.outerHTML).join('').PHP_DESC();
                         _row.htmlFile.reGenerate = true;
                     }
                 } else {
                     let xAt = this.formHT.getAttribute('x-at');
                     if (xAt == null || !xAt.equalIgnoreCase(_row.src.mainFileRootPath)) {
                         this.formHT.setAttribute('x-at', _row.src.mainFileRootPath);
-                        _row.htmlFile.content = this.formHT.outerHTML;
+                        _row.htmlFile.content = this.formHT.outerHTML.PHP_DESC();
                         _row.htmlFile.reGenerate = true;
                     }
 
@@ -126,12 +128,13 @@ export class commonParser {
                 let controls: Control[] = [];
                 /*if (_row.htmlFile.reGenerate)
                     template.htmlContents = template.htmlContents;*/
-                if (template.htmlContents == '') {
+                if (template.htmlContents == '' || template.htmlContents == undefined) {
+                    debugger;
                     template.htmlContents = `<wrapper  searchstatus="{=.searchStatus}" aria-disabled="{=.isDisabled}" x-at="${_row.src.mainFileRootPath}"  >
 <!-- DONT MODIFY "x-at" ATTRIBUTE FROM PRIMARY FILE -->
 </wrapper>`;
                 }
-                let cntHT = template.htmlContents.$() as HTMLElement;
+                let cntHT = template.htmlContents.PHP_ESC().$() as HTMLElement;
                 if (cntHT['length'] != undefined) cntHT = cntHT[0];
                 const elements = Array.from(cntHT.querySelectorAll(`[${propOpt.ATTR.X_NAME}]`));
                 for (let i = 0, iObj = elements, len = iObj.length; i < len; i++) {

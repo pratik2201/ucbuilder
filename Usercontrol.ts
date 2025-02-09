@@ -283,7 +283,9 @@ export class Usercontrol {
         resizerObserver: undefined as ResizeObserver,
         finalizeInit: (param0: IUcOptions): void => {
             let ext = this.ucExtends;
-            if (!ext.srcNode.cssCode.hasContent) {
+            ext.srcNode.pushCSS(ext.fileInfo.style.fullPath,ext.self);
+      
+            /*if (!ext.srcNode.cssCode.hasContent) {
                 ext.srcNode.cssCode.load(
                     FileDataBank.readFile(ext.fileInfo.style.fullPath, { replaceContentWithKeys: true })
                 );
@@ -292,7 +294,7 @@ export class Usercontrol {
                     localNodeElement: ext.self,
                 });
             }
-            ext.srcNode.loadCSS();
+            ext.srcNode.loadCSS();*/
             /*param0.source.cssContents = ext.srcNode.styler.parseStyleSeperator_sub(
                 {
                     data: (param0.source.cssContents == undefined ?

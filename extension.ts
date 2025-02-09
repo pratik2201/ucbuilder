@@ -56,6 +56,8 @@ interface String {
     endsWithI(s: string): boolean,
     includesI(s: string): { result:boolean,index:number },
     equalIgnoreCase(s: string): boolean,
+    PHP_ESC():string,
+    PHP_DESC():string,
 }
 
 

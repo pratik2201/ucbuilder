@@ -1,4 +1,5 @@
 import { controlOpt } from "ucbuilder/build/common";
+import { TemplateMaker } from "ucbuilder/build/regs/TemplateMaker";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { RootPathRow } from "ucbuilder/global/findAndReplace";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
@@ -12,30 +13,46 @@ const PassElementOptions: IPassElementOptions = {
     applySubTree: true,
     skipTopEle: false
 }
-export class CodeNode {
+class HTMLCodeNode {
     content: string;
     hasContent: boolean = false;
     hasLoadedByPath: boolean;
     originalContent: string;
     path: string;
-    //onContentLoaded: () => {};
-    load(original_content: string/*{ path, content }: { path?: string,*content?: string }*/): boolean {
+    load(original_content: string): boolean {
         let hasAlreadyLoaded = this.hasContent;
         if (original_content != undefined) {
             this.originalContent = original_content;
             this.hasContent = true;
             this.hasLoadedByPath = false;
-            // this.onContentLoaded();
             return hasAlreadyLoaded;
         }
-        /*if (path != undefined) {
-            this.originalContent = FileDataBank.readFile(path,{});
-            this.hasContent = true;
-            this.hasLoadedByPath = true;
-            //   this.onContentLoaded();
-            return hasAlreadyLoaded;
-        }*/
     }
+}
+class StyleCodeNode {
+
+    originalContent: string;
+    styleHT: HTMLStyleElement;
+    constructor() {
+        this.styleHT = document.createElement("style");
+        this.styleHT.type = "text/css";
+        this.styleHT.setAttribute("rel", 'stylesheet');
+    }
+    private _content: string;
+    public get content(): string {
+        return this._content;
+    }
+    public set content(value: string) {
+        this._content = value;
+        if (this.styleHT == undefined) {
+            this.styleHT = document.createElement("style");
+            this.styleHT.type = "text/css";
+            this.styleHT.setAttribute("rel", 'stylesheet');
+        }
+        this.styleHT.innerHTML = this._content;
+        SourceNode.resourcesHT.appendChild(this.styleHT);
+    }
+
 }
 export class SourceNode {
     isNewSource = true;
@@ -44,15 +61,32 @@ export class SourceNode {
     get uniqStamp(): string { return this.styler.LOCAL_STAMP_KEY; }
     myObjectKey: string = "";
     accessKey: string = '';
-    cssCode: CodeNode = new CodeNode();
-    htmlCode: CodeNode = new CodeNode();
+    htmlCode: HTMLCodeNode = new HTMLCodeNode();
     styler: StylerRegs;
 
     dataHT: HTMLElement;
-    styleHT: HTMLStyleElement;
     rootFilePath: string = '';
     root: RootPathRow;
-
+    cssObj: { [key: string]: StyleCodeNode } = {};
+    pushCSSByContent(key: string, cssContent: string, localNodeElement?: HTMLElement) {
+        let csnd = this.cssObj[key];
+        if (csnd == undefined) {
+            let newcssCode: StyleCodeNode = new StyleCodeNode();
+            newcssCode.originalContent = cssContent;
+            newcssCode.content = this.styler.parseStyleSeperator_sub({
+                data: newcssCode.originalContent,
+                localNodeElement: localNodeElement,
+            });
+            this.cssObj[key] = newcssCode;
+        }
+    }
+    pushCSS(cssFilePath: string, localNodeElement?: HTMLElement) {
+        this.pushCSSByContent(
+            cssFilePath,
+            FileDataBank.readFile(cssFilePath, { replaceContentWithKeys: true }),
+            localNodeElement
+        );
+    }
     static resourcesHT: HTMLElement = document.createElement("programres");
     static init() {
         this.resourcesHT.setAttribute("stamp", 'program.stamp');
@@ -73,32 +107,29 @@ export class SourceNode {
                 element.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
             }
             //element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
-            // element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
+            //element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
             //element.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
             if (option.applySubTree) {
                 element.querySelectorAll("*")
                     .forEach((s) => {
                         s.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
-                        // s.classList.add(...ATTR_OF.getParent(stmpUnq, stmpRt));
+                        //s.classList.add(...ATTR_OF.getParent(stmpUnq, stmpRt));
                         //s.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
-                        // s.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
+                        //s.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
                         //s.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
                     });
             }
         }
         return stamplist;
     }
-    loadCSS() {
+    /*loadCSS() {
         if (this.styleHT != undefined) return;
         this.styleHT = document.createElement("style");
         this.styleHT.type = "text/css";
-        this.styleHT.setAttribute("rel", 'stylesheet');
-        /*this.styleHT.setAttribute("objKey", this.myObjectKey);
-        this.styleHT.setAttribute("fUniq", this.uniqStamp);
-        this.styleHT.setAttribute("stamp", this.stamp);*/
+        this.styleHT.setAttribute("rel", 'stylesheet');        
         this.styleHT.innerHTML = this.cssCode.content;
         SourceNode.resourcesHT.appendChild(this.styleHT);
-    }
+    }*/
     loadHTML(callback = (s: string) => s) {
         let htCode = this.htmlCode;
         htCode.content = this.styler.parseStyle(htCode.originalContent);
@@ -111,17 +142,16 @@ export class SourceNode {
             this.dataHT.setAttribute('x-tabindex', '-1');
         }
         htCode.content = this.dataHT.outerHTML;
-        htCode.content = htCode.content.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
-
+        htCode.content = htCode.content.PHP_DESC();//.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
     }
     release() {
         if (StampNode.deregisterSource(this.myObjectKey)) {
-            this.styleHT.remove();
+            let keys = Object.keys(this.cssObj);
+            for (let i = 0, iObj = keys, ilen = iObj.length; i < ilen; i++) {
+                this.cssObj[iObj[i]].styleHT.remove();
+            }
             this.dataHT =
-                this.cssCode =
-                this.htmlCode =
-                this.styleHT = undefined;
-
+                this.htmlCode = this.cssObj = undefined;
             delete StampNode.childs[this.myObjectKey];
         }
     }

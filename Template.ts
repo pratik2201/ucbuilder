@@ -38,8 +38,8 @@ export class Template {
       let xcsspath = iele.getAttribute('x-csspath');
       if (xrelativeChild != null) {
         xrelativeChild = xrelativeChild.removeExtension();
-        csspath = cinfo.mainFileRootPath.removeExtension() + '/' + xrelativeChild + '.scss';
-        htmlpath = cinfo.mainFilePath.removeExtension() + '/' + xrelativeChild + '.html';
+        csspath = cinfo.mainFileRootPath + '/' + xrelativeChild + '.scss';
+        htmlpath = cinfo.mainFilePath + '/' + xrelativeChild + '.html';
         isCSSFullpath = false; isHTMLFullpath = true;
       } else if (xrelative != null) {
         xrelative = xrelative.removeExtension();
@@ -62,10 +62,12 @@ export class Template {
       rtrn.accessKey = name;
       rtrn.cssContents = FileDataBank.readFile(csspath, { isFullPath: isCSSFullpath, replaceContentWithKeys: true });
       rtrn.htmlContents = FileDataBank.readFile(htmlpath, { isFullPath: isHTMLFullpath, });
+      if (rtrn.htmlContents == undefined) debugger;
+      rtrn.htmlContents = rtrn.htmlContents?.PHP_DESC() ?? undefined;
     } else {
       rtrn.objectKey = cinfo.style.rootPath;
       rtrn.cssContents = FileDataBank.readFile(cinfo.style.fullPath, { replaceContentWithKeys: true });
-      rtrn.htmlContents = iele.outerHTML;
+      rtrn.htmlContents = iele.outerHTML.PHP_DESC();
     }
     /*iele.getAttribute('x-name');
     iele.getAttribute('x-relative-child');
@@ -100,7 +102,7 @@ export class Template {
   }
   private static GetTemplatePathOptionsArray(cinfo: codeFileInfo): ITemplatePathOptions[] {
     let data = FileDataBank.readFile(cinfo.html.fullPath, {});
-    let ele = data.$();
+    let ele = data.PHP_DESC().$();
     let rtrn: ITemplatePathOptions[] = [];
     if (ele.length != undefined) {
       for (let i = 0, iObj = ele, ilen = iObj.length; i < ilen; i++) {
@@ -136,7 +138,9 @@ export class Template {
   static GetArrayOfTemplate(cinfo: codeFileInfo): ITemplatePathOptions[] {
     return Template.GetTemplatePathOptionsArray(cinfo);
   }
-
+  createTemplate() {
+    
+  }
   constructor() {
     //Template._CSS_VAR_STAMP++;
     StylerRegs.stampNo++;
@@ -245,8 +249,7 @@ export class TemplateNode {
       tptname: string
     ) => {
       let tptExt = this.extended;
-      let toj = Object.assign({}, TptOptions);
-      let param0 = Object.assign(toj, _args);
+      let param0 = Object.assign(Object.assign({}, TptOptions), _args);
       param0.source.accessKey = tptPathOpt.accessKey;
       tptExt.srcNode = StampNode.registerSoruce(
         {
@@ -281,20 +284,22 @@ export class TemplateNode {
           tptExt.srcNode.styler,
           eleHT.nodeName
         );
-      if (!tptExt.srcNode.cssCode.hasContent) {
+      tptExt.srcNode.pushCSSByContent(param0.cfInfo.style.fullPath,tptPathOpt.cssContents,tptExt.parentUc.ucExtends.self);
+      /*if (!tptExt.srcNode.cssCode.hasContent) {
         tptExt.srcNode.cssCode.content = tptExt.srcNode.styler.parseStyleSeperator_sub({
           data: tptPathOpt.cssContents,
           localNodeElement: tptExt.parentUc.ucExtends.self,
-        }); /*tptExt.srcNode.styler.parseStyleSeperator_sub({
-          data: (tptPathOpt.cssContents == undefined) ?
-            FileDataBank.readFile(param0.source.cfInfo.style.fullPath, { replaceContentWithKeys: true })
-            :
-            tptPathOpt.cssContents,
-          localNodeElement: tptExt.parentUc.ucExtends.self,
-          //cssVarStampKey: tptExt.main.extended.cssVarStampKey,
-        });*/
+        });
+        // tptExt.srcNode.styler.parseStyleSeperator_sub({
+        //   data: (tptPathOpt.cssContents == undefined) ?
+        //     FileDataBank.readFile(param0.source.cfInfo.style.fullPath, { replaceContentWithKeys: true })
+        //     :
+        //     tptPathOpt.cssContents,
+        //   localNodeElement: tptExt.parentUc.ucExtends.self,
+        //   cssVarStampKey: tptExt.main.extended.cssVarStampKey,
+        // });
         tptExt.srcNode.loadCSS();
-      }
+      }*/
       tptExt.parentUc.ucExtends.Events.beforeClose.on(({ prevent }) => {
         tptExt.srcNode.release();
       });

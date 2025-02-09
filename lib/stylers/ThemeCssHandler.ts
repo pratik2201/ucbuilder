@@ -33,15 +33,17 @@ export class ThemeCssHandler {
                             root: node,
                             accessName: '',
                         });
-                        if (!stpSrc.cssCode.hasContent) {
+                        stpSrc.pushCSS(path);
+                        /*if (!stpSrc.cssCode.hasContent) {
                             stpSrc.cssCode.load(
                                 FileDataBank.readFile(path, { replaceContentWithKeys: true })
                             );
                             stpSrc.cssCode.content = stpSrc.styler.parseStyleSeperator_sub({
                                 data: stpSrc.cssCode.originalContent,
+                                
                             });
                         }
-                        stpSrc.loadCSS();
+                        stpSrc.loadCSS();*/
                         /*let isGoodToAdd: boolean = LoadGlobal.isGoodToPush(path);
                         if (isGoodToAdd) {
                             let cssContents: string = _this.main.parseStyleSeperator_sub({

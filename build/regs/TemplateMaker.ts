@@ -1,6 +1,6 @@
 export class TemplateMaker {
     // templateCache = new Map<string, Function>();
-
+   
     templateCache = new Map<string, Function>();
     compileTemplate(template: string): Function {
         if (this.templateCache.has(template)) return this.templateCache.get(template)!;
