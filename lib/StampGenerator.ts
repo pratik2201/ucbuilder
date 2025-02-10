@@ -1,5 +1,6 @@
 import { controlOpt } from "ucbuilder/build/common";
 import { TemplateMaker } from "ucbuilder/build/regs/TemplateMaker";
+import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { RootPathRow } from "ucbuilder/global/findAndReplace";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
@@ -65,13 +66,12 @@ export class SourceNode {
     accessKey: string = '';
     htmlCode: HTMLCodeNode = new HTMLCodeNode();
     styler: StylerRegs;
-
+    onRelease = [] as (()=>void)[]
     dataHT: HTMLElement;
     rootFilePath: string = '';
     root: RootPathRow;
     cssObj: { [key: string]: StyleCodeNode } = {};
     pushCSSByContent(key: string, cssContent: string, localNodeElement?: HTMLElement) {
-        console.log(key);
         
         let csnd = this.cssObj[key];
         let ccontent = this.styler.parseStyleSeperator_sub({
@@ -145,9 +145,11 @@ export class SourceNode {
     release() {
         if (StampNode.deregisterSource(this.myObjectKey)) {
             let keys = Object.keys(this.cssObj);
-            for (let i = 0, iObj = keys, ilen = iObj.length; i < ilen; i++) {
-                this.cssObj[iObj[i]].styleHT.remove();
-            }
+            for (let i = 0, iObj = keys, ilen = iObj.length; i < ilen; i++) 
+                this.cssObj[iObj[i]].styleHT.remove();            
+            for(let i=0,iObj=this.onRelease,ilen=iObj.length   ;   i < ilen   ;   i++)
+                iObj[i]();                
+            
             this.dataHT =
                 this.htmlCode = this.cssObj = undefined;
             delete StampNode.childs[this.myObjectKey];
@@ -170,11 +172,11 @@ export class StampNode {
             
             rtrn = new SourceNode();
             //rtrn.main = this;
-            rtrn.styler = new StylerRegs(root, generateStamp);
             rtrn.root = root;
             rtrn.myObjectKey = myObjectKey;
             rtrn.accessKey = accessName;
             this.childs[myObjectKey] = rtrn;
+            rtrn.styler = new StylerRegs(rtrn, generateStamp);
         } else rtrn.isNewSource = false;
         rtrn.counter++;      
         //console.log([rtrn.counter,'open',myObjectKey]);
@@ -188,7 +190,7 @@ export class StampNode {
             rtrn.counter--;
             //console.log([rtrn.counter,'close',myObjectKey]);
             
-            result = (rtrn.counter == 0);
+            result = (rtrn.counter <= 0);
         }
         return result;
     }

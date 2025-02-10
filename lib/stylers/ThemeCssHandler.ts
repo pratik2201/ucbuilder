@@ -34,6 +34,9 @@ export class ThemeCssHandler {
                             accessName: '',
                         });
                         stpSrc.pushCSS(path);
+                        _this.main.main.onRelease.push(() => {
+                            stpSrc.release(); 
+                        });
                         /*if (!stpSrc.cssCode.hasContent) {
                             stpSrc.cssCode.load(
                                 FileDataBank.readFile(path, { replaceContentWithKeys: true })

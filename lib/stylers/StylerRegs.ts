@@ -4,7 +4,7 @@ import { RootPathRow, rootPathRow } from "ucbuilder/global/findAndReplace";
 import { openCloser } from "ucbuilder/global/openCloser";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { StampNode } from "ucbuilder/lib/StampGenerator";
+import { SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
 import { RootAndExcludeHandler } from "ucbuilder/lib/stylers/RootAndExcludeHandler";
 import { SelectorHandler } from "ucbuilder/lib/stylers/SelectorHandler";
 import { ThemeCssHandler } from "ucbuilder/lib/stylers/ThemeCssHandler";
@@ -137,9 +137,10 @@ export class StylerRegs {
   path: string = "";
   wrapperHT: HTMLElement = undefined;
   templateHT: HTMLElement = undefined;
-  constructor(rootInfo?: RootPathRow, generateStamp: boolean = true) {
-    this.rootInfo = rootInfo;
-
+  main: SourceNode;
+  constructor(main: SourceNode, generateStamp: boolean = true) {
+    this.main = main;
+    this.rootInfo = main.root;
     StylerRegs.stampCallTimes++;
     if (generateStamp)
       StylerRegs.stampNo++;

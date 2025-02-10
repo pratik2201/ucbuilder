@@ -186,10 +186,10 @@ export class Usercontrol {
             let res = stmpNode.stamp.generateSource('', {
                 htmlFilePath: ucExt.fileInfo.html.fullPath
             });*/
-            if (ucExt.fileInfo.style.rootPath.includes('fixed')) {
+           /* if (ucExt.fileInfo.style.rootPath.includes('fixed')) {
                 console.log(this);
                 
-            }
+            }*/
                 
             
             ucExt.srcNode = StampNode.registerSoruce({
