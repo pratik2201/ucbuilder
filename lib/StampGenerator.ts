@@ -1,9 +1,6 @@
 import { controlOpt } from "ucbuilder/build/common";
-import { TemplateMaker } from "ucbuilder/build/regs/TemplateMaker";
-import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { RootPathRow } from "ucbuilder/global/findAndReplace";
-import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
 export interface IPassElementOptions {
