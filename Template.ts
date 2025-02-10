@@ -9,7 +9,7 @@ import { FilterContent } from "ucbuilder/global/filterContent";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
-import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
+import { CSSVariableScope, StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 interface TptTextObjectNode<K> {
   content: string,
@@ -168,58 +168,28 @@ export class TemplateNode {
     // wrapper: undefined as HTMLElement,
     //  size: new Size(),
     regsMng: new regsManage(),
-    setCSS_globalVar(varList: VariableList/*,key: string, value: string*/) {
-
-      StylerRegs.__VAR.SETVALUE(
-        varList,
-        '' + this.srcNode.styler.rootInfo.id,
-        "g"
-      );
+    setCssVariable: (varList: VariableList, scope: CSSVariableScope) => {
+      let styler = this.extended.srcNode.styler;
+      switch (scope) {
+        case 'global': styler.__VAR.SETVALUE(varList, styler.LOCAL_STAMP_KEY, "g"); break;
+        case 'template': styler.__VAR.SETVALUE(varList, styler.TEMPLATE_STAMP_KEY, "t", this.extended.parentUc.ucExtends.self); break;
+        case 'local': styler.__VAR.SETVALUE(varList, styler.LOCAL_STAMP_KEY, "l", this.extended.parentUc.ucExtends.self); break;
+        case 'internal': styler.__VAR.SETVALUE(varList, StylerRegs.internalKey, "i", this.extended.parentUc.ucExtends.self); break;
+      }
     },
-    setCSS_templateVar: (varList: VariableList/*,key: string, value: string*/) => {
-      StylerRegs.__VAR.SETVALUE(
-        varList,
-        this.extended.srcNode.styler.TEMPLATE_STAMP_KEY,
-        "t",
-        this.extended.parentUc.ucExtends.self
-      );
-    },
-    setCSS_localVar: (varList: VariableList/*,key: string, value: string*/) => {
-      StylerRegs.__VAR.SETVALUE(
-        varList,
-        this.extended.srcNode.styler.LOCAL_STAMP_KEY,
-        "l",
-        this.extended.parentUc.ucExtends.self
-      );
-    },
-    setCSS_internalVar: (varList: VariableList/*,key: string, value: string*/) => {
-
-      StylerRegs.__VAR.SETVALUE(
-        varList,
-        StylerRegs.internalKey,
-        "i",
-        this.extended.parentUc.ucExtends.self
-      );
-    },
-
-    getCSS_globalVar: (key: string) => {
-      return document.body.style.getPropertyValue(
-        StylerRegs.__VAR.getKeyName(key, '' + this.extended.srcNode.styler.ROOT_STAMP_KEY, "g")
-      );
-    },
-    getCSS_templateVar: (key: string) => {
-      return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-        StylerRegs.__VAR.getKeyName(key, this.extended.srcNode.styler.TEMPLATE_STAMP_KEY, "t")
-      );
-    }, getCSS_localVar: (key: string) => {
-      return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-        StylerRegs.__VAR.getKeyName(key, this.extended.srcNode.styler.LOCAL_STAMP_KEY, "l")
-      );
-    },
-    getCSS_internalVar: (key: string) => {
-      return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-        StylerRegs.__VAR.getKeyName(key, StylerRegs.internalKey, "i")
-      );
+    getCssVariable: (key: string, scope: CSSVariableScope): string => {
+      let styler = this.extended.srcNode.styler;
+      switch (scope) {
+        case 'global': return document.body.style.getPropertyValue(
+          styler.__VAR.getKeyName(key, styler.ROOT_STAMP_KEY, "g"));
+        case 'template': return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
+          styler.__VAR.getKeyName(key, styler.TEMPLATE_STAMP_KEY, "t"));
+        case 'local': return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
+          styler.__VAR.getKeyName(key, styler.LOCAL_STAMP_KEY, "l"));
+        case 'internal': return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
+          styler.__VAR.getKeyName(key, StylerRegs.internalKey, "i"));
+        default: return '';
+      }
     },
     generateContent: (jsonRow: {}): string => {
       let _this = this.extended;

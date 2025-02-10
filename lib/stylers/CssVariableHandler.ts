@@ -1,4 +1,4 @@
-import { patternList, StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
+import { CSSVariableScopeSort, patternList, StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 
 export class CssVariableHandler {
     main: StylerRegs;
@@ -11,13 +11,13 @@ export class CssVariableHandler {
             patternList.varValuePrinterPattern,
             (match: string, varName: string, defaultVal: string) => {
                 let ky: string = varName;//.toLowerCase();
-                let scope: string = ky.charAt(1);
+                let scope = ky.charAt(1) as CSSVariableScopeSort;
                 let uniqId: string = StylerRegs.internalKey;
                 //console.log(['printer',patternList.varValuePrinterPattern,varName,defaultVal,match]);
 
                 switch (scope) {
                     case "g":
-                        uniqId = '' + this.main.rootInfo;//_curRoot.id;
+                        uniqId = '' + this.main.rootInfo.id;//_curRoot.id;
                         break;
                     case "t":
                         uniqId = _main.TEMPLATE_STAMP_KEY;
@@ -26,7 +26,7 @@ export class CssVariableHandler {
                         uniqId = _main.LOCAL_STAMP_KEY;
                         break;
                 }
-                return StylerRegs.__VAR.GETVALUE(
+                return this.main.__VAR.GETVALUE(
                     ky.substring(3).trim(),
                     uniqId,
                     scope,
@@ -59,7 +59,7 @@ export class CssVariableHandler {
                     default: return match;
                 }
                 let key = ky.substring(3).trim();
-                StylerRegs.__VAR.SETVALUE({ [key]: value }, uniqId, scope, tarEle);
+                this.main.__VAR.SETVALUE({ [key]: value }, uniqId, scope, tarEle);
                 return '';
             }
         );

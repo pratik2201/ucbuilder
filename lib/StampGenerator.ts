@@ -46,6 +46,7 @@ class StyleCodeNode {
         this._content = value;
         if (this.styleHT == undefined) {
             this.styleHT = document.createElement("style");
+            
             this.styleHT.type = "text/css";
             this.styleHT.setAttribute("rel", 'stylesheet');
         }
@@ -78,6 +79,7 @@ export class SourceNode {
             let newcssCode: StyleCodeNode = new StyleCodeNode();
             newcssCode.originalContent = cssContent;
             newcssCode.content = ccontent;
+            newcssCode.styleHT.setAttribute('a-key', key);
             this.cssObj[key] = newcssCode;
         }
     }

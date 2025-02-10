@@ -64,24 +64,26 @@ const styleSeperatorOptions: StyleSeperatorOptions = {
   localNodeElement: undefined,
   //cssVarStampKey: "",
 };
+export type CSSVariableScope = "global" | "local" | "internal" | "template";
+export type CSSVariableScopeSort = "g" | "l" | "i" | "t";
 export class StylerRegs {
-  static __VAR = {
-    getKeyName: (key: string, uniqId: string, code: string): string => {
-        return `--${key}${uniqId}${code}`;
+  __VAR = {
+    getKeyName: (key: string, uniqId: string, code: CSSVariableScopeSort): string => {
+      return `--${key}${uniqId}${code}`;
     },
 
-    SETVALUE: (vlst: VariableList,/*key: string,*/ uniqId: string, code: string, /*value: string,*/ tarEle: HTMLElement = document.body): void => {
-        let style = tarEle.style;
-        for (const [key, value] of Object.entries(vlst)) {
-            style.setProperty(this.__VAR.getKeyName(key, uniqId, code), value);
-        }
-        return;
+    SETVALUE: (vlst: VariableList, uniqId: string, code: CSSVariableScopeSort,  tarEle: HTMLElement = document.body): void => {
+      let style = tarEle.style;
+      for (const [key, value] of Object.entries(vlst)) {
+        style.setProperty(this.__VAR.getKeyName(key, uniqId, code), value);
+      }
+      return;
     },
 
-    GETVALUE: (key: string, uniqId: string, code: string, defaultVal: string): string => {
-        return ` var(${this.__VAR.getKeyName(key, uniqId, code)},${defaultVal}) `;
+    GETVALUE: (key: string, uniqId: string, code: CSSVariableScopeSort, defaultVal: string): string => {
+      return ` var(${this.__VAR.getKeyName(key, uniqId, code)},${defaultVal}) `;
     },
-};
+  };
   static pushPublicStyles(callback: () => void): void {
     import("ucbuilder/ResourcesUC").then(({ ResourcesUC }) => {
       rootPathHandler.source.forEach((row: RootPathRow) => {
@@ -213,15 +215,15 @@ export class StylerRegs {
     let pstamp_key: string = ''; //ATTR_OF.UC.PARENT_STAMP;
     let pstamp_val: string = _this.LOCAL_STAMP_KEY;  // _this.stamp  <-- i changed dont know why
     let _curRoot: RootPathRow = _this.rootInfo;
-   
-    
+
+
     /*if (_params.isForRoot) {
       //pstamp_key = ATTR_OF.UC.ROOT_STAMP;
       _curRoot = (_params._rootinfo == undefined) ? _this.rootInfo : _params._rootinfo;
       //pstamp_val = '' + _curRoot.id;
     }
     console.log([_curRoot]);*/
-    
+
     let rtrn: string = _params.data.replace(patternList.MULTILINE_COMMENT_REGS, "");
     rtrn = rtrn.replace(patternList.SINGLELINE_COMMENT_REGS, "");
 
@@ -387,7 +389,7 @@ export class StylerRegs {
     /// console.log(extraTextAtBegining);
     rtrn = extraTextAtBegining + '' + rtrn;
     //debugger;
-    
+
     rtrn = this.varHandler.handlerVariable(rtrn);
     /*rtrn = rtrn.replace(
       patternList.varValueGetterPattern,
@@ -430,14 +432,14 @@ export class StylerRegs {
             let __ky = ky.substring(3).trim();
             switch (scope) {
               case "g":
-                StylerRegs.__VAR.SETVALUE(
+                _this.__VAR.SETVALUE(
                   { __ky: value },
                   '' + _curRoot.id,
                   scope
                 );
                 return "";
               case "t":
-                StylerRegs.__VAR.SETVALUE(
+                _this.__VAR.SETVALUE(
                   { __ky: value },
                   this.TEMPLATE_STAMP_KEY,
                   scope,
@@ -445,7 +447,7 @@ export class StylerRegs {
                 );
                 return "";
               case "l":
-                StylerRegs.__VAR.SETVALUE(
+                _this.__VAR.SETVALUE(
                   { __ky: value },
                   this.LOCAL_STAMP_KEY,
                   scope,
@@ -453,7 +455,7 @@ export class StylerRegs {
                 );
                 return "";
               case "i":
-                StylerRegs.__VAR.SETVALUE(
+                _this.__VAR.SETVALUE(
                   { __ky: value },
                   StylerRegs.internalKey,
                   scope,

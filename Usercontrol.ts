@@ -9,7 +9,7 @@ import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { SessionManager } from "ucbuilder/lib/SessionManager";
 import { IPassElementOptions, SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
-import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
+import { CSSVariableScope, StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
 import { WinManager } from "ucbuilder/lib/WinManager";
 /*export enum ucVisibility{
@@ -142,29 +142,28 @@ export class Usercontrol {
             }
         },
 
-        setCSS_globalVar: (varList: VariableList /*key: string, value: string*/): void => {
-            let _this = this.ucExtends;
-            StylerRegs.__VAR.SETVALUE(varList, '' + _this.srcNode.styler.ROOT_STAMP_KEY, 'g');
+        setCssVariable: (varList: VariableList, scope: CSSVariableScope) => {
+            let styler = this.ucExtends.srcNode.styler;
+            switch (scope) {
+                case 'global': styler.__VAR.SETVALUE(varList, '' + styler.LOCAL_STAMP_KEY, "g"); break;
+                //case 'template': styler.__VAR.SETVALUE(varList, styler.TEMPLATE_STAMP_KEY, "t", this.ucExtends.self); break;
+                case 'local': styler.__VAR.SETVALUE(varList, styler.LOCAL_STAMP_KEY, "l", this.ucExtends.self); break;
+                case 'internal': styler.__VAR.SETVALUE(varList, StylerRegs.internalKey, "i", this.ucExtends.self); break;
+            }
         },
-        setCSS_localVar: (varList: VariableList /*key: string, value: string*/): void => {
-            let _this = this.ucExtends;
-            StylerRegs.__VAR.SETVALUE(varList, _this.srcNode.styler.LOCAL_STAMP_KEY, 'l', _this.self);
-        },
-        setCSS_internalVar: (varList: VariableList/*key: string, value: string*/): void => {
-            let _this = this.ucExtends;
-            StylerRegs.__VAR.SETVALUE(varList, StylerRegs.internalKey, 'i', _this.self);
-        },
-        getCSS_globalVar: (key: string): string => {
-            let _this = this.ucExtends;
-            return document.body.style.getPropertyValue(StylerRegs.__VAR.getKeyName(key, '' + _this.srcNode.styler.ROOT_STAMP_KEY, 'g'));
-        },
-        getCSS_localVar: (key: string, localEle: HTMLElement): string => {
-            let _this = this.ucExtends;
-            return _this.self.style.getPropertyValue(StylerRegs.__VAR.getKeyName(key, _this.cssVarStampKey, 'l'));
-        },
-        getCSS_internalVar: (key: string, value: string): string => {
-            let _this = this.ucExtends;
-            return _this.self.style.getPropertyValue(StylerRegs.__VAR.getKeyName(key, StylerRegs.internalKey, 'i'));
+        getCssVariable: (key: string, scope: CSSVariableScope): string => {
+            let styler = this.ucExtends.srcNode.styler;
+            switch (scope) {
+                case 'global': return document.body.style.getPropertyValue(
+                    styler.__VAR.getKeyName(key, '' + styler.ROOT_STAMP_KEY, "g"));
+                /*case 'template': return this.ucExtends.self.style.getPropertyValue(
+                    styler.__VAR.getKeyName(key, styler.TEMPLATE_STAMP_KEY, "t"));*/
+                case 'local': return this.ucExtends.self.style.getPropertyValue(
+                    styler.__VAR.getKeyName(key, styler.LOCAL_STAMP_KEY, "l"));
+                case 'internal': return this.ucExtends.self.style.getPropertyValue(
+                    styler.__VAR.getKeyName(key, StylerRegs.internalKey, "i"));
+                default: return '';
+            }
         },
         cssVarStampKey: '0',
         initializecomponent: (param0: IUcOptions): void => {

@@ -11,8 +11,9 @@ import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 //import { createRequire, Module } from "module";
 
 class intenseGenerator {
-    static setCSS_globalVar(varList:VariableList,  _path: string): void  {        
-        StylerRegs.__VAR.SETVALUE(varList, '' + rootPathHandler.getInfo(_path).id, 'g');
+    static setCSS_globalVar(varList: VariableList, _path: string): void  {    
+        let rt = rootPathHandler.getInfo(_path);
+        rt.stampSRC.styler.__VAR.SETVALUE(varList, '' + rt.id, 'g');
     }
     static generateUC<T = string>(path: T, pera: IUcOptions, ...args: any[]): Usercontrol {
         let param0: IUcOptions = newObjectOpt.copyProps(pera, UcOptions);
