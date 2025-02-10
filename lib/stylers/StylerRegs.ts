@@ -87,7 +87,7 @@ export class StylerRegs {
   static pushPublicStyles(callback: () => void): void {
     import("ucbuilder/ResourcesUC").then(({ ResourcesUC }) => {
       rootPathHandler.source.forEach((row: RootPathRow) => {
-        let _stylepath: string = row.tInfo.replaceWith + "/styles.scss";
+        let _stylepath: string = row.alices + "/styles.scss";
 
         let node: RootPathRow = row;//rootPathHandler.convertToRow(row, true);
         node.isAlreadyFullPath = true;

@@ -33,6 +33,7 @@ class StyleCodeNode {
 
     originalContent: string;
     styleHT: HTMLStyleElement;
+    counter: number = 0;
     constructor() {
         this.styleHT = document.createElement("style");
         this.styleHT.type = "text/css";
@@ -70,6 +71,8 @@ export class SourceNode {
     root: RootPathRow;
     cssObj: { [key: string]: StyleCodeNode } = {};
     pushCSSByContent(key: string, cssContent: string, localNodeElement?: HTMLElement) {
+        console.log(key);
+        
         let csnd = this.cssObj[key];
         let ccontent = this.styler.parseStyleSeperator_sub({
             data: cssContent,
@@ -86,7 +89,7 @@ export class SourceNode {
     pushCSS(cssFilePath: string, localNodeElement?: HTMLElement) {
         this.pushCSSByContent(
             cssFilePath,
-            FileDataBank.readFile(cssFilePath, { replaceContentWithKeys: true }),
+            FileDataBank.readFile(cssFilePath, { /*replaceContentWithKeys: true*/ }),
             localNodeElement
         );
     }
@@ -125,14 +128,6 @@ export class SourceNode {
         }
         return stamplist;
     }
-    /*loadCSS() {
-        if (this.styleHT != undefined) return;
-        this.styleHT = document.createElement("style");
-        this.styleHT.type = "text/css";
-        this.styleHT.setAttribute("rel", 'stylesheet');        
-        this.styleHT.innerHTML = this.cssCode.content;
-        SourceNode.resourcesHT.appendChild(this.styleHT);
-    }*/
     loadHTML(callback = (s: string) => s) {
         let htCode = this.htmlCode;
         htCode.content = this.styler.parseStyle(htCode.originalContent);
@@ -167,9 +162,12 @@ export class StampNode {
         key: string, accessName?: string, root: RootPathRow,
         generateStamp?: boolean,
     }): SourceNode {
+        
         let myObjectKey = key; //this.GetKey(key, alices);
         let rtrn: SourceNode = this.childs[myObjectKey];
         if (rtrn == undefined) {
+           // console.log(['.....new',myObjectKey]);
+            
             rtrn = new SourceNode();
             //rtrn.main = this;
             rtrn.styler = new StylerRegs(root, generateStamp);
@@ -178,8 +176,8 @@ export class StampNode {
             rtrn.accessKey = accessName;
             this.childs[myObjectKey] = rtrn;
         } else rtrn.isNewSource = false;
-        rtrn.counter++;
-        //console.log([myObjectKey, rtrn.counter]);
+        rtrn.counter++;      
+        //console.log([rtrn.counter,'open',myObjectKey]);
         return rtrn;
     }
     static deregisterSource(key: string): boolean {
@@ -188,6 +186,8 @@ export class StampNode {
         let rtrn: SourceNode = this.childs[myObjectKey];
         if (rtrn != undefined) {
             rtrn.counter--;
+            //console.log([rtrn.counter,'close',myObjectKey]);
+            
             result = (rtrn.counter == 0);
         }
         return result;

@@ -204,6 +204,7 @@ export class TemplateNode {
     generateNode: (jsonRow: {}): HTMLElement => {
       let _this = this.extended;
       let dta = _this.generateContent(jsonRow) as string;
+      
       let element = dta.$();
       //console.log(_this.stampRow);
 
