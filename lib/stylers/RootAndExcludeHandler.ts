@@ -1,9 +1,7 @@
 
-import { openCloser } from "ucbuilder/global/openCloser";
-import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { patternList, StylerRegs, StyleSeperatorOptions } from "ucbuilder/lib/stylers/StylerRegs";
 import { RootPathRow } from "ucbuilder/global/findAndReplace";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
+import { patternList, StylerRegs, StyleSeperatorOptions } from "ucbuilder/lib/stylers/StylerRegs";
 export const scopeSelectorOptions: ScopeSelectorOptions = {
     selectorText: "",
     scopeSelectorText: "",

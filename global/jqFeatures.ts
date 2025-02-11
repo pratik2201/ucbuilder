@@ -605,10 +605,10 @@ class jqFeatures {
             }
         }
         String.prototype.PHP_ESC = function () {
-            return (this as string).replace(/<\?(=|php)(.*?)\?>/gm, '<!--?$1$2?-->');
+            return (this as string).replace(/<\?(=|php| )(.*?)\?>/gm, '<!--?$1$2?-->');
         } 
         String.prototype.PHP_DESC = function () {
-            return (this as string).replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
+            return (this as string).replace(/<!--\?(=|php )(.*?)\?-->/gm, '<?$1$2?>');
         } 
         String.prototype.parseUc = function <T = Usercontrol>(val: T): string {
             var div = document.createElement('pre');

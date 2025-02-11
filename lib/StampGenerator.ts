@@ -188,6 +188,8 @@ export class StampNode {
             //console.log([rtrn.counter,'close',myObjectKey]);
             
             result = (rtrn.counter <= 0);
+            console.log([rtrn.counter,'removed',myObjectKey]);
+            
         }
         return result;
     }
