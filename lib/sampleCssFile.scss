@@ -1,0 +1,37 @@
+$var: yello;
+
+:root {
+    --abc: green;
+}
+
+ucbuilder {
+
+    text-box:focus-within,
+    date-box:focus-within,
+    text-area:focus-within,
+    textarea:focus,
+    select:focus {
+        border-color: -g-CLR_INPUT_FOCUS_BORDER--;
+        animation-name: tbFocus;
+        background-color: -g-CLR_INPUT_FOCUS--;
+        color: -g-CLR_INPUT_FOCUS_FORE--;
+    }
+
+    uccontrols{
+        textarea {
+            resize: none;
+            /*
+            background: url('https:/gfgfgt/gyh/* hn   by by  yyyhyhyh');
+            */
+        }
+    
+        text-box,
+        date-box,
+        text-area {
+            white-space: nowrap;
+    
+            overflow: hidden;
+        }
+    
+    }
+}
