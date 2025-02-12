@@ -43,7 +43,7 @@ export class SelectorHandler {
     constructor(main:StylerRegs) {
         this.main = main;
     }
-    giveContents(contents) {
+    /*giveContents(contents) {
         let oc = new openCloser();
         let rtrn = oc.doTask('(', ')', contents, (selector, cssStyle, opened) => {
             if (opened > 1) {
@@ -61,7 +61,7 @@ export class SelectorHandler {
 
         });
         return rtrn;
-    }
+    }*/
     parseScopeSeperator(scopeOpt: ScopeSelectorOptions): string {
         //return this.parseScopeSeperator_sub(scopeOpt)
        /* if (scopeOpt.selectorText === '[SELF_] mainContainer') {

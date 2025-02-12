@@ -294,7 +294,8 @@ export const controlOpt = {
     selectAllText(elem: HTMLElement): void {
         if ((elem as HTMLInputElement).select) (elem as HTMLInputElement).select();
         else selectElementContents(elem);
-        function selectElementContents(el: HTMLElement) {
+        function selectElementContents(el: HTMLElement) {            
+            if (!el.isContentEditable) return;
             var range = document.createRange();
             range.selectNodeContents(el);
             var sel = window.getSelection();
