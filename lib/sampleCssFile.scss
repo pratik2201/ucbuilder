@@ -1,39 +1,27 @@
-$var: yello;
+@use "sharepnl/lib/mainFormView/opened/companyItem.tpt.common.scss";
 
-:root {
-    --abc: green;
-}
-
-
-
-ucbuilder {
-
-    text-box:focus-within,
-    date-box:focus-within,
-    text-area:focus-within,
-    textarea:focus,
-    select:focus {
-        border-color: -g-CLR_INPUT_FOCUS_BORDER--;
-        animation-name: tbFocus;
-        background-color: -g-CLR_INPUT_FOCUS--;
-        color: -g-CLR_INPUT_FOCUS_FORE--;
+&_primary {
+    [SELF_][isActive="true"] {
+        background-color: -g-CLR_CURRENT--;
     }
 
-    uccontrols{
-        textarea {
-            resize: none;
-            /*
-            background: url('https:/gfgfgt/gyh/* hn   by by  yyyhyhyh');
-            */
-        }
-    
-        text-box,
-        date-box,
-        text-area {
-            white-space: nowrap;
-    
-            overflow: hidden;
-        }
-    
+    [SELF_][aria-current="true"]>container {
+        background-color: rgb(219 219 219 / 64%);
+        border-color: rgb(219 219 219 / 64%);
+        ;
+    }
+}
+
+&activeCompany {
+    @use "sharepnl/lib/mainFormView/opened/companyItem.tpt.common.scss";
+
+    [SELF_][isActive="true"] {
+        background-color: -g-CLR_CURRENT--;
+    }
+
+    [SELF_][aria-current="true"]>container {
+        background-color: rgb(219 219 219 / 64%);
+        border-color: rgb(219 219 219 / 64%);
+        ;
     }
 }

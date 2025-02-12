@@ -11,11 +11,10 @@ interface OCIterator {
 
 export class OpenCloseHandler {
     ignoreList: OpenCloseCharNode[] = [];    
-    parse(oc:OpenCloseCharNode,str: string) {
+    parse(oc:OpenCloseCharNode,str: string):OCIterator[] {
         console.log(str);
-        //console.log(this.ignoreList);
         let result: OCIterator[] = [];
-        let stack: OCIterator[] = [];
+        let stack: { node: OCIterator; startIndex: number }[] = [];
         let buffer = "";
         let level = 0;
         let i = 0;
@@ -31,7 +30,6 @@ export class OpenCloseHandler {
                     buffer += str.substring(i, endIdx + ignored.c.length);
                     i = endIdx + ignored.c.length - 1;
                 } else {
-                    // If no closing delimiter found, take rest of string
                     buffer += str.substring(i);
                     break;
                 }
@@ -40,7 +38,8 @@ export class OpenCloseHandler {
             else if (str.startsWith(oc.o, i)) {
                 let frontContent = buffer.trim();
                 buffer = "";
-                stack.push({ frontContent, betweenContent: "", level, child: [] });
+                let node: OCIterator = { frontContent, betweenContent: "", level, child: [] };
+                stack.push({ node, startIndex: i + oc.o.length }); // Track block start index
                 level++;
                 i += oc.o.length - 1;
             }
@@ -50,12 +49,13 @@ export class OpenCloseHandler {
                 buffer = "";
 
                 if (stack.length > 0) {
-                    let node = stack.pop()!;
-                    node.betweenContent = betweenContent;
+                    let { node, startIndex } = stack.pop()!;
+                    node.betweenContent = str.substring(startIndex, i).trim(); // Full content inside `{}`
+
                     level--;
 
                     if (stack.length > 0) {
-                        stack[stack.length - 1].child.push(node);
+                        stack[stack.length - 1].node.child.push(node);
                     } else {
                         result.push(node);
                     }
@@ -69,6 +69,7 @@ export class OpenCloseHandler {
 
             i++;
         }
+
         console.log(result);
         
         return result;
