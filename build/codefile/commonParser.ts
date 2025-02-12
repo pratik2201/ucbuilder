@@ -60,7 +60,7 @@ export class commonParser {
         try {
 
             if (code.trim() != '') {
-                this.formHT = code.PHP_ESC().$();
+                this.formHT = code.PHP_REMOVE().$();
                 primaryChild = this.formHT;
                 if (this.formHT['length'] != undefined) {
                     isMultipleElement = true;
@@ -69,14 +69,14 @@ export class commonParser {
                     primaryChild = mht[0];
                     if (xAt == null || !xAt.equalIgnoreCase(_row.src.mainFileRootPath)) {
                         mht[0].setAttribute('x-at', _row.src.mainFileRootPath);                        
-                        _row.htmlFile.content = mht.map(s=>s.outerHTML).join('').PHP_DESC();
+                        _row.htmlFile.content = mht.map(s=>s.outerHTML).join('').PHP_ADD();
                         _row.htmlFile.reGenerate = true;
                     }
                 } else {
                     let xAt = this.formHT.getAttribute('x-at');
                     if (xAt == null || !xAt.equalIgnoreCase(_row.src.mainFileRootPath)) {
                         this.formHT.setAttribute('x-at', _row.src.mainFileRootPath);
-                        _row.htmlFile.content = this.formHT.outerHTML.PHP_DESC();
+                        _row.htmlFile.content = this.formHT.outerHTML.PHP_ADD();
                         _row.htmlFile.reGenerate = true;
                     }
 
@@ -134,7 +134,7 @@ export class commonParser {
 <!-- DONT MODIFY "x-at" ATTRIBUTE FROM PRIMARY FILE -->
 </wrapper>`;
                 }
-                let cntHT = template.htmlContents.PHP_ESC().$() as HTMLElement;
+                let cntHT = template.htmlContents.PHP_REMOVE().$() as HTMLElement;
                 if (cntHT['length'] != undefined) cntHT = cntHT[0];
                 const elements = Array.from(cntHT.querySelectorAll(`[${propOpt.ATTR.X_NAME}]`));
                 for (let i = 0, iObj = elements, len = iObj.length; i < len; i++) {

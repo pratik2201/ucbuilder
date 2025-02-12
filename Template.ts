@@ -63,11 +63,11 @@ export class Template {
       rtrn.cssContents = FileDataBank.readFile(csspath, { isFullPath: isCSSFullpath, replaceContentWithKeys: true });
       rtrn.htmlContents = FileDataBank.readFile(htmlpath, { isFullPath: isHTMLFullpath, });
       if (rtrn.htmlContents == undefined) debugger;
-      rtrn.htmlContents = rtrn.htmlContents?.PHP_DESC() ?? undefined;
+      rtrn.htmlContents = rtrn.htmlContents?.PHP_ADD() ?? undefined;
     } else {
       rtrn.objectKey = cinfo.style.rootPath;
       rtrn.cssContents = FileDataBank.readFile(cinfo.style.fullPath, { replaceContentWithKeys: true });
-      rtrn.htmlContents = iele.outerHTML.PHP_DESC();
+      rtrn.htmlContents = iele.outerHTML.PHP_ADD();
     }
     /*iele.getAttribute('x-name');
     iele.getAttribute('x-relative-child');
@@ -100,9 +100,74 @@ export class Template {
     }*/
     return rtrn;
   }
-  private static GetTemplatePathOptionsArray(cinfo: codeFileInfo): ITemplatePathOptions[] {
+  static GetOptionsByContent(htmlcontent: string, cssContent: string): { [key: string]: ITemplatePathOptions } {
+    let ele = htmlcontent.PHP_REMOVE().$();
+    let rtrn: { [key: string]: ITemplatePathOptions } = {};
+    let isSingleNode = ele.hasAttribute('id');
+    if (!isSingleNode) {
+      for (let i = 0, iObj = Array.from(ele.children), ilen = iObj.length; i < ilen; i++) {
+        const ichild = iObj[i];
+        let id = ichild.getAttribute('id');
+        if (id != null) {
+          rtrn[id] = {
+            accessKey: id,
+            objectKey: undefined,
+            htmlContents: ichild.outerHTML.PHP_ADD(),
+          };
+        }
+      }
+    } else {
+      let id = ele.getAttribute('id');
+      rtrn[id] = {
+        accessKey: id,
+        objectKey: undefined,
+        htmlContents: ele.outerHTML.PHP_ADD(),
+      };
+    }
+    //cssContent    
+    let cssExtrct = StylerRegs.ScssExtractor(cssContent);
+    let tptCSS = "";
+    //console.log(cssContent);
+    let gkeys = [] as string[];
+    for (let i = 0, iObj = cssExtrct, ilen = iObj.length; i < ilen; i++) {
+      const iItem = iObj[i];
+      let fc = ' '+iItem.frontContent;
+      let needBetween = true;
+      tptCSS += fc.replace(/([\s\S]*)\#(\w+)\s*$/mg, (m, prevCn, ids) => {
+        //console.log([fc, prevCn, ids]);
+        let robj = rtrn[ids];
+        if (robj != undefined) {
+          robj.cssContents = iItem.betweenContent;
+          needBetween = false;
+          gkeys.push(ids);
+          return '';
+        } else {
+          if (iItem.child.length == 0) return m;
+          else { needBetween = false; return ''; }
+        }
+      });
+      if (needBetween) tptCSS += '{ ' + iItem.betweenContent + ' }';      
+    }
+    for(let i=0,iObj=gkeys,ilen=iObj.length   ;   i < ilen   ;   i++){ 
+      const iItem = iObj[i];
+      let ck = rtrn[iItem].cssContents;
+      rtrn[iItem].cssContents = tptCSS+ck;
+    }
+    //console.log(tptCSS);
+    console.log(rtrn);    
+    return rtrn;
+  }
+  private static GetTemplatePathOptionsObject(cinfo: codeFileInfo): { [key: string]: ITemplatePathOptions } {
     let data = FileDataBank.readFile(cinfo.html.fullPath, {});
-    let ele = data.PHP_DESC().$();
+    let robj = this.GetOptionsByContent(data,
+      FileDataBank.readFile(cinfo.style.fullPath, { replaceContentWithKeys: true }));
+    let _mainFileRootPath = cinfo.mainFileRootPath;
+    for (let i = 0, iObj = Object.values(robj), ilen = iObj.length; i < ilen; i++) {
+      const irow = iObj[i];
+      irow.objectKey = _mainFileRootPath + "#" + irow.accessKey;
+    }
+    return robj;
+    /*let ele = data.PHP_ADD().$();
     let rtrn: ITemplatePathOptions[] = [];
     if (ele.length != undefined) {
       for (let i = 0, iObj = ele, ilen = iObj.length; i < ilen; i++) {
@@ -118,28 +183,29 @@ export class Template {
         htmlContents: data,
       };
       rtrn.push(rs);
-      /*let rs = Template.getTemplateOptionByElement(ele, cinfo);
-      rtrn.push(rs); */
     }
-    return rtrn;
-    /*let mainFilePath = strOpt.trim_(htmlFilePath, ".html");
-    let htmlContents = FileDataBank.readFile(mainFilePath + ".html", {});
-    return this.byContents(htmlContents, mainFilePath, returnArray);*/
+    return rtrn;*/
   }
   static GetObjectOfTemplate(cinfo: codeFileInfo): { [key: string]: ITemplatePathOptions } {
-    let ar = Template.GetTemplatePathOptionsArray(cinfo);
+    return Template.GetTemplatePathOptionsObject(cinfo);
+    /*let ar = Template.GetTemplatePathOptionsObject(cinfo);
     let robj: { [key: string]: ITemplatePathOptions } = {};
     for (let i = 0, iObj = ar, ilen = iObj.length; i < ilen; i++) {
       const itpt = iObj[i];
       robj[itpt.accessKey] = itpt;
     }
-    return robj;
+    return robj;*/
   }
   static GetArrayOfTemplate(cinfo: codeFileInfo): ITemplatePathOptions[] {
-    return Template.GetTemplatePathOptionsArray(cinfo);
+    let ar = [] as ITemplatePathOptions[];
+    let objs = Template.GetTemplatePathOptionsObject(cinfo);
+    for (let i = 0, iObj = Object.keys(objs), ilen = iObj.length; i < ilen; i++)
+      ar.push(objs[iObj[i]]);
+    return ar;
+
   }
   createTemplate() {
-    
+
   }
   constructor() {
     //Template._CSS_VAR_STAMP++;
@@ -204,7 +270,7 @@ export class TemplateNode {
     generateNode: (jsonRow: {}): HTMLElement => {
       let _this = this.extended;
       let dta = _this.generateContent(jsonRow) as string;
-      
+
       let element = dta.$();
       //console.log(_this.stampRow);
 
@@ -255,7 +321,7 @@ export class TemplateNode {
           tptExt.srcNode.styler,
           eleHT.nodeName
         );
-      tptExt.srcNode.pushCSSByContent(param0.cfInfo.style.fullPath,tptPathOpt.cssContents,tptExt.parentUc.ucExtends.self);
+      tptExt.srcNode.pushCSSByContent(param0.cfInfo.style.fullPath, tptPathOpt.cssContents, tptExt.parentUc.ucExtends.self);
       /*if (!tptExt.srcNode.cssCode.hasContent) {
         tptExt.srcNode.cssCode.content = tptExt.srcNode.styler.parseStyleSeperator_sub({
           data: tptPathOpt.cssContents,

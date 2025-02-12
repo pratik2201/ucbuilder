@@ -12,7 +12,7 @@ interface OCIterator {
 export class OpenCloseHandler {
     ignoreList: OpenCloseCharNode[] = [];    
     parse(oc:OpenCloseCharNode,str: string):OCIterator[] {
-        console.log(str);
+       // console.log(str);
         let result: OCIterator[] = [];
         let stack: { node: OCIterator; startIndex: number }[] = [];
         let buffer = "";
@@ -70,7 +70,7 @@ export class OpenCloseHandler {
             i++;
         }
 
-        console.log(result);
+        //console.log(result);
         
         return result;
     }

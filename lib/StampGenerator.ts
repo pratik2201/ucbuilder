@@ -137,7 +137,7 @@ export class SourceNode {
             this.dataHT.setAttribute('x-tabindex', '-1');
         }
         htCode.content = this.dataHT.outerHTML;
-        htCode.content = htCode.content.PHP_DESC();//.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
+        htCode.content = htCode.content.PHP_ADD();//.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
     }
     release() {
         if (StampNode.deregisterSource(this.myObjectKey)) {

@@ -9,6 +9,9 @@ import { RootAndExcludeHandler } from "ucbuilder/lib/stylers/RootAndExcludeHandl
 import { SelectorHandler } from "ucbuilder/lib/stylers/SelectorHandler";
 import { ThemeCssHandler } from "ucbuilder/lib/stylers/ThemeCssHandler";
 import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
+import { OpenCloseHandler } from "ucbuilder/lib/OpenCloseHandler";
+
+
 
 export type VariableList = { [key: string]: string };
 
@@ -67,12 +70,20 @@ const styleSeperatorOptions: StyleSeperatorOptions = {
 export type CSSVariableScope = "global" | "local" | "internal" | "template";
 export type CSSVariableScopeSort = "g" | "l" | "i" | "t";
 export class StylerRegs {
+  static ScssExtractor(csscontent: string) {
+    let ocHandler = new OpenCloseHandler();
+    ocHandler.ignoreList.push({ o: `"`, c: `"` },
+      { o: `'`, c: `'` },
+      { o: "`", c: "`" },
+      { o: "/*", c: "*/" });
+    return ocHandler.parse({ o: '{', c: '}' }, csscontent);
+  }
   __VAR = {
     getKeyName: (key: string, uniqId: string, code: CSSVariableScopeSort): string => {
       return `--${key}${uniqId}${code}`;
     },
 
-    SETVALUE: (vlst: VariableList, uniqId: string, code: CSSVariableScopeSort,  tarEle: HTMLElement = document.body): void => {
+    SETVALUE: (vlst: VariableList, uniqId: string, code: CSSVariableScopeSort, tarEle: HTMLElement = document.body): void => {
       let style = tarEle.style;
       for (const [key, value] of Object.entries(vlst)) {
         style.setProperty(this.__VAR.getKeyName(key, uniqId, code), value);

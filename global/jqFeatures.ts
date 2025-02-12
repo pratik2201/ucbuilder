@@ -604,10 +604,10 @@ class jqFeatures {
                 return ar as any;
             }
         }
-        String.prototype.PHP_ESC = function () {
+        String.prototype.PHP_REMOVE = function () {
             return (this as string).replace(/<\?(=|php| )(.*?)\?>/gm, '<!--?$1$2?-->');
         } 
-        String.prototype.PHP_DESC = function () {
+        String.prototype.PHP_ADD = function () {
             return (this as string).replace(/<!--\?(=|php )(.*?)\?-->/gm, '<?$1$2?>');
         } 
         String.prototype.parseUc = function <T = Usercontrol>(val: T): string {
