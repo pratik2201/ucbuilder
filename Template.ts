@@ -103,8 +103,8 @@ export class Template {
   static GetOptionsByContent(htmlcontent: string, cssContent: string): { [key: string]: ITemplatePathOptions } {
     let ele = htmlcontent.PHP_REMOVE().$();
     let rtrn: { [key: string]: ITemplatePathOptions } = {};
-    let isSingleNode = ele.hasAttribute('id');
-    if (!isSingleNode) {
+    let hasMultipleNode = !ele.hasAttribute('id');
+    if (hasMultipleNode) {
       for (let i = 0, iObj = Array.from(ele.children), ilen = iObj.length; i < ilen; i++) {
         const ichild = iObj[i];
         let id = ichild.getAttribute('id');
@@ -124,21 +124,34 @@ export class Template {
         htmlContents: ele.outerHTML.PHP_ADD(),
       };
     }
+    let rtrnKeys = Object.keys(rtrn);
+    let isSimpleMode = false;
+    if (rtrnKeys.length == 0) {
+      rtrn["primary"] = {
+        accessKey: "primary",
+        objectKey: undefined,
+        htmlContents: ele.outerHTML.PHP_ADD(),
+      };
+      rtrnKeys = ["primary"];
+      isSimpleMode = true;
+    }
     //cssContent    
     let cssExtrct = StylerRegs.ScssExtractor(cssContent);
-    let tptCSS = "";
+    let outerRulesCSS = "";
     //console.log(cssContent);
     let gkeys = [] as string[];
+    let hasAnyId = false;
     for (let i = 0, iObj = cssExtrct, ilen = iObj.length; i < ilen; i++) {
       const iItem = iObj[i];
-      let fc = ' '+iItem.frontContent;
+      let fc = ' ' + iItem.frontContent;
       let needBetween = true;
-      tptCSS += fc.replace(/([\s\S]*)\#(\w+)\s*$/mg, (m, prevCn, ids) => {
+      outerRulesCSS += fc.replace(/([\s\S]*)\#(\w+)\s*$/mg, (m, prevCn, ids) => {
         //console.log([fc, prevCn, ids]);
         let robj = rtrn[ids];
         if (robj != undefined) {
           robj.cssContents = iItem.betweenContent;
           needBetween = false;
+          hasAnyId = true;
           gkeys.push(ids);
           return '';
         } else {
@@ -146,15 +159,20 @@ export class Template {
           else { needBetween = false; return ''; }
         }
       });
-      if (needBetween) tptCSS += '{ ' + iItem.betweenContent + ' }';      
+      if (needBetween) outerRulesCSS += '{ ' + iItem.betweenContent + ' }';
     }
-    for(let i=0,iObj=gkeys,ilen=iObj.length   ;   i < ilen   ;   i++){ 
+    if (!hasAnyId && isSimpleMode) {
+      rtrn["primary"].cssContents = cssContent;
+      return rtrn;
+    }
+    for (let i = 0, iObj = rtrnKeys, ilen = iObj.length; i < ilen; i++) {
       const iItem = iObj[i];
       let ck = rtrn[iItem].cssContents;
-      rtrn[iItem].cssContents = tptCSS+ck;
+      rtrn[iItem].cssContents = outerRulesCSS + ck;
     }
+
     //console.log(tptCSS);
-    console.log(rtrn);    
+    //console.log(rtrn);
     return rtrn;
   }
   private static GetTemplatePathOptionsObject(cinfo: codeFileInfo): { [key: string]: ITemplatePathOptions } {
