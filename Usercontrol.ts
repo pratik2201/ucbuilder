@@ -198,7 +198,7 @@ export class Usercontrol {
             });
             let isAlreadyExist = ucExt.srcNode.htmlCode.load(FileDataBank.readFile(ucExt.fileInfo.html.fullPath, { isFullPath: true }));
             if (!isAlreadyExist)
-                ucExt.srcNode.loadHTML(param0.source.beforeContentAssign);
+                ucExt.srcNode.loadHTML(/*param0.source.beforeContentAssign*/);
 
             //console.log([ucExt.fileInfo.mainFileRootPath,res.hasHTMLContentExists]);
 

@@ -125,10 +125,10 @@ export class SourceNode {
         }
         return stamplist;
     }
-    loadHTML(callback = (s: string) => s) {
+    loadHTML(/*callback = (s: string) => s*/) {
         let htCode = this.htmlCode;
         htCode.content = this.styler.parseStyle(htCode.originalContent);
-        if (callback != undefined) htCode.content = callback(htCode.content);
+        //if (callback != undefined) htCode.content = callback(htCode.content);
         this.dataHT = htCode.content.$();
         this.styler.nodeName = this.dataHT.nodeName;
         this.dataHT.setAttribute(ATTR_OF.UC.ALL, this.uniqStamp);

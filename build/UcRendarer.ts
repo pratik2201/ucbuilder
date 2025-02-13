@@ -32,7 +32,7 @@ export class UcRendarer {
     this.tptParams = newObjectOpt.clone(TptOptions);
     this.tptParams.cfInfo = this.fInfo;
     this.tptParams.parentUc = parentUc;
-    this.tptParams.elementHT = tname.$();
+    //this.tptParams.elementHT = tname.$();
     //this.tptParams.source.reloadDesign = true;
     //this.tptParams.source.reloadKey = "" + ResourcesUC.rendrarCounter;
   }
@@ -51,14 +51,14 @@ export class UcRendarer {
   }
 
   generateTpt(htmlContents: string, cssContent: string): Template {
-    this.tptParams.source.htmlContents = htmlContents;
-    this.tptParams.source.cssContents = cssContent;
+    /*this.tptParams.source.htmlContents = htmlContents;
+    this.tptParams.source.cssContents = cssContent;*/
     let desCode: Template = undefined;
-    this.output = this.build.getOutputCode(this.fInfo, htmlContents);
+   /* this.output = this.build.getOutputCode(this.fInfo, htmlContents);
     eval(`
       ${this.output.designerCode} 
       desCode = new designer([this.tptParams]); 
-    `);
+    `);*/
     return desCode;
   }
 }

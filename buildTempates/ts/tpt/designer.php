@@ -47,21 +47,21 @@ export class <?=designer.className ?> extends Template {
     public&nbsp;<?=$tpt.name?>:<?=$tpt.name?>_TEMPLATE;<?php } ?>
 
     constructor(args:IArguments){    
-        super();    
         let aargs = Template.extractArgs(arguments);
         let fargs = aargs[aargs.length - 1] as ITptOptions;
-        this.extended.parentUc = fargs.parentUc;
+        super(fargs);    
+        //this.extended.parentUc = fargs.parentUc;
         //let fargs = Template.extractArgs(arguments) as TptOptions;
         
         //fargs = fargs[fargs.length-1] as TptOptions;
-        let ext = this.extended;
+        //let ext = this.extended;
         let tpts = Template.GetObjectOfTemplate(fargs.cfInfo);
        
         <?php for(let j=0;j<designer.templetes.length;j++){ let $tpt=designer.templetes[j]; ?>
         this.<?=$tpt.name ?> = new <?=$tpt.name ?>_TEMPLATE(this); // ext._templeteNode as <?=$tpt.name?>_TEMPLATE;
-        this.<?=$tpt.name?>.extended.initializecomponent(fargs,tpts['<?=$tpt.name?>'],"<?=$tpt.name?>"); 
+        this.<?=$tpt.name?>.extended.initializecomponent(fargs,tpts['<?=$tpt.name?>']); 
         <?php } ?>
 
-        fargs.elementHT.remove();
+        //fargs.elementHT.remove();
     }
 }

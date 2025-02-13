@@ -39,13 +39,13 @@ class intenseGenerator {
         let param0: ITptOptions = Object.assign(pera, TptOptions);
         let row = ResourcesUC.codefilelist.getObj(path);
         param0.cfInfo = row.codefileObj;
-        if (param0.elementHT == undefined) {
+        /*if (param0.elementHT == undefined) {
             let tname = row.codefileObj.name;
             param0.elementHT =
                 (param0.parentUc == undefined) ?
                         rootPathHandler.contentHT :
                     param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$(),{ skipTopEle:true }) as HTMLElement;
-        }
+        }*/
         args.push(param0);
         let uc: Template = (new (row.obj)(...args));
         return uc;

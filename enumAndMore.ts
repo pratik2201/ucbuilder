@@ -64,16 +64,14 @@ export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
 export type StringExchangerCallback = (content: string) => string;
 export interface ISourceOptions {
     
-    accessKey: string;
     htmlContents?: string;
     cssContents?: string;
-    beforeContentAssign: StringExchangerCallback;
+    //beforeContentAssign: StringExchangerCallback;
 }
 export const SourceOptions: ISourceOptions = {
-    accessKey: "",
-    beforeContentAssign: (content) => {
+    /*beforeContentAssign: (content) => {
         return content;
-    },
+    },*/
 };
 
 export interface ITemplatePathOptions {
@@ -121,12 +119,14 @@ export const UcOptions: IUcOptions = {
 
 export interface ITptOptions {
     cfInfo?: codeFileInfo;
-    elementHT?: HTMLElement;
-    source?: ISourceOptions;
+   /// elementHT?: HTMLElement;
+   // source?: ISourceOptions;
+    //beforeContentAssign?: (s: string) => string;
    // accessName?:string,
     parentUc?: Usercontrol;
 }
 export const TptOptions: ITptOptions = {
-    source: newObjectOpt.clone<ISourceOptions>(SourceOptions),
+    //source: newObjectOpt.clone<ISourceOptions>(SourceOptions),
+    //beforeContentAssign:(s)=>s,
    // accessName:'',
 };

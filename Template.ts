@@ -145,7 +145,7 @@ export class Template {
       const iItem = iObj[i];
       let fc = ' ' + iItem.frontContent;
       let needBetween = true;
-      outerRulesCSS += fc.replace(/([\s\S]*)\#(\w+)\s*$/mg, (m, prevCn:string, ids:string) => {
+      outerRulesCSS += fc.replace(/([\s\S]*)\#(\w+)\s*$/mg, (m, prevCn: string, ids: string) => {
         //console.log([fc, prevCn, ids]);
         let robj = rtrn[ids];
         if (robj != undefined) {
@@ -153,7 +153,7 @@ export class Template {
           needBetween = false;
           hasAnyId = true;
           gkeys.push(ids);
-          return ' '+prevCn.trim()+' ';
+          return ' ' + prevCn.trim() + ' ';
         } else {
           if (iItem.child.length == 0) return m;
           else { needBetween = false; return ''; }
@@ -222,21 +222,32 @@ export class Template {
     return ar;
 
   }
-  createTemplate() {
-
+  createTemplate(tptPathOpt: ITemplatePathOptions): TemplateNode {
+    let tnode = new TemplateNode(this);
+    let tExt = this.extended;
+    let cfg = Object.assign({}, TptOptions);
+    cfg.cfInfo = tExt.cfInfo;
+    cfg.parentUc = tExt.parentUc;
+    tnode.extended.initializecomponent(cfg, tptPathOpt);
+    return tnode;
   }
-  constructor() {
+  constructor(pera: ITptOptions) {
     //Template._CSS_VAR_STAMP++;
     StylerRegs.stampNo++;
+    this.extended.parentUc = pera.parentUc;
+    this.extended.cfInfo = pera.cfInfo;
     //this.extended.cssVarStampKey = "t" + Template._CSS_VAR_STAMP;
   }
-
+  
   extended = {
+    cfInfo: undefined as codeFileInfo,
     parentUc: undefined as Usercontrol,
   };
 }
 export class TemplateNode {
+  static COUNTER = 0;
   constructor(main: Template) {
+    TemplateNode.COUNTER++;
     this.extended.main = main;
     //Template._CSS_VAR_STAMP++;
     //this.extended.cssVarStampKey = "t" + Template._CSS_VAR_STAMP;
@@ -300,12 +311,11 @@ export class TemplateNode {
 
     initializecomponent: (
       _args: ITptOptions,
-      tptPathOpt: ITemplatePathOptions,
-      tptname: string
+      tptPathOpt: ITemplatePathOptions
     ) => {
       let tptExt = this.extended;
+
       let param0 = Object.assign(Object.assign({}, TptOptions), _args);
-      param0.source.accessKey = tptPathOpt.accessKey;
       tptExt.srcNode = StampNode.registerSoruce(
         {
           key: tptPathOpt.objectKey /*+ "@" + tptPathOpt.accessKey*/,
@@ -315,7 +325,7 @@ export class TemplateNode {
         });
       let isAlreadyExist = tptExt.srcNode.htmlCode.load(tptPathOpt.htmlContents);
       if (!isAlreadyExist)
-        tptExt.srcNode.loadHTML(param0.source.beforeContentAssign);
+        tptExt.srcNode.loadHTML(/*param0.beforeContentAssign*/);
 
       let htEle = tptExt.srcNode.dataHT;
 
@@ -323,8 +333,8 @@ export class TemplateNode {
         .filter((s) => s.nodeName.toLowerCase().startsWith("x.temp-"))
         .forEach((s) => htEle.removeAttribute(s.nodeName));
 
-      let eleHT = param0.elementHT;
-      tptExt.parentUc = param0.parentUc;
+      // let eleHT = param0.elementHT;
+      tptExt.parentUc = tptExt.main.extended.parentUc;
       tptExt.srcNode.styler.wrapperHT = tptExt.parentUc.ucExtends.wrapperHT;
       tptExt.srcNode.styler.parent = tptExt.parentUc.ucExtends.srcNode.styler;
       tptExt.srcNode.styler.controlName = tptPathOpt.accessKey;
@@ -333,28 +343,13 @@ export class TemplateNode {
         tptExt.parentUc.ucExtends.srcNode.styler.pushChild(
           param0.cfInfo.mainFilePath +
           "" +
-          (param0.source.accessKey == ""
+          (tptPathOpt.accessKey == ""
             ? ""
-            : "@" + param0.source.accessKey),
+            : "@" + tptPathOpt.accessKey),
           tptExt.srcNode.styler,
-          eleHT.nodeName
+          tptPathOpt.accessKey //eleHT.nodeName     <- I CHANGED IF ANY PROBLEM REPLACE WITH THIS
         );
       tptExt.srcNode.pushCSSByContent(param0.cfInfo.style.fullPath, tptPathOpt.cssContents, tptExt.parentUc.ucExtends.self);
-      /*if (!tptExt.srcNode.cssCode.hasContent) {
-        tptExt.srcNode.cssCode.content = tptExt.srcNode.styler.parseStyleSeperator_sub({
-          data: tptPathOpt.cssContents,
-          localNodeElement: tptExt.parentUc.ucExtends.self,
-        });
-        // tptExt.srcNode.styler.parseStyleSeperator_sub({
-        //   data: (tptPathOpt.cssContents == undefined) ?
-        //     FileDataBank.readFile(param0.source.cfInfo.style.fullPath, { replaceContentWithKeys: true })
-        //     :
-        //     tptPathOpt.cssContents,
-        //   localNodeElement: tptExt.parentUc.ucExtends.self,
-        //   cssVarStampKey: tptExt.main.extended.cssVarStampKey,
-        // });
-        tptExt.srcNode.loadCSS();
-      }*/
       tptExt.parentUc.ucExtends.Events.beforeClose.on(({ prevent }) => {
         tptExt.srcNode.release();
       });

@@ -1,25 +1,27 @@
 @use "sharepnl/lib/mainFormView/opened/companyItem.tpt.common.scss";
 
-&_primary {
-    [SELF_][isActive="true"] {
+#_primary {
+    --[isActive="true"] {
         background-color: -g-CLR_CURRENT--;
     }
 
-    [SELF_][aria-current="true"]>container {
+    --[aria-current="true"]>container {
         background-color: rgb(219 219 219 / 64%);
         border-color: rgb(219 219 219 / 64%);
         ;
     }
 }
 
-&activeCompany {
+#activeCompany {
     @use "sharepnl/lib/mainFormView/opened/companyItem.tpt.common.scss";
-
-    [SELF_][isActive="true"] {
+    --{
+        background-color: gray;
+    }
+    --[isActive="true"] {
         background-color: -g-CLR_CURRENT--;
     }
 
-    [SELF_][aria-current="true"]>container {
+    --[aria-current="true"]>container {
         background-color: rgb(219 219 219 / 64%);
         border-color: rgb(219 219 219 / 64%);
         ;
