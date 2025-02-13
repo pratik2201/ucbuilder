@@ -145,7 +145,7 @@ export class Template {
       const iItem = iObj[i];
       let fc = ' ' + iItem.frontContent;
       let needBetween = true;
-      outerRulesCSS += fc.replace(/([\s\S]*)\#(\w+)\s*$/mg, (m, prevCn, ids) => {
+      outerRulesCSS += fc.replace(/([\s\S]*)\#(\w+)\s*$/mg, (m, prevCn:string, ids:string) => {
         //console.log([fc, prevCn, ids]);
         let robj = rtrn[ids];
         if (robj != undefined) {
@@ -153,7 +153,7 @@ export class Template {
           needBetween = false;
           hasAnyId = true;
           gkeys.push(ids);
-          return '';
+          return ' '+prevCn.trim()+' ';
         } else {
           if (iItem.child.length == 0) return m;
           else { needBetween = false; return ''; }
@@ -308,7 +308,7 @@ export class TemplateNode {
       param0.source.accessKey = tptPathOpt.accessKey;
       tptExt.srcNode = StampNode.registerSoruce(
         {
-          key: tptPathOpt.objectKey + "@" + tptPathOpt.accessKey,
+          key: tptPathOpt.objectKey /*+ "@" + tptPathOpt.accessKey*/,
           accessName: tptPathOpt.accessKey,
           root: param0.cfInfo.rootInfo,
           generateStamp: false
