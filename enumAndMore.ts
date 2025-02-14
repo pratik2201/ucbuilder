@@ -4,13 +4,13 @@ import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import crypto from "crypto";
 export type UCGenerateMode = "client" | "designer";
-export type UcStates = "normal" | "dock" | "minimize" | "maximize";  
-   
+export type UcStates = "normal" | "dock" | "minimize" | "maximize";
+
 export const uniqOpt = {
     get guid(): string {
         return crypto.randomBytes(16).toString('hex');
     },
-    
+
     get guidAs_(): string {
         return crypto.randomBytes(16).toString('hex');
     },
@@ -24,7 +24,7 @@ export const uniqOpt = {
 };
 
 
-        
+
 export const ROW_ACCESS_KEY = uniqOpt.guid;
 
 
@@ -63,7 +63,7 @@ export const sessionOptions: SessionOptions = {
 export type WrapperNodeNameAs = "wrapper" | "targetElement" | "random";
 export type StringExchangerCallback = (content: string) => string;
 export interface ISourceOptions {
-    
+
     htmlContents?: string;
     cssContents?: string;
     //beforeContentAssign: StringExchangerCallback;
@@ -94,7 +94,7 @@ export interface IUcOptions {
     session?: SessionOptions;
     source?: ISourceOptions;
     parentUc?: Usercontrol;
-    accessName?:string,
+    accessName?: string,
     events?: {
         beforeInitlize: (uc: Usercontrol) => void;
     };
@@ -108,7 +108,7 @@ export const UcOptions: IUcOptions = {
     session: newObjectOpt.clone<SessionOptions>(sessionOptions),
     source: newObjectOpt.clone<ISourceOptions>(SourceOptions),
     //loadAt: document.body,
-    decisionForTargerElement:'waitForDecision',
+    decisionForTargerElement: 'waitForDecision',
     events: {
         beforeInitlize: (uc) => {
 
@@ -119,14 +119,16 @@ export const UcOptions: IUcOptions = {
 
 export interface ITptOptions {
     cfInfo?: codeFileInfo;
-   /// elementHT?: HTMLElement;
-   // source?: ISourceOptions;
+    MakeEmptyTemplate?: boolean;
+    /// elementHT?: HTMLElement;
+    // source?: ISourceOptions;
     //beforeContentAssign?: (s: string) => string;
-   // accessName?:string,
+    // accessName?:string,
     parentUc?: Usercontrol;
 }
 export const TptOptions: ITptOptions = {
+    MakeEmptyTemplate: false,
     //source: newObjectOpt.clone<ISourceOptions>(SourceOptions),
     //beforeContentAssign:(s)=>s,
-   // accessName:'',
+    // accessName:'',
 };

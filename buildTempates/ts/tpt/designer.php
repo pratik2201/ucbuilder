@@ -52,7 +52,7 @@ export class <?=designer.className ?> extends Template {
         super(fargs);    
         //this.extended.parentUc = fargs.parentUc;
         //let fargs = Template.extractArgs(arguments) as TptOptions;
-        
+        if(fargs.MakeEmptyTemplate)return;
         //fargs = fargs[fargs.length-1] as TptOptions;
         //let ext = this.extended;
         let tpts = Template.GetObjectOfTemplate(fargs.cfInfo);
