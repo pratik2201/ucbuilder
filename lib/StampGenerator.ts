@@ -45,7 +45,7 @@ class StyleCodeNode {
         this._content = value;
         if (this.styleHT == undefined) {
             this.styleHT = document.createElement("style");
-            
+
             this.styleHT.type = "text/css";
             this.styleHT.setAttribute("rel", 'stylesheet');
         }
@@ -63,13 +63,13 @@ export class SourceNode {
     accessKey: string = '';
     htmlCode: HTMLCodeNode = new HTMLCodeNode();
     styler: StylerRegs;
-    onRelease = [] as (()=>void)[]
+    onRelease = [] as (() => void)[]
     dataHT: HTMLElement;
     rootFilePath: string = '';
     root: RootPathRow;
     cssObj: { [key: string]: StyleCodeNode } = {};
     pushCSSByContent(key: string, cssContent: string, localNodeElement?: HTMLElement) {
-        
+
         let csnd = this.cssObj[key];
         let ccontent = this.styler.parseStyleSeperator_sub({
             data: cssContent,
@@ -95,10 +95,12 @@ export class SourceNode {
         this.resourcesHT.setAttribute("stamp", 'program.stamp');
         document.body.appendChild(this.resourcesHT);
     }
-    passElement = <A = HTMLElement | HTMLElement[]>(ele: A, options?: IPassElementOptions): string[] => {
+    passElement = <A = HTMLElement | HTMLElement[]>(ele: A, options?: IPassElementOptions): { [xname: string]: HTMLElement } => {
         let option = Object.assign(Object.assign({}, PassElementOptions), options);
         let stamplist: string[] = [];
-        let stmpTxt: string = this.stamp;
+        let rtrn: { [xname: string]: HTMLElement } = {};
+        let xnameAtrr = undefined;
+        //let stmpTxt: string = this.stamp;
         let stmpUnq: string = this.uniqStamp;
         //if (this.cInfo.rootInfo == undefined)
         //    console.log(this.cInfo);
@@ -108,6 +110,7 @@ export class SourceNode {
             const element: HTMLElement = iObj[i];
             if (!option.skipTopEle) {
                 element.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
+                xnameAtrr = element.getAttribute(ATTR_OF.X_NAME);
             }
             //element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
             //element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
@@ -123,7 +126,7 @@ export class SourceNode {
                     });
             }
         }
-        return stamplist;
+        return rtrn;
     }
     loadHTML(/*callback = (s: string) => s*/) {
         let htCode = this.htmlCode;
@@ -142,11 +145,11 @@ export class SourceNode {
     release() {
         if (StampNode.deregisterSource(this.myObjectKey)) {
             let keys = Object.keys(this.cssObj);
-            for (let i = 0, iObj = keys, ilen = iObj.length; i < ilen; i++) 
-                this.cssObj[iObj[i]].styleHT.remove();            
-            for(let i=0,iObj=this.onRelease,ilen=iObj.length   ;   i < ilen   ;   i++)
-                iObj[i]();                
-            
+            for (let i = 0, iObj = keys, ilen = iObj.length; i < ilen; i++)
+                this.cssObj[iObj[i]].styleHT.remove();
+            for (let i = 0, iObj = this.onRelease, ilen = iObj.length; i < ilen; i++)
+                iObj[i]();
+
             this.dataHT =
                 this.htmlCode = this.cssObj = undefined;
             delete StampNode.childs[this.myObjectKey];
@@ -161,12 +164,12 @@ export class StampNode {
         key: string, accessName?: string, root: RootPathRow,
         generateStamp?: boolean,
     }): SourceNode {
-        
+
         let myObjectKey = key; //this.GetKey(key, alices);
         let rtrn: SourceNode = this.childs[myObjectKey];
         if (rtrn == undefined) {
-           // console.log(['.....new',myObjectKey]);
-            
+            // console.log(['.....new',myObjectKey]);
+
             rtrn = new SourceNode();
             //rtrn.main = this;
             rtrn.root = root;
@@ -175,7 +178,7 @@ export class StampNode {
             this.childs[myObjectKey] = rtrn;
             rtrn.styler = new StylerRegs(rtrn, generateStamp);
         } else rtrn.isNewSource = false;
-        rtrn.counter++;      
+        rtrn.counter++;
         //console.log([rtrn.counter,'open',myObjectKey]);
         return rtrn;
     }
@@ -186,10 +189,10 @@ export class StampNode {
         if (rtrn != undefined) {
             rtrn.counter--;
             //console.log([rtrn.counter,'close',myObjectKey]);
-            
+
             result = (rtrn.counter <= 0);
-            console.log([rtrn.counter,'removed',myObjectKey]);
-            
+            console.log([rtrn.counter, 'removed', myObjectKey]);
+
         }
         return result;
     }

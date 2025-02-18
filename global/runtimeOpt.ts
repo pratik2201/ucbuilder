@@ -17,7 +17,7 @@ export const GLOBAL_OPTIONS: {
         allowTabInAllForms: true,
     },
 };
-export interface AttrOfUC {
+/*export interface AttrOfUC {
     UC_STAMP: string,
     PARENT_STAMP: string,
     UNIQUE_STAMP: string,
@@ -28,7 +28,7 @@ export const attrOfUC: AttrOfUC = {
     PARENT_STAMP: "parent" + uniqOpt.randomNo(),
     UNIQUE_STAMP: "uniq" + uniqOpt.randomNo(),
     ROOT_STAMP: "root" + uniqOpt.randomNo(),
-}
+}*/
 
 export const ATTR_OF = {
     setUc: (u: string): string => {
@@ -45,6 +45,11 @@ export const ATTR_OF = {
     getUc: (u: string): string => {
         return ATTR_OF.UC.UC_STAMP + "" + u;
     },
+    X_NAME: "x-name",
+    BASE_OBJECT: "base_object",
+    SCOPE_KEY: "x-scope",
+    ACCESSIBLE_KEY: "id",
+    TEMPLETE_DEFAULT: "primary",
     UC: Object.freeze({
         ALL: "all" + uniqOpt.randomNo(),
         UC_STAMP: "uc" + uniqOpt.randomNo(),

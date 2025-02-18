@@ -10,6 +10,7 @@ import { builder } from "ucbuilder/build/builder";
 import { ITemplatePathOptions } from "ucbuilder/enumAndMore";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { TemplateMaker } from "ucbuilder/build/regs/TemplateMaker";
+import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 
 export class commonParser {
 
@@ -136,11 +137,11 @@ export class commonParser {
                 }
                 let cntHT = template.htmlContents.PHP_REMOVE().$() as HTMLElement;
                 if (cntHT['length'] != undefined) cntHT = cntHT[0];
-                const elements = Array.from(cntHT.querySelectorAll(`[${propOpt.ATTR.X_NAME}]`));
+                const elements = Array.from(cntHT.querySelectorAll(`[${ATTR_OF.X_NAME}]`));
                 for (let i = 0, iObj = elements, len = iObj.length; i < len; i++) {
                     const element = iObj[i];
                     onSelect_xName.fire([element as HTMLElement, _row]);
-                    let scope = element.getAttribute(propOpt.ATTR.SCOPE_KEY) as ScopeType;
+                    let scope = element.getAttribute(ATTR_OF.SCOPE_KEY) as ScopeType;
                     if (scope == undefined)
                         scope = 'public';
                     let _generic = element.getAttribute('x-generic');
@@ -163,9 +164,9 @@ export class commonParser {
         } else {
             _row.designer.baseClassName = "Usercontrol";
 
-            const elements = Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.X_NAME}]`));
-            let accessKeys = `"` + Array.from(this.formHT.querySelectorAll(`[${propOpt.ATTR.ACCESSIBLE_KEY}]`))
-                .map(s => s.getAttribute(propOpt.ATTR.ACCESSIBLE_KEY))
+            const elements = Array.from(this.formHT.querySelectorAll(`[${ATTR_OF.X_NAME}]`));
+            let accessKeys = `"` + Array.from(this.formHT.querySelectorAll(`[${ATTR_OF.ACCESSIBLE_KEY}]`))
+                .map(s => s.getAttribute(ATTR_OF.ACCESSIBLE_KEY))
                 .distinct().join(`" | "`) + `"`;
             _row.designer.getterFunk = accessKeys;
 
@@ -180,9 +181,9 @@ export class commonParser {
             for (let i = 0, iObj = elements, len = iObj.length; i < len; i++) {
                 const element = iObj[i];
                 onSelect_xName.fire([element as HTMLElement, _row]);
-                let nameAttr = element.getAttribute(propOpt.ATTR.X_NAME);
+                let nameAttr = element.getAttribute(ATTR_OF.X_NAME);
                 let nodeName = element.nodeName;
-                let scope = element.getAttribute(propOpt.ATTR.SCOPE_KEY) as ScopeType;
+                let scope = element.getAttribute(ATTR_OF.SCOPE_KEY) as ScopeType;
                 if (scope == undefined)
                     scope = 'public';
                 let proto = Object.getPrototypeOf(element).constructor.name;

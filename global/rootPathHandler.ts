@@ -1,10 +1,9 @@
-import { pathInfo, strOpt } from "ucbuilder/build/common";
-import { replaceTextRow, ReplaceTextRow, RootPathRow, PathType } from "ucbuilder/global/findAndReplace";
-import { rootPathParam, RootPathParam } from 'ucbuilder/enumAndMore';
-import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { builder } from "ucbuilder/build/builder";
+import { pathInfo, strOpt } from "ucbuilder/build/common";
+import { rootPathParam, RootPathParam } from 'ucbuilder/enumAndMore';
+import { PathType, RootPathRow } from "ucbuilder/global/findAndReplace";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { UcConfig } from "ucbuilder/start";
-import { StampNode } from "ucbuilder/lib/StampGenerator";
 
 export class rootPathHandler {
 

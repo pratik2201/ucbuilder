@@ -1,6 +1,5 @@
-import { propOpt, controlOpt, objectOpt, strOpt } from "ucbuilder/build/common";
+import { controlOpt } from "ucbuilder/build/common";
 import { KeyboardKeys } from "ucbuilder/lib/hardware";
-import { CommonEvent } from "ucbuilder/global/commonEvent";
 
 interface TabIndexRow {
     container: HTMLElement;

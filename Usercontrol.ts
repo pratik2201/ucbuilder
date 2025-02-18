@@ -1,6 +1,6 @@
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
-import { objectOpt, propOpt } from "ucbuilder/build/common";
-import { UCGenerateMode, IUcOptions, UcStates, uniqOpt, WhatToDoWithTargetElement } from "ucbuilder/enumAndMore";
+import { objectOpt } from "ucbuilder/build/common";
+import { IUcOptions, UCGenerateMode, UcStates, uniqOpt, WhatToDoWithTargetElement } from "ucbuilder/enumAndMore";
 import { CommonEvent } from "ucbuilder/global/commonEvent";
 import { TransferDataNode } from "ucbuilder/global/drag/transferation";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
@@ -238,7 +238,7 @@ export class Usercontrol {
 
             ucExt.loadAt.setValue(param0.decisionForTargerElement, param0.targetElement);
             let pucExt = ucExt.PARENT.ucExtends;
-            ucExt.wrapperHT.data(propOpt.ATTR.BASE_OBJECT, this);
+            ucExt.wrapperHT.data(ATTR_OF.BASE_OBJECT, this);
             if (!ucExt.isForm) {
                 ucExt.parentDependantIndex = pucExt.dependant.length;
                 pucExt.dependant.push(this);
@@ -518,16 +518,16 @@ export class Usercontrol {
                     for (let i = 0, len = specific.length; i < len; i++) {
                         const itmpath = specific[i];
                         if (!(itmpath in childs)) {
-                            let ele = fromElement.querySelector(`[${propOpt.ATTR.X_NAME}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`) as HTMLElement; // old one `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+                            let ele = fromElement.querySelector(`[${ATTR_OF.X_NAME}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`) as HTMLElement; // old one `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
                             //let ele = fromElement.querySelector(`[${propOpt.ATTR.ACCESS_KEY}='${itmpath}']${ATTR_OF.setParent(uniqStamp)}`) as HTMLElement; 
                             fillObj(itmpath, ele);
                         }
                     }
                 } else {
-                    let eleAr = Array.from(fromElement.querySelectorAll(`[${propOpt.ATTR.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+                    let eleAr = Array.from(fromElement.querySelectorAll(`[${ATTR_OF.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
                     for (let i = 0, len = eleAr.length; i < len; i++) {
                         const ele = eleAr[i];
-                        fillObj(ele.getAttribute(propOpt.ATTR.X_NAME), ele);
+                        fillObj(ele.getAttribute(ATTR_OF.X_NAME), ele);
                     }
                 }
                 function fillObj(itmpath: string, htEle: HTMLElement): void {

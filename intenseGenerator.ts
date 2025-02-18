@@ -1,13 +1,13 @@
-import { Usercontrol } from "ucbuilder/Usercontrol";
-import { Template } from "ucbuilder/Template";
-import { TemplateNode } from "ucbuilder/Template";
-import { newObjectOpt } from "ucbuilder/global/objectOpt";
-import { IUcOptions, UcOptions, ITptOptions, TptOptions, WrapperNodeNameAs } from "ucbuilder/enumAndMore";
-import { ResourcesUC } from "ucbuilder/ResourcesUC";
-import { objectOpt, propOpt } from "ucbuilder/build/common";
+import { objectOpt } from "ucbuilder/build/common";
 import { UcRendarer } from "ucbuilder/build/UcRendarer";
-import { StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
+import { ITptOptions, IUcOptions, TptOptions, UcOptions } from "ucbuilder/enumAndMore";
+import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
+import { VariableList } from "ucbuilder/lib/stylers/StylerRegs";
+import { ResourcesUC } from "ucbuilder/ResourcesUC";
+import { Template, TemplateNode } from "ucbuilder/Template";
+import { Usercontrol } from "ucbuilder/Usercontrol";
+import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 //import { createRequire, Module } from "module";
 
 class intenseGenerator {
@@ -53,14 +53,14 @@ class intenseGenerator {
 
     static parseTPT(val: Template | TemplateNode | String, parentUc: Usercontrol): TemplateNode {
         if (objectOpt.parse(val as object, 'Template')) {
-            return val[propOpt.ATTR.TEMPLETE_DEFAULT] as TemplateNode;
+            return val[ATTR_OF.TEMPLETE_DEFAULT] as TemplateNode;
         } else if (objectOpt.parse(val as object, 'TemplateNode')) {
             return val as TemplateNode;
         } else if (objectOpt.parse(val, 'String')) {
             let splval: string[] = ('' + val).split(";");
             let tpt = intenseGenerator.generateTPT(('' + val), { parentUc: parentUc });
             let res = (splval.length === 1) ?
-                tpt[propOpt.ATTR.TEMPLETE_DEFAULT]
+                tpt[ATTR_OF.TEMPLETE_DEFAULT]
                 :
                 tpt[splval[1].trim()];
             return res;

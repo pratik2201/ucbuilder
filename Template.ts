@@ -445,7 +445,7 @@ export class TemplateNode {
         specific.forEach((itmpath) => {
           if (!(itmpath in childs)) {
             let ele = fromElement.querySelector(
-              `[${propOpt.ATTR.X_NAME}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+              `[${ATTR_OF.X_NAME}='${itmpath}'][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}='${itmpath}'][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
             ) as HTMLElement;
             fillObj(itmpath, ele);
           }
@@ -454,11 +454,11 @@ export class TemplateNode {
         let uniqStamp = uExt.extended.srcNode.uniqStamp;
         let eleAr = Array.from(
           fromElement.querySelectorAll(
-            `[${propOpt.ATTR.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+            `[${ATTR_OF.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`  // old one  `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
           )
         ) as HTMLElement[];
         eleAr.forEach((ele) => {
-          fillObj(ele.getAttribute(propOpt.ATTR.X_NAME), ele);
+          fillObj(ele.getAttribute(ATTR_OF.X_NAME), ele);
         });
       }
       function fillObj(itmpath: string, htEle: HTMLElement) {

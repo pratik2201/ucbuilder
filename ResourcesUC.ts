@@ -1,10 +1,10 @@
 import { codefileHandler } from "ucbuilder/build/codefileHandler";
-import { propOpt } from "ucbuilder/build/common";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { SourceNode } from "ucbuilder/lib/StampGenerator";
 import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
 import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
 import { Usercontrol } from "ucbuilder/Usercontrol";
+import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 export class ResourcesUC {
     //static styler = new StylerRegs();
     //static stamp: StampNode;
@@ -16,7 +16,7 @@ export class ResourcesUC {
 
     /** @param {HTMLElement} element @returns {Usercontrol} */
     static getBaseObject(element: HTMLElement): Usercontrol {
-        return element.data(propOpt.ATTR.BASE_OBJECT);
+        return element.data(ATTR_OF.BASE_OBJECT);
     }
 
     //

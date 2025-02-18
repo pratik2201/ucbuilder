@@ -236,16 +236,16 @@ export const looping = {
     }
 }
 export const propOpt = {
-    ATTR: {
+    /*ATTR: {
         FILE_STAMP: "file-stamp",
+        OPTION: "_option",
         BASE_OBJECT: "base_object",
         X_NAME: "x-name",
-        ACCESSIBLE_KEY: "id",
+        SCOPE_KEY: "x-scope",
+        
         TEMPLETE_DEFAULT: "primary",
         TEMPLETE_ACCESS_KEY: "x-tname",
-        SCOPE_KEY: "x-scope",
-        OPTION: "_option",
-    },
+    },*/
     hasAttr(attr: any): boolean {
         return (typeof attr !== 'undefined' && attr !== false);
     },
