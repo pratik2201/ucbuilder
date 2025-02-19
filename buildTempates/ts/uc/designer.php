@@ -1,5 +1,6 @@
-<?php for(let i=0;i<designer.importClasses.length;i++){ let $rw=designer.importClasses[i]; ?>
-import { <?=$rw.importText?> } from '<?=$rw.url?>';<?php } ?>
+<?php for(let i=0;i<designer.importClasses.length;i++){ let $rw=designer.importClasses[i]; 
+?>import { <?=$rw.importText?> } from '<?=$rw.url?>';
+<?php } ?>
 /**
  *  code filename must same and case sensitive with classname 
  */
@@ -29,19 +30,19 @@ export class <?=designer.className ?> extends Usercontrol {
     }
 
     <?php 
-        for(let i=0;i<designer.controls.length;i++){  let $rw=designer.controls[i];
-            switch($rw.type){ ?> 
-                <?php case "none": ?>
-                    <?=$rw.scope?>&nbsp;<?=$rw.name?>: <?=$rw.proto?><?=$rw.generic?>;
-    <?php break;?>
-                <?php case ".tpt": ?>
-                    <?=$rw.scope?>&nbsp;<?=$rw.name?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
-    <?php break;?>
-                <?php case ".uc": ?>
-                    <?=$rw.scope?>&nbsp;<?=$rw.name?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
-    <?php break; ?>
-    <?php      }
-        } ?>
+    for(let i=0;i<designer.controls.length;i++){  let $rw=designer.controls[i];
+        switch($rw.type){ 
+            case "none": ?>
+            <?=$rw.scope?>&nbsp;<?=$rw.name?>: <?=$rw.proto?><?=$rw.generic?>;
+    <?php   break;
+            case ".tpt": ?>
+            <?=$rw.scope?>&nbsp;<?=$rw.name?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
+    <?php   break;
+            case ".uc": ?>
+            <?=$rw.scope?>&nbsp;<?=$rw.name?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
+    <?php   break; 
+        }
+    } ?>
     
     constructor(){ super(); }
     initializecomponent(argsLst: IArguments, form: <?=src.name?>) {
@@ -50,8 +51,8 @@ export class <?=designer.className ?> extends Usercontrol {
         let ucExt = this.ucExtends;
         
         ucExt.initializecomponent(args);        
-        let CONTROLS = ucExt.designer.getAllControls();
-        
+        //let CONTROLS = ucExt.designer.getAllControls();
+        let CONTROLS = ucExt.controls;
         <?php 
         for(let i=0;i<designer.controls.length;i++){  let $rw=designer.controls[i];
             switch($rw.type){ ?>
@@ -61,7 +62,7 @@ export class <?=designer.className ?> extends Usercontrol {
         this.<?=$rw.name ?> = <?=$rw.importedClass.objText?>.Create({ 
             parentUc: this, 
             accessName:"<?=$rw.name?>" , 
-            elementHT :CONTROLS.<?=$rw.name?> 
+            elementHT :CONTROLS.<?=$rw.name?> as any
         });<?php   break; ?>
                 <?php case ".uc": ?>
         this.<?=$rw.name?> = <?=$rw.importedClass.objText?>.Create({ 
@@ -74,7 +75,7 @@ export class <?=designer.className ?> extends Usercontrol {
                     addNodeToParentSession:true,
                 },   
                 decisionForTargerElement:'replace',
-                targetElement : CONTROLS.<?=$rw.name?> 
+                targetElement : CONTROLS.<?=$rw.name?> as any
             });
         this.<?=$rw.name ?>.ucExtends.show();<?php   break;  
 

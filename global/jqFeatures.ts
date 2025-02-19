@@ -323,7 +323,7 @@ class jqFeatures {
         }
         commonPrototype.parseUc = function (val: Usercontrol) {
             if (val) {
-                return val.ucExtends.passElement(this);
+                val.ucExtends.passElement(this);
             }
             return this;
         }
@@ -614,7 +614,8 @@ class jqFeatures {
             var div = document.createElement('pre');
             div.innerHTML = this;
             if (val) {
-                return (val as Usercontrol).ucExtends.passElement(div).innerHTML;
+                (val as Usercontrol).ucExtends.passElement(div);
+                return div.innerHTML;
             } return this;
         }
         String.prototype.toCamelCase = function () {

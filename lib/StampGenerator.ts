@@ -95,7 +95,7 @@ export class SourceNode {
         this.resourcesHT.setAttribute("stamp", 'program.stamp');
         document.body.appendChild(this.resourcesHT);
     }
-    passElement = <A = HTMLElement | HTMLElement[]>(ele: A, options?: IPassElementOptions): { [xname: string]: HTMLElement } => {
+    passElement = <A = HTMLElement | HTMLElement[]>(ele: A, options?: IPassElementOptions): { [xname: string]: HTMLElement | HTMLElement[] } => {
         let option = Object.assign(Object.assign({}, PassElementOptions), options);
         let stamplist: string[] = [];
         let rtrn: { [xname: string]: HTMLElement } = {};
@@ -153,7 +153,7 @@ export class SourceNode {
                     });
             }
         }
-        console.log(rtrn);
+       // console.log(rtrn);
 
         return rtrn;
     }
