@@ -606,10 +606,10 @@ class jqFeatures {
         }
         String.prototype.PHP_REMOVE = function () {
             return (this as string).replace(/<\?(=|php| )(.*?)\?>/gm, '<!--?$1$2?-->');
-        } 
+        }
         String.prototype.PHP_ADD = function () {
             return (this as string).replace(/<!--\?(=|php )(.*?)\?-->/gm, '<?$1$2?>');
-        } 
+        }
         String.prototype.parseUc = function <T = Usercontrol>(val: T): string {
             var div = document.createElement('pre');
             div.innerHTML = this;
@@ -707,7 +707,7 @@ class jqFeatures {
             } else {
                 reg = "\\.[^.]+";
             }
-            return  str.replace( new RegExp(reg, flag), "");
+            return str.replace(new RegExp(reg, flag), "");
         }
         String.prototype.getDriveFromPath = function (): string | undefined {
             let r = this.match(/^[\w]+?:+/gi);
@@ -725,6 +725,10 @@ class jqFeatures {
                  return FileDataBank.getReplacedContent(rtrn);
              })();*/
             //});
+        }
+        Object.prototype.getType = function (): string | undefined {
+            if (this == undefined || this == null) return this + '';
+            return Object.getPrototypeOf(this)?.constructor.name;
         }
         //console.log(`hello {=s}`.__({ s: 'd' }).then(s => s));
         //

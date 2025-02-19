@@ -111,7 +111,21 @@ export class SourceNode {
             if (!option.skipTopEle) {
                 element.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
                 xnameAtrr = element.getAttribute(ATTR_OF.X_NAME);
+                if (xnameAtrr != null && xnameAtrr.length > 0) {
+                    let xctr = rtrn[xnameAtrr];
+                    if (xctr == undefined)
+                        rtrn[xnameAtrr] = element;
+                    else {
+                        if (xctr.getType() != 'Array') {
+                            (xctr as any as HTMLElement[]).push(element);
+                        } else {
+                            rtrn[xnameAtrr] = [xctr] as any;
+                        }
+                    }
+
+                }
             }
+
             //element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
             //element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
             //element.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
@@ -119,6 +133,19 @@ export class SourceNode {
                 element.querySelectorAll("*")
                     .forEach((s) => {
                         s.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
+                        xnameAtrr = s.getAttribute(ATTR_OF.X_NAME);
+                        if (xnameAtrr != null && xnameAtrr.length > 0) {
+                            let xctr = rtrn[xnameAtrr];
+                            if (xctr == undefined)
+                                rtrn[xnameAtrr] = s as HTMLElement;
+                            else {
+                                if (xctr.getType() != 'Array') {
+                                    (xctr as any as HTMLElement[]).push(s as HTMLElement);
+                                } else {
+                                    rtrn[xnameAtrr] = [xctr] as any;
+                                }
+                            }
+                        }
                         //s.classList.add(...ATTR_OF.getParent(stmpUnq, stmpRt));
                         //s.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
                         //s.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
@@ -126,6 +153,8 @@ export class SourceNode {
                     });
             }
         }
+        console.log(rtrn);
+
         return rtrn;
     }
     loadHTML(/*callback = (s: string) => s*/) {
