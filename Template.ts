@@ -371,7 +371,7 @@ export class TemplateNode {
         });
       let isAlreadyExist = tptExt.srcNode.htmlCode.load(tptPathOpt.htmlContents);
       if (!isAlreadyExist)
-        tptExt.srcNode.loadHTML(/*param0.beforeContentAssign*/);
+        tptExt.srcNode.loadHTML(false/*param0.beforeContentAssign*/);
 
       let htEle = tptExt.srcNode.dataHT;
 

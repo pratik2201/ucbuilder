@@ -95,6 +95,21 @@ export class SourceNode {
         this.resourcesHT.setAttribute("stamp", 'program.stamp');
         document.body.appendChild(this.resourcesHT);
     }
+    static ExtendControlObject(rtrn: {}, xname: string, ctr: any, ignoreEmpty: boolean = true) {
+        if (ignoreEmpty) {
+            if (xname == null || xname.length == 0) return;
+        }
+        let xctr = rtrn[xname];
+        if (xctr == undefined)
+            rtrn[xname] = ctr;
+        else {
+            if (xctr.getType() != 'Array') {
+                (xctr as any as HTMLElement[]).push(ctr);
+            } else {
+                rtrn[xname] = [xctr] as any;
+            }
+        }
+    }
     passElement = <A = HTMLElement | HTMLElement[]>(ele: A, options?: IPassElementOptions): { [xname: string]: HTMLElement | HTMLElement[] } => {
         let option = Object.assign(Object.assign({}, PassElementOptions), options);
         let stamplist: string[] = [];
@@ -111,21 +126,9 @@ export class SourceNode {
             if (!option.skipTopEle) {
                 element.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
                 xnameAtrr = element.getAttribute(ATTR_OF.X_NAME);
-                if (xnameAtrr != null && xnameAtrr.length > 0) {
-                    let xctr = rtrn[xnameAtrr];
-                    if (xctr == undefined)
-                        rtrn[xnameAtrr] = element;
-                    else {
-                        if (xctr.getType() != 'Array') {
-                            (xctr as any as HTMLElement[]).push(element);
-                        } else {
-                            rtrn[xnameAtrr] = [xctr] as any;
-                        }
-                    }
+                SourceNode.ExtendControlObject(rtrn, xnameAtrr, element);
 
-                }
             }
-
             //element.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
             //element.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
             //element.setAttribute(ATTR_OF.UC.ROOT_STAMP, stmpRt);
@@ -134,18 +137,7 @@ export class SourceNode {
                     .forEach((s) => {
                         s.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
                         xnameAtrr = s.getAttribute(ATTR_OF.X_NAME);
-                        if (xnameAtrr != null && xnameAtrr.length > 0) {
-                            let xctr = rtrn[xnameAtrr];
-                            if (xctr == undefined)
-                                rtrn[xnameAtrr] = s as HTMLElement;
-                            else {
-                                if (xctr.getType() != 'Array') {
-                                    (xctr as any as HTMLElement[]).push(s as HTMLElement);
-                                } else {
-                                    rtrn[xnameAtrr] = [xctr] as any;
-                                }
-                            }
-                        }
+                        SourceNode.ExtendControlObject(rtrn, xnameAtrr, s);
                         //s.classList.add(...ATTR_OF.getParent(stmpUnq, stmpRt));
                         //s.setAttribute(ATTR_OF.UC.PARENT_STAMP, stmpUnq); // stmpTxt i changed dont know why
                         //s.setAttribute(ATTR_OF.UC.UNIQUE_STAMP, stmpUnq);
@@ -153,11 +145,11 @@ export class SourceNode {
                     });
             }
         }
-       // console.log(rtrn);
+        // console.log(rtrn);
 
         return rtrn;
     }
-    loadHTML(/*callback = (s: string) => s*/) {
+    loadHTML(setTabindex=true/*callback = (s: string) => s*/) {
         let htCode = this.htmlCode;
         htCode.content = this.styler.parseStyle(htCode.originalContent);
         //if (callback != undefined) htCode.content = callback(htCode.content);
@@ -165,7 +157,8 @@ export class SourceNode {
         this.styler.nodeName = this.dataHT.nodeName;
         this.dataHT.setAttribute(ATTR_OF.UC.ALL, this.uniqStamp);
         htCode.content = this.dataHT.outerHTML;
-        if (!this.dataHT.hasAttribute('x-tabindex')) {
+        
+        if (setTabindex && !this.dataHT.hasAttribute('x-tabindex')) {
             this.dataHT.setAttribute('x-tabindex', '-1');
         }
         htCode.content = this.dataHT.outerHTML;
