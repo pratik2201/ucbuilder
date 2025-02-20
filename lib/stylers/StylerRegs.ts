@@ -46,7 +46,7 @@ export const patternList/*: PatternList */ = {
   stylesFilterPattern: /(animation-name|-[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
   varValuePrinterPattern: /(-[lgit]-\w+)\s*(.*?)--/gim,    //       /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
   varValueGetterPattern: /(\$[lgit]-\w+)\:(.*?)\;/gim,            //      /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
-  //scopeSelector: /\[SELF_]/gm,
+  //scopeSelector: /\&/gm,
   rootExcludePattern: /(\w*)(:root|:exclude)/gi,
 };
 export interface StyleSeperatorOptions {

@@ -64,7 +64,7 @@ export class SelectorHandler {
     }*/
     parseScopeSeperator(scopeOpt: ScopeSelectorOptions): string {
         //return this.parseScopeSeperator_sub(scopeOpt)
-       /* if (scopeOpt.selectorText === '[SELF_] mainContainer') {
+       /* if (scopeOpt.selectorText === '& mainContainer') {
             debugger;
         }*/
         scopeOpt = Object.assign(scopeSelectorOptions, scopeOpt);
@@ -163,7 +163,7 @@ export class SelectorHandler {
                 splitted[i] = matchs;
                 let nextSplitters = splitted.slice(i);
                 let subSelector = nextSplitters.join(' ');
-                splitted[i] = this.splitselector(subSelector.replace(kvNode, '[SELF_]'), styler, hiddens);
+                splitted[i] = this.splitselector(subSelector.replace(kvNode, '&'), styler, hiddens);
                 hasUcFound = false;
                 splitted = splitted.slice(0, i + 1);
                 break;
@@ -188,16 +188,16 @@ export class SelectorHandler {
                    
             switch (len) {
                 case 1:
-                    if (fsel.startsWith('[SELF_]'))
-                        splitted[0] = fsel.replace('[SELF_]',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`);  //`WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
+                    if (fsel.startsWith('&'))
+                        splitted[0] = fsel.replace('&',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`);  //`WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
                     else {
                     
                         splitted[0] = this.setStamp_shu_____(fsel,  '^', styler.LOCAL_STAMP_KEY+'_');  //ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
                     }
                     break;
                 default:
-                    if (fsel.startsWith('[SELF_]'))
-                        splitted[0] = fsel.replace('[SELF_]',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]` );  //   // `WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
+                    if (fsel.startsWith('&'))
+                        splitted[0] = fsel.replace('&',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]` );  //   // `WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
                     else {
                         fsel = splitted[len - 1];
                         splitted[len - 1] = this.setStamp_shu_____(fsel, '^', styler.LOCAL_STAMP_KEY + '_');  // ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
@@ -206,8 +206,8 @@ export class SelectorHandler {
             }
         }
        /* fsel = splitted[0];
-        if (fsel.startsWith('[SELF_]')) {
-            splitted[0] = fsel.replace('[SELF_]', `WRAPPER[${ATTR_OF.UC.UC_STAMP}="${styler.uniqStamp}"]`);
+        if (fsel.startsWith('&')) {
+            splitted[0] = fsel.replace('&', `WRAPPER[${ATTR_OF.UC.UC_STAMP}="${styler.uniqStamp}"]`);
         } else {
             splitted[0] = `${fsel}`;//this.setStamp_shu_____(fsel, ATTR_OF.UC.UC_STAMP, styler.uniqStamp);
         }
@@ -248,18 +248,18 @@ export class SelectorHandler {
     //         changed = false;
     //         trimedVal = s.trim();
     //         calltime = 0;
-    //         if (trimedVal == "[SELF_]") {
+    //         if (trimedVal == "&") {
     //             changed = true;
     //             calltime++;
     //             rVal = `${scopeOpt.scopeSelectorText} ${_main.nodeName}[${ATTR_OF.UC.UC_STAMP}="${_main.uniqStamp}"]`;  //UNIQUE_STAMP ,_main.stamp  <-- i changed dont know why
     //         } else {
     //             rVal = trimedVal.replace(
-    //                 /\[SELF_]/gm,
+    //                 /\&/gm,
     //                 (match: string, offset: any, input_string: string) => {
     //                     changed = true;
     //                     calltime++;
     //                     if (calltime == 1) {
-    //                         if (trimedVal.startsWith("[SELF_]")) {
+    //                         if (trimedVal.startsWith("&")) {
     //                             return `${scopeOpt.scopeSelectorText} [${ATTR_OF.UC.ALL}="${_main.uniqStamp}"]`;  //UNIQUE_STAMP ,_main.stamp  <-- i changed dont know why
     //                         } else {
     //                             preText = scopeOpt.scopeSelectorText + " ";
