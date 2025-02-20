@@ -81,10 +81,10 @@ export class Usercontrol {
            
             `;
     }
-    static _CSS_VAR_STAMP = 0;
+    //static _CSS_VAR_STAMP = 0;
     constructor() {
-        Usercontrol._CSS_VAR_STAMP++;
-        this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
+        //Usercontrol._CSS_VAR_STAMP++;
+        //this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
 
     }
 
@@ -95,7 +95,7 @@ export class Usercontrol {
         form: undefined as Usercontrol,
         dialogForm: undefined as Usercontrol,
         PARENT: undefined as Usercontrol,
-        session: new SessionManager(),
+        session:undefined as SessionManager,// new SessionManager(),
         //stampRow: undefined as userControlStampRow,
         //stampNode: undefined as StampNode,
         srcNode: undefined as SourceNode,
@@ -172,8 +172,11 @@ export class Usercontrol {
             if (param0.events.beforeInitlize != undefined) param0.events.beforeInitlize(this);
             ucExt.isForm = (param0.parentUc == undefined);
             ucExt.fileInfo = param0.cfInfo;
-
-            ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
+            //console.log(param0.session);
+            if (param0.session.loadBySession) {
+                ucExt.session = new SessionManager();                
+                ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
+            }
             //param0.source.addTabIndex = ucExt.isForm;
             /*let stmpNode = StampNode.generateSource({
                 stampKeys: ucExt.fileInfo.mainFileRootPath,
