@@ -11,8 +11,6 @@ import { ThemeCssHandler } from "ucbuilder/lib/stylers/ThemeCssHandler";
 import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
 import { OpenCloseHandler } from "ucbuilder/lib/OpenCloseHandler";
 
-
-
 export type VariableList = { [key: string]: string };
 
 /*interface PatternList {
@@ -42,11 +40,11 @@ export const patternList/*: PatternList */ = {
   subUcFatcher: /\[inside=("|'|`)([\s\S]*?)\1\]([\S\s]*)/gim,
   //themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   themeCSSLoader: /\@(import|use)\s*([\"'`])((?:\\.|(?!\2)[^\\])*)\2\s*;/gim,
-
-  stylesFilterPattern: /(animation-name|-[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
-  varHandler:/(\$[lgit]-\w+)((?:\s*\:\s*(.*?)\s*;)|(?:\s+(.+?)\s*--)|\s*)/gim,
-  varValuePrinterPattern: /(-[lgit]-\w+)\s*(.*?)--/gim,    //       /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
-  varValueGetterPattern: /(\$[lgit]-\w+)\:(.*?)\;/gim,            //      /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
+  mediaSelector: /^\s*@(media|keyframes|supports|container|document)\s+([\s\S]*)\s*/i,
+  animationNamePattern: /animation-name\s*:\s*([\w-]+)\s*;/gim,  ///(animation-name|-[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
+  varHandler: /(\$[lgit]-\w+)((?:\s*\:\s*(.*?)\s*;)|(?:\s+(.+?)\s*--)|\s*)/gim,
+  //varValuePrinterPattern: /(-[lgit]-\w+)\s*(.*?)--/gim,    //       /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
+  //varValueGetterPattern: /(\$[lgit]-\w+)\:(.*?)\;/gim,            //      /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
   //scopeSelector: /\&/gm,
   rootExcludePattern: /(\w*)(:root|:exclude)/gi,
 };
@@ -79,7 +77,7 @@ export class StylerRegs {
       { o: "/*", c: "*/" });
     return ocHandler.parse({ o: '{', c: '}' }, csscontent);
   }
-  __VAR = {
+  /*__VAR = {
     getKeyName: (key: string, uniqId: string, code: CSSVariableScopeSort): string => {
       return `--${key}${uniqId}${code}`;
     },
@@ -95,7 +93,7 @@ export class StylerRegs {
     GETVALUE: (key: string, uniqId: string, code: CSSVariableScopeSort, defaultVal: string): string => {
       return ` var(${this.__VAR.getKeyName(key, uniqId, code)},${defaultVal}) `;
     },
-  };
+  };*/
   static pushPublicStyles(callback: () => void): void {
     import("ucbuilder/ResourcesUC").then(({ ResourcesUC }) => {
       rootPathHandler.source.forEach((row: RootPathRow) => {
@@ -284,30 +282,48 @@ export class StylerRegs {
       "}",
       rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
-        let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
-
+        //if (selectorText.startsWith('@keyframes l-rotate')) debugger;
+        let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);        
         if (excludeContentList.length == 0) {
-
-          let sel = '';
-          selectorText = selectorText.replace(/(.*?)([^;]*?)$/gim, (m, extraText, slctr) => {
-            extraTextAtBegining += " " + extraText;
-            sel += slctr;
-            return '';
-          });
-          sel = sel.trim();
-          return `${_this.selectorHandler.parseScopeSeperator({
-            selectorText: sel,
-            scopeSelectorText: _params.scopeSelectorText,
-            /*parent_stamp: pstamp_key,
-            parent_stamp_value: pstamp_val,*/
-            root: _curRoot,
-            isForRoot: _params.isForRoot
-          })}{${styleContent}}`;
+          let trimSelector: string = selectorText.trim();
+          let m = trimSelector.match(patternList.mediaSelector);
+          if (m != null) {
+            let type = '@' + m[1].trim();
+            switch (type) {
+              case '@media':
+              case '@supports':
+              case '@container':
+              case '@document':
+                let csnt = _this.parseStyleSeperator_sub(Object.assign({}, _args, { data: styleContent }));
+                return `${trimSelector} { ${csnt} } `;
+              case '@keyframes':
+                let v = _this.varHandler.GetCSSAnimationName(m[2].trim());
+                return `@keyframes ${v} {${styleContent}} `;
+            }
+          } else {
+            let sel = '';
+            selectorText = selectorText.replace(/(.*?)([^;]*?)$/gim, (m, extraText, slctr) => {
+              extraTextAtBegining += " " + extraText;
+              sel += slctr;
+              return '';
+            });
+            sel = sel.trim();
+          
+            return `${_this.selectorHandler.parseScopeSeperator({
+              selectorText: sel,
+              scopeSelectorText: _params.scopeSelectorText,
+              /*parent_stamp: pstamp_key,
+              parent_stamp_value: pstamp_val,*/
+              root: _curRoot,
+              isForRoot: _params.isForRoot
+            })}{${styleContent}}`;
+          }
         } else {
           let changed: boolean = false;
           //let selList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
           changed = excludeContentList.length != 0;
           excludeContentList.fillInto(externalStyles);
+          
           //#region  old
           // selectorText.split(",").forEach((pselctor: string) => {
           //   pselctor.trim().replace(
@@ -355,10 +371,11 @@ export class StylerRegs {
           //#endregion          
           if (!changed) {
             changed = false;
-            let trimSelector: string = selectorText.trim();
-            if (trimSelector.startsWith("@keyframes")) {
-              return `${trimSelector}_${this.LOCAL_STAMP_KEY}{${styleContent}} `;
-            } else {
+             /*else {*/
+              /*if (trimSelector.startsWith("@keyframes")) {
+                return `${trimSelector}_${this.LOCAL_STAMP_KEY}{${styleContent}} `;
+              } else {*/
+
               selectorText.replace(
                 patternList.subUcFatcher,
                 (match: string, quationMark: string, filePath: string, UCselector: string) => {
@@ -393,7 +410,7 @@ export class StylerRegs {
                   return "";
                 }
               );
-            }
+            //}
             return !changed ? `${selectorText} ${styleContent}` : "";
           } else return "";
         }
@@ -434,25 +451,30 @@ export class StylerRegs {
       
     );}*/
     rtrn = rtrn.replace(
-      patternList.stylesFilterPattern,
-      (match: string, key: string, value: string) => {
-        let ky: string = key.toLowerCase().trim();
-        switch (ky) {
+      patternList.animationNamePattern,
+      (match: string,/* key: string, */ value: string) => {
+        //let ky: string = key.toLowerCase().trim();
+        _this.varHandler.GetCSSAnimationName(value);
+        return `animation-name : ${_this.varHandler.GetCSSAnimationName(value)}; `;
+        
+        /*switch (ky) {
           case "animation-name":
-            return `${key}: ${value.trimEnd()}_${this.LOCAL_STAMP_KEY}; `;
+           
           default:
             let scope: string = ky.charAt(1);
             let __ky = ky.substring(3).trim();
+            console.log(scope);
+            
             switch (scope) {
               case "g":
-                _this.__VAR.SETVALUE(
+                CssVariableHandler.SetCSSVarValue(
                   { __ky: value },
-                  '' + _curRoot.id,
+                   _curRoot.id,
                   scope
                 );
                 return "";
               case "t":
-                _this.__VAR.SETVALUE(
+                CssVariableHandler.SetCSSVarValue(
                   { __ky: value },
                   this.TEMPLATE_STAMP_KEY,
                   scope,
@@ -460,7 +482,7 @@ export class StylerRegs {
                 );
                 return "";
               case "l":
-                _this.__VAR.SETVALUE(
+                CssVariableHandler.SetCSSVarValue(
                   { __ky: value },
                   this.LOCAL_STAMP_KEY,
                   scope,
@@ -468,7 +490,7 @@ export class StylerRegs {
                 );
                 return "";
               case "i":
-                _this.__VAR.SETVALUE(
+                CssVariableHandler.SetCSSVarValue(
                   { __ky: value },
                   StylerRegs.internalKey,
                   scope,
@@ -477,7 +499,7 @@ export class StylerRegs {
                 return "";
             }
             return match;
-        }
+        }*/
       }
     );
     //rtrn = rtrn.trim().replace(/(;|,|:|{|})[\n\r ]*/gi, "$1");

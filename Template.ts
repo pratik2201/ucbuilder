@@ -11,6 +11,7 @@ import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
 import { CSSVariableScope, StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { Usercontrol } from "ucbuilder/Usercontrol";
+import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
 interface TptTextObjectNode<K> {
   content: string,
   row: K
@@ -311,23 +312,23 @@ export class TemplateNode {
     setCssVariable: (varList: VariableList, scope: CSSVariableScope) => {
       let styler = this.extended.srcNode.styler;
       switch (scope) {
-        case 'global': styler.__VAR.SETVALUE(varList, styler.LOCAL_STAMP_KEY, "g"); break;
-        case 'template': styler.__VAR.SETVALUE(varList, styler.TEMPLATE_STAMP_KEY, "t", this.extended.parentUc.ucExtends.self); break;
-        case 'local': styler.__VAR.SETVALUE(varList, styler.LOCAL_STAMP_KEY, "l", this.extended.parentUc.ucExtends.self); break;
-        case 'internal': styler.__VAR.SETVALUE(varList, StylerRegs.internalKey, "i", this.extended.parentUc.ucExtends.self); break;
+        case 'global': CssVariableHandler.SetCSSVarValue(varList, styler.LOCAL_STAMP_KEY, "g"); break;
+        case 'template': CssVariableHandler.SetCSSVarValue(varList, styler.TEMPLATE_STAMP_KEY, "t", this.extended.parentUc.ucExtends.self); break;
+        case 'local': CssVariableHandler.SetCSSVarValue(varList, styler.LOCAL_STAMP_KEY, "l", this.extended.parentUc.ucExtends.self); break;
+        case 'internal': CssVariableHandler.SetCSSVarValue(varList, StylerRegs.internalKey, "i", this.extended.parentUc.ucExtends.self); break;
       }
     },
     getCssVariable: (key: string, scope: CSSVariableScope): string => {
       let styler = this.extended.srcNode.styler;
       switch (scope) {
         case 'global': return document.body.style.getPropertyValue(
-          styler.__VAR.getKeyName(key, styler.ROOT_STAMP_KEY, "g"));
+          CssVariableHandler.GetCombinedCSSVarName(key, styler.ROOT_STAMP_KEY, "g"));
         case 'template': return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-          styler.__VAR.getKeyName(key, styler.TEMPLATE_STAMP_KEY, "t"));
+          CssVariableHandler.GetCombinedCSSVarName(key, styler.TEMPLATE_STAMP_KEY, "t"));
         case 'local': return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-          styler.__VAR.getKeyName(key, styler.LOCAL_STAMP_KEY, "l"));
+          CssVariableHandler.GetCombinedCSSVarName(key, styler.LOCAL_STAMP_KEY, "l"));
         case 'internal': return this.extended.parentUc.ucExtends.self.style.getPropertyValue(
-          styler.__VAR.getKeyName(key, StylerRegs.internalKey, "i"));
+          CssVariableHandler.GetCombinedCSSVarName(key, StylerRegs.internalKey, "i"));
         default: return '';
       }
     },

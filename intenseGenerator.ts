@@ -8,12 +8,13 @@ import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { Template, TemplateNode } from "ucbuilder/Template";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
+import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
 //import { createRequire, Module } from "module";
 
 class intenseGenerator {
     static setCSS_globalVar(varList: VariableList, _path: string): void  {    
         let rt = rootPathHandler.getInfo(_path);
-        rt.stampSRC.styler.__VAR.SETVALUE(varList, '' + rt.id, 'g');
+        CssVariableHandler.SetCSSVarValue(varList, '' + rt.id, 'g');
     }
     static generateUC<T = string>(path: T, pera: IUcOptions, ...args: any[]): Usercontrol {
         let param0: IUcOptions = newObjectOpt.copyProps(pera, UcOptions);

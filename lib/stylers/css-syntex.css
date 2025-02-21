@@ -1,0 +1,38 @@
+@keyframes fadeIn {
+    from {
+      opacity: 0;
+    }
+    to {
+      opacity: 1;
+    }
+  }
+  
+ @media (max-width: 600px) {
+    body {
+      background: lightgray;
+    }
+    .container {
+      padding: 10px;
+    }
+  }
+  
+  
+  @supports (display: grid) {
+    .grid-container {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+    }
+  }
+  
+  @container (min-width: 500px) {
+    .card {
+      padding: 20px;
+      font-size: 1.2rem;
+    }
+  }
+  
+  @document url("https://www.example.com/") {
+    body {
+      background: #f0f0f0;
+    }
+  }
