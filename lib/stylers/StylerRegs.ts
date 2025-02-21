@@ -44,6 +44,7 @@ export const patternList/*: PatternList */ = {
   themeCSSLoader: /\@(import|use)\s*([\"'`])((?:\\.|(?!\2)[^\\])*)\2\s*;/gim,
 
   stylesFilterPattern: /(animation-name|-[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
+  varHandler:/(\$[lgit]-\w+)((?:\s*\:\s*(.*?)\s*;)|(?:\s+(.+?)\s*--)|\s*)/gim,
   varValuePrinterPattern: /(-[lgit]-\w+)\s*(.*?)--/gim,    //       /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
   varValueGetterPattern: /(\$[lgit]-\w+)\:(.*?)\;/gim,            //      /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
   //scopeSelector: /\&/gm,

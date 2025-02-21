@@ -7,6 +7,76 @@ export class CssVariableHandler {
     }
     handlerVariable(rtrn: string): string {
         let _main = this.main;
+        //   /(\$[lgit]-\w+)((?:\s*\:\s*(.*?)\s*;)|(?:\s+(.+?)\s*--)|\s*)/gim
+        rtrn = rtrn.replace(patternList.varHandler,
+            (match: string, fullVarName: string, defaultVal: string) => {
+                console.log([match, fullVarName, defaultVal]);
+                let ky: string = fullVarName;//.toLowerCase();
+                let scope = ky.charAt(1) as CSSVariableScopeSort;
+                let varName = ky.substring(3).trim()
+                let uniqId: string = StylerRegs.internalKey;
+                let isPrintWithEmptyValue = defaultVal.length == 0;
+                let isPrintWithDefaultValue = defaultVal.endsWith('--');
+                let isSettingValue = defaultVal.charAt(0) == ':' && defaultVal.slice(-1) == ';';
+                if (isPrintWithEmptyValue || isPrintWithDefaultValue) { // GET VALUE 
+                    if (isPrintWithDefaultValue) defaultVal = defaultVal._trimText('--');
+                    switch (scope) {
+                        case "g": uniqId = '' + this.main.rootInfo.id; break;
+                        case "t": uniqId = _main.TEMPLATE_STAMP_KEY; break;
+                        case "l": uniqId = _main.LOCAL_STAMP_KEY; break;
+                    }
+                    return this.main.__VAR.GETVALUE(
+                        ky.substring(3).trim(),
+                        uniqId,
+                        scope,
+                        defaultVal
+                    );
+                } else if (isSettingValue) { // SET VALUE
+                    let tarEle: HTMLElement = undefined;
+                    defaultVal = defaultVal._trimText(':').trimText_(';');
+                    switch (scope) {
+                        case "g": uniqId = '' + this.main.rootInfo.id; break;
+                        case "t":
+                            uniqId = _main.TEMPLATE_STAMP_KEY;
+                            tarEle = _main.wrapperHT;
+                            break;
+                        case "l":
+                            uniqId = _main.LOCAL_STAMP_KEY;
+                            tarEle = _main.wrapperHT;
+                            break;
+                        default: return match;
+                    }
+                    let key = ky.substring(3).trim();
+                    this.main.__VAR.SETVALUE({ [key]: defaultVal }, uniqId, scope, tarEle);
+                    return '';
+                }
+                //console.log(scope, varName, defaultVal);
+                return match;
+                /*
+                let ky: string = varName;//.toLowerCase();
+                let scope = ky.charAt(1) as CSSVariableScopeSort;
+                let uniqId: string = StylerRegs.internalKey;
+                //console.log(['printer',patternList.varValuePrinterPattern,varName,defaultVal,match]);
+
+                switch (scope) {
+                    case "g":
+                        uniqId = '' + this.main.rootInfo.id;//_curRoot.id;
+                        break;
+                    case "t":
+                        uniqId = _main.TEMPLATE_STAMP_KEY;
+                        break;
+                    case "l":
+                        uniqId = _main.LOCAL_STAMP_KEY;
+                        break;
+                }
+                return this.main.__VAR.GETVALUE(
+                    ky.substring(3).trim(),
+                    uniqId,
+                    scope,
+                    defaultVal
+                )*/
+            });
+        /*
         rtrn = rtrn.replace(
             patternList.varValuePrinterPattern,
             (match: string, varName: string, defaultVal: string) => {
@@ -31,7 +101,7 @@ export class CssVariableHandler {
                     uniqId,
                     scope,
                     defaultVal
-                ) /*+ ';'*/;
+                );
             }
         );
         rtrn = rtrn.replace(
@@ -62,7 +132,7 @@ export class CssVariableHandler {
                 this.main.__VAR.SETVALUE({ [key]: value }, uniqId, scope, tarEle);
                 return '';
             }
-        );
+        );*/
         return rtrn;
     }
     static __VAR = {

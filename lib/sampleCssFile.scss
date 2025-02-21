@@ -2,7 +2,7 @@
 
 #_primary {
     --[isActive="true"] {
-        background-color: -g-CLR_CURRENT--;
+        background-color: $g-CLR_CURRENT;
     }
 
     --[aria-current="true"]>container {
@@ -18,7 +18,7 @@
         background-color: gray;
     }
     --[isActive="true"] {
-        background-color: -g-CLR_CURRENT--;
+        background-color: $g-CLR_CURRENT;
     }
 
     --[aria-current="true"]>container {
