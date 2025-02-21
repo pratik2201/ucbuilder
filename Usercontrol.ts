@@ -95,7 +95,7 @@ export class Usercontrol {
         form: undefined as Usercontrol,
         dialogForm: undefined as Usercontrol,
         PARENT: undefined as Usercontrol,
-        session:undefined as SessionManager,// new SessionManager(),
+        session: undefined as SessionManager,// new SessionManager(),
         //stampRow: undefined as userControlStampRow,
         //stampNode: undefined as StampNode,
         srcNode: undefined as SourceNode,
@@ -174,7 +174,7 @@ export class Usercontrol {
             ucExt.fileInfo = param0.cfInfo;
             //console.log(param0.session);
             if (param0.session.loadBySession) {
-                ucExt.session = new SessionManager();                
+                ucExt.session = new SessionManager();
                 ucExt.session.init(this, param0.session, param0.session.uniqueIdentity);
             }
             //param0.source.addTabIndex = ucExt.isForm;
@@ -398,11 +398,11 @@ export class Usercontrol {
         close: () => {
             this.ucExtends.destruct();
         },
-        queryElements(selector: string, callback: (element: HTMLElement) => void): void {
+        /*queryElements(selector: string, callback: (element: HTMLElement) => void): void {
             let elements = document.querySelectorAll(selector);
             elements.forEach(element => callback(element as HTMLElement));
-        },
-        idList: [],
+        },*/
+        //idList: [],
         //stampRow: userControlStampRow,
         _windowstate: 'normal' as UcStates,
         get windowstate() { return this._windowstate; },
@@ -415,9 +415,9 @@ export class Usercontrol {
             let _ext = this.ucExtends;
             return _ext.dependant.find(s => s.ucExtends.fileInfo.mainFileRootPath.equalIgnoreCase(_mainfileRootpath));
         },
-        options: {
-            ucExt: () => this.ucExtends,
-        },
+        /* options: {
+             ucExt: () => this.ucExtends,
+         },*/
         Events: {
             afterInitlize: new CommonEvent<() => void>(),
             // @ts-ignore
@@ -474,17 +474,18 @@ export class Usercontrol {
         passElement: (ele: HTMLElement | HTMLElement[], options?: IPassElementOptions): { [xname: string]: HTMLElement | HTMLElement[] } => {
             return this.ucExtends.srcNode.passElement(ele, options);
         },
+
         designer: {
             setCaption: (text: string) => {
                 this.ucExtends.wrapperHT.setAttribute("x-caption", text);
                 this.ucExtends.Events.captionChanged.fire([text]);
             },
-            getAllControls: (specific?: string[]): { [key: string]: HTMLElement } => {
-                let childs: { [key: string]: HTMLElement } = {};
+            getAllControls: (/*specific?: string[]*/): { [key: string]: HTMLElement|HTMLElement[] } => {
+                let childs: { [key: string]: HTMLElement|HTMLElement[] } = {};
                 let uExt = this.ucExtends;
                 let fromElement = uExt.wrapperHT;
                 let uniqStamp = uExt.srcNode.uniqStamp;
-                if (specific != undefined) {
+                /*if (specific != undefined) {
                     for (let i = 0, len = specific.length; i < len; i++) {
                         const itmpath = specific[i];
                         if (!(itmpath in childs)) {
@@ -493,19 +494,20 @@ export class Usercontrol {
                             fillObj(itmpath, ele);
                         }
                     }
-                } else {
-                    let eleAr = Array.from(fromElement.querySelectorAll(`[${ATTR_OF.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
-                    for (let i = 0, len = eleAr.length; i < len; i++) {
-                        const ele = eleAr[i];
-                        fillObj(ele.getAttribute(ATTR_OF.X_NAME), ele);
-                    }
+                } else {*/
+                let eleAr = Array.from(fromElement.querySelectorAll(`[${ATTR_OF.X_NAME}][${ATTR_OF.UC.ALL}^='${uniqStamp}_']`)) as HTMLElement[];  // old one `[${propOpt.ATTR.ACCESS_KEY}][${ATTR_OF.UC.UNIQUE_STAMP}='${uniqStamp}']`
+                for (let i = 0, len = eleAr.length; i < len; i++) {
+                    const ele = eleAr[i];
+                    SourceNode.ExtendControlObject(childs, ele.getAttribute(ATTR_OF.X_NAME), ele);
+                    //fillObj(ele.getAttribute(ATTR_OF.X_NAME), ele);
                 }
-                function fillObj(itmpath: string, htEle: HTMLElement): void {
+                //}
+                /*function fillObj(itmpath: string, htEle: HTMLElement): void {
                     if (htEle != undefined)
                         childs[itmpath] = htEle;
                     else
                         console.warn('empty-controls-returned');
-                }
+                }*/
                 return childs;
             }
         },
