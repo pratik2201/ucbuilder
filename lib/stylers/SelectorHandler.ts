@@ -1,7 +1,7 @@
 
 import { openCloser } from "ucbuilder/global/openCloser";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
+import { CSSSearchAttributeCondition, StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
 import { RootPathRow } from "ucbuilder/global/findAndReplace";
 export const scopeSelectorOptions: ScopeSelectorOptions = {
     selectorText: "",
@@ -9,11 +9,11 @@ export const scopeSelectorOptions: ScopeSelectorOptions = {
     //parent_stamp?: "",
     //parent_stamp_value?: undefined,
     root: undefined,
-    isForRoot:false,
+    isForRoot: false,
     hiddens: {
-        root:undefined,
+        root: undefined,
         list: {},
-        isForRoot:false,
+        isForRoot: false,
         counter: 0,
     }
 };
@@ -27,20 +27,20 @@ export interface HiddenScopeKVP {
 export interface HiddenScopeNode {
     list: HiddenScopeKVP,
     root: RootPathRow,
-    isForRoot: boolean,scopeSelectorText?: string;
+    isForRoot: boolean, scopeSelectorText?: string;
     counter: number
 }
 export interface ScopeSelectorOptions {
     selectorText: string;
     scopeSelectorText?: string;
-    isForRoot:boolean,
-    root:RootPathRow,
+    isForRoot: boolean,
+    root: RootPathRow,
     hiddens?: HiddenScopeNode
 }
 
 export class SelectorHandler {
     main: StylerRegs;
-    constructor(main:StylerRegs) {
+    constructor(main: StylerRegs) {
         this.main = main;
     }
     /*giveContents(contents) {
@@ -64,9 +64,9 @@ export class SelectorHandler {
     }*/
     parseScopeSeperator(scopeOpt: ScopeSelectorOptions): string {
         //return this.parseScopeSeperator_sub(scopeOpt)
-       /* if (scopeOpt.selectorText === '& mainContainer') {
-            debugger;
-        }*/
+        /* if (scopeOpt.selectorText === '& mainContainer') {
+             debugger;
+         }*/
         scopeOpt = Object.assign(scopeSelectorOptions, scopeOpt);
         scopeOpt.hiddens.root = scopeOpt.root;
         scopeOpt.hiddens.scopeSelectorText = scopeOpt.scopeSelectorText;
@@ -75,16 +75,11 @@ export class SelectorHandler {
         let counter = scopeOpt.hiddens.counter;
         let _this = this;
         let oldSelector = scopeOpt.selectorText;
-        if (scopeOpt.selectorText.includes('forms') /*&& sub.indexOf('◄◘') != -1*/) {
-            // console.log(_this.main.children);
-           // debugger;
-            if (counter == 0) {
-                //console.log([scopeOpt.parent_stamp, scopeOpt.parent_stamp_value, scopeOpt.scopeSelectorText]);
-                console.log(this.main);
-            }
-
-            //debugger;
-        }
+        // if (scopeOpt.selectorText.includes('forms') /*&& sub.indexOf('◄◘') != -1*/) {
+        //     if (counter == 0) {
+        //         console.log(this.main);
+        //     }
+        // }
         let oc = new openCloser();
         //let hiddens: {key:string,value:string}[] = []
         let rtrn = oc.doTask('(', ')', scopeOpt.selectorText, (selector, cssStyle, opened) => {
@@ -179,51 +174,54 @@ export class SelectorHandler {
         splitted = splitted.filter(word => word !== "");
         let len = splitted.length;
         let fsel = '';
-       
+        let code: CSSSearchAttributeCondition = this.main.selectorMode;
+        let keyval = styler.LOCAL_STAMP_KEY + '_';
+        if (code == '*') keyval = '_' + styler.TEMPLATE_STAMP_KEY + '_';
+        else code = '^';
         if (hiddens.isForRoot) {
             fsel = splitted[len - 1];
-            splitted[len - 1] = this.SELECTOR_CONDITION(fsel,  '$', "_"+hiddens.root.id);  // ATTR_OF.UC.CLASS_ROOT+''+hiddens.root.id
+            splitted[len - 1] = this.SELECTOR_CONDITION(fsel, '$', "_" + hiddens.root.id);  // ATTR_OF.UC.CLASS_ROOT+''+hiddens.root.id
         } else {
             fsel = splitted[0];
-                   
+
             switch (len) {
                 case 1:
                     if (fsel.startsWith('&'))
-                        splitted[0] = fsel.replace('&',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`);  //`WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
+                        splitted[0] = fsel.replace('&', `WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`);  //`WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
                     else {
-                    
-                        splitted[0] = this.SELECTOR_CONDITION(fsel,  '^', styler.LOCAL_STAMP_KEY+'_');  //ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
+
+                        splitted[0] = this.SELECTOR_CONDITION(fsel, code, keyval);  //ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
                     }
                     break;
                 default:
                     if (fsel.startsWith('&'))
-                        splitted[0] = fsel.replace('&',`WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]` );  //   // `WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
+                        splitted[0] = fsel.replace('&', `WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`);  //   // `WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
                     else {
                         fsel = splitted[len - 1];
-                        splitted[len - 1] = this.SELECTOR_CONDITION(fsel, '^', styler.LOCAL_STAMP_KEY + '_');  // ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
+                        splitted[len - 1] = this.SELECTOR_CONDITION(fsel, code, keyval);  // ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
                     }
                     break;
             }
         }
-       /* fsel = splitted[0];
-        if (fsel.startsWith('&')) {
-            splitted[0] = fsel.replace('&', `WRAPPER[${ATTR_OF.UC.UC_STAMP}="${styler.uniqStamp}"]`);
-        } else {
-            splitted[0] = `${fsel}`;//this.setStamp_shu_____(fsel, ATTR_OF.UC.UC_STAMP, styler.uniqStamp);
-        }
-        if (len > 1) {
-            let fsel = splitted[len - 1];
-            // splitted[len-1] = this.setStamp_shu_____(fsel, ATTR_OF.UC.PARENT_STAMP, styler.uniqStamp);
-        }*/
-       // console.log(hiddens.scopeSelectorText);
-        
-        splitted.unshift(hiddens.scopeSelectorText!=undefined?hiddens.scopeSelectorText:'');
+        /* fsel = splitted[0];
+         if (fsel.startsWith('&')) {
+             splitted[0] = fsel.replace('&', `WRAPPER[${ATTR_OF.UC.UC_STAMP}="${styler.uniqStamp}"]`);
+         } else {
+             splitted[0] = `${fsel}`;//this.setStamp_shu_____(fsel, ATTR_OF.UC.UC_STAMP, styler.uniqStamp);
+         }
+         if (len > 1) {
+             let fsel = splitted[len - 1];
+             // splitted[len-1] = this.setStamp_shu_____(fsel, ATTR_OF.UC.PARENT_STAMP, styler.uniqStamp);
+         }*/
+        // console.log(hiddens.scopeSelectorText);
+
+        splitted.unshift(hiddens.scopeSelectorText != undefined ? hiddens.scopeSelectorText : '');
         return splitted.join(' ');
         //scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions), scopeOpt);
         //return this.parseScopeSeperator_sub(scopeOpt);
 
     }
-    SELECTOR_CONDITION(selector, /*classes*/ regxInd:'^'|'*'|'$'='^', stampvalue) {
+    SELECTOR_CONDITION(selector, /*classes*/ regxInd: CSSSearchAttributeCondition = '^', stampvalue) {
         let dbl: string[] = selector.split(/ *:: */);
         let sngl: string[] = dbl[0].split(/ *: */);
         //sngl[0] += `.${classes}`;

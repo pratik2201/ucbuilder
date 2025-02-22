@@ -55,13 +55,17 @@ export class <?=designer.className ?> extends Template {
         if(fargs.MakeEmptyTemplate)return;
         //fargs = fargs[fargs.length-1] as TptOptions;
         //let ext = this.extended;
-        let tpts = Template.GetObjectOfTemplate(fargs.cfInfo);
+        let oot = Template.GetObjectOfTemplate(fargs.cfInfo);
+        let tpts = oot.tptObj;
        
         <?php for(let j=0;j<designer.templetes.length;j++){ let $tpt=designer.templetes[j]; ?>
         this.<?=$tpt.name ?> = new <?=$tpt.name ?>_TEMPLATE(this); // ext._templeteNode as <?=$tpt.name?>_TEMPLATE;
         this.<?=$tpt.name?>.extended.initializecomponent(fargs,tpts['<?=$tpt.name?>']); 
         <?php } ?>
 
+        if (oot.outerCSS.trim() != '')
+            this.pushTemplateCss(oot.outerCSS);
+        //console.log(oot.outerCSS);
         //fargs.elementHT.remove();
     }
 }

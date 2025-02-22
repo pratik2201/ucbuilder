@@ -3,6 +3,7 @@ import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { RootPathRow } from "ucbuilder/global/findAndReplace";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
+import { Usercontrol } from "ucbuilder/Usercontrol";
 export interface IPassElementOptions {
     applySubTree?: boolean;
     skipTopEle?: boolean;
@@ -67,6 +68,16 @@ export class SourceNode {
     onRelease = [] as (() => void)[]
     dataHT: HTMLElement;
     rootFilePath: string = '';
+    config = ({ parentSrc, parentUc, wrapper, key, accessName }: {
+        parentSrc: SourceNode, parentUc: Usercontrol,
+        wrapper: HTMLElement, key: string, accessName: string
+    }) => {
+        this.styler.controlName = accessName;
+        this.styler.wrapperHT = wrapper;
+        //this.styler.parent = parentSrc.styler;
+        parentSrc.styler
+            .pushChild(key, this.styler, accessName);
+    }
     root: RootPathRow;
     cssObj: { [key: string]: StyleCodeNode } = {};
     pushCSSByContent(key: string, cssContent: string, localNodeElement?: HTMLElement) {
@@ -122,9 +133,9 @@ export class SourceNode {
         //    console.log(this.cInfo);
         let stmpRt = '' + this.root.id;
         let keyToSet = option.groupKey != undefined ?
-                stmpUnq + "_" + option.groupKey + "_" + stmpRt
-                :
-                stmpUnq + "_" + stmpRt;
+            stmpUnq + "_" + option.groupKey + "_" + stmpRt
+            :
+            stmpUnq + "_" + stmpRt;
         let ar = controlOpt.getArray(ele);
         for (let i = 0, iObj = ar, ilen = iObj.length; i < ilen; i++) {
             const element: HTMLElement = iObj[i];

@@ -31,7 +31,7 @@ export type VariableList = { [key: string]: string };
 
 
 export const patternList/*: PatternList */ = {
-  globalFinderPathPattern: /path=(["'`])([\s\S]*?)\1/gim,
+  //globalFinderPathPattern: /path=(["'`])([\s\S]*?)\1/gim,
   //globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
   MULTILINE_COMMENT_REGS: /\/\*([\s\S]*?)\*\//gi,
@@ -68,6 +68,7 @@ const styleSeperatorOptions: StyleSeperatorOptions = {
 };
 export type CSSVariableScope = "global" | "local" | "internal" | "template";
 export type CSSVariableScopeSort = "g" | "l" | "i" | "t";
+export type CSSSearchAttributeCondition = "*" | "^" | "$";
 export class StylerRegs {
   static ScssExtractor(csscontent: string) {
     let ocHandler = new OpenCloseHandler();
@@ -144,6 +145,7 @@ export class StylerRegs {
   parent: StylerRegs = undefined;
   children: StylerRegs[] = [];
   alices: string = "";
+  selectorMode: CSSSearchAttributeCondition = '^';
   path: string = "";
   wrapperHT: HTMLElement = undefined;
   templateHT: HTMLElement = undefined;
@@ -277,13 +279,10 @@ export class StylerRegs {
     rtrn = rtrn.trim().replace(patternList.SPACE_REMOVER_REGS, "$1");   // remove this comment it was old code
 
     let extraTextAtBegining = "";
-    rtrn = this.opnClsr.doTask(
-      "{",
-      "}",
-      rtrn,
+    rtrn = this.opnClsr.doTask("{", "}", rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
         //if (selectorText.startsWith('@keyframes l-rotate')) debugger;
-        let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);        
+        let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
         if (excludeContentList.length == 0) {
           let trimSelector: string = selectorText.trim();
           let m = trimSelector.match(patternList.mediaSelector);
@@ -308,7 +307,7 @@ export class StylerRegs {
               return '';
             });
             sel = sel.trim();
-          
+
             return `${_this.selectorHandler.parseScopeSeperator({
               selectorText: sel,
               scopeSelectorText: _params.scopeSelectorText,
@@ -323,7 +322,7 @@ export class StylerRegs {
           //let selList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
           changed = excludeContentList.length != 0;
           excludeContentList.fillInto(externalStyles);
-          
+
           //#region  old
           // selectorText.split(",").forEach((pselctor: string) => {
           //   pselctor.trim().replace(
@@ -371,23 +370,23 @@ export class StylerRegs {
           //#endregion          
           if (!changed) {
             changed = false;
-             /*else {*/
-              /*if (trimSelector.startsWith("@keyframes")) {
-                return `${trimSelector}_${this.LOCAL_STAMP_KEY}{${styleContent}} `;
-              } else {*/
+            /*else {*/
+            /*if (trimSelector.startsWith("@keyframes")) {
+              return `${trimSelector}_${this.LOCAL_STAMP_KEY}{${styleContent}} `;
+            } else {*/
 
-              selectorText.replace(
-                patternList.subUcFatcher,
-                (match: string, quationMark: string, filePath: string, UCselector: string) => {
-                  filePath = filePath.toLowerCase();
-                  UCselector = UCselector.trim();
-                  let tree: StylerRegs = this.children.find(
-                    (s: StylerRegs) => s.path == filePath || s.alices == filePath
-                  );
-                  if (tree != undefined) {
-                    let nscope: string =
-                      _params.callCounter == 1
-                        ? /*_this.selectorHandler.parseScopeSeperator({
+            selectorText.replace(
+              patternList.subUcFatcher,
+              (match: string, quationMark: string, filePath: string, UCselector: string) => {
+                filePath = filePath.toLowerCase();
+                UCselector = UCselector.trim();
+                let tree: StylerRegs = this.children.find(
+                  (s: StylerRegs) => s.path == filePath || s.alices == filePath
+                );
+                if (tree != undefined) {
+                  let nscope: string =
+                    _params.callCounter == 1
+                      ? /*_this.selectorHandler.parseScopeSeperator({
                           selectorText: UCselector,
                           scopeSelectorText:_params.scopeSelectorText,
                           parent_stamp:'',// ATTR_OF.UC.UC_STAMP,  REMOVED  // ATTR_OF.UC.UC_STAMP  <- changed dont know why
@@ -395,21 +394,21 @@ export class StylerRegs {
                           root:_curRoot,
                           isForRoot:_params.isForRoot
                         })*/`WRAPPER[${ATTR_OF.UC.ALL}='${this.LOCAL_STAMP_KEY}'] `
-                        : _params.scopeSelectorText;
+                      : _params.scopeSelectorText;
 
-                    let css: string = tree.parseStyleSeperator_sub({
-                      data: styleContent,
-                      scopeSelectorText: nscope,
-                      callCounter: _params.callCounter,
-                    });
+                  let css: string = tree.parseStyleSeperator_sub({
+                    data: styleContent,
+                    scopeSelectorText: nscope,
+                    callCounter: _params.callCounter,
+                  });
 
-                    externalStyles.push(css);
-                    changed = true;
-                    return "";
-                  }
+                  externalStyles.push(css);
+                  changed = true;
                   return "";
                 }
-              );
+                return "";
+              }
+            );
             //}
             return !changed ? `${selectorText} ${styleContent}` : "";
           } else return "";
@@ -456,7 +455,7 @@ export class StylerRegs {
         //let ky: string = key.toLowerCase().trim();
         _this.varHandler.GetCSSAnimationName(value);
         return `animation-name : ${_this.varHandler.GetCSSAnimationName(value)}; `;
-        
+
         /*switch (ky) {
           case "animation-name":
            
@@ -527,5 +526,6 @@ export class StylerRegs {
       node.parent = this;
       this.children.push(node);
     }
+    node.parent = this;
   }
 }

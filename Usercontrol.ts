@@ -198,6 +198,7 @@ export class Usercontrol {
 
             ucExt.srcNode = StampNode.registerSoruce({
                 key: ucExt.fileInfo.style.rootPath,
+                accessName:param0.accessName,
                 root: ucExt.fileInfo.rootInfo
             });
             let isAlreadyExist = ucExt.srcNode.htmlCode.load(FileDataBank.readFile(ucExt.fileInfo.html.fullPath, { isFullPath: true }));
@@ -208,27 +209,40 @@ export class Usercontrol {
 
             //ucExt.stampRow = UserControlStamp.getStamp(param0.source);
             ucExt.wrapperHT = ucExt.srcNode.dataHT.cloneNode(true) as HTMLElement;
-            //console.log(param0.targetElement.nodeName);
-            ucExt.srcNode.styler.controlName = param0.accessName;
-            //console.log(ucExt.fileInfo.mainFilePath+":"+param0.accessName);
+            
 
+            
+            //console.log(ucExt.fileInfo.mainFilePath+":"+param0.accessName);
             if (ucExt.isForm) {
                 ucExt.PARENT = this;
                 ucExt.form = this;
-                ucExt.fileInfo.rootInfo.stampSRC.styler
+
+                ucExt.srcNode.config({
+                    parentUc: ucExt.PARENT,
+                    parentSrc: ucExt.fileInfo.rootInfo.stampSRC,
+                    wrapper: ucExt.wrapperHT,
+                    key: ucExt.fileInfo.mainFilePath,
+                    accessName: param0.accessName
+                });
+
+                /*ucExt.fileInfo.rootInfo.stampSRC.styler
                     .pushChild(
                         ucExt.fileInfo.mainFilePath,
-                        ucExt.srcNode.styler, param0.accessName); // param0.targetElement.nodeName
+                        ucExt.srcNode.styler, param0.accessName);*/ // param0.targetElement.nodeName
                 // param0.wrapperHT.appendChild(ucExt.wrapperHT);
             } else {
                 ucExt.form = param0.parentUc.ucExtends.form;
                 ucExt.PARENT = param0.parentUc;
-                ucExt.PARENT.ucExtends.srcNode.styler
-                    .pushChild(
-                        ucExt.fileInfo.mainFilePath,
-                        ucExt.srcNode.styler, param0.accessName);  // param0.targetElement.nodeName
+                ucExt.srcNode.config({
+                    parentUc: param0.parentUc,
+                    parentSrc: ucExt.PARENT.ucExtends.srcNode,
+                    wrapper: ucExt.wrapperHT,
+                    key: ucExt.fileInfo.mainFilePath,
+                    accessName: param0.accessName
+                });
+                  // param0.targetElement.nodeName
 
-                ucExt.srcNode.styler.parent = ucExt.PARENT.ucExtends.srcNode.styler;
+                
                 if (param0.targetElement) {
                     ucExt.initalComponents.elements = param0.targetElement.children;
                     if (param0.decisionForTargerElement == 'replace')

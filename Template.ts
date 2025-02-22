@@ -9,7 +9,7 @@ import { FilterContent } from "ucbuilder/global/filterContent";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
-import { CSSVariableScope, StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
+import { CSSSearchAttributeCondition, CSSVariableScope, StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
 interface TptTextObjectNode<K> {
@@ -101,7 +101,7 @@ export class Template {
     }*/
     return rtrn;
   }
-  static splitCSSById(cssContent: string, rtrn: { [key: string]: ITemplatePathOptions }) {
+  static splitCSSById(cssContent: string, rtrn: { [key: string]: ITemplatePathOptions }): string {
     let rtrnKeys = Object.keys(rtrn);
 
     let cssExtrct = StylerRegs.ScssExtractor(cssContent);
@@ -132,17 +132,16 @@ export class Template {
     if (!hasAnyId) {
       if (rtrn["primary"] != undefined)
         rtrn["primary"].cssContents = cssContent;
-      return;
+      return outerRulesCSS;
     }
-    console.log(outerRulesCSS);
-    
-    for (let i = 0, iObj = rtrnKeys, ilen = iObj.length; i < ilen; i++) {
+    /*for (let i = 0, iObj = rtrnKeys, ilen = iObj.length; i < ilen; i++) {
       const iItem = iObj[i];
       let ck = rtrn[iItem].cssContents;
       rtrn[iItem].cssContents = outerRulesCSS + ck;
-    }
+    }*/
+    return outerRulesCSS;
   }
-  static GetOptionsByContent(htmlcontent: string, cssContent: string): { [key: string]: ITemplatePathOptions } {
+  static GetOptionsByContent(htmlcontent: string, cssContent: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
     let ele = htmlcontent.PHP_REMOVE().$();
     let rtrn: { [key: string]: ITemplatePathOptions } = {};
     let hasMultipleNode = !ele.hasAttribute('id');
@@ -177,8 +176,8 @@ export class Template {
       rtrnKeys = ["primary"];
       isSimpleMode = true;
     }
-    this.splitCSSById(cssContent, rtrn);
-    return rtrn;
+    let outerCSS = this.splitCSSById(cssContent, rtrn);
+    return { outerCSS: outerCSS, tptObj: rtrn };
     //cssContent    
     /*let cssExtrct = StylerRegs.ScssExtractor(cssContent);
     let outerRulesCSS = "";
@@ -217,14 +216,14 @@ export class Template {
 
     //console.log(tptCSS);
     //console.log(rtrn);
-    return rtrn;
+    //return rtrn;
   }
-  private static GetTemplatePathOptionsObject(cinfo: codeFileInfo): { [key: string]: ITemplatePathOptions } {
+  private static GetTemplatePathOptionsObject(cinfo: codeFileInfo): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
     let data = FileDataBank.readFile(cinfo.html.fullPath, {});
     let robj = this.GetOptionsByContent(data,
       FileDataBank.readFile(cinfo.style.fullPath, { replaceContentWithKeys: true }));
     let _mainFileRootPath = cinfo.mainFileRootPath;
-    for (let i = 0, iObj = Object.values(robj), ilen = iObj.length; i < ilen; i++) {
+    for (let i = 0, iObj = Object.values(robj.tptObj), ilen = iObj.length; i < ilen; i++) {
       const irow = iObj[i];
       irow.objectKey = _mainFileRootPath + "#" + irow.accessKey;
     }
@@ -248,7 +247,7 @@ export class Template {
     }
     return rtrn;*/
   }
-  static GetObjectOfTemplate(cinfo: codeFileInfo): { [key: string]: ITemplatePathOptions } {
+  static GetObjectOfTemplate(cinfo: codeFileInfo): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
     return Template.GetTemplatePathOptionsObject(cinfo);
     /*let ar = Template.GetTemplatePathOptionsObject(cinfo);
     let robj: { [key: string]: ITemplatePathOptions } = {};
@@ -260,7 +259,7 @@ export class Template {
   }
   static GetArrayOfTemplate(cinfo: codeFileInfo): ITemplatePathOptions[] {
     let ar = [] as ITemplatePathOptions[];
-    let objs = Template.GetTemplatePathOptionsObject(cinfo);
+    let objs = Template.GetTemplatePathOptionsObject(cinfo).tptObj;
     for (let i = 0, iObj = Object.keys(objs), ilen = iObj.length; i < ilen; i++)
       ar.push(objs[iObj[i]]);
     return ar;
@@ -274,6 +273,33 @@ export class Template {
     cfg.parentUc = tExt.parentUc;
     tnode.extended.initializecomponent(cfg, tptPathOpt);
     return tnode;
+  }
+  private static TemplateCssCounter = 0;
+  pushTemplateCss(cssCode: string,mode:CSSSearchAttributeCondition = '*') {
+    Template.TemplateCssCounter++;
+    let accessName = `style${Template.TemplateCssCounter}`;
+    let ext = this.extended;
+    let snode = StampNode.registerSoruce(
+      {
+        key: ext.cfInfo.mainFileRootPath + "#" + accessName,
+        accessName: accessName,
+        root: ext.cfInfo.rootInfo,
+        generateStamp: false
+      });
+    let puc = ext.parentUc;
+    let pext = puc.ucExtends;
+    snode.styler.selectorMode = mode;
+    snode.config({
+      parentUc: puc,
+      parentSrc: pext.srcNode,
+      wrapper: pext.wrapperHT,
+      key: `${ext.cfInfo.mainFileRootPath}@${accessName}`,
+      accessName: accessName
+    });
+    snode.pushCSSByContent(ext.cfInfo.style.rootPath, cssCode, pext.wrapperHT);
+    pext.Events.beforeClose.on(({ prevent }) => {
+      snode.release();
+    });
   }
   static COUNTER = 0;
   nodeCounter = Template.COUNTER;
@@ -384,24 +410,41 @@ export class TemplateNode {
 
       // let eleHT = param0.elementHT;
       tptExt.parentUc = tptExt.main.extended.parentUc;
-      tptExt.srcNode.styler.wrapperHT = tptExt.parentUc.ucExtends.wrapperHT;
+
+
+
+      let puc = tptExt.parentUc;
+      let pext = puc.ucExtends;
+
+      tptExt.srcNode.config({
+        parentUc: puc,
+        parentSrc: pext.srcNode,
+        wrapper: pext.wrapperHT,
+        key: `${param0.cfInfo.mainFileRootPath}@${tptPathOpt.accessKey}`,
+        accessName: tptPathOpt.accessKey
+      });
+
+
+
+      /*tptExt.srcNode.styler.wrapperHT = tptExt.parentUc.ucExtends.wrapperHT;
       tptExt.srcNode.styler.parent = tptExt.parentUc.ucExtends.srcNode.styler;
       tptExt.srcNode.styler.controlName = tptPathOpt.accessKey;
-
-      if (tptExt.parentUc != undefined)
+      //console.log(`===> ${tptExt.accessName}`);
+      if (tptExt.parentUc != undefined) {
         tptExt.parentUc.ucExtends.srcNode.styler.pushChild(
-          param0.cfInfo.mainFilePath +
-          "" +
-          (tptExt.accessName == ""
-            ? ""
-            : "@" + tptExt.accessName),
+          `${param0.cfInfo.mainFilePath}@${tptExt.accessName}`,
           tptExt.srcNode.styler,
-          tptExt.accessName //eleHT.nodeName     <- I CHANGED IF ANY PROBLEM REPLACE WITH THIS
+          tptExt.accessName
         );
-      tptExt.srcNode.pushCSSByContent(param0.cfInfo.style.fullPath, tptPathOpt.cssContents, tptExt.parentUc.ucExtends.self);
+      }*/
+
+      tptExt.srcNode.pushCSSByContent(param0.cfInfo.style.rootPath, tptPathOpt.cssContents, tptExt.parentUc.ucExtends.self);
       tptExt.parentUc.ucExtends.Events.beforeClose.on(({ prevent }) => {
         tptExt.srcNode.release();
       });
+
+
+
 
       tptExt.Events.onDataExport = (data) =>
         param0.parentUc.ucExtends.Events.onDataExport(data);
