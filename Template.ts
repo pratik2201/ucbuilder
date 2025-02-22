@@ -134,6 +134,8 @@ export class Template {
         rtrn["primary"].cssContents = cssContent;
       return;
     }
+    console.log(outerRulesCSS);
+    
     for (let i = 0, iObj = rtrnKeys, ilen = iObj.length; i < ilen; i++) {
       const iItem = iObj[i];
       let ck = rtrn[iItem].cssContents;
@@ -284,7 +286,7 @@ export class Template {
     //this.extended.cssVarStampKey = "t" + Template._CSS_VAR_STAMP;
   }
 
-  extended = {  
+  extended = {
     cfInfo: undefined as codeFileInfo,
     parentUc: undefined as Usercontrol,
   };
@@ -343,15 +345,15 @@ export class TemplateNode {
     },
     tmaker: new TemplateMaker(),
     generateNode: (jsonRow: {}): HTMLElement => {
-      let _this = this.extended;
-      let dta = _this.generateContent(jsonRow) as string;
+      let _ext = this.extended;
+      let dta = _ext.generateContent(jsonRow) as string;
 
       let element = dta.$();
       //console.log(_this.stampRow);
 
-      _this.srcNode.passElement(element, { skipTopEle: true });
+      _ext.srcNode.passElement(element, { skipTopEle: true, groupKey: _ext.srcNode.styler.TEMPLATE_STAMP_KEY });
 
-      _this.Events.onGenerateNode(element, jsonRow);
+      _ext.Events.onGenerateNode(element, jsonRow);
       return element;
     },
 

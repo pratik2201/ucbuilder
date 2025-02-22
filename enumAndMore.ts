@@ -79,6 +79,7 @@ export interface ITemplatePathOptions {
     objectKey: string;
     htmlContents?: string;
     cssContents?: string;
+    tptCSSContents?: string;
 }
 export const TemplatePathOptions: ITemplatePathOptions = {
     accessKey: "",

@@ -6,6 +6,7 @@ import { StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
 export interface IPassElementOptions {
     applySubTree?: boolean;
     skipTopEle?: boolean;
+    groupKey?: string;
 }
 const PassElementOptions: IPassElementOptions = {
     applySubTree: true,
@@ -120,11 +121,15 @@ export class SourceNode {
         //if (this.cInfo.rootInfo == undefined)
         //    console.log(this.cInfo);
         let stmpRt = '' + this.root.id;
+        let keyToSet = option.groupKey != undefined ?
+                stmpUnq + "_" + option.groupKey + "_" + stmpRt
+                :
+                stmpUnq + "_" + stmpRt;
         let ar = controlOpt.getArray(ele);
         for (let i = 0, iObj = ar, ilen = iObj.length; i < ilen; i++) {
             const element: HTMLElement = iObj[i];
             if (!option.skipTopEle) {
-                element.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
+                element.setAttribute(ATTR_OF.UC.ALL, keyToSet);
                 xnameAtrr = element.getAttribute(ATTR_OF.X_NAME);
                 SourceNode.ExtendControlObject(rtrn, xnameAtrr, element);
 
@@ -135,7 +140,7 @@ export class SourceNode {
             if (option.applySubTree) {
                 element.querySelectorAll("*")
                     .forEach((s) => {
-                        s.setAttribute(ATTR_OF.UC.ALL, stmpUnq + "_" + stmpRt);
+                        s.setAttribute(ATTR_OF.UC.ALL, keyToSet);
                         xnameAtrr = s.getAttribute(ATTR_OF.X_NAME);
                         SourceNode.ExtendControlObject(rtrn, xnameAtrr, s);
                         //s.classList.add(...ATTR_OF.getParent(stmpUnq, stmpRt));
@@ -149,7 +154,7 @@ export class SourceNode {
 
         return rtrn;
     }
-    loadHTML(setTabindex=true/*callback = (s: string) => s*/) {
+    loadHTML(setTabindex = true/*callback = (s: string) => s*/) {
         let htCode = this.htmlCode;
         htCode.content = this.styler.parseStyle(htCode.originalContent);
         //if (callback != undefined) htCode.content = callback(htCode.content);
@@ -157,7 +162,7 @@ export class SourceNode {
         this.styler.nodeName = this.dataHT.nodeName;
         this.dataHT.setAttribute(ATTR_OF.UC.ALL, this.uniqStamp);
         htCode.content = this.dataHT.outerHTML;
-        
+
         if (setTabindex && !this.dataHT.hasAttribute('x-tabindex')) {
             this.dataHT.setAttribute('x-tabindex', '-1');
         }
