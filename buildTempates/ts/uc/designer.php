@@ -33,13 +33,13 @@ export class <?=designer.className ?> extends Usercontrol {
     for(let i=0;i<designer.controls.length;i++){  let $rw=designer.controls[i];
         switch($rw.type){ 
             case "none": ?>
-            <?=$rw.scope?>&nbsp;<?=$rw.name?>: <?=$rw.proto?><?=$rw.generic?>;
+            <?=$rw.scope?>&nbsp;<?=$rw.nameQT?>: <?=$rw.proto?><?=$rw.generic?>;
     <?php   break;
             case ".tpt": ?>
-            <?=$rw.scope?>&nbsp;<?=$rw.name?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
+            <?=$rw.scope?>&nbsp;<?=$rw.nameQT?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
     <?php   break;
             case ".uc": ?>
-            <?=$rw.scope?>&nbsp;<?=$rw.name?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
+            <?=$rw.scope?>&nbsp;<?=$rw.nameQT?>: import('<?=$rw.src.mainFileRootPath?>').<?=$rw.src.name?>;
     <?php   break; 
         }
     } ?>
@@ -57,15 +57,15 @@ export class <?=designer.className ?> extends Usercontrol {
         for(let i=0;i<designer.controls.length;i++){  let $rw=designer.controls[i];
             switch($rw.type){ ?>
                 <?php case "none": ?>
-        this.<?=$rw.name?> = CONTROLS.<?=$rw.name?> as <?=$rw.proto?>;<?php   break; ?>
+        this<?=$rw.nameThis?> = CONTROLS<?=$rw.nameThis?> as <?=$rw.proto?>;<?php   break; ?>
                 <?php case ".tpt": ?>
-        this.<?=$rw.name ?> = <?=$rw.importedClass.objText?>.Create({ 
+        this<?=$rw.nameThis ?> = <?=$rw.importedClass.objText?>.Create({ 
             parentUc: this, 
             accessName:"<?=$rw.name?>" , 
-            elementHT :CONTROLS.<?=$rw.name?> as any
+            elementHT :CONTROLS<?=$rw.nameThis?> as any
         });<?php   break; ?>
                 <?php case ".uc": ?>
-        this.<?=$rw.name?> = <?=$rw.importedClass.objText?>.Create({ 
+        this<?=$rw.nameThis?> = <?=$rw.importedClass.objText?>.Create({ 
                 parentUc : this, 
                 mode:args.mode,
                 accessName:"<?=$rw.name?>" , 
@@ -75,9 +75,9 @@ export class <?=designer.className ?> extends Usercontrol {
                     addNodeToParentSession:true,
                 },   
                 decisionForTargerElement:'replace',
-                targetElement : CONTROLS.<?=$rw.name?> as any
+                targetElement : CONTROLS<?=$rw.nameThis?> as any
             });
-        this.<?=$rw.name ?>.ucExtends.show();<?php   break;  
+        this<?=$rw.nameThis ?>.ucExtends.show();<?php   break;  
 
             }
         }

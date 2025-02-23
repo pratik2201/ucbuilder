@@ -109,7 +109,7 @@ export class SelectorHandler {
         //let n = Object.assign({}, scopeOpt);
         scopeOpt.selectorText = rtrn;
         if (counter == 0) {
-            rtrn = this.loopMultipleSelectors(rtrn, this.main, scopeOpt.hiddens);
+            rtrn = this.loopMultipleSelectors(rtrn, /*this.main,*/ scopeOpt.hiddens);
             //console.log([oldSelector, rtrn]);
             scopeOpt.hiddens.list = {}
             scopeOpt.hiddens.counter = 0;
@@ -120,11 +120,11 @@ export class SelectorHandler {
 
         return rtrn;
     }
-    loopMultipleSelectors(selector: string, stylers: StylerRegs, hiddens: HiddenScopeNode): string {
+    loopMultipleSelectors(selector: string, /*stylers: StylerRegs,*/ hiddens: HiddenScopeNode): string {
         let selectors = selector.split(',');
         let rtrn = [];
         for (let i = 0, len = selectors.length; i < len; i++) {
-            rtrn.push(this.splitselector(selectors[i], stylers, hiddens));
+            rtrn.push(this.splitselector(selectors[i], /*stylers,*/ hiddens));
         }
         return rtrn.join(',');
     }
@@ -132,22 +132,27 @@ export class SelectorHandler {
         hiddens.counter++;
         return '◄◘' + hiddens.counter + '◘▀';
     }
-    splitselector(selector: string, styler: StylerRegs, hiddens: HiddenScopeNode): string {
-
+    splitselector(selector: string, hiddens: HiddenScopeNode): string {
+        //if (selector.trim().startsWith('&winFrame1')) debugger;
+        
         //console.log(selector, hiddens);     
         let splitted = selector.split(' ');
         let hasUcFound = false;
         let kvNode: string;
         let _this = this;
         let nSelector = '';
+        let isStartWithSubUc = false;
+        let sub_styler: StylerRegs = undefined;
         for (let i = 0, len = splitted.length; i < len; i++) {
             let sel = splitted[i];
-            let matchs = sel.replace(/^in-(\w+)/gm, (s, ucName) => {
-                let sub_styler = _this.main.children.find(s => s.controlName === ucName);
+            hasUcFound = false; sub_styler = undefined;
+            let matchs = sel.replace(/^&(\w+)/gm, (s, ucName) => {
+                sub_styler = _this.main.children.find(s => s.controlName === ucName);
                 hasUcFound = (sub_styler != undefined);
                 if (hasUcFound) {
-                    styler = sub_styler;
-                    let nnode = `${styler.nodeName}[WRAPPER="${styler.LOCAL_STAMP_KEY}"]`;
+                    isStartWithSubUc = (i == 0);
+                   // styler = sub_styler;
+                    let nnode = `${sub_styler.nodeName}[${ATTR_OF.UC.ALL}="${sub_styler.LOCAL_STAMP_KEY}"]`;
                     let key = _this.KEY(hiddens);
                     kvNode = key;
                     hiddens.list[kvNode] = { value: nnode };
@@ -158,7 +163,7 @@ export class SelectorHandler {
                 splitted[i] = matchs;
                 let nextSplitters = splitted.slice(i);
                 let subSelector = nextSplitters.join(' ');
-                splitted[i] = this.splitselector(subSelector.replace(kvNode, '&'), styler, hiddens);
+                splitted[i] = sub_styler.selectorHandler.splitselector(subSelector.replace(kvNode, '&'), /*sub_styler,*/ hiddens);
                 hasUcFound = false;
                 splitted = splitted.slice(0, i + 1);
                 break;
@@ -166,11 +171,13 @@ export class SelectorHandler {
             } else {
                 let ntext = splitted[i];
                 ntext = ntext.replace(/◄◘(\d+)◘▀/gm, (r) => {
-                    return '(' + _this.loopMultipleSelectors(hiddens.list[r].selector, styler, hiddens) + ')';
+                    return '(' + _this.loopMultipleSelectors(hiddens.list[r].selector,/* styler,*/ hiddens) + ')';
                 });
                 splitted[i] = ntext;
             }
         }
+        if (isStartWithSubUc) splitted.unshift('&'); 
+        let styler = this.main;
         splitted = splitted.filter(word => word !== "");
         let len = splitted.length;
         let fsel = '';
@@ -189,16 +196,20 @@ export class SelectorHandler {
                     if (fsel.startsWith('&'))
                         splitted[0] = fsel.replace('&', `WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`);  //`WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
                     else {
-
-                        splitted[0] = this.SELECTOR_CONDITION(fsel, code, keyval);  //ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
+                        //if (!isStartWithSubUc) {
+                            splitted[0] = this.SELECTOR_CONDITION(fsel, code, keyval);  //ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
+                        //}
                     }
                     break;
                 default:
                     if (fsel.startsWith('&'))
                         splitted[0] = fsel.replace('&', `WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`);  //   // `WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
                     else {
-                        fsel = splitted[len - 1];
-                        splitted[len - 1] = this.SELECTOR_CONDITION(fsel, code, keyval);  // ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
+                        
+                        //if (!isStartWithSubUc) {
+                            fsel = splitted[len - 1];
+                            splitted[len - 1] = this.SELECTOR_CONDITION(fsel, code, keyval);  // ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
+                        //}
                     }
                     break;
             }

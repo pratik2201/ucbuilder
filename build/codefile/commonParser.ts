@@ -1,6 +1,6 @@
 import { commonGenerator } from "ucbuilder/build/codefile/commonGenerator";
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
-import { commonRow, CommonRow, Control, ImportClassNode } from "ucbuilder/build/buildRow.js";
+import { commonRow, CommonRow, Control,  ImportClassNode } from "ucbuilder/build/buildRow.js";
 import { buildOptions, objectOpt, propOpt, ScopeType, SpecialExtEnum } from "ucbuilder/build/common";
 import { FilterContent } from "ucbuilder/global/filterContent";
 import { FileDataBank } from "ucbuilder/global/fileDataBank";
@@ -53,10 +53,10 @@ export class commonParser {
         let code = (htmlContents == undefined) ? FileDataBank.readFile(_row.src.html.fullPath, {
             reloadData: true,
         }) : htmlContents;
-       
+
         let isUserControl = _row.src.extCode == SpecialExtEnum.uc;
         let isMultipleElement = false;
-        let primaryChild:HTMLElement=undefined;
+        let primaryChild: HTMLElement = undefined;
         fullHT: HTMLElement = undefined;
         try {
 
@@ -69,8 +69,8 @@ export class commonParser {
                     let xAt = mht[0].getAttribute('x-at');
                     primaryChild = mht[0];
                     if (xAt == null || !xAt.equalIgnoreCase(_row.src.mainFileRootPath)) {
-                        mht[0].setAttribute('x-at', _row.src.mainFileRootPath);                        
-                        _row.htmlFile.content = mht.map(s=>s.outerHTML).join('').PHP_ADD();
+                        mht[0].setAttribute('x-at', _row.src.mainFileRootPath);
+                        _row.htmlFile.content = mht.map(s => s.outerHTML).join('').PHP_ADD();
                         _row.htmlFile.reGenerate = true;
                     }
                 } else {
@@ -116,7 +116,7 @@ export class commonParser {
             aliceNumber = this.fillDefImports('VariableList', 'ucbuilder/lib/stylers/StylerRegs', aliceNumber, im);
             _row.designer.baseClassName = "Template";
 
-           // let arTpt = Template.byHTMLFileArray(_row.src);
+            // let arTpt = Template.byHTMLFileArray(_row.src);
             let subTemplates = Template.GetArrayOfTemplate(_row.src); //Template.getTemplates.byDirectory(_row.src.html.fullPath, true) as TemplatePathOptions[];
             /*console.log(arTpt);
             console.log(subTemplates);
@@ -146,13 +146,14 @@ export class commonParser {
                         scope = 'public';
                     let _generic = element.getAttribute('x-generic');
                     _generic = _generic == null ? '' : '<' + _generic + '>';
-                    controls.push({
+                    let ctr = Object.assign(new Control(), {
                         name: element.getAttribute("x-name"),
                         nodeName: element.nodeName,
                         generic: _generic,
                         proto: objectOpt.getClassName(element),
                         scope: scope,
                     });
+                    controls.push(ctr);
                 }
 
                 tpts.push({
@@ -194,7 +195,7 @@ export class commonParser {
                     let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath));
                     uFInf.parseUrl(_subpath);
                     if (uFInf.existCodeFile || uFInf.existHtmlFile || uFInf.existDeignerFile) {
-                        let ctrlNode: Control = {
+                        let ctrlNode = Object.assign(new Control(), {
                             name: nameAttr,
                             proto: proto,
                             generic: _generic,
@@ -202,19 +203,19 @@ export class commonParser {
                             type: uFInf.extCode,
                             nodeName: uFInf.name,
                             src: uFInf,
-                        }
+                        });
                         aliceNumber = _this.fillDefImports(uFInf.name, uFInf.mainFileRootPath, aliceNumber, im, ctrlNode);
                         _row.designer.controls.push(ctrlNode);
                     }
                 } else {
-                    _row.designer.controls.push({
+                   _row.designer.controls.push(Object.assign(new Control(), {
                         name: nameAttr,
                         proto: proto,
                         generic: _generic,
                         scope: scope,
                         type: 'none',
                         nodeName: nodeName,
-                    });
+                    }));
                 }
             }
             //  console.log(_row.src.codeSrc.rootPath);

@@ -8,7 +8,7 @@ import { <?=src.name?> } from '<?=src.mainFileRootPath?>';
     
 <?php for(let j=0;j<designer.templetes.length;j++){ let $tpt=designer.templetes[j]; ?>
 type <?=$tpt.name?>_ELEMENT_MAP = { <?php for(let i=0;i<$tpt.controls.length;i++){ let $rw=$tpt.controls[i]; ?>
-    <?=$rw.name?> : <?=$rw.proto?><?=$rw.generic?>,<?php } ?>}
+    <?=$rw.nameQT?> : <?=$rw.proto?><?=$rw.generic?>,<?php } ?>}
 class <?=$tpt.name?>_TEMPLATE extends TemplateNode{
     constructor(tpt:Template) { super(tpt);   }
    
