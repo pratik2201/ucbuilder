@@ -17,7 +17,7 @@ export class Control /*implements IControl*/ {
     }
     public set name(value: string) {
         this._name = value; 
-        if (value.match(/^\w+$/) != null) {
+        if (value.match(/^(?!\d)\w+$/) != null) {
             this._nameQT = value;
             this._nameThis = `.${value}`;
         } else {
@@ -29,7 +29,8 @@ export class Control /*implements IControl*/ {
     _nameQT: string = '';
     get nameQT() { return  this._nameQT };
     _nameThis: string = '';
-    get nameThis() { return  this._nameThis };
+    get nameThis() { return this._nameThis };
+    
     type?: SpecialExtType = 'none';
     generic?: string = '';
     scope: ScopeType = "public";
