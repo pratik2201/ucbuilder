@@ -5,7 +5,7 @@ export class TemplateMaker {
     compileTemplate(template: string): Function {
         if (this.templateCache.has(template)) return this.templateCache.get(template)!;
 
-        let jsCode = `let output = []; with (context) {\n`;
+        let jsCode = `let output = []; let $$$=context; with (context) {\n`;
         let regex = /([\s\S]*?)(<\?php|<\?=|<\?)([\s\S]*?)\?>/g;
         let lastIndex = 0;
 

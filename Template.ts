@@ -275,7 +275,7 @@ export class Template {
     return tnode;
   }
   private static TemplateCssCounter = 0;
-  pushTemplateCss(cssCode: string,mode:CSSSearchAttributeCondition = '*') {
+  pushTemplateCss(cssCode: string, mode: CSSSearchAttributeCondition = '*') {
     Template.TemplateCssCounter++;
     let accessName = `style${Template.TemplateCssCounter}`;
     let ext = this.extended;
@@ -377,9 +377,9 @@ export class TemplateNode {
       let element = dta.$();
       //console.log(_this.stampRow);
 
-      _ext.srcNode.passElement(element, { skipTopEle: true, groupKey: _ext.srcNode.styler.TEMPLATE_STAMP_KEY });
+      let ctrls = _ext.srcNode.passElement(element, { skipTopEle: true, groupKey: _ext.srcNode.styler.TEMPLATE_STAMP_KEY });
 
-      _ext.Events.onGenerateNode(element, jsonRow);
+      _ext.Events.onGenerateNode(element, jsonRow, ctrls);
       return element;
     },
 
@@ -454,7 +454,7 @@ export class TemplateNode {
       //onGettingContent: (jsonRow: any) => { return this.extended.stampRow.content; },
       beforeGenerateContent: (content: string, jsonRow: any) => content,
       onGenerateContent: (content: string, jsonRow: any) => content,
-      onGenerateNode: (mainNode: HTMLElement, jsonRow: any) => { },
+      onGenerateNode: (mainNode: HTMLElement, jsonRow: any, ctrls?: { [key: string]: HTMLElement | HTMLElement[] }) => { },
 
       onDataExport: (data: TransferDataNode) => {
         return false;
