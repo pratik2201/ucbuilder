@@ -214,7 +214,12 @@ export class StylerRegs {
   }
   opnClsr: openCloser = new openCloser();
   static internalKey: string = 'int' + uniqOpt.randomNo();
-
+  static REMOVE_COMMENT(rtrn: string): string {
+    return rtrn.replace(patternList.MULTILINE_COMMENT_REGS, "")
+      .replace(patternList.SINGLELINE_COMMENT_REGS, "");
+  } static REMOVE_EXTRASPACE(rtrn: string): string {
+    return rtrn.replace(patternList.SPACE_REMOVER_REGS, "$1");
+  }
   parseStyleSeperator_sub(_args: StyleSeperatorOptions): string {
     let _this = this;
 
@@ -237,11 +242,10 @@ export class StylerRegs {
     }
     console.log([_curRoot]);*/
 
-    let rtrn: string = _params.data.replace(patternList.MULTILINE_COMMENT_REGS, "");
-    rtrn = rtrn.replace(patternList.SINGLELINE_COMMENT_REGS, "");
-
-    rtrn = _this.themeCssHandler.match(rtrn);
-
+    //let rtrn: string = _params.data.replace(patternList.MULTILINE_COMMENT_REGS, "");
+    //rtrn = rtrn.replace(patternList.SINGLELINE_COMMENT_REGS, "");
+    let rtrn = StylerRegs.REMOVE_COMMENT(_params.data);
+    rtrn = StylerRegs.REMOVE_EXTRASPACE(_this.themeCssHandler.match(rtrn));
     /*rtrn = rtrn.replace(
       patternList.themeCSSLoader,
       (match: string, code: string, quationMark: string, path: string, offset: any, input_string: string) => {
@@ -276,7 +280,7 @@ export class StylerRegs {
     );*/
 
     //rtrn = rtrn.trim().replace(/(;|,|{|})[\n\r ]*/gi, "$1 ");   // remove this comment it was old code
-    rtrn = rtrn.trim().replace(patternList.SPACE_REMOVER_REGS, "$1");   // remove this comment it was old code
+    // remove this comment it was old code
 
     let extraTextAtBegining = "";
     rtrn = this.opnClsr.doTask("{", "}", rtrn,

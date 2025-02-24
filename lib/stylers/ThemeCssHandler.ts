@@ -4,6 +4,7 @@ import { RootPathRow } from "ucbuilder/global/findAndReplace";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { StampNode } from "ucbuilder/lib/StampGenerator";
 import { patternList, StylerRegs } from "ucbuilder/lib/stylers/StylerRegs";
+import { Template } from "ucbuilder/Template";
 
 export class ThemeCssHandler {
     main: StylerRegs;
@@ -23,6 +24,8 @@ export class ThemeCssHandler {
                             replaceContentWithKeys: true
                         });
                         themecontents = _this.match(themecontents);
+                        //console.log(Template.splitCSSById(themecontents,));
+                        _this.main.main.onRelease
                         return themecontents;
                     case "import":
                         //console.log(path);

@@ -1,5 +1,4 @@
 import { codeFileInfo } from "ucbuilder/build/codeFileInfo";
-import { propOpt } from "ucbuilder/build/common";
 import { regsManage } from "ucbuilder/build/regs/regsManage";
 import { TemplateMaker } from "ucbuilder/build/regs/TemplateMaker";
 import { ITemplatePathOptions, ITptOptions, TptOptions } from "ucbuilder/enumAndMore";
@@ -9,9 +8,9 @@ import { FilterContent } from "ucbuilder/global/filterContent";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
+import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
 import { CSSSearchAttributeCondition, CSSVariableScope, StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
 import { Usercontrol } from "ucbuilder/Usercontrol";
-import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
 interface TptTextObjectNode<K> {
   content: string,
   row: K
@@ -101,45 +100,82 @@ export class Template {
     }*/
     return rtrn;
   }
+
   static splitCSSById(cssContent: string, rtrn: { [key: string]: ITemplatePathOptions }): string {
     let rtrnKeys = Object.keys(rtrn);
-
+    cssContent = StylerRegs.REMOVE_EXTRASPACE(StylerRegs.REMOVE_COMMENT(useLoader(cssContent)));
     let cssExtrct = StylerRegs.ScssExtractor(cssContent);
     let outerRulesCSS = "";
+    let commonRulesCSS = "";
     //console.log(cssContent);
     let gkeys = [] as string[];
     let hasAnyId = false;
+    let prevCnt = '';
     for (let i = 0, iObj = cssExtrct, ilen = iObj.length; i < ilen; i++) {
       const iItem = iObj[i];
-      let fc = ' ' + iItem.frontContent;
-      let needBetween = true;
-      outerRulesCSS += fc.replace(/([\s\S]*)\#(\w+)\s*$/mg, (m, prevCn: string, ids: string) => {
-        //console.log([fc, prevCn, ids]);
+      let hasFound = false;
+      /*outerRulesCSS += */iItem.frontContent.replace(/([\s\S]*)\#(\w+)\s*$/mg, (m, prevCn: string, ids: string) => {
         let robj = rtrn[ids];
-        if (robj != undefined) {
-          robj.cssContents = iItem.betweenContent;
-          needBetween = false;
+        if (robj != undefined) { // IF TEMPLATENODE FOUND
+          robj.cssContents = robj.cssContents == undefined ? iItem.betweenContent : robj.cssContents + `
+            `  + iItem.betweenContent;
+          hasFound = true;
           hasAnyId = true;
           gkeys.push(ids);
-          return ' ' + prevCn.trim() + ' ';
-        } else {
-          if (iItem.child.length == 0) return m;
-          else { needBetween = false; return ''; }
+          prevCnt = prevCn.trim();
+          return '';//' ' + prevCn.trim() + ' ';
+        } else {        // IF NOT FOUND
+          if (iItem.child.length == 0) { return m; }
+          else { hasFound = true; return ''; }
         }
       });
-      if (needBetween) outerRulesCSS += '{ ' + iItem.betweenContent + ' }';
+      if (!hasFound) {
+        //console.log(iItem.frontContent);
+        let fcSplitted = iItem.frontContent.split(';');
+        let selector = fcSplitted.pop();
+        let fcontent = fcSplitted.join(';');
+        if (fcSplitted.length > 0) fcontent += ';';
+        //console.log(iItem.frontContent);        
+        if (!selector.includes('&')) {
+          outerRulesCSS += iItem.frontContent + ' { ' + iItem.betweenContent + ' } ';
+        } else {
+          outerRulesCSS += fcontent; //console.log([fcontent,selector]);
+          commonRulesCSS += selector + ' { ' + iItem.betweenContent + ' } ';
+        }
+      }
+
     }
     if (!hasAnyId) {
-      if (rtrn["primary"] != undefined)
-        rtrn["primary"].cssContents = cssContent;
+      if (rtrn["primary"] != undefined) {
+        let p = rtrn["primary"];
+        p.cssContents = p.cssContents == undefined ? cssContent : p.cssContents + `
+          ` + cssContent;
+      }
       return outerRulesCSS;
     }
-    /*for (let i = 0, iObj = rtrnKeys, ilen = iObj.length; i < ilen; i++) {
-      const iItem = iObj[i];
-      let ck = rtrn[iItem].cssContents;
-      rtrn[iItem].cssContents = outerRulesCSS + ck;
-    }*/
+    if (commonRulesCSS.length > 0)
+      for (let i = 0, iObj = rtrnKeys, ilen = iObj.length; i < ilen; i++) {
+        const iItem = iObj[i];
+        let ck = rtrn[iItem].cssContents ?? '';
+        rtrn[iItem].cssContents = commonRulesCSS + ck;
+      }
+
     return outerRulesCSS;
+    function useLoader(csscnt: string): string {
+      //console.log(cssContent);
+
+      csscnt = csscnt.replace(/\@use\s*([\"'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/gim,
+        (match: string, quationMark: string, path: string, offset: any, input_string: string) => {
+          let c = FileDataBank.readFile(path, {
+            isFullPath: false,
+            replaceContentWithKeys: true
+          })
+          //console.log(c);
+
+          return useLoader(c);
+        });
+      return csscnt;
+    }
   }
   static GetOptionsByContent(htmlcontent: string, cssContent: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
     let ele = htmlcontent.PHP_REMOVE().$();
