@@ -103,6 +103,7 @@ export class Template {
 
   static splitCSSById(cssContent: string, rtrn: { [key: string]: ITemplatePathOptions }): string {
     let rtrnKeys = Object.keys(rtrn);
+   //  if (cssContent.includes('part2Size')) debugger;
     cssContent = StylerRegs.REMOVE_EXTRASPACE(StylerRegs.REMOVE_COMMENT(useLoader(cssContent)));
     let cssExtrct = StylerRegs.ScssExtractor(cssContent);
     let outerRulesCSS = "";
@@ -122,7 +123,7 @@ export class Template {
           hasFound = true;
           hasAnyId = true;
           gkeys.push(ids);
-          prevCnt = prevCn.trim();
+          outerRulesCSS += ' '+ prevCn.trim();
           return '';//' ' + prevCn.trim() + ' ';
         } else {        // IF NOT FOUND
           if (iItem.child.length == 0) { return m; }
@@ -143,8 +144,7 @@ export class Template {
           commonRulesCSS += selector + ' { ' + iItem.betweenContent + ' } ';
         }
       }
-
-    }
+    }//else
     if (!hasAnyId) {
       if (rtrn["primary"] != undefined) {
         let p = rtrn["primary"];
@@ -304,8 +304,10 @@ export class Template {
   createTemplate(tptPathOpt: ITemplatePathOptions): TemplateNode {
     let tnode = new TemplateNode(this);
     let tExt = this.extended;
+
     let cfg = Object.assign({}, TptOptions);
     cfg.cfInfo = tExt.cfInfo;
+    
     cfg.parentUc = tExt.parentUc;
     tnode.extended.initializecomponent(cfg, tptPathOpt);
     return tnode;

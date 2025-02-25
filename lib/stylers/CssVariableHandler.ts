@@ -45,6 +45,7 @@ export class CssVariableHandler {
         rtrn = rtrn.replace(patternList.varHandler,
             (match: string, fullVarName: string, defaultVal: string) => {
                 //console.log([match, fullVarName, defaultVal]);
+                defaultVal = defaultVal.trim();
                 let ky: string = fullVarName;//.toLowerCase();
                 let scope = ky.charAt(1) as CSSVariableScopeSort;
                 let varName = ky.substring(3).trim()
