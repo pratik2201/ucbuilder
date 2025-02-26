@@ -305,8 +305,11 @@ class TabIndexManager {
 
     static getDirectParent(element) { return this.getClosest(element); }
     static getDirectElement(container: HTMLElement, index: number): HTMLElement {
-        return (Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`))
-            .filter(s => container.is(this.getClosest(s))) as HTMLElement[])[0];
+        let ar = Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`));
+        ar = ar.filter(s => container.is(this.getClosest(s))) as HTMLElement[];
+        return ar[0] as HTMLElement;
+        //return (Array.from(container.querySelectorAll(`[x-tabindex="${index}"]`))
+        //    .filter(s => container.is(this.getClosest(s))) as HTMLElement[])[0];
     }
 
     static focusTo(htele: HTMLElement) {
