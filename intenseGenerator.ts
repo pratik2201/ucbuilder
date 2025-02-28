@@ -9,7 +9,6 @@ import { Template, TemplateNode } from "ucbuilder/Template";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
-//import { createRequire, Module } from "module";
 
 class intenseGenerator {
     static setCSS_globalVar(varList: VariableList, _path: string): void  {    

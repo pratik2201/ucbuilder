@@ -1,7 +1,4 @@
-import { json } from "stream/consumers";
 import { objectOpt } from "ucbuilder/build/common";
-import { patternMatcher } from "ucbuilder/build/regs/patternMatcher";
-import { newObjectOpt } from "ucbuilder/global/objectOpt";
 
 type LoopEachItemCallback = (obj: {}, content: string, nameSpace: string, loopCode: string) => string;
 const loopEachItemCallback: LoopEachItemCallback = (obj = {}, content, nameSpace, loopCode) => { return content; };
