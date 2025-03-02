@@ -22,10 +22,10 @@
       "./node_modules/@types"
     ],
     "baseUrl": ".",
-    "rootDir": ".",
-    "outDir": "out",
+    "rootDir": "./src", 
+    "outDir": "./out",
     "paths": {
-      "ucbuilder/*": [  "./*" ]
+      "ucbuilder/*": [  "./src/*" ]
     }
   }
 }

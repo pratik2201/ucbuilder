@@ -1,17 +1,17 @@
-const { propOpt, strOpt, pathInfo } = require("ucbuilder/build/common");
-const { regsManage } = require("ucbuilder/build/regs/regsManage");
-const { fileDataBank } = require("ucbuilder/global/fileDataBank");
-const { filterContent } = require("ucbuilder/global/filterContent");
+const { propOpt, strOpt, pathInfo } = require("ucbuilder/src/build/common");
+const { regsManage } = require("ucbuilder/src/build/regs/regsManage");
+const { fileDataBank } = require("ucbuilder/src/global/fileDataBank");
+const { filterContent } = require("ucbuilder/src/global/filterContent");
 const { loadGlobal } = require("ucbuilder/global/loadGlobal");
-const { ATTR_OF } = require("ucbuilder/global/runtimeOpt");
+const { ATTR_OF } = require("ucbuilder/src/global/runtimeOpt");
 const { stylerRegs } = require("ucbuilder/global/stylerRegs");
 const { userControlStampRow, userControlStamp } = require("ucbuilder/global/userControlStamp");
 const { Usercontrol } = require("ucbuilder/Usercontrol");
 const { tptOptions, templatePathOptions } = require("ucbuilder/enumAndMore");
-const { transferDataNode } = require("ucbuilder/global/drag/transferation");
-const { fileInfo, codeFileInfo } = require("ucbuilder/build/codeFileInfo");
-const { newObjectOpt } = require("ucbuilder/global/objectOpt");
-const { Size } = require("ucbuilder/global/drawing/shapes");
+const { transferDataNode } = require("ucbuilder/src/global/drag/transferation");
+const { fileInfo, codeFileInfo } = require("ucbuilder/src/build/codeFileInfo");
+const { newObjectOpt } = require("ucbuilder/src/global/objectOpt");
+const { Size } = require("ucbuilder/src/global/drawing/shapes");
 
 class Paperbox {
     static getTemplates = {
