@@ -5,31 +5,9 @@ import { openCloser } from "ucbuilder/global/openCloser";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
-import { RootAndExcludeHandler } from "ucbuilder/lib/stylers/RootAndExcludeHandler";
-import { SelectorHandler } from "ucbuilder/lib/stylers/SelectorHandler";
-import { ThemeCssHandler } from "ucbuilder/lib/stylers/ThemeCssHandler";
-import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
+import { FileDataBank } from "ucbuilder/global/fileDataBank";
 import { OpenCloseHandler } from "ucbuilder/lib/OpenCloseHandler";
-
 export type VariableList = { [key: string]: string };
-
-/*interface PatternList {
-  globalFinderPathPattern: RegExp;
-  globalFinderPattern: RegExp;
-  styleTagSelector: RegExp;
-  styleCommentRegs: RegExp;
-  subUcFatcher: RegExp;
-  themeCSSLoader: RegExp;
-  stylesFilterPattern: RegExp;
-  varValuePrinterPattern: RegExp;
-  varValueGetterPattern: RegExp;
-  scopeSelector: RegExp;
-  rootExcludePattern: RegExp;
-}*/
-
-//   /\@import\s*([\"'`])((?:\\.|(?!\1)[^\\])*)\1\s*;/
-
-
 export const patternList/*: PatternList */ = {
   //globalFinderPathPattern: /path=(["'`])([\s\S]*?)\1/gim,
   //globalFinderPattern: /(.|\n)<gload([\n\r\w\W.]*?)>/gim,
@@ -48,7 +26,7 @@ export const patternList/*: PatternList */ = {
   //scopeSelector: /\&/gm,
   rootExcludePattern: /(\w*)(:root|:exclude)/gi,
 };
-export interface StyleSeperatorOptions {
+export interface IStyleSeperatorOptions {
   data: string,
   scopeSelectorText?: string,
   callCounter?: number,
@@ -57,7 +35,7 @@ export interface StyleSeperatorOptions {
   localNodeElement?: HTMLElement,
   //cssVarStampKey?: string,
 }
-const styleSeperatorOptions: StyleSeperatorOptions = {
+const StyleSeperatorOptions: IStyleSeperatorOptions = {
   data: "",
   scopeSelectorText: "",
   callCounter: 0,
@@ -220,13 +198,13 @@ export class StylerRegs {
   } static REMOVE_EXTRASPACE(rtrn: string): string {
     return rtrn.replace(patternList.SPACE_REMOVER_REGS, "$1");
   }
-  parseStyleSeperator_sub(_args: StyleSeperatorOptions): string {
+  parseStyleSeperator_sub(_args: IStyleSeperatorOptions): string {
     let _this = this;
 
     if (_args.data == undefined) return "";
 
     //console.log([_args.isForRoot,_args._rootinfo]);
-    let _params = Object.assign(Object.assign({}, styleSeperatorOptions), _args);
+    let _params = Object.assign(Object.assign({}, StyleSeperatorOptions), _args);
 
     _params.callCounter++;
     let externalStyles: string[] = [];
@@ -532,4 +510,566 @@ export class StylerRegs {
     }
     node.parent = this;
   }
+}
+
+/*export const ScopeSelectorOptions: IScopeSelectorOptions = {
+    selectorText: "",
+    scopeSelectorText: "",
+    parent_stamp: "",
+    parent_stamp_value: undefined,
+    root: undefined,
+    isForRoot: false,
+    hiddens: {
+        root: undefined,
+        list: {},
+        isForRoot: false,
+        counter: 0,
+    }
+};*/
+export interface IHiddenScopeKVP {
+    [key: string]: {
+        selector?: string;
+        funcName?: string;
+        value: string;
+    };
+}
+export interface IHiddenScopeNode {
+    list: IHiddenScopeKVP;
+    root: RootPathRow;
+    isForRoot: boolean; scopeSelectorText?: string;
+    counter: number;
+}
+/*export interface IScopeSelectorOptions {
+    selectorText: string;
+    scopeSelectorText?: string;
+    parent_stamp: string;
+    parent_stamp_value?: string;
+    isForRoot: boolean;
+    root: RootPathRow;
+    hiddens?: IHiddenScopeNode;
+}*/
+export class RootAndExcludeHandler {
+    main: StylerRegs;
+    constructor(main: StylerRegs) {
+        this.main = main;
+    }
+    rootExcludePattern: RegExp;
+    checkRoot(selectorText: string, styleContent: string, _params: IStyleSeperatorOptions): string[] {
+        if (selectorText.match(patternList.rootExcludePattern) == null) return [];
+        // debugger;
+        let changed = false;
+        let _this = this;
+        let externalStyles: string[] = [];
+        let selectors = selectorText.split(",");
+        for (let i = 0; i < selectors.length; i++) {
+            const pselctor = selectors[i];
+            pselctor.trim().replace(
+                patternList.rootExcludePattern,
+                (match: string, rootAlices: string, nmode: string) => {
+
+                    switch (nmode) {
+                        case ":root":
+                            if (rootAlices == undefined || rootAlices == '') {
+                                changed = true;
+                                externalStyles.push(
+                                    _this.main.parseStyleSeperator_sub({
+                                        data: _params.scopeSelectorText + styleContent,
+                                        callCounter: _params.callCounter,
+                                        isForRoot: true,
+                                        _rootinfo: undefined
+                                    })
+                                );
+                            } else {
+                                let rInfo = rootPathHandler.getInfoByAlices(
+                                    rootAlices // `@${rootAlices}:`
+                                );
+                                if (rInfo != undefined) {
+
+                                    externalStyles.push(
+                                        _this.main.parseStyleSeperator_sub({
+                                            data: _params.scopeSelectorText + styleContent,
+                                            callCounter: _params.callCounter,
+                                            isForRoot: true,
+                                            _rootinfo: rInfo,
+                                        })
+                                    );
+                                }
+                            }
+                            break;
+                        case ":exclude":
+                            externalStyles.push(styleContent);
+                            return "";
+                    }
+                    return "";
+                }
+            );
+        }
+        return externalStyles;
+    }
+}
+
+
+
+
+export class ThemeCssHandler {
+  main: StylerRegs;
+  constructor(main: StylerRegs) {
+      this.main = main;
+  }
+  match(rtrn: string): string {
+      let _this = this;
+      rtrn = rtrn.replace(
+          patternList.themeCSSLoader,
+          (match: string, code: string, quationMark: string, path: string, offset: any, input_string: string) => {
+              switch (code) {
+                  case "use":
+                      //if (path.indexOf('voucherexpenseitem.tpt@ledger')!=-1) debugger;
+                      let themecontents = FileDataBank.readFile(path, {
+                          isFullPath: false,
+                          replaceContentWithKeys: true
+                      });
+                      themecontents = _this.match(themecontents);
+                      //console.log(Template.splitCSSById(themecontents,));
+                      _this.main.main.onRelease
+                      return themecontents;
+                  case "import":
+                      //console.log(path);
+                      let node: RootPathRow = rootPathHandler.getInfo(path);//rootPathHandler.convertToRow(row, true);
+                      node.isAlreadyFullPath = true;
+                      let stpSrc = StampNode.registerSoruce({
+                          key: path,
+                          root: node,
+                          accessName: '',
+                      });
+                      stpSrc.pushCSS(path);
+                      _this.main.main.onRelease.push(() => {
+                          stpSrc.release(); 
+                      });
+                      
+                      return "";
+              }
+          }
+      );
+      return rtrn;
+  }
+}
+
+export const ScopeSelectorOptions: IScopeSelectorOptions = {
+    selectorText: "",
+    scopeSelectorText: "",
+    //parent_stamp?: "",
+    //parent_stamp_value?: undefined,
+    root: undefined,
+    isForRoot: false,
+    hiddens: {
+        root: undefined,
+        list: {},
+        isForRoot: false,
+        counter: 0,
+    }
+};
+export interface HiddenScopeKVP {
+    [key: string]: {
+        selector?: string;
+        funcName?: string;
+        value: string;
+    };
+}
+export interface IScopeSelectorOptions {
+    selectorText: string;
+    scopeSelectorText?: string;
+    isForRoot: boolean;
+    root: RootPathRow;
+    hiddens?: IHiddenScopeNode;
+}
+export class SelectorHandler {
+    main: StylerRegs;
+    constructor(main: StylerRegs) {
+        this.main = main;
+    }
+    /*giveContents(contents) {
+        let oc = new openCloser();
+        let rtrn = oc.doTask('(', ')', contents, (selector, cssStyle, opened) => {
+            if (opened > 1) {
+                if (selector.endsWith(':has')) {
+                    cssStyle = this.giveContents(cssStyle);
+                } else {
+                    return selector + '(' + cssStyle + ')';
+                }
+            }
+            if (selector.endsWith(':has')) {
+                return selector + '<' + cssStyle + '>';
+            } else {
+                return selector + '(' + cssStyle + ')';
+            }
+
+        });
+        return rtrn;
+    }*/
+    parseScopeSeperator(scopeOpt: IScopeSelectorOptions): string {
+        //return this.parseScopeSeperator_sub(scopeOpt)
+        /* if (scopeOpt.selectorText === '& mainContainer') {
+             debugger;
+         }*/
+        scopeOpt = Object.assign(ScopeSelectorOptions, scopeOpt);
+        scopeOpt.hiddens.root = scopeOpt.root;
+        scopeOpt.hiddens.scopeSelectorText = scopeOpt.scopeSelectorText;
+        scopeOpt.hiddens.isForRoot = scopeOpt.isForRoot;
+        if (scopeOpt.selectorText.trim() == '') return '';
+        let counter = scopeOpt.hiddens.counter;
+        let _this = this;
+        let oldSelector = scopeOpt.selectorText;
+        // if (scopeOpt.selectorText.includes('forms') /*&& sub.indexOf('◄◘') != -1*/) {
+        //     if (counter == 0) {
+        //         console.log(this.main);
+        //     }
+        // }
+        let oc = new openCloser();
+        //let hiddens: {key:string,value:string}[] = []
+        let rtrn = oc.doTask('(', ')', scopeOpt.selectorText, (selector, cssStyle, opened) => {
+            if (opened > 1) {
+                if (selector.endsWith(':has')) {
+                    scopeOpt.selectorText = cssStyle;
+                    let key = _this.KEY(scopeOpt.hiddens);
+                    cssStyle = _this.parseScopeSeperator(scopeOpt);
+                    scopeOpt.hiddens.list[key] = { selector: cssStyle, funcName: 'has', value: '(' + cssStyle + ')' };
+                    return selector + '' + key;
+                } else {
+                    return selector + '(' + cssStyle + ')';
+                }
+            }
+            if (selector.endsWith(':has')) {
+                //let n = Object.assign({}, scopeOpt);
+                scopeOpt.selectorText = cssStyle;
+                // let scss = cssStyle; // this.parseScopeSeperator_sub(n);
+                let key = _this.KEY(scopeOpt.hiddens);
+                scopeOpt.hiddens.list[key] = { selector: cssStyle, funcName: 'has', value: '(' + cssStyle + ')' };
+                return selector + '' + key;
+            } else {
+                return selector + '(' + cssStyle + ')';
+            }
+
+        });
+        //let n = Object.assign({}, scopeOpt);
+        scopeOpt.selectorText = rtrn;
+        if (counter == 0) {
+            rtrn = this.loopMultipleSelectors(rtrn, /*this.main,*/ scopeOpt.hiddens);
+            //console.log([oldSelector, rtrn]);
+            scopeOpt.hiddens.list = {};
+            scopeOpt.hiddens.counter = 0;
+        }
+
+        //let sub = this.parseScopeSeperator_sub(scopeOpt);
+        // console.log([sub, rtrn]);
+        return rtrn;
+    }
+    loopMultipleSelectors(selector: string, /*stylers: StylerRegs,*/ hiddens: IHiddenScopeNode): string {
+        let selectors = selector.split(',');
+        let rtrn = [];
+        for (let i = 0, len = selectors.length; i < len; i++) {
+            rtrn.push(this.splitselector(selectors[i], /*stylers,*/ hiddens));
+        }
+        return rtrn.join(',');
+    }
+    KEY(hiddens: IHiddenScopeNode) {
+        hiddens.counter++;
+        return '◄◘' + hiddens.counter + '◘▀';
+    }
+    splitselector(selector: string, hiddens: IHiddenScopeNode): string {
+        //if (selector.trim().startsWith('&winFrame1')) debugger;
+        //console.log(selector, hiddens);     
+        let splitted = selector.split(' ');
+        let hasUcFound = false;
+        let kvNode: string;
+        let _this = this;
+        let nSelector = '';
+        let isStartWithSubUc = false;
+        let sub_styler: StylerRegs = undefined;
+        for (let i = 0, len = splitted.length; i < len; i++) {
+            let sel = splitted[i];
+            hasUcFound = false; sub_styler = undefined;
+            let matchs = sel.replace(/^&(\w+)/gm, (s, ucName) => {
+                sub_styler = _this.main.children.find(s => s.controlName === ucName);
+                hasUcFound = (sub_styler != undefined);
+                if (hasUcFound) {
+                    isStartWithSubUc = (i == 0);
+                    // styler = sub_styler;
+                    let nnode = `${sub_styler.nodeName}[${ATTR_OF.UC.ALL}="${sub_styler.LOCAL_STAMP_KEY}"]`;
+                    let key = _this.KEY(hiddens);
+                    kvNode = key;
+                    hiddens.list[kvNode] = { value: nnode };
+                    return key;
+                } else return s;
+            });
+            if (hasUcFound) {
+                splitted[i] = matchs;
+                let nextSplitters = splitted.slice(i);
+                let subSelector = nextSplitters.join(' ');
+                splitted[i] = sub_styler.selectorHandler.splitselector(subSelector.replace(kvNode, '&'), /*sub_styler,*/ hiddens);
+                hasUcFound = false;
+                splitted = splitted.slice(0, i + 1);
+                break;
+
+            } else {
+                let ntext = splitted[i];
+                ntext = ntext.replace(/◄◘(\d+)◘▀/gm, (r) => {
+                    return '(' + _this.loopMultipleSelectors(hiddens.list[r].selector, /* styler,*/ hiddens) + ')';
+                });
+                splitted[i] = ntext;
+            }
+        }
+        if (isStartWithSubUc) splitted.unshift('&');
+        let styler = this.main;
+        splitted = splitted.filter(word => word !== "");
+        let len = splitted.length;
+        let fsel = '';
+        let code: CSSSearchAttributeCondition = this.main.selectorMode;
+        let keyval = styler.LOCAL_STAMP_KEY + '_';
+        if (code == '*') keyval = '_' + styler.TEMPLATE_STAMP_KEY + '_';
+        else code = '^';
+        if (hiddens.isForRoot) {
+            fsel = splitted[len - 1];
+            splitted[len - 1] = this.SELECTOR_CONDITION(fsel, '$', "_" + hiddens.root.id); // ATTR_OF.UC.CLASS_ROOT+''+hiddens.root.id
+        } else {
+            fsel = splitted[0];
+
+            switch (len) {
+                case 1:
+                    if (fsel.startsWith('&'))
+                        splitted[0] = fsel.replace('&', `WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //`WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
+                    else {
+                        //if (!isStartWithSubUc) {
+                        splitted[0] = this.SELECTOR_CONDITION(fsel, code, keyval); //ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
+
+                        //}
+                    }
+                    break;
+                default:
+                    if (fsel.startsWith('&'))
+                        splitted[0] = fsel.replace('&', `WRAPPER[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //   // `WRAPPER.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
+                    else {
+
+                        //if (!isStartWithSubUc) {
+                        fsel = splitted[len - 1];
+                        splitted[len - 1] = this.SELECTOR_CONDITION(fsel, code, keyval); // ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
+
+                        //}
+                    }
+                    break;
+            }
+        }
+        /* fsel = splitted[0];
+         if (fsel.startsWith('&')) {
+             splitted[0] = fsel.replace('&', `WRAPPER[${ATTR_OF.UC.UC_STAMP}="${styler.uniqStamp}"]`);
+         } else {
+             splitted[0] = `${fsel}`;//this.setStamp_shu_____(fsel, ATTR_OF.UC.UC_STAMP, styler.uniqStamp);
+         }
+         if (len > 1) {
+             let fsel = splitted[len - 1];
+             // splitted[len-1] = this.setStamp_shu_____(fsel, ATTR_OF.UC.PARENT_STAMP, styler.uniqStamp);
+         }*/
+        // console.log(hiddens.scopeSelectorText);
+        splitted.unshift(hiddens.scopeSelectorText != undefined ? hiddens.scopeSelectorText : '');
+        return splitted.join(' ');
+        //scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions), scopeOpt);
+        //return this.parseScopeSeperator_sub(scopeOpt);
+    }
+    SELECTOR_CONDITION(selector, /*classes*/ regxInd: CSSSearchAttributeCondition = '^', stampvalue) {
+        let dbl: string[] = selector.split(/ *:: */);
+        let sngl: string[] = dbl[0].split(/ *: */);
+        //sngl[0] += `.${classes}`;
+        sngl[0] += `[${ATTR_OF.UC.ALL}${regxInd}="${stampvalue}"]`;
+        dbl[0] = sngl.join(":");
+        return dbl.join("::");
+    }
+}
+
+
+export class CssVariableHandler {
+  static GetCombinedCSSVarName = (key: string, uniqId: string, code: CSSVariableScopeSort): string => {
+      return `--${key}${uniqId}${code}`;
+  }
+  static GetCombinedCSSAnimationName = (key: string, uniqId: string, code: CSSVariableScopeSort): string => {
+      return `anm${key}${uniqId}${code}`;
+  }
+  static SetCSSVarValue = (vlst: VariableList, uniqId: any, code: CSSVariableScopeSort, tarEle: HTMLElement = document.body): void => {
+      let style = tarEle.style;
+      for (const [key, value] of Object.entries(vlst)) {
+          style.setProperty(this.GetCombinedCSSVarName(key, uniqId, code), value);
+      }
+      return;
+  }
+
+  static GetCSSVarValue = (key: string, uniqId: string, code: CSSVariableScopeSort, defaultVal: string): string => {
+      return ` var(${this.GetCombinedCSSVarName(key, uniqId, code)},${defaultVal}) `;
+  }
+  GetCSSAnimationName = (animName: string) => {
+      let r = animName.match(/^(\w)-(\w+)/i);
+      let scope: CSSVariableScopeSort = '' as any;
+      let name = animName;
+      if (r == null) return CssVariableHandler.GetCombinedCSSAnimationName(name, this.main.LOCAL_STAMP_KEY, 'l');
+      else {
+          scope = r[1] as CSSVariableScopeSort;
+          name = r[2];
+          switch (scope) {
+              case 'g': return CssVariableHandler.GetCombinedCSSAnimationName(name, this.main.ROOT_STAMP_KEY, 'g');
+              case 't': return CssVariableHandler.GetCombinedCSSAnimationName(name, this.main.TEMPLATE_STAMP_KEY, 't');
+              case 'l': return CssVariableHandler.GetCombinedCSSAnimationName(name, this.main.LOCAL_STAMP_KEY, 'l');
+              default: return animName;
+          }
+      }
+  }
+  main: StylerRegs;
+  constructor(main: StylerRegs) {
+      this.main = main;
+  }
+  handlerVariable(rtrn: string): string {
+      let _this = this;
+      let _main = this.main;
+
+      //   /(\$[lgit]-\w+)((?:\s*\:\s*(.*?)\s*;)|(?:\s+(.+?)\s*--)|\s*)/gim
+      rtrn = rtrn.replace(patternList.varHandler,
+          (match: string, fullVarName: string, defaultVal: string) => {
+              //console.log([match, fullVarName, defaultVal]);
+              defaultVal = defaultVal.trim();
+              let ky: string = fullVarName;//.toLowerCase();
+              let scope = ky.charAt(1) as CSSVariableScopeSort;
+              let varName = ky.substring(3).trim()
+              let uniqId: string = StylerRegs.internalKey;
+              let isPrintWithEmptyValue = defaultVal.length == 0;
+              let isPrintWithDefaultValue = defaultVal.endsWith('--');
+              let isSettingValue = defaultVal.charAt(0) == ':' && defaultVal.slice(-1) == ';';
+              if (isPrintWithEmptyValue || isPrintWithDefaultValue) { // GET VALUE 
+                  if (isPrintWithDefaultValue) {
+                      defaultVal = defaultVal._trimText('--');
+                      defaultVal = _this.handlerVariable(defaultVal);
+                  }
+                  switch (scope) {
+                      case "g": uniqId = '' + _main.ROOT_STAMP_KEY; break;
+                      case "t": uniqId = _main.TEMPLATE_STAMP_KEY; break;
+                      case "l": uniqId = _main.LOCAL_STAMP_KEY; break;
+                  }
+                  return CssVariableHandler.GetCSSVarValue(
+                      varName,
+                      uniqId,
+                      scope,
+                      defaultVal
+                  );
+              } else if (isSettingValue) { // SET VALUE
+                  let tarEle: HTMLElement = undefined;
+                  defaultVal = defaultVal._trimText(':').trimText_(';');
+                  defaultVal = _this.handlerVariable(defaultVal);
+                  switch (scope) {
+                      case "g": uniqId = '' + this.main.rootInfo.id; break;
+                      case "t":
+                          uniqId = _main.TEMPLATE_STAMP_KEY;
+                          tarEle = _main.wrapperHT;
+                          break;
+                      case "l":
+                          uniqId = _main.LOCAL_STAMP_KEY;
+                          tarEle = _main.wrapperHT;
+                          break;
+                      default: return match;
+                  }
+                  let key = varName;
+                  CssVariableHandler.SetCSSVarValue({ [key]: defaultVal }, uniqId, scope, tarEle);
+                  return '';
+              }
+              //console.log(scope, varName, defaultVal);
+              return match;
+          });
+      /*
+      rtrn = rtrn.replace(
+          patternList.varValuePrinterPattern,
+          (match: string, varName: string, defaultVal: string) => {
+              let ky: string = varName;//.toLowerCase();
+              let scope = ky.charAt(1) as CSSVariableScopeSort;
+              let uniqId: string = StylerRegs.internalKey;
+              //console.log(['printer',patternList.varValuePrinterPattern,varName,defaultVal,match]);
+  
+              switch (scope) {
+                  case "g":
+                      uniqId = '' + this.main.rootInfo.id;//_curRoot.id;
+                      break;
+                  case "t":
+                      uniqId = _main.TEMPLATE_STAMP_KEY;
+                      break;
+                  case "l":
+                      uniqId = _main.LOCAL_STAMP_KEY;
+                      break;
+              }
+              return this.main.__VAR.GETVALUE(
+                  ky.substring(3).trim(),
+                  uniqId,
+                  scope,
+                  defaultVal
+              );
+          }
+      );
+      rtrn = rtrn.replace(
+          patternList.varValueGetterPattern,
+          (match: string, varName: string, value: string) => {
+              //  console.log(['getter',varName,value,match]);
+  
+              let ky: string = varName;//.toLowerCase();
+              let scope: string = ky.charAt(1);
+              let uniqId: string = StylerRegs.internalKey;
+              let tarEle: HTMLElement = undefined;
+              // debugger;
+              switch (scope) {
+                  case "g":
+                      uniqId = '' + this.main.rootInfo.id;//_curRoot.id;
+                      break;
+                  case "t":
+                      uniqId = _main.TEMPLATE_STAMP_KEY;
+                      tarEle = _main.wrapperHT;
+                      break;
+                  case "l":
+                      uniqId = _main.LOCAL_STAMP_KEY;
+                      tarEle = _main.wrapperHT;
+                      break;
+                  default: return match;
+              }
+              let key = ky.substring(3).trim();
+              this.main.__VAR.SETVALUE({ [key]: value }, uniqId, scope, tarEle);
+              return '';
+          }
+      );*/
+      return rtrn;
+  }
+
+  // __VAR = {
+  //     getKeyName: (key: string, uniqId: string, code: CSSVariableScopeSort): string => {
+  //         return `--${key}${uniqId}${code}`;
+  //     },
+
+  //     SETVALUE: (vlst: VariableList, uniqId: string, code: CSSVariableScopeSort, tarEle: HTMLElement = document.body): void => {
+  //         let style = tarEle.style;
+  //         for (const [key, value] of Object.entries(vlst)) {
+  //             style.setProperty(this.__VAR.getKeyName(key, uniqId, code), value);
+  //         }
+  //         return;
+  //     },
+
+  //     GETVALUE: (key: string, uniqId: string, code: CSSVariableScopeSort, defaultVal: string): string => {
+  //         return ` var(${this.__VAR.getKeyName(key, uniqId, code)},${defaultVal}) `;
+  //     },
+  // };
+  // static __VAR = {
+  //     getKeyName: (key: string, uniqId: string, code: string): string => {
+  //         return `--${key}${uniqId}${code}`;
+  //     },
+
+  //     SETVALUE: (vlst: VariableList,/*key: string,*/ uniqId: string, code: string, /*value: string,*/ tarEle: HTMLElement = document.body): void => {
+  //         let style = tarEle.style;
+  //         for (const [key, value] of Object.entries(vlst)) {
+  //             style.setProperty(this.__VAR.getKeyName(key, uniqId, code), value);
+  //         }
+  //         return;
+  //     },
+
+  //     GETVALUE: (key: string, uniqId: string, code: string, defaultVal: string): string => {
+  //         return ` var(${this.__VAR.getKeyName(key, uniqId, code)},${defaultVal}) `;
+  //     },
+  // };
 }

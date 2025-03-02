@@ -8,8 +8,7 @@ import { FilterContent } from "ucbuilder/global/filterContent";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
-import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
-import { CSSSearchAttributeCondition, CSSVariableScope, StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
+import { CSSSearchAttributeCondition, CSSVariableScope, StylerRegs, VariableList,CssVariableHandler } from "ucbuilder/lib/stylers/StylerRegs";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 interface TptTextObjectNode<K> {
   content: string,

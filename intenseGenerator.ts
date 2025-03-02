@@ -3,12 +3,11 @@ import { UcRendarer } from "ucbuilder/build/UcRendarer";
 import { ITptOptions, IUcOptions, TptOptions, UcOptions } from "ucbuilder/enumAndMore";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
-import { VariableList } from "ucbuilder/lib/stylers/StylerRegs";
+import { VariableList,CssVariableHandler } from "ucbuilder/lib/stylers/StylerRegs";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { Template, TemplateNode } from "ucbuilder/Template";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
-import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
 
 class intenseGenerator {
     static setCSS_globalVar(varList: VariableList, _path: string): void  {    

@@ -9,10 +9,9 @@ import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
 import { SessionManager } from "ucbuilder/lib/SessionManager";
 import { IPassElementOptions, SourceNode, StampNode } from "ucbuilder/lib/StampGenerator";
-import { CSSVariableScope, StylerRegs, VariableList } from "ucbuilder/lib/stylers/StylerRegs";
+import { CSSVariableScope, StylerRegs, VariableList,CssVariableHandler } from "ucbuilder/lib/stylers/StylerRegs";
 import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
 import { WinManager } from "ucbuilder/lib/WinManager";
-import { CssVariableHandler } from "ucbuilder/lib/stylers/CssVariableHandler";
 /*export enum ucVisibility{
     inherit = 0,
     visible = 1,
