@@ -20,7 +20,7 @@ export class <?=designer.className ?> extends Usercontrol {
     }
     static Create(pera: IUcOptions, ...args: any[]): <?=src.name ?> { 
         /** <?=src.mainFileRootPath?> */
-        return intenseGenerator.generateUC(this.FILE_PATH,pera,...args) as <?=src.name?>;
+        return intenseGenerator.generateUC(this.FILE_PATH,<?=src.name?>,pera,...args) as <?=src.name?>;
     }
     get(id:<?=designer.getterFunk ?>) {
         return this.ucExtends.find(`[id="${id}"]`)[0];

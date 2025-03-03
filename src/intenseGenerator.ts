@@ -3,26 +3,28 @@ import { UcRendarer } from "ucbuilder/build/UcRendarer";
 import { ITptOptions, IUcOptions, TptOptions, UcOptions } from "ucbuilder/enumAndMore";
 import { newObjectOpt } from "ucbuilder/global/objectOpt";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
-import { VariableList,CssVariableHandler } from "ucbuilder/StylerRegs";
+import { VariableList, CssVariableHandler } from "ucbuilder/StylerRegs";
 import { ResourcesUC } from "ucbuilder/ResourcesUC";
 import { Template, TemplateNode } from "ucbuilder/Template";
 import { Usercontrol } from "ucbuilder/Usercontrol";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
+import { codeFileInfo } from "./build/codeFileInfo";
 
 class intenseGenerator {
-    static setCSS_globalVar(varList: VariableList, _path: string): void  {    
+    static setCSS_globalVar(varList: VariableList, _path: string): void {
         let rt = rootPathHandler.getInfo(_path);
         CssVariableHandler.SetCSSVarValue(varList, '' + rt.id, 'g');
     }
-    static generateUC<T = string>(path: T, pera: IUcOptions, ...args: any[]): Usercontrol {
+    static generateUC<T = string>(path: T, classObj: any, pera: IUcOptions, ...args: any[]): Usercontrol {
         let param0: IUcOptions = newObjectOpt.copyProps(pera, UcOptions);
-        let row = ResourcesUC.codefilelist.getObj(path as string);
-        param0.cfInfo = row.codefileObj;
+        //let row = ResourcesUC.codefilelist.getObj(path as string);
+        param0.cfInfo = new codeFileInfo(codeFileInfo.getExtType(path as string));
+        param0.cfInfo.parseUrl(path as string);
+       // param0.cfInfo = row.codefileObj;
         let toSend = [];
         toSend.push(...args, param0);
-        let classObj = row.obj; //Object.values(row.obj)[0] as any;
-       // console.log(toSend);
-        
+        //let classObj = row.obj; //Object.values(row.obj)[0] as any;
+
         let uc: Usercontrol = (new (classObj)(...toSend));
         if (uc['$']) uc['$'](args);
         //uc.ucExtends.Events.loaded.fire();
@@ -33,11 +35,13 @@ class intenseGenerator {
 
     }
 
-    static generateTPT(path: string, pera: ITptOptions, ...args: any[]): Template {
+    static generateTPT(path: string,classObj: any, pera: ITptOptions, ...args: any[]): Template {
         //let param0: TptOptions = newObjectOpt.copyProps(pera, TptOptions);
         let param0: ITptOptions = Object.assign(pera, TptOptions);
-        let row = ResourcesUC.codefilelist.getObj(path);
-        param0.cfInfo = row.codefileObj;
+        //let row = ResourcesUC.codefilelist.getObj(path);
+        param0.cfInfo = new codeFileInfo(codeFileInfo.getExtType(path));
+        param0.cfInfo.parseUrl(path);
+        //param0.cfInfo = row.codefileObj;
         /*if (param0.elementHT == undefined) {
             let tname = row.codefileObj.name;
             param0.elementHT =
@@ -46,11 +50,11 @@ class intenseGenerator {
                     param0.parentUc.ucExtends.passElement(`<${tname}></${tname}>`.$(),{ skipTopEle:true }) as HTMLElement;
         }*/
         args.push(param0);
-        let uc: Template = (new (row.obj)(...args));
+        let uc: Template = (new (/*row.obj*/classObj)(...args));
         return uc;
     }
 
-    static parseTPT(val: Template | TemplateNode | String, parentUc: Usercontrol): TemplateNode {
+   /* static parseTPT(val: Template | TemplateNode | String, parentUc: Usercontrol): TemplateNode {
         if (objectOpt.parse(val as object, 'Template')) {
             return val[ATTR_OF.TEMPLETE_DEFAULT] as TemplateNode;
         } else if (objectOpt.parse(val as object, 'TemplateNode')) {
@@ -64,8 +68,7 @@ class intenseGenerator {
                 tpt[splval[1].trim()];
             return res;
         }
-    }
-
+    } 
     static parseUC(val: Usercontrol | string | HTMLElement, parentUc: Usercontrol): Usercontrol {
         if (objectOpt.parse(val as Usercontrol, 'Usercontrol')) {
             return val as Usercontrol;
@@ -75,7 +78,7 @@ class intenseGenerator {
             let _path = (val as HTMLElement).getAttribute("x-from") as string;
             if (_path != undefined) return intenseGenerator.generateUC(_path, { parentUc: parentUc });
         }
-    }
+    }*/
 }
 
 export { intenseGenerator };

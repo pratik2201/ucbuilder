@@ -1,10 +1,9 @@
-import { codefileHandler } from "ucbuilder/build/codefileHandler";
 import { rootPathHandler } from "ucbuilder/global/rootPathHandler";
-import { SourceNode } from "ucbuilder/lib/StampGenerator";
-import { StylerRegs } from "ucbuilder/StylerRegs";
-import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
-import { Usercontrol } from "ucbuilder/Usercontrol";
 import { ATTR_OF } from "ucbuilder/global/runtimeOpt";
+import { SourceNode } from "ucbuilder/lib/StampGenerator";
+import { TabIndexManager } from "ucbuilder/lib/TabIndexManager";
+import { StylerRegs } from "ucbuilder/StylerRegs";
+import { Usercontrol } from "ucbuilder/Usercontrol";
 export class ResourcesUC {
     //static styler = new StylerRegs();
     //static stamp: StampNode;
@@ -20,8 +19,7 @@ export class ResourcesUC {
     }
 
     //
-     /** @type {codefileHandler}  */
-    static codefilelist: codefileHandler = new codefileHandler();
+    //static codefilelist: codefileHandler = new codefileHandler();
     static isInitBefore = false;
     static init(callback:()=>void) {
         if (!this.isInitBefore) {

@@ -39,7 +39,7 @@ export class <?=designer.className ?> extends Template {
         intenseGenerator.setCSS_globalVar(varList,this.FILE_PATH);
     }
     static Create(pera: ITptOptions): <?=src.name?> { 
-        return intenseGenerator.generateTPT(this.FILE_PATH,pera) as <?=src.name?>;
+        return intenseGenerator.generateTPT(this.FILE_PATH,<?=src.name?>,pera) as <?=src.name?>;
     }
 
      
