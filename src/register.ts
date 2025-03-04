@@ -51,7 +51,7 @@ class register {
 
         // console.log(path.join(__dirname, '../..'), process.cwd());
         // console.log(" >>> "+process.cwd());
-        rootDirOf = newObjectOpt.copyProps(rootDirOf, ucConfig);
+        rootDirOf = newObjectOpt.copyProps(rootDirOf, new ucConfig());
         //if (rootDirOf.outDir == '') rootDirOf.outDir = '/';  //  old code i commented un coment if not work
         rootDirOf.outDir = '/' + rootDirOf.outDir + '/';
         rootDirOf.outDir = rootDirOf.outDir.toFilePath(false);

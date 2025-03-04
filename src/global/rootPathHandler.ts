@@ -155,9 +155,7 @@ export class rootPathHandler {
         let src = _pth;//.toLowerCase().trim();
         let isAlreadyFullPath = false;
         let pathtype: PathType = 'none';
-        //console.log('sharepnl//\//\///lffib\\mainForm.uc.js');        
-        //console.log("sharepnl//\//\///lffib\\mainForm.uc.js".toFilePath());        
-        // console.log('######################'+_pth);
+      
 
         //console.clear();
         let findex = this.source.findIndex(s => {

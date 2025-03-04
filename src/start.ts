@@ -15,24 +15,29 @@ import register from "ucbuilder/register";
 
  */
 
-
 export interface UcConfig {
     projectName: string,
-    rootDir: string,
+    projectAlices: string,
+    importDir: string,
     designerDir: string,
+
+    rootDir: string,
     outDir: string,
-    type:'js'|'ts',
+    type: 'js' | 'ts',
     paths: {
         [key: string]: string,
     },
 }
-export const ucConfig: UcConfig = {
-    projectName: "",
-    rootDir: "",
-    outDir: "/",
-    designerDir: '/_designer/',
-    type:'js',
-    paths: {
+export class ucConfig implements UcConfig {
+    projectName = "";
+    projectAlices = "";
+    designerDir = "_designer/";
+    importDir = "";
+
+    rootDir = "";
+    outDir = "/";
+    type: 'js' | 'ts' = 'js';
+    paths = {
 
     }
 }
@@ -42,7 +47,7 @@ export const ucConfig: UcConfig = {
 export class ConfigManage {
     static CONFIG_FILE_NAME = 'ucconfig.json';
     constructor() {
-        this.json = Object.assign({}, ucConfig);
+        this.json = Object.assign({}, new ucConfig());
         this.json.paths = {};
     }
     /*ROOT_PATH(path?: string) { return (path != undefined ? path : this.json.rootPath); } */
@@ -57,8 +62,8 @@ export class ConfigManage {
     private isSubModuleConfigExist(moduleName: string, rootpath: string = this.json.rootDir) {
         return fs.existsSync(this.getSubModuleConfigPath(moduleName, rootpath));
     }
-   
-    readSubModuleConfig(moduleName: string, rootpath: string = this.json.rootDir):UcConfig {
+
+    readSubModuleConfig(moduleName: string, rootpath: string = this.json.rootDir): UcConfig {
         if (this.isSubModuleConfigExist(moduleName, rootpath)) {
             let _pth = this.getSubModuleConfigPath(moduleName, rootpath);
             try {
@@ -87,7 +92,7 @@ export class ConfigManage {
         let rpath = this.getUcConfigPath(cfg.rootDir);
         fs.writeFileSync(rpath, JSON.stringify(cfg, null, 4), 'binary');
     }
-    private getConfig(dirpath: string): { package: {}, isNewConfig: boolean, type:'js'|'ts', outputDir: string, rootDir: string } | undefined {
+    private getConfig(dirpath: string): { package: {}, isNewConfig: boolean, type: 'js' | 'ts', outputDir: string, rootDir: string } | undefined {
         let isPackageFound = false;
         let ptype: 'js' | 'ts' = 'js';
         let _rootDir = dirpath;
@@ -119,9 +124,9 @@ export class ConfigManage {
                 this.json = isNewConfig ? this.json : dta;
                 console.log(this.json.rootDir + '/tsconfig.json');
                 console.log(fs.existsSync(this.json.rootDir + '/tsconfig.json'));
-                
+
                 ptype = fs.existsSync(this.json.rootDir + '/tsconfig.json') ? 'ts' : 'js';
-                return { package: packageData, isNewConfig: isNewConfig, type:ptype, outputDir: opPath, rootDir: orignalRootDir };
+                return { package: packageData, isNewConfig: isNewConfig, type: ptype, outputDir: opPath, rootDir: orignalRootDir };
             }
             return undefined;
         }
@@ -153,10 +158,12 @@ export class ConfigManage {
      * @param dirpath path
      * @returns rootdir path
      */
-    setbypath(dirpath: string,updateAlices:boolean = true):string {
+    setbypath(dirpath: string, updateAlices: boolean = true): string {
         dirpath = dirpath.toFilePath();
         //console.log(dirpath);
         let cinf = this.getConfig(dirpath);
+        //console.log(cinf);
+
         if (cinf != undefined) {
             let jsn = this.json;
             cinf.isNewConfig = cinf.isNewConfig;
@@ -165,7 +172,7 @@ export class ConfigManage {
                 jsn.type = cinf.type;
                 jsn.rootDir = cinf.rootDir;
                 jsn.paths[jsn.projectName] = './';
-                jsn.projectName = cinf.package['name'];                
+                jsn.projectName = cinf.package['name'];
             }
             if (updateAlices) this.updateAliceList();
             return jsn.rootDir;
@@ -182,16 +189,16 @@ export function registerDir(dirpath: string, pera?: RootPathParam): ConfigManage
         let keys = Object.keys(jsn.paths).filter(s => !s.equalIgnoreCase(jsn.projectName));
         for (let i = 0; i < keys.length; i++) {
             const alice = keys[i];
-            const modulepath = rootDirPath+'/'+jsn.paths[alice];
+            const modulepath = rootDirPath + '/' + jsn.paths[alice];
             const modulename = path.basename(modulepath);
             let smdl = config.readSubModuleConfig(modulename, rootDirPath);
-            if(smdl!=undefined)ucr.registar(smdl, pera);
+            if (smdl != undefined) ucr.registar(smdl, pera);
         }
         ucr.registar(config.json, pera);
     } else {
         console.error('ROOT NOT GOT AS ASPECTED...');
         return undefined;
-        
+
     }
     return config;
     //console.log(fpath);

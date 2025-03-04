@@ -166,8 +166,8 @@ export class codeFileInfo {
     rootInfo: RootPathRow | undefined;
 
     parseUrl(_url: string): boolean {
-
-        let url = pathInfo.cleanPath(_url);
+        let url = _url.toFilePath();//pathInfo.cleanPath(_url);
+        console.log(url);
         this.rootInfo = rootPathHandler.getInfo(url);
         //console.log(_url);
 

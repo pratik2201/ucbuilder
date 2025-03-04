@@ -57,6 +57,8 @@ export const rootPathRow: RootPathRow = {
     isAlreadyFullPath: false,
     location: {
         projectName: '',
+        importDir: '',
+        projectAlices:'',
         outDir: "/",
         designerDir: "/",
         rootDir: "",
