@@ -1,0 +1,184 @@
+// import fs from "fs";
+// import * as chokidar from "chokidar";
+// import { IpcMainGroup } from "../ipc/IpcMainHelper.js";
+
+// const main = IpcMainGroup(import.meta.url);
+// let watcher: fs.FSWatcher = undefined;
+
+// let cwatcher: chokidar.FSWatcher;
+// main.On("startWatch", (evt, _path) => {
+//     console.log('FILE WATCHER STARTED...AT ' + _path);
+//     doStart(_path);
+//     /* watcher = fs.watch(_path, { recursive: true }, (fsEvt, fpath) => {
+//          let status = '';
+//          const fullPath = `${_path}/${fpath}`;
+//          if (fs.existsSync(fullPath)) {
+//              if (fs.statSync(fullPath).isDirectory()) return;
+//              status = 'ADD_UPDATE';
+//          } else {
+//              status = 'DELETE';
+//          }
+//          main.Reply("watch_Listner", evt, fsEvt, _path + '/' + fpath, status);
+//      });*/
+// });
+// function doStart(_path: string) {
+//     cwatcher = chokidar.watch(_path, {
+//         ignoreInitial: true,
+//         persistent: true,
+//         depth: undefined,     // watch all subfolders
+//         usePolling: true,     // more stable across OS types
+//         interval: 200,
+//     });
+
+//     let lastUnlinked = null;
+//     let lastUnlinkedTime = 0;
+
+//     function rename(oldPath: any, newPath: any) {
+//         console.log(`🔁 File moved: ${oldPath as any} → ${newPath as any}`);
+//     }
+//     cwatcher.on("add", file => {
+//         const now = Date.now();
+//         if (lastUnlinked && now - lastUnlinkedTime < 300) {
+//             console.log(`🔁 File moved: ${lastUnlinked} → ${file}`);
+//             lastUnlinked = null;
+//         } else {
+//             console.log(`🟢 New file: ${file}`);
+//         }
+//     })
+//         .on("unlink", file => {
+//             lastUnlinked = file;
+//             lastUnlinkedTime = Date.now();
+//             console.log("🔴 File removed:", file);
+//         })
+//         .on("rename", rename as never);
+// }
+// main.On("stopWatch", (evt, _path) => {
+//     console.log('FILE WATCHER STOPPED...');
+//     watcher.close();
+//     /* if (watcher != undefined)
+//         watcher.close();*/
+// });
+
+import chokidar, { ChokidarOptions, FSWatcher } from "chokidar";
+import fs from "fs";
+import path from "path";
+import { IpcMainGroup } from "../ipc/IpcMainHelper.js";
+import { TSPathResolver } from "../global/TSPathResolver.js";
+import { ucUtil } from "../global/ucUtil.js";
+const main = IpcMainGroup(import.meta.url);
+// ---- CONFIG ----
+const projectRoot = path.resolve();//process.argv[2] || "../sharepnl";
+const srcPath = projectRoot; //path.resolve(projectRoot, "src");
+const pathMapFile = path.join(projectRoot, "path-map.json");
+const ignoredList = [
+    path.join(srcPath, 'node_modules'),
+    path.join(srcPath, '.git'),
+    path.join(srcPath, 'out'),
+    path.join(srcPath, 'dist'),
+];
+console.log(ignoredList);
+const watcherOptions: ChokidarOptions = {
+    ignoreInitial: true,
+    ignored: (file) => ignoredList.findIndex(s => TSPathResolver.isSamePath(s, file)) != -1,
+
+    //  [
+    //     '**/node_modules/**',
+    //     '**/.git/**',
+    //    // '**/out/**',
+    //    // '**/assets/**',
+    //    // '**/dist/**',
+    //     path.join(srcPath, 'out'),
+    //     path.join(srcPath, 'dist'),
+    // ],
+    persistent: true,
+    depth: undefined,     // watch all subfolders
+    usePolling: true,     // more stable across OS types
+    interval: 200,        // poll every 200ms
+};
+
+let eleEvent: Electron.IpcMainEvent;
+main.On("startWatch", (e, _path) => {
+   // console.log('FILE WATCHER STARTED...AT ' + _path);
+    startWatch();
+    eleEvent = e;
+});
+main.On("stopWatch", (evt, _path) => {
+    //console.log('FILE WATCHER STOPPED...');
+    watcher?.unwatch(srcPath);
+    clearInterval(interval);
+});
+// ---- STATE ----
+let pathMap = fs.existsSync(pathMapFile)
+    ? JSON.parse(fs.readFileSync(pathMapFile, "utf-8"))
+    : {};
+
+let unlinkCache = [];  // store recently removed files (for rename detection)
+
+// ---- FUNCTIONS ----
+function savePathMap() {
+    fs.writeFileSync(pathMapFile, JSON.stringify(pathMap, null, 2));
+}
+
+function detectRename(newFile) {
+    const now = Date.now();
+    console.log(unlinkCache);
+     
+    const matchIndex = unlinkCache.findIndex(
+        e => { 
+            return now - e.time < 1200 && path.basename(e.path) === path.basename(newFile);
+        }
+    );  
+    if (matchIndex !== -1) {
+        const oldFile = unlinkCache[matchIndex].path;
+        unlinkCache.splice(matchIndex, 1);
+        main.Reply("watch_moved", eleEvent, oldFile, newFile);
+        const key = Object.keys(pathMap).find(k => pathMap[k] === oldFile);
+        if (key) {
+            pathMap[key] = newFile;
+            savePathMap();
+        }
+        return true;
+    }
+
+    return false;
+}
+let watcher: FSWatcher;
+let interval = null;
+function startWatch() {
+    // ---- WATCHER ----
+    console.log(watcherOptions);
+
+    watcher = chokidar.watch(srcPath, watcherOptions);
+    console.log(`[path-watcher] Watching ${srcPath}`);
+
+    watcher
+        .on("add", newPath => {
+            if (!detectRename(newPath)) {
+                // console.log("🟢 File added:", newPath);
+                pathMap[newPath] = newPath;
+                //savePathMap();
+            }
+        })
+        .on("unlink", removedPath => {
+            //console.log("🔴 File removed:", removedPath);
+
+            unlinkCache.push({ path: removedPath, time: Date.now() });
+            const entry = Object.keys(pathMap).find(k => pathMap[k] === removedPath);
+            if (entry) delete pathMap[entry];
+            //savePathMap();
+            main.Reply("watch_removed", eleEvent, removedPath);
+        })
+    /* .on("change", changedPath => {
+         console.log("🟠 File modified:", changedPath);
+         main.Reply("watch_modified", eleEvent, changedPath);
+
+     });*/
+
+    // ---- PERIODIC SYNC ----
+    interval = setInterval(() => {
+        console.log("🧩 Background sync running...");
+        // Example: clean up expired unlink cache
+        const now = Date.now();
+        unlinkCache = unlinkCache.filter(e => now - e.time < 1200);
+    }, 5000);
+}

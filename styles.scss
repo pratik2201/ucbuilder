@@ -1,0 +1,25 @@
+:exclude {
+    
+    html,
+    body {
+        font-family: Arial, Helvetica, sans-serif;
+        -webkit-user-select: none;
+        user-select: none;
+        -moz-user-select: none;
+        font-size: small;
+        object-fit: contain;
+        height: 100%; margin: 0; position: fixed; left: 0px; 
+        top: 0px;  bottom: 0px; right: 0px;
+    }
+    
+    body * {
+        font-size: inherit;
+        outline: 0;         
+    }
+    /**/
+    .disabled,
+    [disabled="true"] {
+        pointer-events: none;
+        opacity: 0.4;
+    }
+}

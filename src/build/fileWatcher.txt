@@ -1,0 +1,237 @@
+ doRecursionsd = () => {
+        return;
+        const _builder = this.main;
+        const _this = this;
+        const changedFiles = new Map<string, string>();
+        //return;
+        _this.main.dirsToBuild.forEach((s: string) => _builder.recursive(s, (pth) => {
+            let isChanged = false;
+            if (pth.endsWith('.ts')) {
+                let data = nodeFn.fs.readFileSync(pth, 'binary');
+                data = data.replace(/import\s+((?:[\$\w*\s{},]+from\s+)?)["']([^"']+)["'];/gm, (m: string,fromMdls, _modulePath: string) => {
+                    if (_modulePath.startsWith('@sharepnl/')) {
+                        //console.log(`${pth}`);
+                        let newpath = nodeFn.path.join(nodeFn.path.resolve(), _modulePath.substring(_modulePath.indexOf('/')));
+                        let mpath = nodeFn.path.relativeFilePath(pth, newpath);
+                        if (!mpath.startsWith('./') && !mpath.startsWith('../')) 
+                            mpath = './' + mpath;
+                        
+                        let fc = `import ${fromMdls}"${mpath}";`;
+                        isChanged = true;  
+                        return fc;
+                    }
+                    else if (_modulePath.startsWith('#sharepnl/'))
+                        console.log();
+                    else if (_modulePath.startsWith('sharepnl/'))
+                        console.log(_modulePath);
+                    return m;
+                });
+                if (isChanged) {
+                    changedFiles.set(pth, data);
+                }
+            }
+        }));
+        /*let keys = Array.from(changedFiles.keys());
+        console.log(changedFiles);
+        
+        if (keys.length > 0)
+            if (renderer.sendSync('rendererIgnorance.add', [...keys]) == true) {
+                for (const [_path, contents] of changedFiles) {
+                    nodeFn.fs.writeFileSync(_path, contents, undefined, 'binary');
+                }
+                renderer.sendSync('rendererIgnorance.remove', [...keys]);
+            }*/
+    }
+
+
+import { nodeFn } from "@ucbuilder/nodeFn.js";
+import { builder } from "@ucbuilder/build/builder.js";
+import { codeFileInfo } from "@ucbuilder/build/codeFileInfo.js";
+import { IpcRendererHelper } from "@ucbuilder/ipc/IpcRendererHelper.js";
+import { log } from "console";
+import { register } from "module";
+const renderer = IpcRendererHelper.Group(import.meta.url);
+export class fileWatcher {
+
+    constructor(main: builder) { this.main = main; }
+    main: builder;
+    l
+    WATCH_LIST = {
+        removed: [] as string[],
+        modified: [] as string[],
+        moved: [] as {oldFile:string,newFile:string}[],
+    }
+    init(dirPath: string) {
+        const _this = this;
+        this.dirPath = dirPath;
+        renderer.on("watch_removed", (e, removedPath) => {
+           // console.log("🔴 File removed:", removedPath);
+            _this.WATCH_LIST.removed.push(removedPath);
+        });
+        renderer.on("watch_modified", (e, changedPath) => {
+            //console.log("🟠 File modified:", changedPath);
+            _this.WATCH_LIST.modified.push(changedPath);
+        });
+
+        renderer.on("watch_moved", (e, oldFile, newFile) => {
+            _this.WATCH_LIST.modified.push(oldFile,newFile);
+            //console.log(`🔁 File moved: ${oldFile} → ${newFile}`);
+        });
+    }
+    fill() {
+
+    }
+    dirPath: string = "";
+    startWatch() {
+        // let _this = this;
+        // _this.watcher = nodeFn.fs.watch(_this.dirPath, { recursive: true }, _this.watch_Listner);
+        renderer.send("startWatch", [this.dirPath]);
+    }
+    stopWatch() {
+        //if (this.watcher != undefined)
+        //    this.watcher.close();
+        renderer.send("stopWatch", []);
+    }
+    isGenerating = false;
+    timeoutInterval: any;
+    rowsToFollow: { evt: import("fs").WatchEventType, isFolder: boolean, filepath: string }[] = [];
+
+    static isValidFileForPathReplacer(filePath: string) { return filePath.match(/\.ts$|\.scss$|\.html$/i) != null; }
+    static isTSFile(filePath: string) { return filePath.match(/\.ts$/i) != null; }
+    static isHTMLFile(filePath: string) { return filePath.match(/\.uc\.html$|\.tpt\.html$/i) != null; }
+    static isUcHTMLFile(filePath: string) { return filePath.match(/\.uc\.html$/i) != null; }
+    static isSCSSFile(filePath: string) { return filePath.match(/\.scss$/i) != null; }
+    dirMoveInfo = {
+        newPath: '' as string,
+        oldPath: '' as string,
+    }
+    watch_Listner = (e: Electron.IpcRendererEvent, evt: import("fs").WatchEventType, filepath: string, status: 'ADD_UPDATE' | 'DELETE') => {
+        let _this = this;
+        console.log([evt, status, filepath]);
+        // if(evt == 'rename')
+
+        return;
+        if (filepath == null || filepath == undefined || filepath.startsWith('node_modules')) return;
+        filepath = filepath["#toFilePath"]();
+
+
+        let isFolder = nodeFn.fs.existsSync(filepath) && nodeFn.fs.isDirectory(filepath);
+        if (fileWatcher.isHTMLFile(filepath) || isFolder) {
+            this.rowsToFollow.push({ evt: evt, isFolder: isFolder, filepath: filepath });
+            clearTimeout(_this.timeoutInterval);
+            _this.timeoutInterval = setTimeout(timerCall, 500);
+        }
+        function timerCall() {
+            let rows = [..._this.rowsToFollow];
+            _this.isGenerating = true;
+            _this.rowsToFollow.length = 0;
+            _this.stopWatch();
+            _this.main.commonMng.reset();
+
+            for (let i = 0; i < rows.length; i++) {
+                const rw = rows[i];
+                if (rw.isFolder) continue;
+                _this.WHATTODO(rw.evt, rw.filepath);
+            }
+            _this.generatingIsInProcess = true;
+            //console.log([..._this.main.commonMng.pathReplacement]);
+            _this.main.buildALL(() => {
+                _this.generatingIsInProcess = false;
+                _this.isGenerating = false;
+                _this.startWatch();
+            });
+
+        }
+    };
+
+    WHATTODO(evt: import("fs").WatchEventType, filepath: string) {
+        console.log('WHATTODO : ' + evt);
+        switch (evt) {
+            case "change":
+                this.CHECK_FILE_MODIFIED(filepath["#toFilePath"]());
+                break;
+            case "rename": // IF FILE CHANGED...
+
+                this.CHECK_FILE_MOVE(filepath["#toFilePath"]());
+                break;
+        }
+    }
+    CHECK_FILE_MODIFIED(currentPath: string) {
+        let _this = this;
+        if (fileWatcher.isHTMLFile(currentPath)) {
+            console.log('FILE_MODIFIED');
+
+            let cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
+            cFinfo.parseUrl(currentPath, 'src', undefined);
+        }
+    }
+    static oPath = /_FILE_PATH\s*=\s*\s*('|"|`)(.*?)\1\s*/gm;
+    static getFilePathFromHTML(content: string): string | undefined {
+        try {
+            if (content.trim() != '') {
+                let formHT = content["#$"]() as HTMLElement;
+                return formHT.getAttribute('x-at');
+            } else return undefined;
+        } catch {
+            return undefined;
+        }
+    }
+    generatingIsInProcess = false;
+    filesInQueue: string[] = [];
+    CHECK_FILE_MOVE(currentPath: string) {
+        /*  console.log('FILE_MOVE');
+          let _this = this;
+          let cFinfo: codeFileInfo, oFinfo: codeFileInfo;
+          if (!nodeFn.fs.existsSync(currentPath)) { ///   IF FILE IS DELETED OR MOVED..
+  
+              cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
+              cFinfo.parseUrl(currentPath, undefined);
+              console.log('delete be :-' + cFinfo.designer.fullPath);
+  
+              if (nodeFn.fs.existsSync(cFinfo.designer.fullPath))
+                  nodeFn.fs.rmSync(cFinfo.designer.fullPath);
+              return;
+          }
+          let oldhtmlPath = fileWatcher.getFilePathFromHTML(nodeFn.fs.readFileSync(currentPath, 'binary',undefined,false));
+          if (oldhtmlPath == undefined) {
+              cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
+              cFinfo.parseUrl(currentPath, undefined);
+              if (nodeFn.fs.existsSync(cFinfo.html.fullPath)) {
+  
+                  let htContent = nodeFn.fs.readFileSync(cFinfo.html.fullPath, 'binary',undefined,false);
+                  if (htContent == '') {
+                      _this.main.commonMng.rows.length = 0;
+                      _this.main.buildFile(cFinfo, () => {
+  
+                          _this.generatingIsInProcess = false;
+  
+                      });
+                  }
+                  return;
+              } else {
+                  if (nodeFn.fs.existsSync(cFinfo.designer.fullPath))
+                      nodeFn.fs.rmSync(cFinfo.designer.fullPath);
+                  return;
+              }
+          }
+          let oldPath = oldhtmlPath + '.html';//window.atob(key);
+          cFinfo = new codeFileInfo(codeFileInfo.getExtType(currentPath));
+          cFinfo.parseUrl(currentPath, undefined);
+          oFinfo = new codeFileInfo(codeFileInfo.getExtType(oldPath));
+          oFinfo.parseUrl(oldPath, cFinfo.projectInfo.importMetaURL);
+          if (!oFinfo.mainBase.rootWithExt["#equalIgnoreCase"](cFinfo.mainBase.rootWithExt)) {
+  
+              this.main.commonMng.pushReplacement({
+                  findPath: oFinfo.mainBase.pathWithExt,
+                  replaceWith: cFinfo.projectInfo.getAlifasPath(cFinfo.mainBase.pathWithExt, cFinfo.projectInfo.developer.bridgfeAlias)
+              });
+              this.main.commonMng.pushReplacement({
+                  findPath: oFinfo.designerBase.pathWithExt,
+                  replaceWith: cFinfo.projectInfo.getAlgiasPath(cFinfo.designerBase.pathWithExt, cFinfo.projectInfo.developer.brigdgeAlias)
+              });           
+              if (nodeFn.fs.existsSync(oFinfo.designer.fullPath, oFinfo.act5ualProject.importMetaURL))
+                  nodeFn.fs.rmSync(oFinfo.designer.fullPath, undefined, oFinfo.ac4tualProject.importMetaURL);
+          }
+          _this.generatingIsInProcess = false;*/
+    }
+}

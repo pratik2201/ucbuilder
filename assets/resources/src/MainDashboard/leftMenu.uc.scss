@@ -1,0 +1,42 @@
+& {
+  position: relative;
+  display: block;
+  height: max-content;
+  width: 100%;
+  background-color: white;
+  border: solid 1px black;
+}
+
+
+/* Left Sidebar */
+.side-menu {
+  width: 100%;
+  background: #25253d;
+  color: #ccc;
+  display: flex;
+  flex-direction: column;
+  padding-top: 20px;
+  box-shadow: 2px 0 6px rgba(0, 0, 0, 0.2);
+}
+
+.side-menu a {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 20px; box-sizing: border-box;
+  color: #ccc;
+  text-decoration: none;
+  font-size: 0.95rem;
+  transition: background 0.2s, color 0.2s;
+}
+
+.side-menu a:hover {
+  background: #1e1e2f;
+  color: #fff;
+}
+
+.side-menu a.active {
+  background: #4a90e2;
+  color: #fff;
+  font-weight: 500;
+}

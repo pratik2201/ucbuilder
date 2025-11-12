@@ -1,0 +1,23 @@
+{
+    "$schema": "./node_modules/ucbuilder/config$schema.json",
+    "env": "developer",
+    "browser":{
+        "importmap": {
+            "ucbuilder": "node_modules/ucbuilder"
+        } 
+    }, 
+    "developer": {       
+        "build": {
+            "ignorePath": ["node_modules","out", ".git",".vscode"],
+            "buildPath": ".",
+            "keyBind": {
+            }
+        }
+    },
+    "preference": {
+        "designerDir": "assets/designer",
+        "jsDir": "out",
+        "tsDir": ""
+    },
+    "type": "ts" 
+}

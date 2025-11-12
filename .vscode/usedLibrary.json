@@ -1,0 +1,25 @@
+{
+    "fs": [
+        "@@@D:/projects/electronProjects/ucbuilder/build/builder.ts",
+        "@@@D:/projects/electronProjects/ucbuilder/build/codefile/commonGenerator.ts",
+        "@@@D:/projects/electronProjects/ucbuilder/build/codefile/rfileGenerator.ts",
+        "@@@D:/projects/electronProjects/ucbuilder/build/common.ts",
+        "@@@D:/projects/electronProjects/ucbuilder/build/fileWatcher.ts",
+        "@@@D:/projects/electronProjects/ucbuilder/checkimports.ts",
+        "@@@D:/projects/electronProjects/ucbuilder/global/fileDataBank.ts",
+        "@@@D:/projects/electronProjects/ucbuilder/start.ts"
+    ],
+    "path": [
+        "@@@D:/projects/electronProjects/ucbuilder/build/builder.ts",
+        "@@@D:/projects/electronProjects/ucbuilder/build/codefile/commonGenerator.ts",
+        "@@@D:/projects/electronProjects/ucbuilder/checkimports.ts",
+        "@@@D:/projects/electronProjects/ucbuilder/start.ts"
+    ],
+    "crypto": [
+        "@@@D:/projects/electronProjects/ucbuilder/enumAndMore.ts",
+        "@@@D:/projects/electronProjects/ucbuilder/global/xcrypto.ts"
+    ],
+    "module-alias": [
+        "D:/projects/electronProjects/ucbuilder/start.ts"
+    ]
+}

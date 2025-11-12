@@ -1,0 +1,142 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://example.com/UserUCConfig.schema.json",
+  "title": "UserUCConfig",
+  "description": "Configuration file for ucbuilder-based Electron applications.",
+  "type": "object",
+  "properties": {
+    "env": {
+      "type": "string",
+      "enum": ["developer", "user"],
+      "default": "developer",
+      "description": "Specifies the environment mode. 'developer' enables development tools and debugging, while 'user' is for production."
+    },
+    "preloadMain": {
+      "type": "array",
+      "items": { "type": "string" },
+      "default": [],
+      "description": "List of preload script file paths to be injected into Electron's main process."
+    },
+    "browser": {
+      "type": "object",
+      "description": "Browser configuration including module import maps and global aliases.",
+      "properties": {
+        "importmap": {
+          "type": "object",
+          "description": "Defines import path mappings similar to browser import maps. Key is the module alias, value is the resolved path.",
+          "patternProperties": {
+            ".*": { "type": "string" }
+          },
+          "additionalProperties": false,
+          "default": {}
+        },
+        "globalAlias": {
+          "type": "object",
+          "description": "Maps global module aliases, e.g., 'fs' → 'node:fs'. Useful for preload environments without Node.js direct access.",
+          "patternProperties": {
+            ".*": { "type": "string" }
+          },
+          "additionalProperties": false,
+          "default": {}
+        }
+      },
+      "required": [ ]
+    },
+    "preference": {
+      "$ref": "#/$defs/IUCConfigPreference",
+      "description": "Defines project directory structure preferences."
+    },
+    "developer": {
+      "$ref": "#/$defs/IDeveloperOptions",
+      "description": "Contains developer-specific options, such as build behavior and key bindings."
+    },
+    "type": {
+      "type": "string",
+      "enum": ["ts", "js"],
+      "description": "Defines the main scripting language type used by the project ('ts' for TypeScript, 'js' for JavaScript)."
+    }
+  },
+  "required": [ ],
+  "$defs": {
+    "IBuildKeyBinding": {
+      "type": "object",
+      "description": "Defines key combination bindings for triggering build or other commands.",
+      "properties": {
+        "keyCode": {
+          "type": "number",
+          "description": "Numeric key code representing the keyboard key (e.g., 66 for 'B')."
+        },
+        "ctrlKey": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the Ctrl key must be held down."
+        },
+        "shiftKey": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the Shift key must be held down."
+        },
+        "altKey": {
+          "type": "boolean",
+          "default": false,
+          "description": "Whether the Alt key must be held down."
+        }
+      },
+      "additionalProperties": false
+    },
+    "UcBuildOptions": {
+      "type": "object",
+      "description": "Specifies build-related options for developer mode.",
+      "properties": {
+        "keyBind": {
+          "$ref": "#/$defs/IBuildKeyBinding",
+          "description": "Keyboard shortcut binding to trigger a build process."
+        },
+        "ignorePath": {
+          "type": "array",
+          "items": { "type": "string" },
+          "description": "List of paths or folders to exclude during build operations."
+        },
+        "buildPath": {
+          "type": "string",
+          "description": "List of paths or folders to include during build operations."
+        }
+      },
+      "additionalProperties": false
+    },
+    "IDeveloperOptions": {
+      "type": "object",
+      "description": "Groups all developer-oriented configuration options.",
+      "properties": {
+        "build": {
+          "$ref": "#/$defs/UcBuildOptions",
+          "description": "Build settings configuration object."
+        }
+      },
+      "required": [ ],
+      "additionalProperties": false
+    },
+    "IUCConfigPreference": {
+      "type": "object",
+      "description": "Specifies directory preferences for project organization.",
+      "properties": {
+        "designerDir": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the directory containing designer files i.e (.designer.ts,.designer.js) \n this path will inside jsDir or tsDir \n if tsDir is 'src' and designerDir is '_desiger' than path will be 'src/_designerDir' same behaviour for jsDir. "
+        },
+        "jsDir": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the directory containing JavaScript source files."
+        },
+        "tsDir": {
+          "type": "string",
+          "default": "",
+          "description": "Path to the directory containing TypeScript source files."
+        }
+      },
+      "additionalProperties": false
+    }
+  }
+}

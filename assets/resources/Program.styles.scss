@@ -1,0 +1,42 @@
+:exclude {
+ 
+    body {
+        margin: 0px;
+        -webkit-user-select: none;
+        user-select: none;
+        -moz-user-select: none;
+        font-size: small;
+        object-fit: contain;
+    }
+
+    body * {
+        box-sizing: border-box;
+    }
+
+    body *:focus-within {
+        outline: none;
+    }
+
+    body,
+    textarea {
+        font-size: small;
+        font-family: Arial;
+    }
+
+    ::selection {
+        background-color: #ff8b0742;
+    }
+}
+:root {
+    //  CURRENT PROJECT'S STYLE
+
+    $g-title_background: #b2b2b2;
+
+    [inert="true"] {
+        opacity: 1;
+    }
+
+    [aria-disabled="true"] {
+        opacity: 0.3;
+    }
+}

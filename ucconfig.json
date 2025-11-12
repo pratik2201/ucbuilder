@@ -1,0 +1,17 @@
+{
+    "browser": {
+        "importmap": {
+            "@ucbuilder": "out"
+        }
+    },
+    "preference": {
+        "designerDir": "_designer",
+        "jsDir": "out",
+        "tsDir": ""
+    },
+    "type": "ts",
+    "preloadMain": [
+        "{:out/build/fileWatcher.ipc.js}",
+        "{:out/nodeFn.ipc.js}"
+    ]
+}

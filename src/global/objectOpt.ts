@@ -1,0 +1,88 @@
+//namespace ucbuilder.global.objectOptions {
+const getC = (c: any): string | undefined => {
+  if (c === undefined || c === null || isNaN(c)) return "";
+  return Object.getPrototypeOf(c).constructor.name;
+}
+
+export class newObjectOpt {
+  /**
+   * this will read `package.json` file from project's root directory and return project name
+   * @param dirpath pass project's root directory path
+   * @returns 
+   */
+  static getProjectname(dirpath: string): string | undefined {
+    let fpath: string = `${dirpath}/package.json`;
+    let pjson = require(fpath);
+    if (pjson != undefined) {
+      return pjson.name;
+    }
+    return undefined;
+  };
+  static extractArguments(args: IArguments): IArguments {
+    let cargs = args[0];
+    if (cargs.toString() === '[object Arguments]') {
+      return this.extractArguments(cargs);
+    } else return args;
+  }
+  static copyProps<T = Object>(from: T, to: T): T {
+    // if (to == undefined) to = {} as T;
+    let rtrn = this.clone(to);
+    this.recursiveProp(from, rtrn);
+    return rtrn;
+  }
+  static recursiveProp(from: Object, to: Object): void {
+    try {
+      for (const key in from) {
+        if (Object.hasOwnProperty.call(from, key)) {
+          const element = from[key];
+          if (getC(element) == "Object") {
+            let sobj = to[key];
+            if (sobj != undefined) this.recursiveProp(element, sobj);
+            else to[key] = element;
+          } else {
+            to[key] = element;
+          }
+        }
+      }
+    } catch (ex) {
+      if (from === undefined) to = from;
+      return;
+    }
+  }
+  static clone<T>(obj: T): T {
+    /*let cloned = Object.create(Object.getPrototypeOf(obj), Object.getOwnPropertyDescriptors(obj));
+    console.log(obj);
+    console.log(cloned);
+    return cloned;*/
+    return JSON.parse(JSON.stringify(obj));
+  }
+  static copyAttr(from: HTMLElement, to: HTMLElement): void {
+    Array.from(from.attributes).forEach(s =>
+      to.setAttribute(s.name, s.value)
+    );
+  }
+  static getClassName(obj: object): string {
+    return Object.getPrototypeOf(obj).constructor.name;
+  }
+  static analysisObject(obj: object): { key: string, value: object, type: string }[] {
+    let rtrn: { key: string, value: object, type: string }[] = [];
+    let npro: any;
+    do {
+      for (const key in Object.getOwnPropertyDescriptors(obj)) {
+        let val = undefined;
+        try { val = obj[key]; } catch (excp) { }
+        let type = val != undefined ? this.getClassName(obj[key]) : "undefined";
+        rtrn.push({
+          key: key,
+          type: type,
+          value: val
+        });
+      }
+      obj = Object.getPrototypeOf(obj);
+      npro = Object.getPrototypeOf(obj);
+    } while ((npro != null || npro != undefined));
+
+    return rtrn;
+  }
+}
+//}

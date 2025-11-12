@@ -1,0 +1,40 @@
+{
+  "name": "ucbuilder",
+  "type": "module",
+  "version": "1.0.1",
+  "description": ":Shree Ganeshay Namah: \n new way app design",
+  "main": "./out/ipc/IpcMainHelper.js",
+  "scripts": {
+    "clean": "rimraf out",
+    "build": "tsc",
+    "rebuild": "npm run clean && tsc"
+  },
+  "author": "ap",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "^20.11.0",
+    "electron": "^31.6.0",
+    "rimraf": "^6.0.1",
+    "tsconfig-paths": "^4.2.0",
+    "typescript": "^4.8.4"
+  },
+  "dependencies": {
+    "chokidar": "^4.0.3"
+  },
+  "keywords": [
+    "electron app designer",
+    "app developement",
+    "new way design",
+    "ui design",
+    "winform designer",
+    "software developement"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pratik2201/ucbuilder.git"
+  },
+  "bugs": {
+    "url": "https://github.com/pratik2201/ucbuilder/issues"
+  },
+  "homepage": "https://github.com/pratik2201/ucbuilder#readme"
+}

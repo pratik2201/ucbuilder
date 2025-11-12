@@ -1,0 +1,11 @@
+# Ignore unnecessary files
+src/
+.vscode/
+node_modules/
+*.log
+
+# Include out directory
+!out/**
+
+# Include everything under assets/resources (all subfolders & files)
+!assets/resources/**

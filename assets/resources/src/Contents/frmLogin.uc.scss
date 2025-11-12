@@ -1,0 +1,89 @@
+& {
+    position: relative;
+    display: block;
+    border: solid 1px black;
+}
+
+/* ---------------- Main Login Section ---------------- */
+.login-main {
+    position: relative;
+    padding-top: 80px;
+    padding: 50px 80px;
+    background: #f4f5f9;
+}
+
+.login-section {
+    width: 100%;
+    max-width: 400px;
+    background: transparent;
+}
+
+.login-section h2 {
+    font-size: 1.8rem;
+    color: #1e1e2f;
+    margin-bottom: 8px;
+}
+
+.subtitle {
+    font-size: 0.95rem;
+    color: #666;
+    margin-bottom: 25px;
+}
+
+/* ---------------- Form ---------------- */
+.login-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+.login-form label {
+    font-size: 0.9rem;
+    color: #444;
+}
+
+.login-form input {
+    padding: 10px 12px;
+    border: 1px solid #ccc;
+    border-radius: 6px;
+    font-size: 1rem;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.login-form input:focus {
+    outline: none;
+    border-color: #4a90e2;
+    box-shadow: 0 0 0 2px rgba(74, 144, 226, 0.2);
+}
+
+.login-form button {
+    background: #1e1e2f;
+    color: #fff;
+    border: none;
+    padding: 10px 0;
+    border-radius: 6px;
+    font-size: 1rem;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.login-form button:hover {
+    background: #4a90e2;
+}
+
+/* ---------------- Extra Links ---------------- */
+.login-links {
+    margin-top: 18px;
+    display: flex;
+    justify-content: space-between;
+}
+
+.login-links a {
+    text-decoration: none;
+    font-size: 0.9rem;
+    color: #4a90e2;
+}
+
+.login-links a:hover {
+    text-decoration: underline;
+}

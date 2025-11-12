@@ -1,0 +1,75 @@
+{
+    "$schema": "https://raw.githubusercontent.com/microsoft/vscode-html-languageservice/main/docs/customData.schema.json",
+    "tags": [
+        {
+            "name": "x:template",
+            "description": "template tag ",
+            "attributes": [
+                {
+                    "name": "x-name",
+                    "type": "string"
+                },
+                {
+                    "name": "x-relative",
+                    "type": "string"
+                },
+                {
+                    "name": "x-relative-child",
+                    "type": "string"
+                },
+                {
+                    "name": "x-htmlpath",
+                    "type": "string"
+                },
+                {
+                    "name": "x-csspath",
+                    "type": "string"
+                }
+            ]          
+        }        
+    ],
+    "globalAttributes": [
+        {
+            "name": "x-generic",
+            "description": "give generic arguments for user control or any else",
+            "type": "string"
+        }, 
+        {
+            "name": "x-name",
+            "description": "name of element used to access in code file",
+            "type": "object"
+        },
+        {
+            "name": "x-size",
+            "description": "size is of element",
+            "type": "string"
+        },
+        {
+            "name": "x-from",
+            "description": "location of usercontrol to load",
+            "type": "path"
+        },
+        {
+            "name": "x-tabindex",
+            "description": "tabindex of element",
+            "type": "number"
+        }
+    ],
+    "valueSets": [
+        {
+            "name": "boolval",
+            "values": [
+                { "name": "true"  },
+                { "name": "false" }
+            ]
+        },
+        {
+            "name": "custCtrls",
+            "values": [
+                { "name": "text-box"  },
+                { "name": "date-box"  },
+                { "name": "text-area" }
+            ]
+        }
+    ]
+}
