@@ -40,8 +40,61 @@ Quick Introduction Youtube : [here](https://www.youtube.com/watch?v=3ZUkDqP6DQU)
 ---
 # 🚀 Instructions
 
+this is **SINGLE WINDOW** App system.  
+
+***BUILD DESIGNER*** <br>
+---
+designer build process done in render process (in browser)
+default is ctrl+F12 in browser it will log 
+`build start` and `build successfull..`
+you can set keybinding in `ucconfig.json` file
+ 
 ***FILE TYPES*** <br>
 ---
+ucconfig.json <br>
+```json
+{
+    "$schema": "./node_modules/ucbuilder/config$schema.json",
+    "browser":{
+        "importmap": { 
+            // path alices for (render process) for browser only 
+        } 
+    }, 
+    "developer": {       
+        "build": {
+            "ignorePath": [],  // add path which will be ignore during designer build
+            "buildPath": ".", // path to build
+            "keyBind": 
+            // key binding to start build process default is (ctrl+F12)
+            { 
+                "keyCode": 123, 
+                "altKey": false,
+                "ctrlKey": true,
+                "shiftKey": false,            
+            }
+        }
+    },
+    "preference": {        
+       "jsDir": "out", 
+       //output dir where output file store
+       
+       "tsDir": "",
+       // sourcecode dir
+       
+       "designerDir": "assets/designer", 
+        //designer dir where designer file store
+        //this path is sub directory of `jsDir` and `tsDir`
+        // i.e tsDir = "src" , designerDir = "assets/designer"
+        // finalpath will = `src/assets/designer` same for out
+    },
+    "preloadMain": // this (.ipc.ts) files will load in main process before renderer load
+    [ 
+    ],
+     "env": "developer", // this is under construction
+     "type": "ts", // this is under construction   
+}
+```
+
 ***Usercontrol*** 
 (single ui with multiple child `Usercontrols`)
 --
@@ -222,13 +275,95 @@ export class MainDashboard extends MainDashboard$Designer{
     }
 }
 ```
+***HTML Files***
+
+in `html` file there are some special extra attibute
+
+**x-name**<br>
+`x-name` attibute used to access element or loaded usercontrol in codefile 
+same you can set `id` attibute to element and get access in codefile
+ 
+**x-from**<br>
+this attibute stand for load usercontrol at the place of element
+
+**x-tabindex**<br> 
+attibute stand for define tab order 
+here you can define any child elements tab order from `0` index inside each `closest parent element` element with x-tabindex.
+
+**x-caption**<br> 
+attibute stand for set title to window  
+
+MainDashboard.uc.html<br>
+```html
+<wrapper x-caption="Form1" x-at="src\MainDashboard.uc.html" tabindex="0">
+    <div class="layout">
+        <topmenu x-from="MainDashboard/topMenu.uc.html" x-name="topmenu1"></topmenu>
+        <leftmenu x-from="MainDashboard/leftMenu.uc.html" x-name="leftmenu1"></leftmenu>
+        <main class="main-content" x-name="maincontent1"></main>
+        <footermenu x-from="MainDashboard/footerMenu.uc.html" x-name="footerMenu1"></footermenu>
+    </div>
+</wrapper>
+```
 ***CSS STYLES***
----
+`.scss` file treat here as `.css` file just some changes
 
-**Note** : stylesheet code `.scss` is treat as `.css` just file extenstion changed. <br>
+**&** selector has 2 meaning<br> 
+`&`  = is root element of perticular usercontrol <br> 
+`&topmenu1` = `&` followed by `x-name of usercontrol` will be apply to that usercontrol
+  ```html
+  <wrapper>
+      <topmenu x-from="MainDashboard/topMenu.uc.html" x-name="topmenu1"></topmenu>  
+  </wrapper>
+  ```
+  ```scss
+  & { background-color:green; }  
+  // this will select current `wrapper`
+
+  &topmenu1 { background-color:blue; } 
+  // this will select `wrapper` of topmenu1 usercontrol
+
+  &topmenu1 .logo { background-color:yellow; } 
+  // this will select element with `logo` class inside topmenu1 usercontrol
+  ```
+**VARIABLE** (VARIABLE Startwith,`$l-`,`$g-`,`$i-`)
+ 
+**$l-** (local variable)<br>
+    local variable only apply inside `current usercontrol`.
+    `will not be` applied in `child usercontrol`.
+
+**$i-** (internal variable)<br>
+    internal variable apply to `any element` inside current usercontrol's
+
+**$g-** (global variable)<br>
+    global variable apply to any element belong to current project.
+    will not be applied to `included project's elements`
 
 
----
+```scss
+$l-fontColor:blue;  // local variable (start with  `$l-`,`$g-`,`$i-` define it's scope)
+&{
+    display:block; position: absolute;
+    background-color: rgb(240,240,240); 
+    border:solid 1px black; 
+    width: 100%; height: 100%;  overflow: hidden;
+}
+h2{
+    font-family: Arial, Helvetica, sans-serif; display: block;  font-size: medium; color: $l-fontColor; padding: 5px; padding-left: 15px; 
+    background-color: $g-title_background;  
+    margin: 0px;
+}
+.layout { 
+  overflow: hidden; display: grid;
+  grid-template-columns: 150px auto;
+  grid-template-rows: max-content auto max-content;
+}
+&topmenu1 {
+    grid-column: span 2;
+}
+&footerMenu1 {
+    grid-column: span 2;
+}
+```
 
 
 
