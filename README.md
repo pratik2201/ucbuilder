@@ -222,9 +222,12 @@ export class MainDashboard extends MainDashboard$Designer{
     }
 }
 ```
+***CSS STYLES***
+---
+
 **Note** : stylesheet code `.scss` is treat as `.css` just file extenstion changed. <br>
 
-***CSS STYLES***
+
 ---
 
 
