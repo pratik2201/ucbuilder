@@ -84,8 +84,7 @@ ucconfig.json <br>
        "designerDir": "assets/designer", 
         //designer dir where designer file store
         //this path is sub directory of `jsDir` and `tsDir`
-        // i.e tsDir = "src" , designerDir = "assets/designer"
-        // finalpath will = `src/assets/designer` same for out
+        // i.e tsDir = "src" , designerDir = "assets/designer"  finalpath will `src/assets/designer` 
     },
     "preloadMain": // this (.ipc.ts) files will load in main process before renderer load
     [ 
