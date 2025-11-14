@@ -1,7 +1,7 @@
 {
   "name": "ucbuilder",
   "type": "module",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "description": ":Shree Ganeshay Namah: \n new way app design",
   "main": "./out/ipc/IpcMainHelper.js",
   "scripts": {
