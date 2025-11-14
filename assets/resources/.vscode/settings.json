@@ -8,6 +8,7 @@
     "javascript.preferences.importModuleSpecifier": "relative",
     "typescript.preferences.importModuleSpecifier": "relative",
     "explorer.fileNesting.enabled": true,
+    "explorer.fileNesting.expand": false,  
     "explorer.fileNesting.patterns": {
         "Program.ts": "Program.viewer.html,Program.preload-renderer.ts,Program.preload.cjs,Program.styles.scss,Program.main.ts",
         "package.json": ".babelrc, LICENSE,ucconfig.json, jsconfig.json, package-lock.json, .browserslistrc, .dockerignore, .editorconfig, .env, .eslintignore, .eslintrc., .gitignore, .graphqlrc., .nvmrc, .prettierignore, .prettierrc.*, README.md, babel.config.json, cypress.json, jest.config.ts, jest.preset.js, nx.json, package.json, tsconfig.base.json, tsconfig.json, workspace.json, yarn.lock, vercel.json, netlify.toml, pnpm-lock.yaml",
