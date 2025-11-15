@@ -57,7 +57,8 @@ main.On("startWatch", (e, _path) => {
 });
 main.Handle("stopWatch", async (evt, _path) => {
     //watcher?.unwatch(srcPath);
-    await watcher.close();//.then(() => console.log("Chokidar watcher stopped"));
+    if (watcher != undefined)
+        await watcher.close();//.then(() => console.log("Chokidar watcher stopped"));
     IS_ON = false;
     clearInterval(interval);
     return true;

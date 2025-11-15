@@ -65,7 +65,7 @@ function checkForUp(ev) {
 
   const { builder } = await import('ucbuilder/out/build/builder.js');
   let mgen = builder.GetInstance(); // 
-  mgen.
+  mgen.filewatcher.startWatch();
   window['$ucbuilder'] = mgen;
   //mgen.addToIgnore('node_modules', '.git','out', '.vscode'); 
   window.addEventListener('keyup', (ev) => {

@@ -9,7 +9,7 @@ import { IpcMainHelper } from "./IpcMainHelper.js";
 import { IpcRendererHelper } from "./IpcRendererHelper.js";
 PathBridge.path = path as any;
 PathBridge.url = url as any;
-export class configManage { 
+export class configManage {
     static filler = new ConfigFiller();
     static init(win: import("electron").BrowserWindow, initailModule: string, initialPreload: string) {
         this.filler.fill(correctpath(path.resolve()));
@@ -22,6 +22,7 @@ export class configManage {
         IpcMainHelper.Handle('loadChennels', async (event, _path) => {
             try {
                 await import(`${_path}`);
+                console.log(`${_path} \nloaded..`);
                 return true;
             } catch (ex) {
                 console.log(ex);
@@ -43,6 +44,7 @@ export class configManage {
             _preloadImport += `
             await _api.invoke("${IPC_API_KEY}","loadChennels;","${iItem}");`;
         }
+
         let ShubhCode = "";
         let ucfg = this.filler.GetByAlias('ucbuilder');
         if (ucfg != undefined) {

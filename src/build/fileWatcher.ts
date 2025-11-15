@@ -47,6 +47,7 @@ export class fileWatcher {
     }
     checkDesignerMove(update: FILE_WARCHER_FILE_ROW) {
         let toBuild: codeFileInfo[] = [];
+        return;
         update.moved.forEach(f => {
             if (f.from.endsWith('.uc.ts') || f.from.endsWith('.tpt.ts')) {
                 let tocInfo = new codeFileInfo(codeFileInfo.getExtType(f.to));
@@ -231,8 +232,8 @@ export class fileWatcher {
             if (isChanged) {
                 changedFiles.set(fnode.to, data);
             }
-        });
-
+        }); 
+        
 
 
 

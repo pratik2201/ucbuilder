@@ -26,6 +26,7 @@ export class builder {
         this.project = ProjectManage.getInfoByProjectPath(this.ROOT_DIR);
         this.commonMng = new commonParser(this);
         this.filewatcher = new fileWatcher(this);
+        this.filewatcher.init();
         const _this = this;
         this.project.config.developer.build.ignorePath.forEach(pth => {
             _this.addToIgnore(pth);
@@ -46,27 +47,29 @@ export class builder {
         let _this = this;
         let prj = this.project;
         //if (this.filewatcher != undefined) this.filewatcher.stopWatch();
-        let designerPath = nodeFn.path.join(prj.projectPath,prj.config.preference.designerDir);
-        if (prj.config.type == 'ts') {
-            this.recursive(designerPath, this.ignoreDirs, (pth) => {
-                if (pth.endsWith('.designer.ts')) {
-                    let _pthObj = PathBridge.Convert(pth, 'src', '.designer.ts');
-                    if (!nodeFn.fs.existsSync(_pthObj[".ts"])) {
-                        console.log(`${_pthObj[".designer.ts"]} file deleted...`);
-                        nodeFn.fs.rmSync(_pthObj[".designer.ts"])
+        let designerPath = nodeFn.path.join(prj.projectPath, prj.config.preference.designerDir);
+        if (nodeFn.fs.existsSync(designerPath)) {
+            if (prj.config.type == 'ts') {
+                this.recursive(designerPath, this.ignoreDirs, (pth) => {
+                    if (pth.endsWith('.designer.ts')) {
+                        let _pthObj = PathBridge.Convert(pth, 'src', '.designer.ts');
+                        if (!nodeFn.fs.existsSync(_pthObj[".ts"])) {
+                            console.log(`${_pthObj[".designer.ts"]} file deleted...`);
+                            nodeFn.fs.rmSync(_pthObj[".designer.ts"])
+                        }
                     }
-                }
-            });
-        } else {
-            this.recursive(designerPath, this.ignoreDirs, (pth) => {
-                if (pth.endsWith('.designer.js')) {
-                    let _pthObj = PathBridge.Convert(pth, 'out', '.designer.js');
-                    if (!nodeFn.fs.existsSync(_pthObj[".js"])) {
-                        console.log(`${_pthObj[".designer.js"]} file deleted...`);
-                        nodeFn.fs.rmSync(_pthObj[".designer.js"])
+                });
+            } else {
+                this.recursive(designerPath, this.ignoreDirs, (pth) => {
+                    if (pth.endsWith('.designer.js')) {
+                        let _pthObj = PathBridge.Convert(pth, 'out', '.designer.js');
+                        if (!nodeFn.fs.existsSync(_pthObj[".js"])) {
+                            console.log(`${_pthObj[".designer.js"]} file deleted...`);
+                            nodeFn.fs.rmSync(_pthObj[".designer.js"])
+                        }
                     }
-                }
-            });
+                });
+            }
         }
         let bpath = nodeFn.path.join(this.project.projectPath, this.project.config.developer.build.buildPath);
         this.recursive(bpath, undefined, (pth) => {
