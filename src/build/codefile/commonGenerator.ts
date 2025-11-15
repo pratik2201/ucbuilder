@@ -119,7 +119,7 @@ export class commonGenerator {
             const row = this.rows[i];
             let srctype = row.src.projectInfo.type;
             let uctype = row.src.extCode;
-            console.log(row);
+            //console.log(row);
             
             commonGenerator.ensureDirectoryExistence(row.src.pathOf['.designer.ts']);
 

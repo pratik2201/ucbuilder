@@ -6,20 +6,16 @@ import { OpenCloseHandler } from "./lib/OpenCloseHandler.js";
 import { SourceNode, StampNode, STYLER_SELECTOR_TYPE } from "./lib/StampGenerator.js";
 import { nodeFn } from "./nodeFn.js";
 export type VariableList = { [key: string]: string };
-export const patternList/*: PatternList */ = {
+export const patternList = {
   styleTagSelector: /<style([\n\r\w\W.]*?)>([\n\r\w\W.]*?)<\/style>/gi,
   MULTILINE_COMMENT_REGS: /\/\*([\s\S]*?)\*\//gi,
   SINGLELINE_COMMENT_REGS: /\/\/.*/mg,
   SPACE_REMOVER_REGS: /(;|,|:|{|})[\n\r ]*/gi,
   subUcFatcher: /\[inside=([\"'`])((?:\\.|(?!\1)[^\\])*)\1\]([\S\s]*)/gim,
-  //themeCSSLoader: /\[(theme|css)=(["'`])*([\s\S]*?)\2\]/gim,
   themeCSSLoader: /\@(import|use)\s*([\"'`])((?:\\.|(?!\2)[^\\])*)\2\s*;/gim,
   mediaSelector: /^\s*@(media|keyframes|supports|container|document)\s+([\s\S]*)\s*/i,
-  animationNamePattern: /animation-name\s*:\s*([\w-]+)\s*;/gim,  ///(animation-name|-[lgit]-\w+)\s*:\s*(.*?)\s*;/gim,
+  animationNamePattern: /animation-name\s*:\s*([\w-]+)\s*;/gim,
   varHandler: /(\$[lgit]-\w+)((?:\s*\:\s*(.*?)\s*;)|(?:\s+(.+?)\s*--)|\s*)/gim,
-  //varValuePrinterPattern: /(-[lgit]-\w+)\s*(.*?)--/gim,    //       /var\s*\(\s*(\$[lgit]-\w+)\s*(.*?)\);/gim,
-  //varValueGetterPattern: /(\$[lgit]-\w+)\:(.*?)\;/gim,            //      /(\$[lgit]-\w+)\s*\:(.*?)\;/gim,
-  //scopeSelector: /\&/gm,
   rootExcludePattern: /(\w*)(:root|:exclude)/gi,
 };
 export interface IKeyStampNode {
@@ -69,19 +65,6 @@ export class StylerRegs {
   }
   baseType: StyleBaseType = StyleBaseType.UserControl;
   static initProjectsStyle(/*callback: () => void*/): void {
-    // import("d/ResourcesUC.js").then(({ ResourcesUC }) => {
-    /* rootPathHandler.source.forEach((row: RootPathRow) => {
-       let _stylepath: string = row.alices + "/styles.scss";
- 
-       let node: RootPathRow = row;//rootPathHandler.convertToRow(row, true);
-       node.isAlreadyFullPath = true;
-       node.stampSRC = StampNode.registerSoruce({
-         key: _stylepath,
-         root: node,
-         accessName: node.alices,
-       });
-       node.stampSRC.pushCSS(_stylepath, document.body);
-     });*/
     SourceNode.init();
     ProjectManage.projects.forEach((row) => {
       let _stylepath: string = row.projectPrimaryAlice + "/Program.styles.scss";
@@ -97,9 +80,7 @@ export class StylerRegs {
         // debugger;
         row.stampSRC.pushCSS(cssPath, row.importMetaURL, document.body);
       }
-    })
-    //callback();
-    // });
+    });
   }
   KEYS: IKeyStampNode = {
     TEMPLATE: "" as string,
@@ -107,10 +88,6 @@ export class StylerRegs {
     ROOT: "" as string,
     INTERNAL: "" as string,
   };
-  //KEYS.TEMPLATE: string = "";
-  //KEYS.LOCAL: string = "";
-  //KEYS.ROOT: string = "";
-  //get ROOT_STAMP_KEY() { return "" + this.projcectInfo.id; }
   controlXName: string = '';
   static templateID: number = 0;
   static localID: number = 0;
@@ -147,7 +124,6 @@ export class StylerRegs {
       StylerRegs.localID++;
       if (generateStamp) {
         StylerRegs.templateID++;
-
       }
       this.KEYS.ROOT = "" + this.projectInfo.id;
       this.KEYS.TEMPLATE = "" + StylerRegs.templateID;
@@ -199,15 +175,9 @@ export class StylerRegs {
   }
   parseStyleSeperator_sub(_args: IStyleSeperatorOptions): string {
     let _this = this;
-    //debugger;
     if (_args.data == undefined) return "";
-
     let _params = Object.assign(Object.assign({}, StyleSeperatorOptions), _args);
-
     _params.callCounter++;
-    //let pstamp_key: string = ''; //ATTR_OF.UC.PARENT_STAMP;
-    //let pstamp_val: string = _this.LOCAL_STAMP_KEY;  // _this.stamp  <-- i changed dont know why
-    //let _curRoot: RootPathRow = _this.rootInfo;
     let _curProject: ProjectRowR = _this.projectInfo;
     let rtrn = StylerRegs.REMOVE_COMMENT(_params.data);
     rtrn = StylerRegs.REMOVE_EXTRASPACE(_this.themeCssHandler.match(rtrn));
@@ -223,9 +193,6 @@ export class StylerRegs {
         return `animation-name : ${_this.varHandler.GetCSSAnimationName(value)}; `;
       }
     );
-
-
-
     let STYLE_BLOCK_NODE: string[] = [];
     let LINEAR_STYLES = '';
     //let extraTextAtBegining = "";
@@ -268,18 +235,7 @@ export class StylerRegs {
             })}{${styleContent}}`;
           }
         } else {
-          /*let changed: boolean = false;
-          //let selList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
-          changed = excludeContentList.length != 0;
-          excludeContentList["#fillInto"](STYLE_BLOCK_NODE);*/
           return excludeContentList.join(' ');
-          /*if (!changed) {
-            changed = false;
-          
-            
-            //}
-            return !changed ? `${selectorText} ${styleContent}` : "";
-          } else */ return "";
         }
       }
     );
@@ -317,7 +273,6 @@ export interface IHiddenScopeKVP {
 }
 export interface IHiddenScopeNode {
   list: IHiddenScopeKVP;
-  //root: RootPathRow;
   project: ProjectRowR;
   isForRoot: boolean; scopeSelectorText?: string;
   counter: number;
@@ -330,24 +285,16 @@ export class RootAndExcludeHandler {
   }
   rootExcludePattern: RegExp;
   checkRoot(selectorText: string, styleContent: string, _params: IStyleSeperatorOptions): string[] {
-    // debugger;
     let changed = false;
     let _this = this;
     let externalStyles: string[] = [];
     selectorText.replace(
       patternList.subUcFatcher,
       (match: string, quationMark: string, filePath: string, UCselector: string) => {
-        filePath = filePath["#devEsc"]();
-
-        let fpath = nodeFn.path.resolveFilePath(this.main.main.cssFilePath, filePath);
-
-        filePath = fpath;  
-
-        console.log(filePath);
-        UCselector = UCselector.trim();
-        //console.log(this.main.children);
-        //filePath = filePath.replace(/\//g, '\\');
-
+        filePath = filePath["#devEsc"](); 
+        let fpath = nodeFn.path.resolveFilePath(this.main.main.cssFilePath, filePath); 
+        filePath = fpath; 
+        UCselector = UCselector.trim(); 
         let tree: StylerRegs = this.main.children.find(
           (s: StylerRegs) => nodeFn.path.isSamePath(s.path, filePath) || s.alices == filePath
         );
@@ -419,9 +366,6 @@ export class RootAndExcludeHandler {
   }
 }
 
-
-
-
 export class ThemeCssHandler {
   main: StylerRegs;
   constructor(main: StylerRegs) {
@@ -429,11 +373,11 @@ export class ThemeCssHandler {
   }
   match(rtrn: string): string {
     let _this = this;
-     let fspath = this.main.main.cssFilePath;
+    let fspath = this.main.main.cssFilePath;
     rtrn = rtrn.replace(
       patternList.themeCSSLoader,
       (match: string, code: string, quationMark: string, path: string, offset: any, input_string: string) => {
-       
+
         switch (code) {
           case "use":
             let themecontents = '';
@@ -460,23 +404,6 @@ export class ThemeCssHandler {
                 stpSrc.release();
               });
             }
-
-
-            /*let prj = ProjectManage.getInfo(path, this.main.proje5ctInfo.importMetaURL);
-
-            //node.isAlreadyFullPath = true;
-            let stpSrc = StampNode.registerSoruce({
-              key: path,
-
-              //root: node,
-              project: prj.project,
-              accessName: '',
-            });
-            stpSrc.pushCSS(path, prj.project.importMetaURL);
-            _this.main.main.onRelease.push(() => {
-              stpSrc.release();
-            });*/
-
             return "";
         }
       }
@@ -487,13 +414,10 @@ export class ThemeCssHandler {
 
 export const ScopeSelectorOptions: IScopeSelectorOptions = {
   selectorText: "",
-  scopeSelectorText: "",
-  //parent_stamp?: "",
-  //parent_stamp_value?: undefined,
+  scopeSelectorText: "", 
   project: undefined,
   isForRoot: false,
-  hiddens: {
-    //root: undefined,
+  hiddens: { 
     project: undefined,
     list: {},
     isForRoot: false,
@@ -557,17 +481,10 @@ export class SelectorHandler {
           dkey.MAIN_ROOT_SELECTOR = `${main.nodeName}[${ATTR_OF.UC.ALL}$="_${mainKey.ROOT}"]`;
           break;
       }
-      // dkey.MAIN_SELECTOR = main.baseType == StyleBaseType ?
-      //   `${main.nodeName}[${ATTR_OF.UC.ALL}="${mainKey.LOCAL}_${mainKey.TEMPLATE}_${mainKey.ROOT}"]`
-      //   :
-      //   `${main.nodeName}[${ATTR_OF.UC.ALL}="${mainKey.LOCAL}_${mainKey.ROOT}"]`;
-      // dkey.MAIN_ROOT_SELECTOR = `${main.nodeName}[${ATTR_OF.UC.ALL}$="_${mainKey.ROOT}"]`;
     } else {
       dkey.MAIN_SELECTOR = `${main.nodeName}.${ATTR_OF.__CLASS(mainKey.LOCAL, 'm')}.${ATTR_OF.__CLASS(mainKey.ROOT, 'r')}`;
     }
     this.selectorMode = mode;
-    //console.log(this.main.main);
-
   }
   updateSCP(mode: CSSSearchAttributeCondition) {
     let dkey = this._DEFAULT_KEYS;
@@ -579,32 +496,8 @@ export class SelectorHandler {
       case '*': dkey.SCP.scope = 'g'; dkey.SCP.key = `_${mainKey.TEMPLATE}_`; break;
     }
   }
-  /*giveContents(contents) {
-      let oc = new openCloser();
-      let rtrn = oc.doTask('(', ')', contents, (selector, cssStyle, opened) => {
-          if (opened > 1) {
-              if (selector.endsWith(':has')) {
-                  cssStyle = this.giveContents(cssStyle);
-              } else {
-                  return selector + '(' + cssStyle + ')';
-              }
-          }
-          if (selector.endsWith(':has')) {
-              return selector + '<' + cssStyle + '>';
-          } else {
-              return selector + '(' + cssStyle + ')';
-          }
-  
-      });
-      return rtrn;
-  }*/
-  parseScopeSeperator(scopeOpt: IScopeSelectorOptions): string {
-    //return this.parseScopeSeperator_sub(scopeOpt)
-    /* if (scopeOpt.selectorText === '& mainContainer') {
-         debugger;
-     }*/
-    scopeOpt = Object.assign(ScopeSelectorOptions, scopeOpt);
-    //scopeOpt.hiddens.root = scopeOpt.root;
+  parseScopeSeperator(scopeOpt: IScopeSelectorOptions): string { 
+    scopeOpt = Object.assign(ScopeSelectorOptions, scopeOpt); 
     scopeOpt.hiddens.project = scopeOpt.project;
 
     scopeOpt.hiddens.scopeSelectorText = scopeOpt.scopeSelectorText;
@@ -612,14 +505,8 @@ export class SelectorHandler {
     if (scopeOpt.selectorText.trim() == '') return '';
     let counter = scopeOpt.hiddens.counter;
     let _this = this;
-    let oldSelector = scopeOpt.selectorText;
-    // if (scopeOpt.selectorText.includes('forms') /*&& sub.indexOf('◄◘') != -1*/) {
-    //     if (counter == 0) {
-    //         console.log(this.main);
-    //     }
-    // }
-    let oc = new openCloser();
-    //let hiddens: {key:string,value:string}[] = []
+    let oldSelector = scopeOpt.selectorText; 
+    let oc = new openCloser(); 
     let rtrn = oc.doTask('(', ')', scopeOpt.selectorText, (selector, cssStyle, opened) => {
       if (opened > 1) {
         if (selector.endsWith(':has')) {
@@ -670,8 +557,6 @@ export class SelectorHandler {
     return '◄◘' + hiddens.counter + '◘▀';
   }
   splitselector(selector: string, hiddens: IHiddenScopeNode): string {
-    //if (selector.trim().startsWith('&winFrame1')) debugger;
-    //console.log(selector, hiddens);     
     let splitted = selector.split(' ');
     let hasUcFound = false;
     let kvNode: string;
@@ -687,9 +572,7 @@ export class SelectorHandler {
         hasUcFound = (sub_styler != undefined);
         if (hasUcFound) {
           isStartWithSubUc = (i == 0);
-          // styler = sub_styler;
           let nnode: string = '';
-          //let nnode = `${sub_styler.nodeName}[${ATTR_OF.UC.ALL}="${sub_styler.LOCAL_STAMP_KEY}"]`;
           nnode = (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) ?
             `${sub_styler.nodeName}[${ATTR_OF.UC.ALL}="${sub_styler.KEYS.LOCAL}"]`
             :
@@ -722,94 +605,52 @@ export class SelectorHandler {
     splitted = splitted.filter(word => word !== "");
     let len = splitted.length;
     let fsel = '';
-    // let __VARS = this.GV();
-    //let code: CSSSearchAttributeCondition = this.main.selectorMode;
-    //let __VARS.scope: StyleClassScopeType = "l";
-    //let __VARS.key = styler.KEYS.LOCAL;
-
     if (hiddens.isForRoot) {
-        fsel = splitted[len - 1];
-       splitted[len - 1] = this.MISC_SELECTOR_CONDITION(fsel, {
+      fsel = splitted[len - 1];
+      if (fsel.startsWith('&')) {
+        switch (len) {
+          case 1: splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR); break;
+          default: splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR);  // fsel.replace('&', `${main.nodeName}[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //   // `${main.nodeName}.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
+            break;
+        }
+      } else {
+        splitted[len - 1] = this.MISC_SELECTOR_CONDITION(fsel, {
           scope: 'r',
           selectorOperation: '$',
           key: '_' + hiddens.project.id
-        }); // ATTR_OF.UC.CLASS_ROOT+''+hiddens.root.id
-  
-
-      // fsel = splitted[0];
-
+        });
+      }
+    } else {
+      fsel = splitted[0];
+      if (fsel.startsWith('&')) {
+        splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_SELECTOR);
+      } else {
+        if (fsel.length == 1) splitted[0] = this.MISC_SELECTOR_CONDITION(fsel, this._DEFAULT_KEYS.SCP);
+        else {
+          fsel = splitted[len - 1];
+          splitted[len - 1] = this.MISC_SELECTOR_CONDITION(fsel, this._DEFAULT_KEYS.SCP);
+        }
+      }
       // switch (len) {
       //   case 1:
       //     if (fsel.startsWith('&'))
-      //       splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR); //fsel.replace('&', `${main.nodeName}[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //`${main.nodeName}.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
-      //     /*else {
-      //       //if (!isStartWithSubUc) {
+      //       splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_SELECTOR); //fsel.replace('&', `${main.nodeName}[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //`${main.nodeName}.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
+      //     else {
       //       splitted[0] = this.MISC_SELECTOR_CONDITION(fsel, this._DEFAULT_KEYS.SCP); //this.CLASS_SELECTOR_CONDITION(fsel, __VARS.scope, __VARS.key); //ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
-
-      //       //}
-      //     }*/
+      //     }
       //     break;
       //   default:
       //     if (fsel.startsWith('&'))
-      //       splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR);  // fsel.replace('&', `${main.nodeName}[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //   // `${main.nodeName}.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
-      //     /*else {
-
-      //       //if (!isStartWithSubUc) {
+      //       splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_SELECTOR);  // fsel.replace('&', `${main.nodeName}[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //   // `${main.nodeName}.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
+      //     else {
       //       fsel = splitted[len - 1];
       //       splitted[len - 1] = this.MISC_SELECTOR_CONDITION(fsel, this._DEFAULT_KEYS.SCP); //this.CLASS_SELECTOR_CONDITION(fsel, __VARS.scope, __VARS.key); // ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
-
-      //       //}
-      //     }*/
+      //     }
       //     break;
       // }
-
-
-
-
-
-    } else {
-      fsel = splitted[0];
-
-      switch (len) {
-        case 1:
-          if (fsel.startsWith('&'))
-            splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_SELECTOR); //fsel.replace('&', `${main.nodeName}[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //`${main.nodeName}.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}` 
-          else {
-            //if (!isStartWithSubUc) {
-            splitted[0] = this.MISC_SELECTOR_CONDITION(fsel, this._DEFAULT_KEYS.SCP); //this.CLASS_SELECTOR_CONDITION(fsel, __VARS.scope, __VARS.key); //ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
-
-            //}
-          }
-          break;
-        default:
-          if (fsel.startsWith('&'))
-            splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_SELECTOR);  // fsel.replace('&', `${main.nodeName}[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //   // `${main.nodeName}.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
-          else {
-
-            //if (!isStartWithSubUc) {
-            fsel = splitted[len - 1];
-            splitted[len - 1] = this.MISC_SELECTOR_CONDITION(fsel, this._DEFAULT_KEYS.SCP); //this.CLASS_SELECTOR_CONDITION(fsel, __VARS.scope, __VARS.key); // ATTR_OF.UC.CLASS_PARENT+''+styler.uniqStamp
-
-            //}
-          }
-          break;
-      }
     }
-    /* fsel = splitted[0];
-     if (fsel.startsWith('&')) {
-         splitted[0] = fsel.replace('&', `${main.nodeName}[${ATTR_OF.UC.UC_STAMP}="${styler.uniqStamp}"]`);
-     } else {
-         splitted[0] = `${fsel}`;//this.setStamp_shu_____(fsel, ATTR_OF.UC.UC_STAMP, styler.uniqStamp);
-     }
-     if (len > 1) {
-         let fsel = splitted[len - 1];
-         // splitted[len-1] = this.setStamp_shu_____(fsel, ATTR_OF.UC.PARENT_STAMP, styler.uniqStamp);
-     }*/
-    // console.log(hiddens.scopeSelectorText);
     splitted.unshift(hiddens.scopeSelectorText != undefined ? hiddens.scopeSelectorText : '');
     return splitted.join(' ');
-    //scopeOpt = Object.assign(Object.assign({}, scopeSelectorOptions), scopeOpt);
-    //return this.parseScopeSeperator_sub(scopeOpt);
   }
 
   MISC_SELECTOR_CONDITION(selector: string, xk: SelScopeMap) {
@@ -822,29 +663,7 @@ export class SelectorHandler {
     }
     dbl[0] = sngl.join(":");
     return dbl.join("::");
-  }
-  // ATTRIB_SELECTOR_CONDITION(selector, /*classes*/ regxInd: CSSSearchAttributeCondition = '^', stampvalue) {
-  //   let dbl: string[] = selector.split(/ *:: */);
-  //   let sngl: string[] = dbl[0].split(/ *: */);
-  //   sngl[0] += `[${ATTR_OF.UC.ALL}${regxInd}="${stampvalue}"]`;
-  //   dbl[0] = sngl.join(":");
-  //   return dbl.join("::");
-  // }
-  // CLASS_SELECTOR_CONDITION(selector, /*classes*/ regxInd: StyleClassScopeType = 'l', stampvalue) {
-  //   let dbl: string[] = selector.split(/ *:: */);
-  //   let sngl: string[] = dbl[0].split(/ *: */);
-  //   sngl[0] += `.${ATTR_OF.__CLASS(stampvalue, regxInd)}`;
-  //   dbl[0] = sngl.join(":");
-  //   return dbl.join("::");
-  // }
-  // SELECTOR_CONDITION(selector, /*classes*/ regxInd: CSSSearchAttributeCondition = '^', stampvalue) {
-  //   let dbl: string[] = selector.split(/ *:: */);
-  //   let sngl: string[] = dbl[0].split(/ *: */);
-  //   //sngl[0] += `.${classes}`;
-  //   sngl[0] += `[${ATTR_OF.UC.ALL}${regxInd}="${stampvalue}"]`;
-  //   dbl[0] = sngl.join(":");
-  //   return dbl.join("::");
-  // }
+  } 
 }
 
 

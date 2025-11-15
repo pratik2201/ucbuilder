@@ -91,9 +91,9 @@ function startWatch() {
         .on("unlink", removedPath => {
             WATCH_LIST.unlink[removedPath] = Date.now();
             doProcess();
-        }); 
+        });
 }
-function checkDesignerMove(update: FILE_WARCHER_FILE_ROW) {
+/*function checkDesignerMove(update: FILE_WARCHER_FILE_ROW) {
     let toRenames: { from: string, to: string }[] = [];
     let toRemoveFromIgnore: string[] = [];
     update.moved.forEach(f => {
@@ -110,23 +110,11 @@ function checkDesignerMove(update: FILE_WARCHER_FILE_ROW) {
             }
         }
     });
-    //setTimeout(() => {
-        toRenames.forEach(s => {
-            //ignoredList.push(s.from, s.to);
-            //toRemoveFromIgnore.push(s.from, s.to);
-            fs.rmSync(s.from ,{force:true});
-        });
-    //}, 10);
-    // let ar = ucUtil.distinct(ignoredList);
-    // ignoredList.length = 0;
-    // ignoredList.push(...ar);
-    // //setTimeout(() => {
-    // for (let i = 0, ilen = toRemoveFromIgnore.length; i < ilen; i++) {
-    //     const iItem = toRemoveFromIgnore[i];
-    //     ignoredList.splice(ignoredList.findIndex(a => a == iItem), 1);
-    // }
-    // //}, 1000);
-}
+
+    toRenames.forEach(s => {
+        fs.rmSync(s.from, { force: true });
+    });
+}*/
 let isProcessing = false;
 function doProcess() {
     if (isProcessing) return;
@@ -143,17 +131,22 @@ function doProcess() {
                     if (addedBaseName === unlinkBaseName) {
                         delete newAr.add[addedPath];
                         delete newAr.unlink[unlinkPath];
-
                         newAr.moved.push({ from: unlinkPath, to: addedPath });
+                        let fromPathOf = PathBridge.Convert(unlinkPath, 'src', '.ts');
+                        let toPathOf = PathBridge.Convert(addedPath, 'src', '.ts');
+                        newAr.moved.push({
+                            from: fromPathOf[".designer.ts"],
+                            to: toPathOf[".designer.ts"]
+                        });
                         break;
-                    } 
+                    }
                 }
             }
         }
-        checkDesignerMove(newAr);
+        //  checkDesignerMove(newAr);
         main.Reply("updates", eleEvent, JSON.stringify(newAr));
     }
-    let to = setTimeout(analysis, 3000); 
+    let to = setTimeout(analysis, 3000);
 }
 /*function detectRename(newFile) {
     const now = Date.now();

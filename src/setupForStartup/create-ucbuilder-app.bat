@@ -84,7 +84,7 @@ if errorlevel 1 (
 @REM call npm run rebuild  
 @REM call npm pack
 @REM cd ../"%projectName%"
-@REM call npm install "../ucbuilder/ucbuilder-1.0.0-beta.3.tgz"
+@REM call npm install "../ucbuilder/ucbuilder-1.0.4.tgz"
 
 echo.
 echo Running ucbuilder startup setup...

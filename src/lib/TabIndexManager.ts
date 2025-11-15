@@ -506,7 +506,7 @@ class TabIndexManager {
         return target.parentElement?.closest("[x-tabindex]");
     }
 
-    static allowNodePattern: RegExp = /INPUT|SELECT|BUTTON|TEXTAREA/i;
+    static allowNodePattern: RegExp = /INPUT|SELECT|BUTTON|A|TEXTAREA/i;
     static isVisaulyAppeared(hte: HTMLElement) {
         if (hte == undefined) return false;
         let isVisible = true;

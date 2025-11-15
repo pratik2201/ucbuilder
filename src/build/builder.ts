@@ -10,6 +10,7 @@ import { CommonRow } from "./buildRow.js";
 import { commonParser } from "./codefile/commonParser.js";
 import { codeFileInfo } from "./codeFileInfo.js";
 import { fileWatcher } from "./fileWatcher.js";
+import { PathBridge } from "./pathBridge.js";
 
 export class builder {
     private ignoreDirs: string[] = [];
@@ -22,43 +23,58 @@ export class builder {
     constructor() {
         if (builder.INSTANCE != undefined) { throw new Error(`SINGLE INSTANCE ONLY use instead builder`); }
         this.ROOT_DIR = nodeFn.path.resolve();
-        this.project = ProjectManage.getInfoByProjectPath(this.ROOT_DIR); 
-        this.commonMng = new commonParser(this); 
+        this.project = ProjectManage.getInfoByProjectPath(this.ROOT_DIR);
+        this.commonMng = new commonParser(this);
+        this.filewatcher = new fileWatcher(this);
         const _this = this;
         this.project.config.developer.build.ignorePath.forEach(pth => {
             _this.addToIgnore(pth);
         });
-    } 
+    }
     projectDir: string = '';
     addToIgnore = (...pathlist: string[]) => {
         pathlist.forEach(p =>
             this.ignoreDirs.push(nodeFn.path.normalize(nodeFn.path.join(this.ROOT_DIR, p)))
         );
     }
-
-    // buildThisDir(...pathlist: string[]) {
-    //     for (let i = 0, iObj = pathlist, ilen = iObj.length; i < ilen; i++) {
-    //         const iItem = iObj[i];
-    //         this.dirsToBuild.push(ProjectManage.resolve(iItem, this.project.importMetaURL)/*["#toFilePath"](true)*/);
-    //     }
-    // }
-
-    //filewatcher: fileWatcher;
     commonMng: commonParser;
-
+    filewatcher: fileWatcher;
     Event = {
         onSelect_xName: new CommonEvent<(ele: HTMLElement, row: CommonRow) => void>()
     }
-
     async buildALL(onComplete = () => { }, _fillReplacerPath = true) {
         let _this = this;
+        let prj = this.project;
+        //if (this.filewatcher != undefined) this.filewatcher.stopWatch();
+        let designerPath = nodeFn.path.join(prj.projectPath,prj.config.preference.designerDir);
+        if (prj.config.type == 'ts') {
+            this.recursive(designerPath, this.ignoreDirs, (pth) => {
+                if (pth.endsWith('.designer.ts')) {
+                    let _pthObj = PathBridge.Convert(pth, 'src', '.designer.ts');
+                    if (!nodeFn.fs.existsSync(_pthObj[".ts"])) {
+                        console.log(`${_pthObj[".designer.ts"]} file deleted...`);
+                        nodeFn.fs.rmSync(_pthObj[".designer.ts"])
+                    }
+                }
+            });
+        } else {
+            this.recursive(designerPath, this.ignoreDirs, (pth) => {
+                if (pth.endsWith('.designer.js')) {
+                    let _pthObj = PathBridge.Convert(pth, 'out', '.designer.js');
+                    if (!nodeFn.fs.existsSync(_pthObj[".js"])) {
+                        console.log(`${_pthObj[".designer.js"]} file deleted...`);
+                        nodeFn.fs.rmSync(_pthObj[".designer.js"])
+                    }
+                }
+            });
+        }
         let bpath = nodeFn.path.join(this.project.projectPath, this.project.config.developer.build.buildPath);
         this.recursive(bpath, undefined, (pth) => {
             _this.checkFileState(pth);
         });
         this.commonMng.gen.generateFiles(this.commonMng.rows);
         onComplete();
-        // if (this.filewatcher != undefined) this.filewatcher.startWatch();
+       //if (this.filewatcher != undefined) this.filewatcher.startWatch();
     }
     isIgnored = (pth: string, igList = this.ignoreDirs) => {
         return this.ignoreDirs.findIndex(s => {

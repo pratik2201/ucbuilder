@@ -100,7 +100,6 @@ export class commonParser {
                 this.codeHT = code["#$"]() as HTMLElement;
                 primaryChild = this.codeHT;
                 _row.htmlFileContent = code;
-                ///_row.htmlFile.reGenerate = true;
             }
         } catch (ex) {
             console.log(ex);
@@ -136,8 +135,8 @@ export class commonParser {
                 if (template.htmlContents == '' || template.htmlContents == undefined) {
                     //debugger;
                     template.htmlContents = `<wrapper   x-at="${rootpath}"  >
-<!-- DONT MODIFY "x-at" ATTRIBUTE FROM PRIMARY FILE -->
-</wrapper>`;
+                    <!-- DONT MODIFY "x-at" ATTRIBUTE FROM PRIMARY FILE -->
+                    </wrapper>`;
                 }
                 let cntHT = template.htmlContents["#PHP_REMOVE"]()["#$"]() as HTMLElement;
                 if (cntHT['length'] != undefined) cntHT = cntHT[0];
@@ -156,58 +155,14 @@ export class commonParser {
                         generic: _generic,
                         proto: objectOpt.getClassName(element),
                         scope: scope,
-                    });
-                    //-controls.push(ctr);
-                }
-
+                    }); 
+                } 
                 tpts.push({
                     name: template.accessKey,
                     scope: "public",
                     controls: controls
                 });
             });
-
-            /*let subTemplates = Template.GetArrayOfTemplate(_row.src);
-
-            let tpts = _row.designer.templetes;
-            subTemplates.forEach(template => {
-                let rolelwr = template.accessKey;
-                if (tpts.findIndex(s => s.name["#equalIgnoreCase"](rolelwr)) != -1) return;
-                let controls: Control[] = [];
-                template.
-                if (template.htmlContents == '' || template.htmlContents == undefined) {
-                    //debugger;
-                    template.htmlContents = `<wrapper   x-at="${rootpath}"  >
-<!-- DONT MODIFY "x-at" ATTRIBUTE FROM PRIMARY FILE -->
-</wrapper>`;
-                }
-                let cntHT = template.htmlContents["#PHP_REMOVE"]()["#$"]() as HTMLElement;
-                if (cntHT['length'] != undefined) cntHT = cntHT[0];
-                const elements = Array.from(cntHT.querySelectorAll(`[${ATTR_OF.X_NAME}]`));
-                for (let i = 0, iObj = elements, len = iObj.length; i < len; i++) {
-                    const element = iObj[i];
-                    onSelect_xName.fire([element as HTMLElement, _row]);
-                    let scope = element.getAttribute(ATTR_OF.SCOPE_KEY) as ScopeType;
-                    if (scope == undefined)
-                        scope = 'public';
-                    let _generic = element.getAttribute('x-generic');
-                    _generic = _generic == null ? '' : '<' + _generic + '>';
-                    let ctr = Object.assign(new Control(), {
-                        name: element.getAttribute("x-name"),
-                        nodeName: element.nodeName,
-                        generic: _generic,
-                        proto: objectOpt.getClassName(element),
-                        scope: scope,
-                    });
-                    controls.push(ctr);
-                }
-
-                tpts.push({
-                    name: template.accessKey,
-                    scope: "public",
-                    controls: controls
-                });
-            });*/
         } else {
             _row.baseClassName = Usercontrol.name;
             let outHT = code["#devEsc"]()["#PHP_REMOVE"]()["#$"]() as HTMLElement;
@@ -217,9 +172,7 @@ export class commonParser {
                 .map(s => s.getAttribute(ATTR_OF.ACCESSIBLE_KEY))
             ["#distinct"]().join(`" | "`) + `"`;
             _row.designer.getterFunk = accessKeys;
-
             let im = _row.designer.importClasses;
-
             _row._extends.addImport(['Usercontrol'], this.uc('./node_modules/ucbuilder/out/Usercontrol.js', DESIGNER_DIR_PATH));
             _row._extends.addImport(['intenseGenerator'], this.uc('./node_modules/ucbuilder/out/intenseGenerator.js', DESIGNER_DIR_PATH));
             _row._extends.addImport(['IUcOptions'], this.uc('./node_modules/ucbuilder/out/enumAndMore.js', DESIGNER_DIR_PATH));
@@ -236,18 +189,10 @@ export class commonParser {
                 let _generic = element.getAttribute('x-generic');
                 _generic = _generic == null ? '' : '<' + _generic + '>';
                 if (element.hasAttribute("x-from")) {
-                    /* let _subpath = element.getAttribute("x-temp-path")["#devEsc"]();
-                     let path = nodeFn.path.join(nodeFn.path.dirname(nodeFn.path.resolve()), _subpath)["#toFilePath"]();
-                     _subpath = path["#toFilePath"]() + '.html';
-                     let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath));
-                     console.log(_subpath);*/
-                    //console.log(uFInf);  
-
                     let _subpath = element.getAttribute("x-from")["#devEsc"]();
                     _subpath = nodeFn.path.resolveFilePath(filePath, _subpath);//["#toFilePath"]();
                     let uFInf = new codeFileInfo(codeFileInfo.getExtType(_subpath));
                     uFInf.parseUrl(_subpath, 'src', filePath);
-
                     if (nodeFn.fs.existsSync(uFInf.pathOf[".ts"]) ||
                         nodeFn.fs.existsSync(uFInf.pathOf[".html"]) ||
                         nodeFn.fs.existsSync(uFInf.pathOf[".designer.ts"])) {
@@ -261,10 +206,7 @@ export class commonParser {
                             src: uFInf,
                         });
                         let fullcodePath = uFInf.pathOf['.ts'];
-                        //console.log(_row.src.pathOf);
-                        
                         let nws = ucUtil.changeExtension(nodeFn.path.relativeFilePath(_row.src.pathOf['.designer.ts'], fullcodePath), '.ts', '.js');
-
                         ctrlNode.codeFilePath = nws; //   oldone;
                         ctrlNode.importedClassName = _row._extends.addImport([uFInf.name],
                             ctrlNode.codeFilePath)![0];
@@ -281,9 +223,6 @@ export class commonParser {
                     }));
                 }
             }
-            //  console.log(_row.src.codeSrc.rootPath);
-            //  console.log(im);
-
         }
         _row._extends.addImport([_row.src.name], _row.codeFilePath);
         return _row;
@@ -292,43 +231,10 @@ export class commonParser {
         let fpath = nodeFn.path.join(nodeFn.path.resolve(), _path);
         return ucUtil.cleanNodeModulesPath(nodeFn.path.relative(fromPath, fpath))["#toFilePath"]();
     }
-
-
-
-
-
-    fillDefImports(name: string, url: string, /*aliceNumber: number,*/ classList: ImportClassNode[], ctrlNode?: Control)/*: number */ {
+    fillDefImports(name: string, url: string,   classList: ImportClassNode[], ctrlNode?: Control)/*: number */ {
         let _urlLowerCase = url.toLowerCase();
         let _import = classList.find(s => s.url.toLowerCase() == _urlLowerCase);
-        if (_import != undefined) {
-            //if (_import.names.findIndex(d => d === name) == -1) _import.names.push(name);
-        } else {
-            /*_import = {
-                names: [name],
-                url: url,
-            }
-            classList.push(_import);*/
-        }
         if (ctrlNode != undefined) ctrlNode.importedClassName = name;
-        /*let _nameLowerCase = name.toLowerCase();
-        let _found = classList.find(s => s.name.toLowerCase() == _nameLowerCase);        
-        let aliceTxt = (_found) ? 'a' + aliceNumber++ : '';
-        let obj: ImportClassNode = {
-            name: name,
-            alice: aliceTxt,
-            url: url,
-            get importText() {
-                if (this.alice == '')
-                    return this.name;
-                else return `${this.name} as ${this.alice}`;
-            },
-            get objText() {
-                return (this.alice == '') ? this.name : this.alice;
-            }
-        };
-        if (ctrlNode != undefined) ctrlNode.importedClassName = name;
-        classList.push(obj);
-        return aliceNumber;*/
     }
 
 }
