@@ -37,23 +37,37 @@ const watcherOptions: ChokidarOptions = {
     usePolling: true,     // more stable across OS types
     interval: 200,        // poll every 200ms
 };
-main.On("rendererIgnorance.add", (e, ..._paths: string[]) => {
-    _paths = _paths.map(s => path.normalize(s));
-    rendererIgnorance.push(..._paths);
-    rendererIgnorance = ucUtil.distinct(rendererIgnorance);
-    e.returnValue = true;
-});
-main.On("rendererIgnorance.remove", (e, ..._paths: string[]) => {
-    _paths = _paths.map(s => path.normalize(s));
-    rendererIgnorance = rendererIgnorance.filter(s => !_paths.includes(s));
-    e.returnValue = true;
-});
+// main.On("rendererIgnorance.add", (e, ..._paths: string[]) => {
+//     _paths = _paths.map(s => path.normalize(s));
+//     rendererIgnorance.push(..._paths);
+//     rendererIgnorance = ucUtil.distinct(rendererIgnorance);
+//     e.returnValue = true;
+// });
+// main.On("rendererIgnorance.remove", (e, ..._paths: string[]) => {
+//     _paths = _paths.map(s => path.normalize(s));
+//     rendererIgnorance = rendererIgnorance.filter(s => !_paths.includes(s));
+//     e.returnValue = true;
+// });
 let eleEvent: Electron.IpcMainEvent;
 let IS_ON = false;
 main.On("startWatch", (e, _path) => {
     eleEvent = e;
     IS_ON = true;
     startWatch();
+});
+main.On("writeContents", (e, changedFiles: Record<string, string>) => {
+    let __KEYS = Object.keys(changedFiles);
+    rendererIgnorance.push(...__KEYS);
+    rendererIgnorance = ucUtil.distinct(rendererIgnorance);
+    for (const [_path, contents] of Object.entries(changedFiles)) {
+        console.log([_path,contents]);
+        
+        fs.writeFileSync(_path, contents, 'binary');
+    }
+    setTimeout(() => {
+        rendererIgnorance = rendererIgnorance.filter(s => !__KEYS.includes(s));
+    }, 1000);
+    e.returnValue = true;
 });
 main.Handle("stopWatch", async (evt, _path) => {
     //watcher?.unwatch(srcPath);
@@ -94,7 +108,7 @@ function startWatch() {
             doProcess();
         });
 }
-/*function checkDesignerMove(update: FILE_WARCHER_FILE_ROW) {
+function checkDesignerMove(update: FILE_WARCHER_FILE_ROW) {
     let toRenames: { from: string, to: string }[] = [];
     let toRemoveFromIgnore: string[] = [];
     update.moved.forEach(f => {
@@ -112,10 +126,10 @@ function startWatch() {
         }
     });
 
-    toRenames.forEach(s => {
+    /*toRenames.forEach(s => {
         fs.rmSync(s.from, { force: true });
-    });
-}*/
+    });*/
+}
 let isProcessing = false;
 function doProcess() {
     if (isProcessing) return;
@@ -133,18 +147,20 @@ function doProcess() {
                         delete newAr.add[addedPath];
                         delete newAr.unlink[unlinkPath];
                         newAr.moved.push({ from: unlinkPath, to: addedPath });
-                        let fromPathOf = PathBridge.Convert(unlinkPath, 'src', '.ts');
-                        let toPathOf = PathBridge.Convert(addedPath, 'src', '.ts');
-                        newAr.moved.push({
-                            from: fromPathOf[".designer.ts"],
-                            to: toPathOf[".designer.ts"]
-                        });
+                        if (unlinkPath.endsWith('.uc.ts') || unlinkPath.endsWith('.tpt.ts')) {
+                            let fromPathOf = PathBridge.Convert(unlinkPath, 'src', '.ts');
+                            let toPathOf = PathBridge.Convert(addedPath, 'src', '.ts');
+                            newAr.moved.push({
+                                from: fromPathOf[".designer.ts"],
+                                to: toPathOf[".designer.ts"]
+                            });
+                        }
                         break;
                     }
                 }
             }
         }
-        //  checkDesignerMove(newAr);
+        //checkDesignerMove(newAr);
         main.Reply("updates", eleEvent, JSON.stringify(newAr));
     }
     let to = setTimeout(analysis, 3000);

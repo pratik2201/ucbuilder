@@ -6,9 +6,10 @@ import { nodeFn } from "../nodeFn.js";
 import { builder } from "./builder.js";
 import { codeFileInfo } from "./codeFileInfo.js";
 import { correctpath } from "../ipc/enumAndMore.js";
+import { UcDependencyScanner } from "./fileStates.js";
 const renderer = IpcRendererHelper.Group(import.meta.url);
 export class fileWatcher {
-
+    //  /(x-from)="(.*?)"|import\s+(.*?)\s+from\s+["'](.*?)["'];|(@use|@import)\s["'](.*?)["']|({:)(.*?)}/gi
     constructor(main: builder) { this.main = main; }
     main: builder;
 
@@ -62,124 +63,68 @@ export class fileWatcher {
             });
         }
     }
+    depScanner = new UcDependencyScanner(nodeFn.path as any,nodeFn.fs as any);
+    static PATTERN: RegExp = /(x-from)\s*=\s*"(.*?)"|(import\s+.*?)\s+from\s+["'](.*?)["'];|(@use|@import)\s["'](.*?)["'];|({:)(.*?)}/gi;
     doRecursion = (updateStr: string) => {
         const _builder = this.main;
         const update: FILE_WARCHER_FILE_ROW = JSON.parse(updateStr);
         const _this = this;
         const changedFiles = new Map<string, string>();
         let bpath = nodeFn.path.join(_this.main.project.projectPath, _this.main.project.config.developer.build.buildPath);
+
         _builder.recursive(bpath, undefined, (pth) => {
             if (fileWatcher.isValidFileForPathReplacer(pth)) {
+               
                 let ext = pth.slice(pth.lastIndexOf('.'));
-                // console.log(pth);
-
+                if (!nodeFn.fs.existsSync(pth)) { console.log(pth); return; }
                 let data = nodeFn.fs.readFileSync(pth, 'binary', undefined, false);
                 let isChanged = false;
-                let replacedPath = [];
-                data = data.replace(/{:(.*?)}/gm, (m, xpath: string) => {
-                    if (xpath.length == 0) return m;
-                    let IsChanged_prevVal = isChanged;
-                    try {
-                        if (update.moved != undefined) {
-                            let fpath = nodeFn.path.resolveFilePath(pth, xpath);
-                            let findex = update.moved.findIndex(s => nodeFn.path.isSamePath(s.from, fpath));
-                            if (findex != -1) {
-                                let relpath = nodeFn.path.relativeFilePath(pth, update.moved[findex].to);
-                                isChanged = true;
-                                replacedPath.push(pth);
-                                return `{:${relpath}}`;
-                            }
+                let xdata =  _this.depScanner.ReplaceAll(data, pth, (e) => {
+                   console.log(e);
+                    return e.match;
+                });
+               
+                
+                data = data.replace(fileWatcher.PATTERN, (m, preeText: string, xpath: string) => {
+                    if (preeText == undefined || xpath == undefined) {
+                        console.log(m); console.log('----------------------'); 
+                        return m;
+                    }
+                    console.log(preeText, xpath); 
+                    let fpath = nodeFn.path.resolveFilePath(pth, xpath);
+                    let findex = update.moved.findIndex(s => nodeFn.path.isSamePath(s.from, fpath));
+                    let REL_PATH = '';
+                    if (findex != -1) {
+                        REL_PATH = nodeFn.path.relativeFilePath(pth, update.moved[findex].to);
+                        isChanged = true;
+                        REL_PATH = ucUtil.devEsc(REL_PATH);
+                        switch (preeText) {
+                            case 'x-from': return ` x-from="${REL_PATH}"`;
+                            case '@use': return `@use "${REL_PATH}";`;
+                            case '@import': return `@import "${REL_PATH}";`;
+                            case '{:': return `{:${REL_PATH}}`;
+                            default: return `${preeText} from "${REL_PATH}"`;  // import {} from "";
                         }
                     }
-                    catch (e) { isChanged = IsChanged_prevVal; return m; }
                     return m;
                 });
-
-                switch (ext) {
-                    case '.html':
-                        data = data.replace(/\s+x-from\s*=\s*([\"'`])((?:\\.|(?!\1)[^\\])*)\1\s+/gim, (m, q: string, xpath: string) => {
-                            xpath = ucUtil.devEsc(xpath);
-                            if (xpath.length == 0 || replacedPath.includes(xpath)) return m;
-                            let IsChanged_prevVal = isChanged;
-                            try {
-                                if (update.moved != undefined) {
-                                    let fpath = nodeFn.path.resolveFilePath(pth, xpath);
-                                    let findex = update.moved.findIndex(s => nodeFn.path.isSamePath(s.from, fpath));
-                                    if (findex != -1) {
-                                        let relpath = nodeFn.path.relativeFilePath(pth, update.moved[findex].to);
-                                        isChanged = true;
-                                        return ` x-from="{:${relpath}}" `;
-                                    }
-                                }
-                            }
-                            catch (e) { isChanged = IsChanged_prevVal; return m; }
-                            return m;
-                        });
-                        break;
-                    case '.ts':
-                        //if (pth.includes('abc.uc.designer')) debugger;
-                        //console.log(pth);
-
-                        /*data = data.replace(/import\s+([\w$\s{},*]+)from\s+?["']([^"']+)["'];/gim, (m, importFrom, xpath: string) => {
-                            xpath = ucUtil.devEsc(xpath);
-                            if (xpath.length == 0 || replacedPath.includes(xpath)) return m;
-                            let IsChanged_prevVal = isChanged;
-                            try {
-                                if (update.moved != undefined) {
-                                    let fpath = nodeFn.path.resolveFilePath(pth, xpath);
-                                    fpath = ucUtil.changeExtension(fpath, '.js', '.ts');
-                                    let findex = update.moved.findIndex(s => nodeFn.path.isSamePath(s.from, fpath));
-                                    if (findex != -1) {
-                                        let relpath = nodeFn.path.relativeFilePath(pth, update.moved[findex].to);
-                                        relpath = ucUtil.changeExtension(relpath, '.ts', '.js');
-                                        isChanged = true;
-                                        return `import ${importFrom}from "${relpath}";`;
-                                    }
-                                }
-                            }
-                            catch (e) { isChanged = IsChanged_prevVal; return m; }
-                            return m;
-                        });*/
-                        break;
-                    case '.scss':
-
-                        data = data.replace(/@(use|import)\s*\s+?["']([^"']+)["']\s*;/gim, (m, useOrImport, xpath: string) => {
-                            xpath = ucUtil.devEsc(xpath);
-                            if (xpath.length == 0 || replacedPath.includes(xpath)) return m;
-                            let IsChanged_prevVal = isChanged;
-                            try {
-                                if (update.moved != undefined) {
-                                    let fpath = nodeFn.path.resolveFilePath(pth, xpath);
-                                    let findex = update.moved.findIndex(s => nodeFn.path.isSamePath(s.from, fpath));
-                                    if (findex != -1) {
-                                        let relpath = nodeFn.path.relativeFilePath(pth, update.moved[findex].to);
-                                        isChanged = true;
-                                        return `@${useOrImport} "${relpath}";`;
-                                    }
-                                }
-                            }
-                            catch (e) { isChanged = IsChanged_prevVal; return m; }
-                            return m;
-                        });
-                        break;
-                }
-                if (isChanged) {
-                    changedFiles.set(pth, data);
-                }
-                //                            
-
             }
         });
         this.checkDesignerMove(update);
+        // console.log(changedFiles);
         let isChanged = false;
         let replacedPath: string[] = [];
+
         update.moved.forEach((fnode) => {
             let data = undefined;
+            if (fnode.to.endsWith('.designer.ts')) return;
             //  debugger;
             let ext = fnode.to.slice(fnode.to.lastIndexOf('.'));
             let ___kp = Object.keys(changedFiles).find(s => nodeFn.path.isSamePath(fnode.to, s));
             if (___kp != undefined) data = changedFiles[___kp];
-            if (data == undefined) data = nodeFn.fs.readFileSync(fnode.to, 'binary', undefined, false);
+            if (data == undefined && nodeFn.fs.existsSync(fnode.to)) {
+                data = nodeFn.fs.readFileSync(fnode.to, 'binary', undefined, false);
+            }
             isChanged = false;
             data = data.replace(/{:(.*?)}/gm, (m, xpath: string) => {
                 if (xpath.length == 0) return m;
@@ -232,19 +177,17 @@ export class fileWatcher {
             if (isChanged) {
                 changedFiles.set(fnode.to, data);
             }
-        }); 
-        
-
-
-
-        let keys = Array.from(changedFiles.keys());
-        if (keys.length > 0)
-            if (renderer.sendSync('rendererIgnorance.add', [...keys]) == true) {
-                for (const [_path, contents] of changedFiles) {
-                    nodeFn.fs.writeFileSync(_path, contents, undefined, 'binary');
-                }
-                renderer.sendSync('rendererIgnorance.remove', [...keys]);
-            }
+        });
+        renderer.sendSync('writeContents', [Object.fromEntries(changedFiles.entries())]);
+        // let keys = Array.from(changedFiles.keys());
+        // if (keys.length > 0)
+        //     if (renderer.sendSync('rendererIgnorance.adFd', [...keys]) == true) {
+        //         for (const [_path, contents] of changedFiles) {
+        //             //if (nodeFn.fs.existsSync(_path))
+        //             nodeFn.fs.writeFileSync(_path, contents, undefined, 'binary');
+        //         }
+        //         renderer.sendSync('rendererIgnorance.remoFve', [...keys]);
+        //     }
     }
     isGenerating = false;
     isCollectiong = false;

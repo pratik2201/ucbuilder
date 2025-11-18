@@ -1,12 +1,12 @@
 import { controlOpt } from "../build/common.js";
 import { ATTR_OF } from "../global/runtimeOpt.js";
 import { ProjectRowR, getMetaUrl } from "../ipc/enumAndMore.js";
-import { ProjectManage } from "../ipc/ProjectManage.js"; 
+import { ProjectManage } from "../ipc/ProjectManage.js";
 import { nodeFn } from "../nodeFn.js";
 import { StylerRegs, WRAPPER_TAG_NAME, IKeyStampNode, StyleBaseType, CSSSearchAttributeCondition } from "../StylerRegs.js";
 import { Usercontrol } from "../Usercontrol.js";
 
- 
+
 export enum STYLER_SELECTOR_TYPE {
     CLASS_SELECTOR = 1,
     ATTRIB_SELECTOR = 2
@@ -117,21 +117,26 @@ export class SourceNode {
     }
 
     pushCSS(cssFilePath: string, importMetaUrl: string, localNodeElement?: HTMLElement) {
-        importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath,ProjectManage.projects);
+        importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
+        let cssContent = '';
+        if (nodeFn.fs.existsSync(cssFilePath))
+            cssContent = nodeFn.fs.readFileSync(cssFilePath, undefined, importMetaUrl);
         this.pushCSSByContent(
             cssFilePath,
-            nodeFn.fs.readFileSync(cssFilePath, undefined, importMetaUrl),
+            cssContent,
             //ProjectManage.getInfo(cssFilePath, importMetaUrl).project,
             localNodeElement
         );
     }
     pushCSSAsync = async (cssFilePath: string, importMetaUrl: string, localNodeElement?: HTMLElement) => {
-        importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath,ProjectManage.projects);
-        let code = await nodeFn.fs.readFile(cssFilePath, undefined, importMetaUrl);
+        importMetaUrl = importMetaUrl ?? getMetaUrl(cssFilePath, ProjectManage.projects);
+        let cssContent = '';
+        if (nodeFn.fs.existsSync(cssFilePath))
+            cssContent = nodeFn.fs.readFileSync(cssFilePath, undefined, importMetaUrl);
         this.pushCSSByContent(
             cssFilePath,
-            code,
-           // ProjectManage.getInfo(cssFilePath, importMetaUrl).project,
+            cssContent,
+            // ProjectManage.getInfo(cssFilePath, importMetaUrl).project,
             localNodeElement
         );
     }
@@ -159,7 +164,7 @@ export class SourceNode {
         const k = this.styler.KEYS;
         if (StampNode.MODE == STYLER_SELECTOR_TYPE.CLASS_SELECTOR) {
             ele["#clearUcStyleClasses"]();
-            ele.classList.add(ATTR_OF.__CLASS(k.LOCAL, 'm'),ATTR_OF.__CLASS(k.ROOT, 'r'));
+            ele.classList.add(ATTR_OF.__CLASS(k.LOCAL, 'm'), ATTR_OF.__CLASS(k.ROOT, 'r'));
         } else {
             ele.setAttribute(ATTR_OF.UC.ALL, `${k.LOCAL}_${k.ROOT}`);
         }
@@ -219,7 +224,7 @@ export class SourceNode {
 
         return rtrn;
     }
-    static transferAttributes(fromEl:HTMLElement, toEl:HTMLElement) {
+    static transferAttributes(fromEl: HTMLElement, toEl: HTMLElement) {
         for (const attr of [...fromEl.attributes]) {
             toEl.setAttribute(attr.name, attr.value);
         }
@@ -235,7 +240,7 @@ export class SourceNode {
         htCode.content = this.styler.parseStyle(htCode.originalContent);
         //if (callback != undefined) htCode.content = callback(htCode.content);
         this.dataHT = SourceNode.tramsformForm(htCode.content["#$"]());
-        
+
         this.styler.nodeName = WRAPPER_TAG_NAME;// this.dataHT.nodeName;
         if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
             this.dataHT.setAttribute(ATTR_OF.UC.ALL, this.localStamp);
@@ -251,7 +256,7 @@ export class SourceNode {
     }
     release() {
         //console.log(this.myObjectKey);
-        
+
         if (StampNode.deregisterSource(this.myObjectKey)) {
             let keys = Object.keys(this.cssObj);
             for (let i = 0, iObj = keys, ilen = iObj.length; i < ilen; i++)
@@ -271,7 +276,7 @@ export class SourceNode {
 }
 export class StampNode {
     static MODE: STYLER_SELECTOR_TYPE = STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR;
-    
+
     static dataHT: HTMLElement;
     static GetKey(key: string, alice: string) { return key + "@" + alice; }
     static childs: { [key: string]: SourceNode; } = {};
@@ -280,16 +285,16 @@ export class StampNode {
     } = {};
 
     static registerSoruce({ key, accessName = '',
-        mode = '^',baseType = StyleBaseType.UserControl,
+        mode = '^', baseType = StyleBaseType.UserControl,
         cssFilePath = undefined, project, /*root,*/ generateStamp = true }: {
-        key: string, accessName?: string, /*root?: RootPathRow,*/
+            key: string, accessName?: string, /*root?: RootPathRow,*/
             cssFilePath?: string,
-        baseType?:StyleBaseType,
-        mode?:CSSSearchAttributeCondition,
-        generateStamp?: boolean, project: ProjectRowR,
-    }): SourceNode {
+            baseType?: StyleBaseType,
+            mode?: CSSSearchAttributeCondition,
+            generateStamp?: boolean, project: ProjectRowR,
+        }): SourceNode {
         //console.log(key);
-        
+
         let myObjectKey = key; //this.GetKey(key, alices);
         let rtrn: SourceNode = this.childs[myObjectKey];
         if (rtrn == undefined) {
@@ -299,8 +304,8 @@ export class StampNode {
             rtrn.myObjectKey = myObjectKey;
             rtrn.accessKey = accessName;
             this.childs[myObjectKey] = rtrn;
-          // if (mode == '*') debugger;
-            rtrn.styler = new StylerRegs(rtrn, generateStamp, StampNode.cacheData[myObjectKey],baseType,mode);
+            // if (mode == '*') debugger;
+            rtrn.styler = new StylerRegs(rtrn, generateStamp, StampNode.cacheData[myObjectKey], baseType, mode);
         } else rtrn.isNewSource = false;
         rtrn.counter++;
         //console.log([rtrn.counter,'open',myObjectKey]);

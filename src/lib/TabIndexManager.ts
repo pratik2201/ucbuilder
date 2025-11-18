@@ -171,7 +171,7 @@ class TabIndexManager {
         let keyDownTimer = null;
         let keyIsDown = false;
         window.addEventListener('keydown', (ev: KeyboardEvent) => {
-            if (TabIndexManager.HAS_SHOWING) {
+            if (TabIndexManager.HAS_SHOWING || ev.defaultPrevented)  {
                 ev.stopImmediatePropagation();
                 ev.preventDefault();
                 ev.stopPropagation();
@@ -229,8 +229,7 @@ class TabIndexManager {
                     htEle = _EVENT_target as HTMLElement;
                     tIndex = this.getTindex(htEle);
                     if (tIndex != null) {
-                        if (htEle.nodeName.match(this.allowNodePattern) == null &&
-                            htEle.getAttribute("contenteditable") != "true") {
+                        if (!this.FOCUSABLE_ELEMENTS.includes(htEle.nodeName) && htEle.contentEditable != "true") {
                             this.movePrev(htEle, ev);
                             ev.preventDefault();
                         }
@@ -240,8 +239,7 @@ class TabIndexManager {
                     htEle = _EVENT_target as HTMLElement;
                     tIndex = this.getTindex(htEle);
                     if (tIndex != null) {
-                        if (htEle.nodeName.match(this.allowNodePattern) == null &&
-                            htEle.getAttribute("contenteditable") != "true") {
+                        if (!this.FOCUSABLE_ELEMENTS.includes(htEle.nodeName) && htEle.contentEditable != "true") {
                             this.moveNext(htEle, ev);
                             ev.preventDefault();
                         }
@@ -506,7 +504,10 @@ class TabIndexManager {
         return target.parentElement?.closest("[x-tabindex]");
     }
 
-    static allowNodePattern: RegExp = /INPUT|SELECT|BUTTON|A|TEXTAREA/i;
+    static FOCUSABLE_ELEMENTS: string[] = ["A",
+        "BUTTON", "INPUT", "SELECT", "TEXTAREA", "OPTION", "OPTGROUP", "FIELDSET",
+        "SUMMARY", "IFRAME", "AREA", "AUDIO", "VIDEO", "EMBED", "OBJECT"
+    ];
     static isVisaulyAppeared(hte: HTMLElement) {
         if (hte == undefined) return false;
         let isVisible = true;
@@ -517,12 +518,15 @@ class TabIndexManager {
         let isVisaulyAppeared = this.isVisaulyAppeared(hte);
         if (!isVisaulyAppeared) return false;
         let element = hte as HTMLInputElement;
-        let isPrimaryInputElements = (element.nodeName.match(this.allowNodePattern) != null ||
-            element.getAttribute('contenteditable') == 'true');
+        let isPrimaryInputElements = (this.FOCUSABLE_ELEMENTS.includes(element.nodeName) /*!= null*/ ||
+            element.contentEditable == 'true');
         if (!isPrimaryInputElements) {
-            if (element.getAttribute('x-tabstop') === `true`) {
-                element.tabIndex = -1;
-                isPrimaryInputElements = true;
+            if (element.hasAttribute('x-tabstop')) {
+                const tabStop = element.getAttribute('x-tabstop');
+                if (tabStop === `true` || tabStop == '1') {
+                    element.tabIndex = -1;
+                    isPrimaryInputElements = true;
+                }
             }
         }
         return !element.disabled && isPrimaryInputElements;

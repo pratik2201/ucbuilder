@@ -22,7 +22,7 @@ export class configManage {
         IpcMainHelper.Handle('loadChennels', async (event, _path) => {
             try {
                 await import(`${_path}`);
-                console.log(`${_path} \nloaded..`);
+                //console.log(`${_path} \nloaded..`);
                 return true;
             } catch (ex) {
                 console.log(ex);

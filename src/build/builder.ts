@@ -53,7 +53,8 @@ export class builder {
                 this.recursive(designerPath, this.ignoreDirs, (pth) => {
                     if (pth.endsWith('.designer.ts')) {
                         let _pthObj = PathBridge.Convert(pth, 'src', '.designer.ts');
-                        if (!nodeFn.fs.existsSync(_pthObj[".ts"])) {
+                        let bothExist = nodeFn.fs.existsSync(_pthObj[".ts"]) && nodeFn.fs.existsSync(_pthObj[".html"]);
+                        if (!bothExist) {
                             console.log(`${_pthObj[".designer.ts"]} file deleted...`);
                             nodeFn.fs.rmSync(_pthObj[".designer.ts"])
                         }
@@ -77,7 +78,7 @@ export class builder {
         });
         this.commonMng.gen.generateFiles(this.commonMng.rows);
         onComplete();
-       //if (this.filewatcher != undefined) this.filewatcher.startWatch();
+        //if (this.filewatcher != undefined) this.filewatcher.startWatch();
     }
     isIgnored = (pth: string, igList = this.ignoreDirs) => {
         return this.ignoreDirs.findIndex(s => {
