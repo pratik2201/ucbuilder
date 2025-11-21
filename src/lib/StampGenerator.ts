@@ -143,7 +143,7 @@ export class SourceNode {
     static resourcesHT: HTMLElement = document.createElement("programres");
     static init() {
         this.resourcesHT.setAttribute("stamp", 'program.stamp');
-        document.body.appendChild(this.resourcesHT);
+        document.head.appendChild(this.resourcesHT);
     }
     static ExtendControlObject(rtrn: {}, xname: string, ctr: any, ignoreEmpty: boolean = true) {
         if (ignoreEmpty) {

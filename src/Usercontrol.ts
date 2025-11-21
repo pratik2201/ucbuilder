@@ -1,7 +1,8 @@
+import { error } from "console";
 import { codeFileInfo } from "./build/codeFileInfo.js";
 import { objectOpt } from "./build/common.js";
 import { TemplateMaker } from "./build/regs/TemplateMaker.js";
-import { IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement } from "./enumAndMore.js";
+import { ITptOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement } from "./enumAndMore.js";
 import { CommonEvent } from "./global/commonEvent.js";
 import { FilterContent } from "./global/filterContent.js";
 import { newObjectOpt } from "./global/objectOpt.js";
@@ -17,6 +18,7 @@ import { CSSVariableScope, CssVariableHandler, StyleBaseType, VariableList } fro
 export type UcDialogResult = "none" | "ok" | 'cancel' | 'close';
 export type ucVisibility = 'inherit' | 'visible' | 'hidden';
 export class Usercontrol {
+    static parse(node: HTMLElement): Usercontrol { return node["#data"](ATTR_OF.BASE_OBJECT); }
     static Resolver = (absFileUrl: string, relPath: string) => {
         let fp = nodeFn.url.fileURLToPath(absFileUrl); // `absFileUrl` designer js path
         return nodeFn.path.resolveFilePath(fp, relPath);
@@ -30,8 +32,8 @@ export class Usercontrol {
             mainUc[xname] = await frmType['CreateAsync']({
                 parentUc: mainUc,
                 accessName: "xname",
-                elementHT: targetEle
-            });
+                elementHT: targetEle,
+            } as ITptOptions);
         }
         async function _uc(xname: string, xfrom: string, targetEle: HTMLElement) {
             let jsPath = ucUtil.changeExtension(nodeFn.path.resolveFilePath(mainFilePath, xfrom), '.html', 'js');
@@ -48,10 +50,11 @@ export class Usercontrol {
                     uniqueIdentity: xname,
                     addNodeToParentSession: true,
                 },
-                decisionForTargerElement: 'replace',
+               // decisionForTargerElement: 'replace',
                 targetElement: targetEle as any
-            });
-            mainUc[xname].ucExtends.show();
+            } as IUcOptions);
+            const uc = mainUc[xname] as Usercontrol;
+            uc.ucExtends.show({ decision: 'replace' });
         }
         for (const [xname, htAr] of Object.entries(mainUc.ucExtends.controls)) {
             let ele = htAr as HTMLElement;
@@ -141,7 +144,7 @@ export class Usercontrol {
         _ext.visibility = 'hidden';
         Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
         if (_ext.isDialogBox)
-            WinManager.pop();
+            WinManager.pop(this);
         _ext.Events.afterClose.fire([this]);  // _ext.Events.afterHide
 
     }
@@ -150,7 +153,7 @@ export class Usercontrol {
         let _ext = _this.ucExtends;
         _ext.Events.onDestruction.fire();
         if (_ext.isDialogBox)
-            WinManager.pop();
+            WinManager.pop(_this);
         _ext.Events.afterClose.fire([this]);
 
         requestAnimationFrame(() => {
@@ -233,7 +236,9 @@ export class Usercontrol {
             let nodeList = _this.self.querySelectorAll(ar.join(","));
             return Array.from(nodeList) as HTMLElement[];
         },
+
         initalComponents: {
+            targetElement: undefined as HTMLElement,
             elements: undefined as HTMLCollection,
             stageHT: undefined as HTMLElement,
             changeStage: (newStage: HTMLElement): boolean => {
@@ -286,7 +291,13 @@ export class Usercontrol {
 
             if (ucExt.isForm) {
                 ucExt.dialogForm = this;
-            } else ucExt.dialogForm = param0.parentUc.ucExtends.dialogForm;
+
+                ucExt.show = () => { throw new Error('Parent Free Usercontrol SHOULD be CALL by `showDialog` \n ' + param0.cfInfo.pathOf[".html"]) };
+            } else {
+                ucExt.dialogForm = param0.parentUc.ucExtends.dialogForm;
+
+                ucExt.showDialog = () => { throw new Error('with Parent Usercontrol SHOULD be CALL by `show` \n ' + param0.cfInfo.pathOf[".html"]) };
+            }
             if (ucExt.isForm) {
                 ucExt.dialogForm.ucExtends.___META.CONTEXT = param0.context;
             }
@@ -383,16 +394,15 @@ export class Usercontrol {
 
                 if (param0.targetElement) {
                     ucExt.initalComponents.elements = param0.targetElement.children;
-                    if (param0.decisionForTargerElement == 'replace')
-                        newObjectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
+                    newObjectOpt.copyAttr(param0.targetElement, ucExt.wrapperHT);
 
                     Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
                 } else {
                     Usercontrol.HiddenSpace.append(ucExt.wrapperHT);
                 }
             }
+            ucExt.initalComponents.targetElement = param0.targetElement;
 
-            ucExt.loadAt.setValue(param0.decisionForTargerElement, param0.targetElement);
             let pucExt = ucExt.PARENT.ucExtends;
             ucExt.wrapperHT["#data"](ATTR_OF.BASE_OBJECT, this);
             if (!ucExt.isForm) {
@@ -450,46 +460,26 @@ export class Usercontrol {
             ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf['.scss'], ext.fileInfo.projectInfo.importMetaURL, ext.self);
             ext.Events.afterInitlize.fire();
         },
-        loadAt: {
-            decision: "append" as WhatToDoWithTargetElement,
-            element: undefined as HTMLElement,
-            setValue: (decision: WhatToDoWithTargetElement, element: HTMLElement) => {
-                let _loadAt = this.ucExtends.loadAt;
-                _loadAt.decision = decision ?? _loadAt.decision ?? 'append';
-                _loadAt.element = element;
-            }
-        },
+
         visibility: 'inherit' as ucVisibility,
         getVisibility: (): ucVisibility => {
             let ext = this.ucExtends;
             return (ext.isForm || ext.visibility != 'inherit') ?
                 ext.visibility : ext.PARENT.ucExtends.visibility;
         },
-        show: ({ at = undefined, decision = undefined, }:
+        show: ({ at = undefined, decision = 'append' }:
             { at?: HTMLElement, decision?: WhatToDoWithTargetElement, visibility?: ucVisibility } = {}) => {
             let _extend = this.ucExtends;
-            let _loadAt = _extend.loadAt;
-            let dec = decision ?? _loadAt.decision as WhatToDoWithTargetElement;
-            let ele = at ?? _loadAt.element as HTMLElement;
-            if (ele == undefined) {
-                ele = _extend.fileInfo.projectInfo.defaultLoadAt;
-            }
-            if (_loadAt.element == undefined) {
-                _loadAt.element = this.ucExtends.fileInfo.projectInfo.defaultLoadAt;
-            }
-            // _extend.loadAt.element = ele;
-            if (ele) {
-
-                switch (dec) {
-                    case 'replace':
-                        ele.after(_extend.wrapperHT);
-                        ele.remove();
+            let _element = _extend.initalComponents.targetElement;
+            _element = at ?? _element;
+            if (_element) {
+                switch (decision) {
+                    case 'append':
+                        _element.append(_extend.wrapperHT);
                         break;
-                    case 'append': ele.append(_extend.wrapperHT); break;
-                    case 'prepend': ele.prepend(_extend.wrapperHT); break;
-                    // case 'waitForDecision':
                     default:
-                        ele.append(_extend.wrapperHT);
+                        _element.after(_extend.wrapperHT);
+                        _element.remove();
                         break;
                 }
             }
@@ -499,10 +489,9 @@ export class Usercontrol {
             _extend.visibility = 'visible';
             //return undefined as Usercontrol
         },
-        showDialog: ({ defaultFocusAt = undefined, keepCurrentVisible = true, afterClose = undefined }: {
+        showDialog: ({ defaultFocusAt = undefined, at = undefined, keepCurrentVisible = true, afterClose = undefined }: {
             at?: HTMLElement,
             keepCurrentVisible?: boolean,
-            decision?: WhatToDoWithTargetElement,
             defaultFocusAt?: HTMLElement,
             afterClose?: (frm: Usercontrol) => void,
         } = {}): void => {
@@ -512,24 +501,15 @@ export class Usercontrol {
             let _parentExt = _extends.PARENT.ucExtends;
             let _oldParentVisibleValue = _parentExt.keepVisible;
             _parentExt.keepVisible = keepCurrentVisible;
-            let loadAt = _extends.loadAt;// as WhatToDoWithTargetElement;
-            if (loadAt.element == undefined) {
-                loadAt.element = _extends.fileInfo.projectInfo.defaultLoadAt;
-            }
-            WinManager.push(this);
-            if (loadAt.element) {
-                switch (loadAt.decision) {
-                    case 'replace':
-                        loadAt.element.after(_extends.wrapperHT);
-                        loadAt.element.remove();
-                        break;
-                    case 'prepend': loadAt.element.prepend(_extends.wrapperHT); break;
-                    case 'append': loadAt.element.append(_extends.wrapperHT); break;
-                    default:
-                        //case 'waitForDecision':
-                        loadAt.element.append(_extends.wrapperHT);
-                        break;
-                }
+            // let loadAt = _extends.loadAt;// as WhatToDoWithTargetElement;
+            //if (loadAt.element == undefined) {
+            //     loadAt.element = _extends.fileInfo.projectInfo.defaultLoadAt;
+            // }
+            // WinManager.push(this);
+            const ele = at ?? _extends.initalComponents.targetElement ?? _extends.fileInfo.projectInfo.defaultLoadAt;
+            if (ele) {
+                ele.append(_extends.wrapperHT);
+                WinManager.push(this);
             }
             //_extends.passElement(WinManager.transperency);
             //_extends.wrapperHT.before(WinManager.transperency);

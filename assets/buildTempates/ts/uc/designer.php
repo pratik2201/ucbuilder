@@ -54,38 +54,7 @@ export class <?=designer.className ?> extends <?= baseClassName ?> {
         let CONTROLS = ucExt.controls;
         
         await Usercontrol.GenerateControls(this,args,args.cfInfo.pathOf[".js"]/*Usercontrol.Resolver(args.source.htmlImportMetaUrl ?? import.meta.url,<?=designer.className ?>.FILE_PATH)*/);
-        /*
-        <?php 
-        for(let i=0;i<designer.controls.length;i++){  let $rw=designer.controls[i];
-            switch($rw.type){ ?>
-                <?php case "none": ?>
-        this<?=$rw.nameThis?> = CONTROLS<?=$rw.nameThis?>  as unknown as <?=$rw.proto?>;<?php   break; ?>
-                <?php case ".tpt": ?>
-        this<?=$rw.nameThis ?> = <?=$rw.importedClassName?>.Create({ 
-            parentUc: this, 
-            accessName:"<?=$rw.name?>" , 
-            elementHT :CONTROLS<?=$rw.nameThis?> as any
-        });<?php   break; ?>
-                <?php case ".uc": ?>
-        this<?=$rw.nameThis?> = await <?=$rw.importedClassName?>.CreateAsync({ 
-                parentUc : this, 
-                mode:args.mode,
-                accessName:"<?=$rw.name?>" , 
-                session:{
-                    loadBySession:args.session.loadBySession,
-                    uniqueIdentity:"<?=$rw.name?>" , 
-                    addNodeToParentSession:true,
-                },   
-                decisionForTargerElement:'replace',
-                targetElement : CONTROLS<?=$rw.nameThis?> as any
-            });
-        this<?=$rw.nameThis ?>.ucExtends.show();<?php   break;  
-
-            }
-        }
-        ?>
-        */ 
-        
+       
         ucExt.finalizeInit(args);
         if(ucExt.session != undefined) ucExt.session.prepareForAutoLoadIfExist();
         Usercontrol.assignPropertiesFromDesigner(form);
@@ -118,15 +87,14 @@ export class <?=designer.className ?> extends <?= baseClassName ?> {
                 parentUc : this, 
                 mode:args.mode,
                 accessName:"<?=$rw.name?>" , 
-                session:{
-                    loadBySession:args.session.loadBySession,
-                    uniqueIdentity:"<?=$rw.name?>" , 
-                    addNodeToParentSession:true,
-                },   
-                decisionForTargerElement:'replace',
+                //session:{
+                //    loadBySession:args.session.loadBySession,
+                //    uniqueIdentity:"<?=$rw.name?>" , 
+                //    addNodeToParentSession:true,
+                //},    
                 targetElement : CONTROLS<?=$rw.nameThis?> as any
             });
-        this<?=$rw.nameThis ?>.ucExtends.show();<?php   break;  
+        this<?=$rw.nameThis ?>.ucExtends.show({decision : 'replace'});<?php   break;  
 
             }
         }

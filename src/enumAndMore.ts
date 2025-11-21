@@ -2,7 +2,7 @@ import { codeFileInfo } from "./build/codeFileInfo.js";
 import { newObjectOpt } from "./global/objectOpt.js";
 import { Usercontrol } from "./Usercontrol.js";
 
- 
+
 
 export type UCGenerateMode = "client" | "designer";
 export type UcStates = "normal" | "dock" | "minimize" | "maximize";
@@ -68,7 +68,7 @@ export const TemplatePathOptions: ITemplatePathOptions = {
     htmlContents: "",
     cssContents: "",
 };
-export type WhatToDoWithTargetElement = "waitForDecision" | "replace" | "append" | "prepend";
+export type WhatToDoWithTargetElement = "replace" | "append";
 
 export interface IUcOptions {
     cfInfo?: codeFileInfo;
@@ -77,12 +77,12 @@ export interface IUcOptions {
     source?: ISourceOptions;
     parentUc?: Usercontrol;
     accessName?: string,
-    context?:any,
+    context?: any,
     events?: {
         beforeInitlize: (uc: Usercontrol) => void;
     };
-
-    decisionForTargerElement?: WhatToDoWithTargetElement;
+    dialogUnder?: Usercontrol,
+    //decisionForTargerElement?: WhatToDoWithTargetElement;
     targetElement?: HTMLElement;
 }
 export const UcOptions: IUcOptions = {
@@ -91,7 +91,7 @@ export const UcOptions: IUcOptions = {
     session: newObjectOpt.clone<SessionOptions>(sessionOptions),
     source: newObjectOpt.clone<ISourceOptions>(SourceOptions),
     //loadAt: document.body,
-    decisionForTargerElement: 'append',  // waitForDecision
+    // decisionForTargerElement: 'append',  // waitForDecision
     events: {
         beforeInitlize: (uc) => {
 

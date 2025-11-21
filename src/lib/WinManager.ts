@@ -1,9 +1,9 @@
 import { CommonEvent } from "../global/commonEvent.js";
-import { GetUniqueId } from "../ipc/enumAndMore.js";
+import { GetRandomNo, GetUniqueId } from "../ipc/enumAndMore.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { TabIndexManager } from "./TabIndexManager.js";
 
- 
+
 interface WinNode {
     uc?: Usercontrol,
     display?: string,
@@ -43,46 +43,78 @@ export class FocusManager {
     }
 }
 export class WinManager {
-    //mainNode: HTMLElement;
-    static curIndex: number = 0;
-    static CURRENT_WIN: WinNode;
-    static pages: WinNode[] = [];
-    static focusMng: FocusManager = new FocusManager();
-
+    static ACCESS_KEY = 'WinManager_' + GetUniqueId();
+    static getNode(htNode: HTMLElement): WinNode { return htNode["#data"](WinManager.ACCESS_KEY); }
+    static setNode(htNode: HTMLElement): WinNode {
+        const dta: WinNode = {};
+        dta.uc = Usercontrol.parse(htNode);
+        htNode["#data"](WinManager.ACCESS_KEY, dta);
+        return dta;
+    } 
+    static focusMng: FocusManager = new FocusManager();  
     static push = (form: Usercontrol): void => {
         let _this = this;
-        let cWin = _this.CURRENT_WIN;
-        let doStyleDisplay = form.ucExtends.Events.beforeUnFreez.fire([_this.CURRENT_WIN?.uc]);
-        if (_this.CURRENT_WIN != undefined) {
-            this.setfreez(true, _this.CURRENT_WIN/*, doStyleDisplay*/);
-        } else _this.CURRENT_WIN = {
-            uc: undefined,
-            lastFocusedAt: undefined
-        };
-        _this.CURRENT_WIN = {};
-        _this.CURRENT_WIN.uc = form;
-        _this.pages.push(_this.CURRENT_WIN);
-
-        _this.curIndex = _this.pages.length - 1;
-    }
-
-    static pop = (): void => {
-        this.curIndex = this.pages.length - 1;
-        // 
-        if (this.curIndex >= 0) {
-            this.pages.pop();
-            this.curIndex--;
-            this.CURRENT_WIN = this.pages[this.curIndex];
-            if (this.CURRENT_WIN != undefined) {
-                let _wrapperHT = this.CURRENT_WIN.uc.ucExtends.self;
-                let res = this.CURRENT_WIN.uc.ucExtends.Events.beforeUnFreez.fire([undefined]);
-                this.setfreez(false, this.CURRENT_WIN/*, res*/);
-
-                return;
+        const mainHT = form.ucExtends.wrapperHT;
+        if (form.ucExtends.isForm) {
+            const prevNode = mainHT.previousElementSibling as HTMLElement;
+            if (prevNode != null) {
+                const wn = WinManager.getNode(prevNode) ?? WinManager.setNode(prevNode);
+                const activeElement = wn.uc.ucExtends.lastFocuedElement;// document.activeElement;
+                if (prevNode.contains(activeElement))
+                    wn.lastFocusedAt = activeElement as any;
+                wn.display = prevNode.style.display;
+                let doStyleDisplay = form.ucExtends.Events.beforeUnFreez.fire([wn?.uc]);
+                this.setfreez(true, wn/*, doStyleDisplay*/);
             }
         }
-        //this.transperency.remove();
-        this.CURRENT_WIN = undefined;
+        /*const wn = WinManager.getNode(mainHT) ?? WinManager.setNode(mainHT);
+        wn.uc = form;
+        wn.display = mainHT.style.display;
+        if (mainHT.contains(document.activeElement))
+            wn.lastFocusedAt = document.activeElement as HTMLElement;*/
+
+        //this.setfreez(true, _this.CURRENT_WIN/*, doStyleDisplay*/);
+
+        // let cWin = _this.CURRENT_WIN;
+        // let doStyleDisplay = form.ucExtends.Events.beforeUnFreez.fire([_this.CURRENT_WIN?.uc]);
+        // if (_this.CURRENT_WIN != undefined) {
+        //     this.setfreez(true, _this.CURRENT_WIN/*, doStyleDisplay*/);
+        // } else _this.CURRENT_WIN = {
+        //     uc: undefined,
+        //     lastFocusedAt: undefined
+        // };
+        // _this.CURRENT_WIN = {};
+        // _this.CURRENT_WIN.uc = form;
+        // _this.pages.push(_this.CURRENT_WIN);
+
+        // _this.curIndex = _this.pages.length - 1;
+    }
+
+    static pop = (form: Usercontrol): void => {
+        const prevHt = form.ucExtends.wrapperHT.previousElementSibling as HTMLElement;
+        if (prevHt != undefined) {
+            const wn = WinManager.getNode(prevHt);
+            if (wn != undefined) {
+                this.setfreez(false, wn/*, res*/);
+            }
+
+        }
+        // this.curIndex = this.pages.length - 1;
+        // if (this.curIndex >= 0) {
+        //     this.pages.pop();
+        //     this.curIndex--;
+        //     this.CURRENT_WIN = this.pages[this.curIndex];
+        //     if (this.CURRENT_WIN != undefined) {
+        //         let _wrapperHT = this.CURRENT_WIN.uc.ucExtends.self;
+        //         let res = this.CURRENT_WIN.uc.ucExtends.Events.beforeUnFreez.fire([undefined]);
+
+        //         this.setfreez(false, this.CURRENT_WIN/*, res*/);
+
+        //         return;
+        //     }
+        // }
+        // //this.transperency.remove();
+        // this.CURRENT_WIN = undefined;
     }
 
     static ATTR = {
@@ -107,6 +139,7 @@ export class WinManager {
         let element = wnode.uc.ucExtends.wrapperHT;
 
         if (freez) {
+
             this.Event.onFreez(wnode.uc);
             this.focusMng.fetch(wnode.uc.ucExtends.lastFocuedElement);
             wnode.lastFocusedAt = this.focusMng.currentElement;
