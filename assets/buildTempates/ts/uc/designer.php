@@ -62,12 +62,11 @@ export class <?=designer.className ?> extends <?= baseClassName ?> {
         delete this.initializecomponentAsync; // = undefined;
     }
 
-    initializecomponent(argsLst: IArguments, form: <?=src.name?>) {
+    initializecomponent(/*argsLst: IArguments,*/args: IUcOptions, form: <?=src.name?>) {
         //return;
-        let fargs = Usercontrol.extractArgs(arguments);
-        let args = fargs[fargs.length-1] as IUcOptions;
+        /*let fargs = Usercontrol.extractArgs(arguments);
+        let args = fargs[fargs.length-1] as IUcOptions; */
         let ucExt = this.ucExtends;
-        
         ucExt.initializecomponent(args);        
         //let CONTROLS = ucExt.designer.getAllControls();
         let CONTROLS = ucExt.controls;

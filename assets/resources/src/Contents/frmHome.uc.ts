@@ -1,6 +1,6 @@
 import { frmHome$Designer } from '../../assets/designer/src/Contents/frmHome.uc.designer.js';
 export class frmHome extends frmHome$Designer{
-    constructor() { super(); this.initializecomponent(arguments, this); }
+    /*constructor() { super(); this.initializecomponent(arguments, this); }*/
     /**
      * USE 
      * $(params){     

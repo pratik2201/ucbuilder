@@ -1,6 +1,6 @@
 import { <?=designer.className?> } from '<?=designerFilePath?>';
 export class <?=codefile.className?> extends <?=designer.className?>{
-    constructor() { super(); this.initializecomponent(arguments, this); }
+    /*constructor() { super(); this.initializecomponent(arguments, this); }*/
     /**
      * USE 
      * $(params){     

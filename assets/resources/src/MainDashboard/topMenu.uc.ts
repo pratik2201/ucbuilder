@@ -4,7 +4,7 @@ import { frmLogin } from "../Contents/frmLogin.uc.js";
 
 
 export class topMenu extends topMenu$Designer {
-    constructor() { super(); this.initializecomponent(arguments, this); }
+    /*constructor() { super(); this.initializecomponent(arguments, this); }*/
     /**
      * USE 
      * $(params){     

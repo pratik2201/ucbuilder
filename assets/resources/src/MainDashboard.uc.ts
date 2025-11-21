@@ -1,6 +1,6 @@
 import { MainDashboard$Designer } from '../assets/designer/src/MainDashboard.uc.designer.js';
 export class MainDashboard extends MainDashboard$Designer{
-    constructor() { super(); this.initializecomponent(arguments, this); }
+    /*constructor() { super(); this.initializecomponent(arguments, this); }*/
     /**
      * USE 
      * $(params){     

@@ -1,6 +1,6 @@
 import { frmLogin$Designer } from '../../assets/designer/src/Contents/frmLogin.uc.designer.js';
 export class frmLogin extends frmLogin$Designer{
-    constructor() { super(); this.initializecomponent(arguments, this); }
+    /*constructor() { super(); this.initializecomponent(arguments, this); }*/
     /**
      * USE 
      * $(params){     

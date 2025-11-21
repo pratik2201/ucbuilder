@@ -79,7 +79,8 @@ export interface IUcOptions {
     accessName?: string,
     context?: any,
     events?: {
-        beforeInitlize: (uc: Usercontrol) => void;
+        beforeInitlize?: (uc: Usercontrol) => void;
+        afterInitlize?: (uc: Usercontrol) => void;
     };
     dialogUnder?: Usercontrol,
     //decisionForTargerElement?: WhatToDoWithTargetElement;
@@ -93,9 +94,12 @@ export const UcOptions: IUcOptions = {
     //loadAt: document.body,
     // decisionForTargerElement: 'append',  // waitForDecision
     events: {
-        beforeInitlize: (uc) => {
+        beforeInitlize: async (uc) => {
 
         },
+        afterInitlize: async (uc) => {
+
+        }
     },
 };
 

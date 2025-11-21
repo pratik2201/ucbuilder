@@ -1,6 +1,6 @@
 import { footerMenu$Designer } from '../../assets/designer/src/MainDashboard/footerMenu.uc.designer.js';
 export class footerMenu extends footerMenu$Designer{
-    constructor() { super(); this.initializecomponent(arguments, this); }
+    /*constructor() { super(); this.initializecomponent(arguments, this); }*/
     /**
      * USE 
      * $(params){     

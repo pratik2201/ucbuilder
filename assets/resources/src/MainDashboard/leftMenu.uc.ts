@@ -1,7 +1,7 @@
 import { leftMenu$Designer } from "../../assets/designer/src/MainDashboard/leftMenu.uc.designer.js";
 
 export class leftMenu extends leftMenu$Designer{
-    constructor() { super(); this.initializecomponent(arguments, this); }
+    /*constructor() { super(); this.initializecomponent(arguments, this); }*/
     /**
      * USE 
      * $(params){     

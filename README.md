@@ -267,7 +267,7 @@ MainDashboard.uc.ts
 ```ts
 import { MainDashboard$Designer } from '../assets/designer/src/MainDashboard.uc.designer.js';  // generate on build  
 export class MainDashboard extends MainDashboard$Designer{
-    constructor() { super(); this.initializecomponent(arguments, this); }
+    /*constructor() { super(); this.initializecomponent(arguments, this); }*/
     
     $(args:any){    // this method user to define construction call
         this.topmenu1.lnkHome.innerText = 'Dashboard';  // access child uc's link button
