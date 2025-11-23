@@ -50,7 +50,7 @@ export class Usercontrol {
                     uniqueIdentity: xname,
                     addNodeToParentSession: true,
                 },
-               // decisionForTargerElement: 'replace',
+                // decisionForTargerElement: 'replace',
                 targetElement: targetEle as any
             } as IUcOptions);
             const uc = mainUc[xname] as Usercontrol;
@@ -151,11 +151,11 @@ export class Usercontrol {
     private destruct = (): boolean => {
         let _this = this;
         let _ext = _this.ucExtends;
-        _ext.Events.onDestruction.fire();
+        _ext.Events.onDestruction.fireAsync();
         if (_ext.isDialogBox)
             WinManager.pop(_this);
-        _ext.Events.afterClose.fire([this]);
-
+        _ext.Events.afterClose.fireAsync([this]);
+        Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
         requestAnimationFrame(() => {
             _ext.srcNode.release();
             _ext.wrapperHT["#delete"]();
@@ -455,10 +455,27 @@ export class Usercontrol {
         },
         controls: undefined as { [xname: string]: HTMLElement | HTMLElement[] },
         resizerObserver: undefined as ResizeObserver,
-        finalizeInit: (param0: IUcOptions): void => {
+        finalizeInitAsync: async (param0: IUcOptions) => {
             let ext = this.ucExtends;
             ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf['.scss'], ext.fileInfo.projectInfo.importMetaURL, ext.self);
-            ext.Events.afterInitlize.fire();
+
+
+
+            if (ext.isDialogBox) {
+                ext.Events.afterInitlize.on(param0.events.afterInitlize);
+                await ext.Events.afterInitlize.fireAsync([this]);
+            }
+        },
+        finalizeInit: (param0: IUcOptions) => {
+            let ext = this.ucExtends;
+            ext.srcNode.pushCSS(ext.srcNode.cssFilePath ?? ext.fileInfo.pathOf['.scss'], ext.fileInfo.projectInfo.importMetaURL, ext.self);
+
+
+
+            if (ext.isDialogBox) {
+                ext.Events.afterInitlize.on(param0.events.afterInitlize);
+                ext.Events.afterInitlize.fire([this]);
+            }
         },
 
         visibility: 'inherit' as ucVisibility,
@@ -559,9 +576,13 @@ export class Usercontrol {
              ucExt: () => this.ucExtends,
          },*/
         Events: {
+         
+            /** @private  */
             _contextChange: new CommonEvent<() => void>(),
             get contextChange() { return this.dialogExt().Events._contextChange; },
-            afterInitlize: new CommonEvent<() => void>(),
+            /** @private  */
+            _afterInitlize: new CommonEvent<(uc: Usercontrol) => void>(),
+            get afterInitlize() { return this.dialogExt().Events._afterInitlize; },
             // @ts-ignore
             beforeClose: new CommonEvent<({ prevent = false }) => void>(),
             afterClose: new CommonEvent<(uc?: Usercontrol) => void>(),
@@ -576,11 +597,13 @@ export class Usercontrol {
             winStateChanged: new CommonEvent<(state: UcStates) => void>(),
             activate: new CommonEvent<() => void>(),
             beforeFreez: new CommonEvent<(newUc: Usercontrol) => void>(),
-            beforeUnFreez: new CommonEvent<(oldUc: Usercontrol) => void>(),
+            beforeUnFreez: new CommonEvent<(oldUc: Usercontrol) => void>(),  
             loaded: new CommonEvent<() => void>(),
             loadLastSession: new CommonEvent<() => void>(),
+            /** @private  */
             _newSessionGenerate: new CommonEvent<() => void>(),
             get newSessionGenerate() { return this.formExt().Events._newSessionGenerate; },
+            /** @private  */
             _completeSessionLoad: new CommonEvent<() => void>(),
             get completeSessionLoad() { return this.formExt().Events._completeSessionLoad; },
             sizeChanged: new CommonEvent<(size: ResizeObserverEntry[]) => void>(),
@@ -591,10 +614,10 @@ export class Usercontrol {
         },
 
         distructOnClose: true,
-        close: () => {
+         close:async () => {
             let _ext = this.ucExtends;
             let res = { prevent: false };
-            _ext.Events.beforeClose.fire([res]); // _ext.Events.beforeHide
+            _ext.Events.beforeClose.fireAsync([res]); // _ext.Events.beforeHide
             if (!res.prevent) {
                 if (this.ucExtends.distructOnClose)
                     this.destruct();

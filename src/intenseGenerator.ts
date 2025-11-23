@@ -27,8 +27,7 @@ class intenseGenerator {
         uc['initializecomponent'](param0, uc);
         if (pera.parentUc != undefined)
             pera.parentUc.ucExtends.lastFocuedElement = document.activeElement as HTMLElement;
-        if (param0.events.afterInitlize != undefined)
-            param0.events.afterInitlize(uc);
+        
 
 
 
@@ -48,7 +47,9 @@ class intenseGenerator {
         await uc['initializecomponentAsync'](param0, uc);
         if (param0.events.afterInitlize != undefined)
             await param0.events.afterInitlize(uc);
+        
         if (uc['$']) await uc['$'](...args);
+    
         return uc;
     }
     static generateTPT(path: string, classObj: any, callerMetaUrl: string, pera: ITptOptions, ...args: any[]): Template {
@@ -57,7 +58,7 @@ class intenseGenerator {
         param0.cfInfo.parseUrl(path, 'out', callerMetaUrl);
         args.push(param0);
         let uc: Template = (new (classObj)(...args));
-        uc['initializecomponentAsync']();
+        uc['initializecomponent']();
         if (uc['$']) uc['$'](...args);
         return uc;
     }

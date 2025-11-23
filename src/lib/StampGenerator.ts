@@ -1,5 +1,6 @@
 import { controlOpt } from "../build/common.js";
 import { ATTR_OF } from "../global/runtimeOpt.js";
+import { ucUtil } from "../global/ucUtil.js";
 import { ProjectRowR, getMetaUrl } from "../ipc/enumAndMore.js";
 import { ProjectManage } from "../ipc/ProjectManage.js";
 import { nodeFn } from "../nodeFn.js";
@@ -100,6 +101,7 @@ export class SourceNode {
     project: ProjectRowR;
     cssObj: { [key: string]: StyleCodeNode } = {};
     pushCSSByContent(key: string, cssContent: string, /*project: ProjectRow,*/ localNodeElement?: HTMLElement) {
+       if (cssContent == undefined) return;
         let csnd = this.cssObj[key];
         cssContent = cssContent['#devEsc']();
         let ccontent = this.styler.parseStyleSeperator_sub({
@@ -239,7 +241,7 @@ export class SourceNode {
         let htCode = this.htmlCode;
         htCode.content = this.styler.parseStyle(htCode.originalContent);
         //if (callback != undefined) htCode.content = callback(htCode.content);
-        this.dataHT = SourceNode.tramsformForm(htCode.content["#$"]());
+        this.dataHT = SourceNode.tramsformForm(ucUtil.PHP_REMOVE(htCode.content)["#$"]());
 
         this.styler.nodeName = WRAPPER_TAG_NAME;// this.dataHT.nodeName;
         if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
@@ -252,7 +254,9 @@ export class SourceNode {
             this.dataHT.setAttribute('x-tabindex', '-1');
         }
         htCode.content = this.dataHT.outerHTML;
-        htCode.content = htCode.content["#PHP_ADD"](); //.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
+        htCode.content = ucUtil.PHP_ADD(htCode.content);//["#PHP_ADD"](); //.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
+        //console.log(htCode.content);
+
     }
     release() {
         //console.log(this.myObjectKey);

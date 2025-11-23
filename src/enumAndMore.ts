@@ -79,6 +79,7 @@ export interface IUcOptions {
     accessName?: string,
     context?: any,
     events?: {
+        beforeFinalize?: (uc: Usercontrol) => void;
         beforeInitlize?: (uc: Usercontrol) => void;
         afterInitlize?: (uc: Usercontrol) => void;
     };

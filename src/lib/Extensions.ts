@@ -173,10 +173,10 @@ export class Extensions {
             }
         }
         String.prototype["#PHP_REMOVE"] = function () {
-            return (this as string).replace(/<\?(=|php| )(.*?)\?>/gm, '<!--?$1$2?-->');
+            return ucUtil.PHP_REMOVE(this as string);
         }
         String.prototype["#PHP_ADD"] = function () {
-            return (this as string).replace(/<!--\?(=|php )(.*?)\?-->/gm, '<?$1$2?>');
+            return ucUtil.PHP_ADD(this as string);
         }
         String.prototype["#parseUc"] = function <T = Usercontrol>(this: string, val: T): string {
             var div = document.createElement('pre');

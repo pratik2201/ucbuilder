@@ -2,7 +2,7 @@ import { arrayOpt } from "../build/common.js";
 import { GetUniqueId } from "../ipc/enumAndMore.js";
 import { Usercontrol } from "../Usercontrol.js";
 
- 
+
 
 interface EventRecord {
     callback: Function;
@@ -100,7 +100,17 @@ export class CommonEvent<F extends (...arg: any) => void> {
         this.Events.afterFireCallbacks();
         return handeled;
     }
-
+    async fireAsync(args: Parameter<F> | void): Promise<boolean> {
+        let elist = this._eventList;
+        let handeled = false;
+        for (let i = 0, len = elist.length; i < len; i++) {
+            const s = elist[i];
+            let rval = await s.callback.apply(this, args);
+            if (rval === true) { handeled = true; break; }
+        }
+        this.Events.afterFireCallbacks();
+        return handeled;
+    }
     fireWithResult(
         _resultCallback: ResultCallback = resultCallback
     ): boolean {

@@ -162,7 +162,7 @@ export class Template {
         let id = ichild.getAttribute('id');
         if (id != null) {
           rtrn[id] = {
-            accessKey: id,
+            accessKey: id, 
             objectKey: undefined,
             htmlContents: ichild.outerHTML["#PHP_ADD"](),
           };
@@ -425,7 +425,7 @@ export class TemplateNode {
           tptExt.accessName
         );
       }*/
-
+      
       tptExt.srcNode.pushCSSByContent(param0.cssBaseFilePath, tptPathOpt.cssContents, /*param0.cfInfo.actualfProject,*/ tptExt.parentUc.ucExtends.self);
       tptExt.parentUc.ucExtends.Events.afterClose.on(({ }) => {
         tptExt.srcNode.release();

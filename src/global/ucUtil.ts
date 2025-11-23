@@ -6,8 +6,16 @@ export interface FILE_WARCHER_FILE_ROW {
     renamed: { from: string, to: string }[],
 }
 export class ucUtil {
+    static GetType(obj: any):string { return Object.getPrototypeOf(obj).constructor.name; }
+    static PHP_REMOVE(text: string) {
+        return text.replace(/<\?(=|php| )(.*?)\?>/gm, '&lt;!--?$1$2?--&gt;');
+    }
+    static PHP_ADD(text: string) {
+        return text.replace(/&lt;!--\?(=|php )(.*?)\?--&gt;/gm, '<?$1$2?>');
+    }
+     
     static trimPath(pth: string) {
-        return  pth.replace(/^\.?\/*|\/*$/g, '');
+        return pth.replace(/^\.?\/*|\/*$/g, '');
     }
     static JsonCopy<K>(obj: K): K {
         return JSON.parse(JSON.stringify(obj));
@@ -46,7 +54,7 @@ export class ucUtil {
     static escapeRegs = (str: string) => {
         return str.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
     }
-   
+
     static devEsc = (str: string): string => {
         // debugger;
         return str.replace(/(.{0,1}){:(.*?)}/gm, (m, fchar, url) => {
