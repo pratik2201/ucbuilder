@@ -54,7 +54,8 @@ export class <?=designer.className ?> extends <?= baseClassName ?> {
         let CONTROLS = ucExt.controls;
         
         await Usercontrol.GenerateControls(this,args,args.cfInfo.pathOf[".js"]/*Usercontrol.Resolver(args.source.htmlImportMetaUrl ?? import.meta.url,<?=designer.className ?>.FILE_PATH)*/);
-        await args.events.beforeFinalize(form);
+        
+        if(args.events?.beforeFinalize!=undefined) args.events?.beforeFinalize(form);
         await ucExt.finalizeInitAsync(args);
         if(ucExt.session != undefined) ucExt.session.prepareForAutoLoadIfExist();
         Usercontrol.assignPropertiesFromDesigner(form);
@@ -98,7 +99,7 @@ export class <?=designer.className ?> extends <?= baseClassName ?> {
             }
         }
         ?>
-        args.events.beforeFinalize(form);
+        if(args.events?.beforeFinalize!=undefined) args.events?.beforeFinalize(form);
         ucExt.finalizeInit(args);
         if(ucExt.session != undefined) ucExt.session.prepareForAutoLoadIfExist();
         Usercontrol.assignPropertiesFromDesigner(form);

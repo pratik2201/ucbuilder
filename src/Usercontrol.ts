@@ -544,14 +544,14 @@ export class Usercontrol {
             //}, 1);
             //if (!alreadyLoadedBefore)
             _extends.Events.loaded.fire();
-            requestAnimationFrame(() => {
+            //requestAnimationFrame(() => {
 
                 if (!defaultFocusAt) {
                     TabIndexManager.moveNext(_extends.self, undefined);
                 } else {
                     TabIndexManager.focusTo(defaultFocusAt);
                 }
-            });
+            //});
             // });
         },
 
