@@ -1,38 +1,4 @@
 
-const shiftKey = <?= keyBinding.shiftKey ?>;
-const ctrlKey = <?= keyBinding.ctrlKey ?>;
-const altKey = <?= keyBinding.altKey ?>;
-let hasCaptured = false;
-const keyCode = parseInt("<?= keyBinding.keyCode ?>") ?? undefined;
-/**
- * @param {KeyboardEvent} ev 
- * @returns {boolean}
- */
-function checkForDown(ev) {
-  let rtrn = (shiftKey == ev.shiftKey && ctrlKey == ev.ctrlKey && altKey == ev.altKey);
-  rtrn = rtrn && (Number.isNaN(keyCode) || keyCode == ev.keyCode);
-  return rtrn;
- /* let rtrn = (shiftKey == ev.shiftKey) &&
-    (ctrlKey == ev.ctrlKey) &&
-    (altKey == ev.altKey);
-  rtrn = rtrn && (Number.isNaN(keyCode) || keyCode == ev.keyCode)
-  return rtrn;*/
-}
-/**
- * @param {KeyboardEvent} ev 
- * @returns {boolean}
- */
-function checkForUp(ev) { 
-  let rtrn = (shiftKey == ev.shiftKey && ctrlKey == ev.ctrlKey && altKey == ev.altKey);
-  rtrn = rtrn && (Number.isNaN(keyCode) || keyCode == ev.keyCode);
-  return rtrn;
-  /*let rtrn = (shiftKey != ev.shiftKey) ||
-    (ctrlKey != ev.ctrlKey) ||
-    (altKey != ev.altKey);
-  rtrn = rtrn && (!Number.isNaN(keyCode) && keyCode != ev.keyCode);
-  return rtrn;*/
-}
-
 (async () => {
   let _api = window["<?=IPC_API_KEY?>"];
 
@@ -48,7 +14,7 @@ function checkForUp(ev) {
     
   const { nodeFn } = await import('ucbuilder/out/nodeFn.js');
   //console.log(nodeFn.path.resolve());
-    
+
   const { PathBridge } = await import('ucbuilder/out/build/pathBridge.js');
   PathBridge.path = nodeFn.path;
   PathBridge.url = nodeFn.url;
@@ -64,13 +30,23 @@ function checkForUp(ev) {
   StylerRegs.initProjectsStyle();
 
   const { builder } = await import('ucbuilder/out/build/builder.js');
-  let mgen = builder.GetInstance(); // 
+  let mgen = builder.GetInstance(); //
+ 
+  const { WinManager } = await import('ucbuilder/out/lib/WinManager.js');   
+  
+  const buildKeyBinding = {  
+      ctrlKey: <?= keyBinding.ctrlKey ?>,
+      shiftKey: <?= keyBinding.shiftKey ?>,
+      altKey: <?= keyBinding.altKey ?>,
+      keyCode: parseInt("<?= keyBinding.keyCode ?>") ?? undefined
+  }
+ 
+  let hasCaptured = false;
   //mgen.filewatcher.startWatch();
   window['$ucbuilder'] = mgen;
-  //mgen.addToIgnore('node_modules', '.git','out', '.vscode'); 
-  window.addEventListener('keyup', (ev) => {
+  WinManager.event.keyup((ev) => {
     if (hasCaptured) {
-      if (checkForUp(ev)) {
+      if (WinManager.isKeyOK(buildKeyBinding,ev)) {
         (async () => {
           console.log('BUILDING...');
           //await mgen.filewatcher.stopWatch();
@@ -88,11 +64,12 @@ function checkForUp(ev) {
       }
     }
   });
-  window.addEventListener('keydown', (ev) => {
-    if (checkForDown(ev)) {
+  
+  WinManager.event.keydown((ev) => {
+    if (WinManager.isKeyOK(buildKeyBinding,ev)) {
       hasCaptured = true;
     }
-  });
+  }); 
   
   PathBridge.CheckAndSetDefault();  
 

@@ -1,5 +1,5 @@
 import { CommonEvent } from "../global/commonEvent.js";
-import { GetRandomNo, GetUniqueId } from "../ipc/enumAndMore.js";
+import { GetRandomNo, GetUniqueId, IBuildKeyBinding } from "../ipc/enumAndMore.js";
 import { Usercontrol } from "../Usercontrol.js";
 import { TabIndexManager } from "./TabIndexManager.js";
 
@@ -42,7 +42,86 @@ export class FocusManager {
         this.Event.onFocus.fire([this.currentElement]);
     }
 }
+export interface IKeyEventBindingNode {
+    key: IBuildKeyBinding;
+    callback: (e: KeyboardEvent) => void;
+}
+export class KeyCaptureManage {
+    static source: IKeyEventBindingNode[] = [];
+    static Add(node: IKeyEventBindingNode, updateIfExist = false) {
+        const _k = node.key;
+        _k.altKey = _k.altKey ?? false;
+        _k.shiftKey = _k.shiftKey ?? false;
+        _k.ctrlKey = _k.ctrlKey ?? false;
+        _k.keyCode = _k.keyCode ?? undefined;
+        const fIndex = this.source.findIndex(s => WinManager.isSameKey(s.key, _k));
+        if (fIndex == -1)
+            this.source.push(node);
+        else {
+            if (updateIfExist) {
+                this.source.splice(fIndex, 1);
+                this.source.push(node);
+            }
+        }
+    }
+    static init() {
+        let keyBindingNode: IKeyEventBindingNode = undefined;
+        WinManager.event.keyup((ev) => {
+            if (keyBindingNode != undefined) {
+                if (WinManager.isKeyOK(keyBindingNode.key, ev)) {
+                    keyBindingNode.callback(ev);
+                    keyBindingNode = undefined;
+                }
+            }
+        });
+
+        WinManager.event.keydown((ev) => {
+            for (let i = 0, ilen = this.source.length; i < ilen; i++) {
+                const iItem = this.source[i];
+                if (WinManager.isKeyOK(iItem.key, ev)) {
+                    keyBindingNode = iItem;
+                }
+            }
+        });
+    }
+}
 export class WinManager {
+    static isSameKey = (j: IBuildKeyBinding, k: IBuildKeyBinding) => {
+        return j.keyCode == k.keyCode && j.altKey == k.altKey && j.shiftKey == k.shiftKey && j.ctrlKey == k.ctrlKey;
+    }
+    static isKeyOK = (k: IBuildKeyBinding, ev: KeyboardEvent) => {
+        let rtrn = (k.shiftKey == ev.shiftKey && k.ctrlKey == ev.ctrlKey && k.altKey == ev.altKey);
+        rtrn = rtrn && (Number.isNaN(k.keyCode) || k.keyCode == ev.keyCode);
+        return rtrn;
+    }
+    private static _keydown = new CommonEvent<(e: KeyboardEvent) => void>();
+    private static _keyup = new CommonEvent<(e: KeyboardEvent) => void>();
+    static initEvent() {
+        const _this = this;
+        window.addEventListener('keydown', (e) => {
+            if (e.defaultPrevented) return;
+            _this._keydown.fire([e]);
+        });
+        window.addEventListener('keyup', (e) => {
+            if (e.defaultPrevented) return;
+            _this._keyup.fire([e]);
+        })
+    }
+    static event = {
+        onFreez: (uc: Usercontrol) => {
+
+        },
+        onUnFreez: (uc: Usercontrol) => {
+
+        },
+        keydown: (callback: (e: KeyboardEvent) => void, uc?: Usercontrol) => {
+            this._keydown.on(callback, uc);
+        },
+        keyup: (callback: (e: KeyboardEvent) => void, uc?: Usercontrol) => {
+            this._keyup.on(callback, uc);
+        },
+
+    }
     static ACCESS_KEY = 'WinManager_' + GetUniqueId();
     static getNode(htNode: HTMLElement): WinNode { return htNode["#data"](WinManager.ACCESS_KEY); }
     static setNode(htNode: HTMLElement): WinNode {
@@ -50,8 +129,8 @@ export class WinManager {
         dta.uc = Usercontrol.parse(htNode);
         htNode["#data"](WinManager.ACCESS_KEY, dta);
         return dta;
-    } 
-    static focusMng: FocusManager = new FocusManager();  
+    }
+    static focusMng: FocusManager = new FocusManager();
     static push = (form: Usercontrol): void => {
         let _this = this;
         const mainHT = form.ucExtends.wrapperHT;
@@ -67,27 +146,6 @@ export class WinManager {
                 this.setfreez(true, wn/*, doStyleDisplay*/);
             }
         }
-        /*const wn = WinManager.getNode(mainHT) ?? WinManager.setNode(mainHT);
-        wn.uc = form;
-        wn.display = mainHT.style.display;
-        if (mainHT.contains(document.activeElement))
-            wn.lastFocusedAt = document.activeElement as HTMLElement;*/
-
-        //this.setfreez(true, _this.CURRENT_WIN/*, doStyleDisplay*/);
-
-        // let cWin = _this.CURRENT_WIN;
-        // let doStyleDisplay = form.ucExtends.Events.beforeUnFreez.fire([_this.CURRENT_WIN?.uc]);
-        // if (_this.CURRENT_WIN != undefined) {
-        //     this.setfreez(true, _this.CURRENT_WIN/*, doStyleDisplay*/);
-        // } else _this.CURRENT_WIN = {
-        //     uc: undefined,
-        //     lastFocusedAt: undefined
-        // };
-        // _this.CURRENT_WIN = {};
-        // _this.CURRENT_WIN.uc = form;
-        // _this.pages.push(_this.CURRENT_WIN);
-
-        // _this.curIndex = _this.pages.length - 1;
     }
 
     static pop = (form: Usercontrol): void => {
@@ -99,22 +157,6 @@ export class WinManager {
             }
 
         }
-        // this.curIndex = this.pages.length - 1;
-        // if (this.curIndex >= 0) {
-        //     this.pages.pop();
-        //     this.curIndex--;
-        //     this.CURRENT_WIN = this.pages[this.curIndex];
-        //     if (this.CURRENT_WIN != undefined) {
-        //         let _wrapperHT = this.CURRENT_WIN.uc.ucExtends.self;
-        //         let res = this.CURRENT_WIN.uc.ucExtends.Events.beforeUnFreez.fire([undefined]);
-
-        //         this.setfreez(false, this.CURRENT_WIN/*, res*/);
-
-        //         return;
-        //     }
-        // }
-        // //this.transperency.remove();
-        // this.CURRENT_WIN = undefined;
     }
 
     static ATTR = {
@@ -127,27 +169,20 @@ export class WinManager {
             OLD_VALUE: "inrtoval" + GetUniqueId(),
         }
     }
-    static Event = {
-        onFreez: (uc: Usercontrol) => {
 
-        },
-        onUnFreez: (uc: Usercontrol) => {
-
-        }
-    }
     static setfreez = (freez: boolean, wnode: WinNode/*, handeledDisplay: boolean*/): void => {
         let element = wnode.uc.ucExtends.wrapperHT;
 
         if (freez) {
 
-            this.Event.onFreez(wnode.uc);
+            this.event.onFreez(wnode.uc);
             this.focusMng.fetch(wnode.uc.ucExtends.lastFocuedElement);
             wnode.lastFocusedAt = this.focusMng.currentElement;
             wnode.display = element.style.display;
             this.FreezThese(freez, element);
             if (!wnode.uc.ucExtends.keepVisible) element.style.display = 'none';
         } else {
-            this.Event.onUnFreez(wnode.uc);
+            this.event.onUnFreez(wnode.uc);
             this.FreezThese(freez, element);
             element.style.display = wnode.display;
             this.focusMng.currentElement = wnode.lastFocusedAt;
@@ -193,3 +228,4 @@ export class WinManager {
     }
 
 }
+WinManager.initEvent();
