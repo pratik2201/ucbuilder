@@ -133,15 +133,15 @@ export class WinManager {
 
     static initEvent() {
         const _this = this;
-        window.addEventListener('keydown', (e) => {
-            console.log(e.code);
+        window.addEventListener('keydown', async (e) => {
+            //console.log(e.code);
 
-            if (e.defaultPrevented) return;
-            _this.event.keydown.fire([e]);
+            //if (e.defaultPrevented) return;
+            await _this.event.keydown.fireAsync([e]);
         });
-        window.addEventListener('keyup', (e) => {
-            if (e.defaultPrevented) return;
-            _this.event.keyup.fire([e]);
+        window.addEventListener('keyup', async (e) => {
+          //  if (e.defaultPrevented) return;
+            await _this.event.keyup.fireAsync([e]);
         });
         this.sortcutMng = new ShortcutManager();
     }

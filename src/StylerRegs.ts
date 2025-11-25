@@ -612,11 +612,21 @@ export class SelectorHandler {
     if (hiddens.isForRoot) {
       fsel = splitted[len - 1];
       if (joinedValue.includes('&')) {
-
         switch (len) {
           case 1: splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR); break;
           default:
-            splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR);  // fsel.replace('&', `${main.nodeName}[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //   // `${main.nodeName}.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
+            for(let i=0,ilen=splitted.length   ;   i < ilen   ;   i++){ 
+              const ispl = splitted[i];
+              if (ispl.includes('&')) {
+                splitted[i] = ispl.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR);
+                break;
+              }else splitted[i] = ispl.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR);              
+            }
+            splitted[len - 1] = this.MISC_SELECTOR_CONDITION(fsel, {
+              scope: 'r',
+              selectorOperation: '$',
+              key: '_' + hiddens.project.id
+            });
             break;
         }
       } else {
