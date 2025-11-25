@@ -2,7 +2,7 @@
 (async () => {
   let _api = window["<?=IPC_API_KEY?>"];
 
-  
+
   const { IpcRendererHelper } = await import('ucbuilder/out/ipc/IpcRendererHelper.js');
   IpcRendererHelper.init(window);
 
@@ -31,29 +31,36 @@
 
   const { builder } = await import('ucbuilder/out/build/builder.js');
   let mgen = builder.GetInstance(); //
- 
-  const { WinManager } = await import('ucbuilder/out/lib/WinManager.js');   
-  
-  const buildKeyBinding = {  
-      ctrlKey: <?= keyBinding.ctrlKey ?>,
-      shiftKey: <?= keyBinding.shiftKey ?>,
-      altKey: <?= keyBinding.altKey ?>,
-      keyCode: parseInt("<?= keyBinding.keyCode ?>") ?? undefined
-  }
- 
+
+  const { WinManager } = await import('ucbuilder/out/lib/WinManager.js');
+  const shortcutKeys = [[ <?= keyBinding.map(s => `"${s}"`).join(',') ?>]];
   let hasCaptured = false;
+  console.log(shortcutKeys);
+  
   //mgen.filewatcher.startWatch();
   window['$ucbuilder'] = mgen;
-  WinManager.event.keyup((ev) => {
+  //console.log(WinManager.sortcutMng);
+  
+  WinManager.sortcutMng.register(shortcutKeys, (e) => {
+    (async () => {
+      console.log('BUILDING...');
+      //await mgen.filewatcher.stopWatch();
+      await mgen.buildALL(() => {
+        console.log('BUILD SUCCESSFULL...');
+        //mgen.filewatcher.startWatch();
+      }, false);
+    })();
+  });
+  /*WinManager.event.keyup.on((ev) => {
     if (hasCaptured) {
-      if (WinManager.isKeyOK(buildKeyBinding,ev)) {
+      if (WinManager.isKeyOK(buildKeyBinding, ev)) {
         (async () => {
           console.log('BUILDING...');
           //await mgen.filewatcher.stopWatch();
           await mgen.buildALL(() => {
-             console.log('BUILD SUCCESSFULL...');
-             //mgen.filewatcher.startWatch();
-          },false);
+            console.log('BUILD SUCCESSFULL...');
+            //mgen.filewatcher.startWatch();
+          }, false);
         })();
         hasCaptured = false;
       }
@@ -64,17 +71,17 @@
       }
     }
   });
-  
-  WinManager.event.keydown((ev) => {
-    if (WinManager.isKeyOK(buildKeyBinding,ev)) {
+
+  WinManager.event.keydown.on((ev) => {
+    if (WinManager.isKeyOK(buildKeyBinding, ev)) {
       hasCaptured = true;
     }
-  }); 
-  
-  PathBridge.CheckAndSetDefault();  
+  });*/
+
+  PathBridge.CheckAndSetDefault();
 
   (await import('<?=initialPreload?>'));
 
-  
+
   (await import('<?=initailModule?>'));
 })();

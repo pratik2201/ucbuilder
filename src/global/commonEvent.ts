@@ -76,9 +76,10 @@ export class CommonEvent<F extends (...arg: any) => void> {
     }
 
     off(callback: Function): void {
-        let fEvent = this._eventList.find(s => s.callback === callback);
-        if (fEvent != undefined) {
-            this._eventList["#RemoveMultiple"](fEvent);
+        let fEvent = this._eventList.findIndex(s => s.callback === callback);
+        if (fEvent != -1) {
+            this._eventList.splice(fEvent, 1);
+            //this._eventList["#RemoveMultiple"](fEvent);
             this.Events.onChangeEventList();
         }
     }

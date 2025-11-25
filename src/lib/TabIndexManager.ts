@@ -1,5 +1,5 @@
 import { controlOpt } from "../build/common.js";
-import { KeyboardKeys } from "./hardware.js";
+import { KeyboardKeyEnum } from "./hardware.js";
 
 // try {
 //     if (module != undefined)
@@ -181,14 +181,14 @@ class TabIndexManager {
             //  if (keyIsDown) return; // prevent multiple intervals
             //   keyIsDown = true;
             let _EVENT_target = ev.target;
-            let _EVENT_keyCode = ev.keyCode;
+            let _EVENT_keyCode = ev.code;
             let _EVENT_shiftKey = ev.shiftKey;
             //console.log("Key down start:", _EVENT_keyCode); // optional
             //keyDownTimer = setInterval(() => {
             //  console.log("Repeated action:", _EVENT_keyCode);
             let code = _EVENT_keyCode;
             switch (code) {
-                case KeyboardKeys.BackSpace:
+                case KeyboardKeyEnum.BackSpace:
                     let constructorName = Object.getPrototypeOf(_EVENT_target).constructor.name;
 
                     switch (constructorName) {
@@ -204,7 +204,7 @@ class TabIndexManager {
                             return;
                     }
                     break;
-                case KeyboardKeys.Enter:
+                case KeyboardKeyEnum.Enter:
                     //console.log(Object.getPrototypeOf(_EVENT_target).constructor.name);
                     if (Object.getPrototypeOf(_EVENT_target).constructor.name == HTMLTextAreaElement.name) {
                         let ele = _EVENT_target as HTMLTextAreaElement;
@@ -215,7 +215,7 @@ class TabIndexManager {
                             else ele.value = _val.slice(0, -1);
                         }
                     }
-                case KeyboardKeys.Tab:
+                case KeyboardKeyEnum.Tab:
                     // console.log(['before', this.breakTheLoop]);                    
                     if (!_EVENT_shiftKey) {
                         this.moveNext(_EVENT_target as HTMLElement, ev);
@@ -225,7 +225,7 @@ class TabIndexManager {
                     this.status = 'none';
                     ev.preventDefault();
                     break;
-                case KeyboardKeys.Left:
+                case KeyboardKeyEnum.Left:
                     htEle = _EVENT_target as HTMLElement;
                     tIndex = this.getTindex(htEle);
                     if (tIndex != null) {
@@ -235,7 +235,7 @@ class TabIndexManager {
                         }
                     }
                     break;
-                case KeyboardKeys.Right:
+                case KeyboardKeyEnum.Right:
                     htEle = _EVENT_target as HTMLElement;
                     tIndex = this.getTindex(htEle);
                     if (tIndex != null) {

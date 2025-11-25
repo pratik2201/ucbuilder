@@ -1,8 +1,86 @@
 import { CommonEvent } from "../global/commonEvent.js";
-import { GetRandomNo, GetUniqueId, IBuildKeyBinding } from "../ipc/enumAndMore.js";
+import { GetUniqueId } from "../ipc/enumAndMore.js";
 import { Usercontrol } from "../Usercontrol.js";
+import { KeyboardKey, KeyboardKeyEnum } from "./hardware.js";
 import { TabIndexManager } from "./TabIndexManager.js";
 
+type ShortcutCallback = (e: KeyboardEvent) => void;
+
+export class ShortcutManager {
+    private pressedKeys: Set<string>;
+    private shortcutMap: Record<string, ShortcutCallback>;
+
+    constructor() {
+        this.pressedKeys = new Set();
+        this.shortcutMap = {};
+
+        /*this._keydown = this._keydown.bind(this);
+        this._keyup = this._keyup.bind(this);
+        this._blur = this._blur.bind(this);*/
+
+        WinManager.event.keydown.on(this._keydown);
+        WinManager.event.keyup.on(this._keyup);
+        window.addEventListener("blur", this._blur); // prevent stuck keys
+    }
+
+    /** Normalize key combination to string */
+    private static getComboString(keys: Set<string>): string {
+        return [...keys].sort().join("+");
+    }
+
+    /** Register a new shortcut */
+    register(keys: KeyboardKey[][], callback: ShortcutCallback): void {
+        keys.forEach(key => {
+            const combo = key.slice().sort().join("+");
+            console.log(`${combo} Registered`);
+            this.shortcutMap[combo] = callback;
+        });
+    }
+
+    /** Unregister a shortcut */
+    unregister(keys: KeyboardKey[]): void {
+        const combo = keys.slice().sort().join("+");
+        delete this.shortcutMap[combo];
+    }
+
+    /** Clear all shortcuts */
+    clear(): void {
+        this.shortcutMap = {};
+    }
+
+    /** Destroy manager and remove all listeners */
+    destroy(): void {
+        WinManager.event.keydown.off(this._keydown);
+        WinManager.event.keyup.off(this._keyup);
+        window.removeEventListener("blur", this._blur);
+        this.pressedKeys.clear();
+        this.shortcutMap = {};
+    }
+
+    // --- PRIVATE EVENT HANDLERS ---
+
+    private _keydown = (e: KeyboardEvent): void => {
+        // prevent repeat firing
+        //console.log(this.pressedKeys);
+
+        if (this.pressedKeys.has(e.code)) return;
+
+        this.pressedKeys.add(e.code);
+
+        const combo = ShortcutManager.getComboString(this.pressedKeys);
+        const cb = this.shortcutMap[combo];
+        if (cb) cb(e);
+    }
+
+    private _keyup = (e: KeyboardEvent): void => {
+        this.pressedKeys.delete(e.code);
+        //this.pressedKeys.clear();
+    }
+
+    private _blur(): void {
+        this.pressedKeys.clear(); // prevent stuck keys when window loses focus
+    }
+}
 
 interface WinNode {
     uc?: Usercontrol,
@@ -42,70 +120,30 @@ export class FocusManager {
         this.Event.onFocus.fire([this.currentElement]);
     }
 }
-export interface IKeyEventBindingNode {
-    key: IBuildKeyBinding;
-    callback: (e: KeyboardEvent) => void;
-}
-export class KeyCaptureManage {
-    static source: IKeyEventBindingNode[] = [];
-    static Add(node: IKeyEventBindingNode, updateIfExist = false) {
-        const _k = node.key;
-        _k.altKey = _k.altKey ?? false;
-        _k.shiftKey = _k.shiftKey ?? false;
-        _k.ctrlKey = _k.ctrlKey ?? false;
-        _k.keyCode = _k.keyCode ?? undefined;
-        const fIndex = this.source.findIndex(s => WinManager.isSameKey(s.key, _k));
-        if (fIndex == -1)
-            this.source.push(node);
-        else {
-            if (updateIfExist) {
-                this.source.splice(fIndex, 1);
-                this.source.push(node);
-            }
-        }
-    }
-    static init() {
-        let keyBindingNode: IKeyEventBindingNode = undefined;
-        WinManager.event.keyup((ev) => {
-            if (keyBindingNode != undefined) {
-                if (WinManager.isKeyOK(keyBindingNode.key, ev)) {
-                    keyBindingNode.callback(ev);
-                    keyBindingNode = undefined;
-                }
-            }
-        });
 
-        WinManager.event.keydown((ev) => {
-            for (let i = 0, ilen = this.source.length; i < ilen; i++) {
-                const iItem = this.source[i];
-                if (WinManager.isKeyOK(iItem.key, ev)) {
-                    keyBindingNode = iItem;
-                }
-            }
-        });
-    }
-}
 export class WinManager {
-    static isSameKey = (j: IBuildKeyBinding, k: IBuildKeyBinding) => {
-        return j.keyCode == k.keyCode && j.altKey == k.altKey && j.shiftKey == k.shiftKey && j.ctrlKey == k.ctrlKey;
+    static sortcutMng: ShortcutManager;
+    static isSameKey = <T>(arr1: T[], arr2: T[]): boolean => {
+        if (arr1.length !== arr2.length) return false; // lengths must be same
+        for (let i = 0; i < arr1.length; i++) {
+            if (arr1[i] !== arr2[i]) return false; // check each element
+        }
+        return true;
     }
-    static isKeyOK = (k: IBuildKeyBinding, ev: KeyboardEvent) => {
-        let rtrn = (k.shiftKey == ev.shiftKey && k.ctrlKey == ev.ctrlKey && k.altKey == ev.altKey);
-        rtrn = rtrn && (Number.isNaN(k.keyCode) || k.keyCode == ev.keyCode);
-        return rtrn;
-    }
-    private static _keydown = new CommonEvent<(e: KeyboardEvent) => void>();
-    private static _keyup = new CommonEvent<(e: KeyboardEvent) => void>();
+
     static initEvent() {
         const _this = this;
         window.addEventListener('keydown', (e) => {
+            console.log(e.code);
+
             if (e.defaultPrevented) return;
-            _this._keydown.fire([e]);
+            _this.event.keydown.fire([e]);
         });
         window.addEventListener('keyup', (e) => {
             if (e.defaultPrevented) return;
-            _this._keyup.fire([e]);
-        })
+            _this.event.keyup.fire([e]);
+        });
+        this.sortcutMng = new ShortcutManager();
     }
     static event = {
         onFreez: (uc: Usercontrol) => {
@@ -114,12 +152,8 @@ export class WinManager {
         onUnFreez: (uc: Usercontrol) => {
 
         },
-        keydown: (callback: (e: KeyboardEvent) => void, uc?: Usercontrol) => {
-            this._keydown.on(callback, uc);
-        },
-        keyup: (callback: (e: KeyboardEvent) => void, uc?: Usercontrol) => {
-            this._keyup.on(callback, uc);
-        },
+        keydown: new CommonEvent<(e: KeyboardEvent) => void>(),
+        keyup: new CommonEvent<(e: KeyboardEvent) => void>(),
 
     }
     static ACCESS_KEY = 'WinManager_' + GetUniqueId();

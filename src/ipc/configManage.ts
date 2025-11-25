@@ -47,6 +47,8 @@ export class configManage {
 
         let ShubhCode = "";
         let ucfg = this.filler.GetByAlias('ucbuilder');
+        console.log(this.filler.MAIN_CONFIG.config.developer.build.keyBind);
+        
         if (ucfg != undefined) {
             //  path.resolve(ucUtil.devEsc('{:../../assets/initial/Labh.js}')); 
             let Labh = path.join(ucfg.projectPath, 'assets/initial/Labh.js');

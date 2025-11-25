@@ -1,3 +1,4 @@
+import { KeyboardKey, KeyboardKeyEnum } from "../lib/hardware.js";
 import { fileURLToPath, pathToFileURL } from "./renderer/fileURLToPath.js";
 import { posixPath } from "./renderer/posixPath.js";
 
@@ -185,19 +186,16 @@ export function GiveSourceFileTypeFeedBack(path: string): SourceFileType {
     else if (path.endsWith('.designer.js')) return '.designer.js';
     else undefined;
 }
+/*
 export interface IBuildKeyBinding {
-    keyCode?: number;
+    keyCode?: string;
     ctrlKey?: boolean;
     shiftKey?: boolean;
     altKey?: boolean;
-}
-export const BuildKeyBinding: IBuildKeyBinding = {
-    altKey: false,
-    ctrlKey: false,
-    shiftKey: false,
-}
+}*/
+
 export class UcBuildOptions {
-    keyBind?: IBuildKeyBinding = Object.assign({}, BuildKeyBinding);
+    keyBind?: KeyboardKey[] = [];
     ignorePath?: string[];
     buildPath?: string;
 }

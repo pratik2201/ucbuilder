@@ -1,0 +1,45 @@
+export interface IKeyEventBindingNode {
+    key: IBuildKeyBinding;
+    callback: (e: KeyboardEvent) => void;
+}
+export class KeyCaptureManage {
+    static source: IKeyEventBindingNode[] = [];
+    static Add(node: IKeyEventBindingNode, updateIfExist = false) {
+        const _k = node.key;
+        _k.altKey = _k.altKey ?? false;
+        _k.shiftKey = _k.shiftKey ?? false;
+        _k.ctrlKey = _k.ctrlKey ?? false;
+        _k.keyCode = _k.keyCode ?? undefined;
+        const fIndex = this.source.findIndex(s => WinManager.isSameKey(s.key, _k));
+        if (fIndex == -1)
+            this.source.push(node);
+        else {
+            if (updateIfExist) {
+                this.source.splice(fIndex, 1);
+                this.source.push(node);
+            }
+        }
+    }
+    static init() {
+        let keyBindingNode: IKeyEventBindingNode = undefined;
+        WinManager.event.keyup.on((ev) => {
+            if (keyBindingNode != undefined) {
+                if (WinManager.isKeyOK(keyBindingNode.key, ev)) {
+                    keyBindingNode.callback(ev);
+                    keyBindingNode = undefined;
+                }
+            }
+        });
+
+        WinManager.event.keydown.on((ev) => {
+            //console.log(ev.code);
+
+            for (let i = 0, ilen = this.source.length; i < ilen; i++) {
+                const iItem = this.source[i];
+                if (WinManager.isKeyOK(iItem.key, ev)) {
+                    keyBindingNode = iItem;
+                }
+            }
+        });
+    }
+}

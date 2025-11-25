@@ -291,10 +291,10 @@ export class RootAndExcludeHandler {
     selectorText.replace(
       patternList.subUcFatcher,
       (match: string, quationMark: string, filePath: string, UCselector: string) => {
-        filePath = filePath["#devEsc"](); 
-        let fpath = nodeFn.path.resolveFilePath(this.main.main.cssFilePath, filePath); 
-        filePath = fpath; 
-        UCselector = UCselector.trim(); 
+        filePath = filePath["#devEsc"]();
+        let fpath = nodeFn.path.resolveFilePath(this.main.main.cssFilePath, filePath);
+        filePath = fpath;
+        UCselector = UCselector.trim();
         let tree: StylerRegs = this.main.children.find(
           (s: StylerRegs) => nodeFn.path.isSamePath(s.path, filePath) || s.alices == filePath
         );
@@ -414,10 +414,10 @@ export class ThemeCssHandler {
 
 export const ScopeSelectorOptions: IScopeSelectorOptions = {
   selectorText: "",
-  scopeSelectorText: "", 
+  scopeSelectorText: "",
   project: undefined,
   isForRoot: false,
-  hiddens: { 
+  hiddens: {
     project: undefined,
     list: {},
     isForRoot: false,
@@ -496,8 +496,8 @@ export class SelectorHandler {
       case '*': dkey.SCP.scope = 'g'; dkey.SCP.key = `_${mainKey.TEMPLATE}_`; break;
     }
   }
-  parseScopeSeperator(scopeOpt: IScopeSelectorOptions): string { 
-    scopeOpt = Object.assign(ScopeSelectorOptions, scopeOpt); 
+  parseScopeSeperator(scopeOpt: IScopeSelectorOptions): string {
+    scopeOpt = Object.assign(ScopeSelectorOptions, scopeOpt);
     scopeOpt.hiddens.project = scopeOpt.project;
 
     scopeOpt.hiddens.scopeSelectorText = scopeOpt.scopeSelectorText;
@@ -505,8 +505,8 @@ export class SelectorHandler {
     if (scopeOpt.selectorText.trim() == '') return '';
     let counter = scopeOpt.hiddens.counter;
     let _this = this;
-    let oldSelector = scopeOpt.selectorText; 
-    let oc = new openCloser(); 
+    let oldSelector = scopeOpt.selectorText;
+    let oc = new openCloser();
     let rtrn = oc.doTask('(', ')', scopeOpt.selectorText, (selector, cssStyle, opened) => {
       if (opened > 1) {
         if (selector.endsWith(':has')) {
@@ -602,15 +602,21 @@ export class SelectorHandler {
     }
     if (isStartWithSubUc) splitted.unshift('&');
     let styler = this.main;
-    splitted = splitted.filter(word => word !== "");
+    let joinedValue = '';
+    splitted = splitted.filter(word => {
+      joinedValue += word;
+      return word !== "";
+    });
     let len = splitted.length;
     let fsel = '';
     if (hiddens.isForRoot) {
       fsel = splitted[len - 1];
-      if (fsel.startsWith('&')) {
+      if (joinedValue.includes('&')) {
+
         switch (len) {
           case 1: splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR); break;
-          default: splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR);  // fsel.replace('&', `${main.nodeName}[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //   // `${main.nodeName}.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
+          default:
+            splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR);  // fsel.replace('&', `${main.nodeName}[${ATTR_OF.UC.ALL}="${styler.LOCAL_STAMP_KEY}"]`); //   // `${main.nodeName}.${ATTR_OF.UC.UC_STAMP+''+styler.uniqStamp}`
             break;
         }
       } else {
@@ -663,7 +669,7 @@ export class SelectorHandler {
     }
     dbl[0] = sngl.join(":");
     return dbl.join("::");
-  } 
+  }
 }
 
 

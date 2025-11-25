@@ -1,7 +1,7 @@
 import fs from "fs";
 import path from "path";
 import url from "url";
-import { KeyboardKeys } from "../lib/hardware.js";
+import { KeyboardKeyEnum } from "../lib/hardware.js";
 import { correctpath, deepAssign, GetProjectName, IDeveloperOptions, IImportMap, IPC_SPLIT_KEY, isSamePath, IUCConfigPreference, ProjectRowM, resolvePathObject, subtractPath, UserUCConfig } from "./enumAndMore.js";
 import { ucUtil } from "../global/ucUtil.js";
 import { ProjectFolder } from "./ProjectFolder.js";
@@ -91,24 +91,15 @@ export class ConfigFiller {
         debugger;
         let projectDir = this.getProjectDir(mainDirPath);
         this.Fill_UCConfig(projectDir, this.ucConfig);
-        
-        
+
+
         const cfg = this.MAIN_CONFIG.config;
         cfg.developer = cfg.developer ?? new IDeveloperOptions();
         cfg.developer.build = cfg.developer.build ?? Object.assign({}, buildOptions) as any;
-        cfg.developer.build.keyBind = cfg.developer.build.keyBind ?? {};
-        let kb = cfg.developer.build.keyBind;
-        kb = kb ?? {};
-        cfg.developer.build.keyBind = kb;
-        if (!kb.altKey && !kb.ctrlKey && !kb.shiftKey && !kb.keyCode) {
-            kb.ctrlKey = true;
-            kb.shiftKey = false;
-            kb.altKey = false;
-            kb.keyCode = KeyboardKeys.F12;
-        }
-
-        console.log(kb);
-        
+        cfg.developer.build.keyBind = cfg.developer.build.keyBind ?? [];
+        const bld = cfg.developer.build;
+        if (bld.keyBind == undefined || bld.keyBind.length == 0)
+            bld.keyBind = ['ControlLeft', 'F12'];
 
         this.PREELOAD_IMPORT = ucUtil.distinct(this.PREELOAD_IMPORT);
         this.ucConfigList.sort((a, b) => b.importMetaURL.length - a.importMetaURL.length);

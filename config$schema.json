@@ -7,13 +7,18 @@
   "properties": {
     "env": {
       "type": "string",
-      "enum": ["developer", "user"],
+      "enum": [
+        "developer",
+        "user"
+      ],
       "default": "developer",
       "description": "Specifies the environment mode. 'developer' enables development tools and debugging, while 'user' is for production."
     },
     "preloadMain": {
       "type": "array",
-      "items": { "type": "string" },
+      "items": {
+        "type": "string"
+      },
       "default": [],
       "description": "List of preload script file paths to be injected into Electron's main process."
     },
@@ -25,7 +30,9 @@
           "type": "object",
           "description": "Defines import path mappings similar to browser import maps. Key is the module alias, value is the resolved path.",
           "patternProperties": {
-            ".*": { "type": "string" }
+            ".*": {
+              "type": "string"
+            }
           },
           "additionalProperties": false,
           "default": {}
@@ -34,13 +41,15 @@
           "type": "object",
           "description": "Maps global module aliases, e.g., 'fs' → 'node:fs'. Useful for preload environments without Node.js direct access.",
           "patternProperties": {
-            ".*": { "type": "string" }
+            ".*": {
+              "type": "string"
+            }
           },
           "additionalProperties": false,
           "default": {}
         }
       },
-      "required": [ ]
+      "required": []
     },
     "preference": {
       "$ref": "#/$defs/IUCConfigPreference",
@@ -52,11 +61,14 @@
     },
     "type": {
       "type": "string",
-      "enum": ["ts", "js"],
+      "enum": [
+        "ts",
+        "js"
+      ],
       "description": "Defines the main scripting language type used by the project ('ts' for TypeScript, 'js' for JavaScript)."
     }
   },
-  "required": [ ],
+  "required": [],
   "$defs": {
     "IBuildKeyBinding": {
       "type": "object",
@@ -89,12 +101,120 @@
       "description": "Specifies build-related options for developer mode.",
       "properties": {
         "keyBind": {
-          "$ref": "#/$defs/IBuildKeyBinding",
-          "description": "Keyboard shortcut binding to trigger a build process."
+          "type": "array",
+          "items": {
+            "type": "string",
+            "enum": [
+              "Backspace",
+              "Tab",
+              "Enter",
+              "ShiftLeft",
+              "ControlLeft",
+              "AltLeft",
+              "Pause",
+              "CapsLock",
+              "Escape",
+              "PageUp",
+              "Space",
+              "PageDown",
+              "End",
+              "Home",
+              "ArrowLeft",
+              "ArrowUp",
+              "ArrowRight",
+              "ArrowDown",
+              "PrintScreen",
+              "Insert",
+              "Delete",
+              "Digit0",
+              "Digit1",
+              "Digit2",
+              "Digit3",
+              "Digit4",
+              "Digit5",
+              "Digit6",
+              "Digit7",
+              "Digit8",
+              "Digit9",
+              "KeyA",
+              "KeyB",
+              "KeyC",
+              "KeyD",
+              "KeyE",
+              "KeyF",
+              "KeyG",
+              "KeyH",
+              "KeyI",
+              "KeyJ",
+              "KeyK",
+              "KeyL",
+              "KeyM",
+              "KeyN",
+              "KeyO",
+              "KeyP",
+              "KeyQ",
+              "KeyR",
+              "KeyS",
+              "KeyT",
+              "KeyU",
+              "KeyV",
+              "KeyW",
+              "KeyX",
+              "KeyY",
+              "KeyZ",
+              "MetaLeft",
+              "MetaRight",
+              "ContextMenu",
+              "Numpad0",
+              "Numpad1",
+              "Numpad2",
+              "Numpad3",
+              "Numpad4",
+              "Numpad5",
+              "Numpad6",
+              "Numpad7",
+              "Numpad8",
+              "Numpad9",
+              "NumpadMultiply",
+              "NumpadAdd",
+              "NumpadSubtract",
+              "NumpadDecimal",
+              "NumpadDivide",
+              "F1",
+              "F2",
+              "F3",
+              "F4",
+              "F5",
+              "F6",
+              "F7",
+              "F8",
+              "F9",
+              "F10",
+              "F11",
+              "F12",
+              "NumLock",
+              "ScrollLock",
+              "LaunchMyComputer",
+              "LaunchCalculator",
+              "Semicolon",
+              "Equal",
+              "Comma",
+              "Minus",
+              "Period",
+              "Slash",
+              "BracketLeft",
+              "Backslash",
+              "BracketRight",
+              "Quote"
+            ]
+          },
+          "description": "List of `code` of KeyboardEvent i.e ['ControlLeft','KeyB'...]"
         },
         "ignorePath": {
           "type": "array",
-          "items": { "type": "string" },
+          "items": {
+            "type": "string"
+          },
           "description": "List of paths or folders to exclude during build operations."
         },
         "buildPath": {
@@ -113,7 +233,7 @@
           "description": "Build settings configuration object."
         }
       },
-      "required": [ ],
+      "required": [],
       "additionalProperties": false
     },
     "IUCConfigPreference": {
