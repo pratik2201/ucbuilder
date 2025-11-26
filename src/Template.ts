@@ -153,6 +153,7 @@ export class Template {
     }
   }
   static GetOptionsByContent(htmlcontent: string, cssContent: string, cssFilePath: string, importMetaUrl: string): { outerCSS: string, tptObj: { [key: string]: ITemplatePathOptions } } {
+     //console.log(htmlcontent["#PHP_REMOVE"]());
     let ele = htmlcontent["#PHP_REMOVE"]()["#$"]();
     let rtrn: { [key: string]: ITemplatePathOptions } = {};
     let hasMultipleNode = !ele.hasAttribute('id');

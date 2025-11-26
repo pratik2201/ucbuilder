@@ -40,8 +40,8 @@
   //mgen.filewatcher.startWatch();
   window['$ucbuilder'] = mgen;
   //console.log(WinManager.sortcutMng);
-  
-  WinManager.sortcutMng.register(shortcutKeys, (e) => {
+  const scLater = WinManager.shortcutManage.CreateLayer();
+  scLater.register(shortcutKeys, (e) => {
     (async () => {
       console.log('BUILDING...');
       //await mgen.filewatcher.stopWatch();

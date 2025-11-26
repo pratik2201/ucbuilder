@@ -242,7 +242,7 @@ export class SourceNode {
         htCode.content = this.styler.parseStyle(htCode.originalContent);
         //if (callback != undefined) htCode.content = callback(htCode.content);
         this.dataHT = SourceNode.tramsformForm(ucUtil.PHP_REMOVE(htCode.content)["#$"]());
-
+ 
         this.styler.nodeName = WRAPPER_TAG_NAME;// this.dataHT.nodeName;
         if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
             this.dataHT.setAttribute(ATTR_OF.UC.ALL, this.localStamp);
@@ -255,7 +255,7 @@ export class SourceNode {
         }
         htCode.content = this.dataHT.outerHTML;
         htCode.content = ucUtil.PHP_ADD(htCode.content);//["#PHP_ADD"](); //.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
-        //console.log(htCode.content);
+     
 
     }
     release() {

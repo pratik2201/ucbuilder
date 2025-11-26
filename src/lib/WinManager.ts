@@ -5,42 +5,37 @@ import { KeyboardKey, KeyboardKeyEnum } from "./hardware.js";
 import { TabIndexManager } from "./TabIndexManager.js";
 
 type ShortcutCallback = (e: KeyboardEvent) => void;
-
-export class ShortcutManager {
-    private pressedKeys: Set<string>;
-    private shortcutMap: Record<string, ShortcutCallback>;
-
-    constructor() {
-        this.pressedKeys = new Set();
-        this.shortcutMap = {};
-
-        /*this._keydown = this._keydown.bind(this);
-        this._keyup = this._keyup.bind(this);
-        this._blur = this._blur.bind(this);*/
-
-        WinManager.event.keydown.on(this._keydown);
-        WinManager.event.keyup.on(this._keyup);
-        window.addEventListener("blur", this._blur); // prevent stuck keys
-    }
-
-    /** Normalize key combination to string */
-    private static getComboString(keys: Set<string>): string {
-        return [...keys].sort().join("+");
-    }
-
-    /** Register a new shortcut */
-    register(keys: KeyboardKey[][], callback: ShortcutCallback): void {
+export class ShortcutNode {
+    private shortcutMap: Record<string, ShortcutCallback> = {};
+    register(keys: KeyboardKey[][], callback: ShortcutCallback, override = false) {
+        const rtrn: string[] = [];
         keys.forEach(key => {
             const combo = key.slice().sort().join("+");
-            console.log(`${combo} Registered`);
-            this.shortcutMap[combo] = callback;
+            
+            if (!(combo in this.shortcutMap)) {
+                this.shortcutMap[combo] = callback;
+                console.log(`${combo} Registered`);
+                rtrn.push(combo);
+            } else {
+                if (override) {
+                    this.shortcutMap[combo] = callback;
+                    console.log(`[${combo}] Registered`);
+                    rtrn.push(combo);
+                }
+            }
         });
+        return rtrn;
     }
 
     /** Unregister a shortcut */
-    unregister(keys: KeyboardKey[]): void {
+    unregister(keys: KeyboardKey[]) {
+        const rtrn: string[] = [];
         const combo = keys.slice().sort().join("+");
-        delete this.shortcutMap[combo];
+        if (combo in this.shortcutMap) {
+            delete this.shortcutMap[combo];
+            rtrn.push(combo);
+        }
+        return rtrn;
     }
 
     /** Clear all shortcuts */
@@ -48,28 +43,57 @@ export class ShortcutManager {
         this.shortcutMap = {};
     }
 
+    callTask(combo: string,e:KeyboardEvent) {
+        if (combo in this.shortcutMap) {
+            const cb = this.shortcutMap[combo];
+            if (cb) cb(e);
+            return true;
+        } else return false;
+
+    }
+}
+export class ShortcutManager {
+    private pressedKeys: Set<string>;
+    source: ShortcutNode[] = [];
+    CreateLayer() {
+        const layer = new ShortcutNode();
+        this.source.unshift(layer);
+        return layer;
+    }
+    constructor() {
+        this.pressedKeys = new Set();
+        WinManager.event.keydown.on(this._keydown);
+        WinManager.event.keyup.on(this._keyup);
+        window.addEventListener("blur", this._blur);
+    }
     /** Destroy manager and remove all listeners */
     destroy(): void {
         WinManager.event.keydown.off(this._keydown);
         WinManager.event.keyup.off(this._keyup);
         window.removeEventListener("blur", this._blur);
         this.pressedKeys.clear();
-        this.shortcutMap = {};
+        this.source.forEach(s => s.clear());
+    }
+
+    /** Normalize key combination to string */
+    private static getComboString(keys: Set<string>): string {
+        return [...keys].sort().join("+");
     }
 
     // --- PRIVATE EVENT HANDLERS ---
 
     private _keydown = (e: KeyboardEvent): void => {
-        // prevent repeat firing
-        //console.log(this.pressedKeys);
-
         if (this.pressedKeys.has(e.code)) return;
 
         this.pressedKeys.add(e.code);
-
+        //console.log('down.');
+        
         const combo = ShortcutManager.getComboString(this.pressedKeys);
-        const cb = this.shortcutMap[combo];
-        if (cb) cb(e);
+        const src = this.source;
+        for(let i=0,ilen=src.length   ;   i < ilen   ;   i++){ 
+            const iItem = src[i];
+            if (iItem.callTask(combo,e)) return;
+        }
     }
 
     private _keyup = (e: KeyboardEvent): void => {
@@ -78,7 +102,7 @@ export class ShortcutManager {
     }
 
     private _blur(): void {
-        this.pressedKeys.clear(); // prevent stuck keys when window loses focus
+        this.pressedKeys.clear();
     }
 }
 
@@ -122,7 +146,7 @@ export class FocusManager {
 }
 
 export class WinManager {
-    static sortcutMng: ShortcutManager;
+    static shortcutManage: ShortcutManager;
     static isSameKey = <T>(arr1: T[], arr2: T[]): boolean => {
         if (arr1.length !== arr2.length) return false; // lengths must be same
         for (let i = 0; i < arr1.length; i++) {
@@ -140,10 +164,10 @@ export class WinManager {
             await _this.event.keydown.fireAsync([e]);
         });
         window.addEventListener('keyup', async (e) => {
-          //  if (e.defaultPrevented) return;
+            //  if (e.defaultPrevented) return;
             await _this.event.keyup.fireAsync([e]);
         });
-        this.sortcutMng = new ShortcutManager();
+        this.shortcutManage = new ShortcutManager();
     }
     static event = {
         onFreez: (uc: Usercontrol) => {

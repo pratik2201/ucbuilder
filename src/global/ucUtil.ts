@@ -11,7 +11,7 @@ export class ucUtil {
         return text.replace(/<\?(=|php| )(.*?)\?>/gm, '&lt;!--?$1$2?--&gt;');
     }
     static PHP_ADD(text: string) {
-        return text.replace(/&lt;!--\?(=|php )(.*?)\?--&gt;/gm, '<?$1$2?>');
+        return text.replace(/&lt;!--\?(=|php| )(.*?)\?--&gt;/gm, '<?$1$2?>');
     }
      
     static trimPath(pth: string) {

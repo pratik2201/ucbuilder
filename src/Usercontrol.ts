@@ -484,8 +484,8 @@ export class Usercontrol {
             return (ext.isForm || ext.visibility != 'inherit') ?
                 ext.visibility : ext.PARENT.ucExtends.visibility;
         },
-        show: ({ at = undefined, decision = 'append' }:
-            { at?: HTMLElement, decision?: WhatToDoWithTargetElement, visibility?: ucVisibility } = {}) => {
+        show: ({ at = undefined, defaultFocusAt = undefined, decision = 'append' }:
+            { at?: HTMLElement, defaultFocusAt?: HTMLElement, decision?: WhatToDoWithTargetElement, visibility?: ucVisibility } = {}) => {
             let _extend = this.ucExtends;
             let _element = _extend.initalComponents.targetElement;
             _element = at ?? _element;
@@ -504,6 +504,9 @@ export class Usercontrol {
                 _extend.dialogForm = _extend.isForm ? this : _extend.PARENT.ucExtends.dialogForm;
             _extend.Events.loaded.fire();
             _extend.visibility = 'visible';
+            if (defaultFocusAt)
+                TabIndexManager.focusTo(defaultFocusAt);
+
             //return undefined as Usercontrol
         },
         showDialog: ({ defaultFocusAt = undefined, at = undefined, keepCurrentVisible = true, afterClose = undefined }: {
@@ -546,11 +549,11 @@ export class Usercontrol {
             _extends.Events.loaded.fire();
             //requestAnimationFrame(() => {
 
-                if (!defaultFocusAt) {
-                    TabIndexManager.moveNext(_extends.self, undefined);
-                } else {
-                    TabIndexManager.focusTo(defaultFocusAt);
-                }
+            if (!defaultFocusAt) {
+                TabIndexManager.moveNext(_extends.self, undefined);
+            } else {
+                TabIndexManager.focusTo(defaultFocusAt);
+            }
             //});
             // });
         },
@@ -576,7 +579,7 @@ export class Usercontrol {
              ucExt: () => this.ucExtends,
          },*/
         Events: {
-         
+
             /** @private  */
             _contextChange: new CommonEvent<() => void>(),
             get contextChange() { return this.dialogExt().Events._contextChange; },
@@ -597,7 +600,7 @@ export class Usercontrol {
             winStateChanged: new CommonEvent<(state: UcStates) => void>(),
             activate: new CommonEvent<() => void>(),
             beforeFreez: new CommonEvent<(newUc: Usercontrol) => void>(),
-            beforeUnFreez: new CommonEvent<(oldUc: Usercontrol) => void>(),  
+            beforeUnFreez: new CommonEvent<(oldUc: Usercontrol) => void>(),
             loaded: new CommonEvent<() => void>(),
             loadLastSession: new CommonEvent<() => void>(),
             /** @private  */
@@ -614,7 +617,7 @@ export class Usercontrol {
         },
 
         distructOnClose: true,
-         close:async () => {
+        close: async () => {
             let _ext = this.ucExtends;
             let res = { prevent: false };
             _ext.Events.beforeClose.fireAsync([res]); // _ext.Events.beforeHide
