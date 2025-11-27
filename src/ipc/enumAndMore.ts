@@ -15,6 +15,9 @@ export class PreloadFullFill {
         },
     };
     path = {
+        basename: undefined as (path: string, suffix?: string) => string,
+        relative: undefined as (from: string, to: string) => string,
+        dirname: undefined as (path: string) => string,
         join: (...paths: string[]) => { return posixPath.join(...paths); },
         resolve: (...paths: string[]) => { return posixPath.resolve(...paths); },
     };
@@ -297,21 +300,21 @@ export function subtractPath(basePath: string, targetPath: string, pathModule: t
     //  return relative;
     return relative;
 }
-export function GetUcConfig(projectdir: string,path: typeof import('path'),fs: typeof import('fs')): string | undefined {
+export function GetUcConfig(projectdir: string, path: typeof import('path'), fs: typeof import('fs')): string | undefined {
     let config_file_path = path.join(projectdir, 'ucconfig.json');
     if (fs.existsSync(config_file_path)) {
         return JSON.parse(fs.readFileSync(config_file_path, 'binary'));
     }
     return undefined;
 }
-export function GetPackage(projectdir: string,path: typeof import('path'),fs: typeof import('fs')): string | undefined {
+export function GetPackage(projectdir: string, path: typeof import('path'), fs: typeof import('fs')): string | undefined {
     let package_file_path = path.join(projectdir, 'package.json');
     if (fs.existsSync(package_file_path)) {
         return JSON.parse(fs.readFileSync(package_file_path, 'binary'));
     }
     return undefined;
 }
-export function GetProjectName(projectdir: string,path: typeof import('path'),fs: typeof import('fs')): string | undefined {
+export function GetProjectName(projectdir: string, path: typeof import('path'), fs: typeof import('fs')): string | undefined {
     let package_file_path = path.join(projectdir, 'package.json');
     if (fs.existsSync(package_file_path)) {
         let packageContent = JSON.parse(fs.readFileSync(package_file_path, 'binary'));

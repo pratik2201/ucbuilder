@@ -1,6 +1,6 @@
 import { error } from "console";
 import { codeFileInfo } from "./build/codeFileInfo.js";
-import { objectOpt } from "./build/common.js";
+import { numOpt, objectOpt } from "./build/common.js";
 import { TemplateMaker } from "./build/regs/TemplateMaker.js";
 import { ITptOptions, IUcOptions, UCGenerateMode, UcStates, WhatToDoWithTargetElement } from "./enumAndMore.js";
 import { CommonEvent } from "./global/commonEvent.js";
@@ -137,38 +137,32 @@ export class Usercontrol {
         //this.ucExtends.cssVarStampKey = 'u' + Usercontrol._CSS_VAR_STAMP;
 
     }
-    private hide = () => {
+    private hide = async () => {
         let _ext = this.ucExtends;
         let res = { prevent: false };
 
         _ext.visibility = 'hidden';
-        Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
         if (_ext.isDialogBox)
-            WinManager.pop(this);
-        _ext.Events.afterClose.fire([this]);  // _ext.Events.afterHide
+            await WinManager.pop(this);
+        Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
+        await _ext.Events.afterClose.fireAsync([this]);  // _ext.Events.afterHide
 
     }
-    private destruct = (): boolean => {
+    private destruct = async (): Promise<boolean> => {
         let _this = this;
         let _ext = _this.ucExtends;
-        _ext.Events.onDestruction.fireAsync();
+        await _ext.Events.onDestruction.fireAsync();
         if (_ext.isDialogBox)
-            WinManager.pop(_this);
+            await WinManager.pop(_this);
         _ext.Events.afterClose.fireAsync([this]);
-        Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
-        requestAnimationFrame(() => {
-            _ext.srcNode.release();
+        await Usercontrol.HiddenSpace.appendChild(_ext.wrapperHT);
+        await _ext.srcNode.release();
+        requestAnimationFrame(async () => {
             _ext.wrapperHT["#delete"]();
             for (const key in _this) {
                 _this[key] = undefined;
             }
         });
-        /* setTimeout(() => {
-             _ext.srcNode.release();
-             for (const key in _this) {
-                 _this[key] = undefined;
-             }
-         }, 0);*/
         return false;
     }
     static templateMkr = new Map<string, string>();
@@ -424,13 +418,13 @@ export class Usercontrol {
                     }
                 }
             }
-            ucExt.Events.activate.Events.onChangeEventList = () => {
+            /*ucExt.Events.activate.Events.onChangeEventList = () => {
                 if (ucExt.Events.activate.onCounter == 1) {
-                    ucExt.self.addEventListener("focusin", (e) => {
-                        ucExt.Events.activate.fire();
+                    ucExt.self.addEventListener("focusin", async (e) => {
+                        await ucExt.Events.activate.fireAsync();
                     });
                 }
-            }
+            }*/
             ucExt.Events.onDestruction.on(() => {
                 //if(ucExt.keepReference)
                 for (let i = ucExt.dependant.length - 1; i >= 0; i--) {
@@ -509,44 +503,45 @@ export class Usercontrol {
 
             //return undefined as Usercontrol
         },
-        showDialog: ({ defaultFocusAt = undefined, at = undefined, keepCurrentVisible = true, afterClose = undefined }: {
+        showDialog: async ({ defaultFocusAt = undefined, at = undefined, keepCurrentVisible = true, afterClose = undefined }: {
             at?: HTMLElement,
             keepCurrentVisible?: boolean,
             defaultFocusAt?: HTMLElement,
             afterClose?: (frm: Usercontrol) => void,
-        } = {}): void => {
+        } = {}) => {
             let _extends = this.ucExtends;
             let alreadyLoadedBefore = _extends.isDialogBox;
             _extends.isDialogBox = true;
             let _parentExt = _extends.PARENT.ucExtends;
             let _oldParentVisibleValue = _parentExt.keepVisible;
             _parentExt.keepVisible = keepCurrentVisible;
-            // let loadAt = _extends.loadAt;// as WhatToDoWithTargetElement;
-            //if (loadAt.element == undefined) {
-            //     loadAt.element = _extends.fileInfo.projectInfo.defaultLoadAt;
-            // }
-            // WinManager.push(this);
             const ele = at ?? _extends.initalComponents.targetElement ?? _extends.fileInfo.projectInfo.defaultLoadAt;
+
+
+            if (ele.previousElementSibling != null) {
+                const puc = Usercontrol.parse(ele.previousElementSibling as HTMLElement);
+                if(puc!=undefined)
+                    puc.ucExtends.lastFocuedElement = document.activeElement as HTMLElement;
+                //pera.parentUc.ucExtends.lastFocuedElement = document.activeElement as HTMLElement;
+            }
+
+
+
             if (ele) {
                 ele.append(_extends.wrapperHT);
-                WinManager.push(this);
+                await WinManager.push(this);
             }
-            //_extends.passElement(WinManager.transperency);
-            //_extends.wrapperHT.before(WinManager.transperency);
-
             _extends.Events.afterClose.on(() => {
                 _extends.PARENT.ucExtends.keepVisible = _oldParentVisibleValue;
             });
             if (afterClose)
                 _extends.Events.afterClose.on(afterClose);
 
-            // setTimeout(() => {
-
             if (_extends.dialogForm == undefined)
                 _extends.dialogForm = this;
             //}, 1);
             //if (!alreadyLoadedBefore)
-            _extends.Events.loaded.fire();
+            _extends.Events.loaded.fireAsync();
             //requestAnimationFrame(() => {
 
             if (!defaultFocusAt) {
@@ -598,7 +593,12 @@ export class Usercontrol {
 
             captionChanged: new CommonEvent<(newCaptionText: string) => void>(),
             winStateChanged: new CommonEvent<(state: UcStates) => void>(),
-            activate: new CommonEvent<() => void>(),
+            //activate: new CommonEvent<() => void>(),
+            _activate: new CommonEvent<() => void>(),
+            get activate() { return this.dialogExt().Events._activate; },
+            _deactivate: new CommonEvent<() => void>(),
+            get deactivate() { return this.dialogExt().Events._deactivate; },
+
             beforeFreez: new CommonEvent<(newUc: Usercontrol) => void>(),
             beforeUnFreez: new CommonEvent<(oldUc: Usercontrol) => void>(),
             loaded: new CommonEvent<() => void>(),
@@ -620,7 +620,7 @@ export class Usercontrol {
         close: async () => {
             let _ext = this.ucExtends;
             let res = { prevent: false };
-            _ext.Events.beforeClose.fireAsync([res]); // _ext.Events.beforeHide
+            await _ext.Events.beforeClose.fireAsync([res]); // _ext.Events.beforeHide
             if (!res.prevent) {
                 if (this.ucExtends.distructOnClose)
                     this.destruct();

@@ -101,7 +101,7 @@ export class SourceNode {
     project: ProjectRowR;
     cssObj: { [key: string]: StyleCodeNode } = {};
     pushCSSByContent(key: string, cssContent: string, /*project: ProjectRow,*/ localNodeElement?: HTMLElement) {
-       if (cssContent == undefined) return;
+        if (cssContent == undefined) return;
         let csnd = this.cssObj[key];
         cssContent = cssContent['#devEsc']();
         let ccontent = this.styler.parseStyleSeperator_sub({
@@ -242,7 +242,7 @@ export class SourceNode {
         htCode.content = this.styler.parseStyle(htCode.originalContent);
         //if (callback != undefined) htCode.content = callback(htCode.content);
         this.dataHT = SourceNode.tramsformForm(ucUtil.PHP_REMOVE(htCode.content)["#$"]());
- 
+
         this.styler.nodeName = WRAPPER_TAG_NAME;// this.dataHT.nodeName;
         if (StampNode.MODE == STYLER_SELECTOR_TYPE.ATTRIB_SELECTOR) {
             this.dataHT.setAttribute(ATTR_OF.UC.ALL, this.localStamp);
@@ -255,13 +255,11 @@ export class SourceNode {
         }
         htCode.content = this.dataHT.outerHTML;
         htCode.content = ucUtil.PHP_ADD(htCode.content);//["#PHP_ADD"](); //.replace(/<!--\?(=|php)(.*?)\?-->/gm, '<?$1$2?>');
-     
+
 
     }
-    release() {
-        //console.log(this.myObjectKey);
-
-        if (StampNode.deregisterSource(this.myObjectKey)) {
+    release = async () => { 
+        if ((await StampNode.deregisterSource(this.myObjectKey))) {
             let keys = Object.keys(this.cssObj);
             for (let i = 0, iObj = keys, ilen = iObj.length; i < ilen; i++)
                 this.cssObj[iObj[i]].styleHT.remove();
@@ -315,17 +313,13 @@ export class StampNode {
         //console.log([rtrn.counter,'open',myObjectKey]);
         return rtrn;
     }
-    static deregisterSource(key: string): boolean {
+    static deregisterSource = async (key: string): Promise<boolean> => {
         let result = false;
         let myObjectKey = key;
         let rtrn: SourceNode = this.childs[myObjectKey];
         if (rtrn != undefined) {
             rtrn.counter--;
-            //console.log([rtrn.counter,'close',myObjectKey]);
-
             result = (rtrn.counter <= 0);
-            //console.log([rtrn.counter, 'removed', myObjectKey]);
-
         }
         return result;
     }

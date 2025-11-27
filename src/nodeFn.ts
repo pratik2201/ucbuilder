@@ -1,8 +1,9 @@
 import fs from 'fs';
 import { IpcRendererHelper } from './ipc/IpcRendererHelper.js';
-import crypto from "crypto"; 
+import crypto from "crypto";
 import { ProjectManage } from './ipc/ProjectManage.js';
 import { ucUtil } from './global/ucUtil.js';
+import { IPC_API_KEY, PreloadFullFill } from './ipc/enumAndMore.js';
 export interface I_WriteFileSyncPerameters { path: string, data: string, encode: fs.WriteFileOptions }
 export interface I_ReadFileSyncPerameters { path: string, doCache?: boolean, encode: fs.WriteFileOptions }
 export interface I_ExistsSyncPerameters { path: string, }
@@ -10,8 +11,11 @@ export interface I_PathBaseName { path: string, suffix: string }
 export interface I_PathRelative { from: string, to: string }
 export interface I_ModuleAlice { alice: string, path: string }
 const renderer = IpcRendererHelper.Group(import.meta.url);
+
+
 export class nodeFn {
     //static ipcMain = renderer;
+    static fullfill: PreloadFullFill = undefined;
     static onReady(callback: () => void) {
         renderer.loaded(callback);
     }
@@ -35,10 +39,12 @@ export class nodeFn {
     }
     static url = {
         fileURLToPath: (path: string): string => {
-            return renderer.sendSync('url.fileURLToPath', [path]) as string;
+            return nodeFn.fullfill.url.fileURLToPath(path);
+            //return renderer.sendSync('url.fileURLToPath', [path]) as string;
 
         }, pathToFileURL: (path: string): string => {
-            return renderer.sendSync('url.pathToFileURL', [path]) as string;
+            return nodeFn.fullfill.url.pathToFileURL(path).href;
+            //return renderer.sendSync('url.pathToFileURL', [path]) as string;
         },
     }
     static resolver = {
@@ -51,34 +57,52 @@ export class nodeFn {
     }
     static path = {
         dirname: (path: string): string => {
-            return renderer.sendSync('path.dirname', [path]);
+            return this.fullfill.path.dirname(path);
+            //return renderer.sendSync('path.dirname', [path]);
         },
         basename: (path: string, suffix?: string): string => {
-            return renderer.sendSync('path.basename', [{ path: path, suffix: suffix } as I_PathBaseName]);
+            return nodeFn.fullfill.path.basename(path, suffix);
+            //return renderer.sendSync('path.basename', [{ path: path, suffix: suffix } as I_PathBaseName]);
         },
         relative: (from: string, to: string): string => {
-            return renderer.sendSync('path.relative', [{ from: from, to: to } as I_PathRelative]);
+            return this.fullfill.path.relative(from, to);
+            //return renderer.sendSync('path.relative', [{ from: from, to: to } as I_PathRelative]);
         },
         resolve: (...paths: string[]): string => {
-            return renderer.sendSync('path.resolve', [paths]);
+            return nodeFn.fullfill.path.resolve(...paths);
+            //return renderer.sendSync('path.resolve', [paths]);
         },
-        resolveFilePath: (basePath: string, path: string): string => {
-            return renderer.sendSync('path.resolveFilePath', [basePath, path]);
+        resolveFilePath: (fromFilePath: string, toFilePath: string): string => {
+            let ius = this.fullfill.path.dirname(fromFilePath.startsWith('file:') ? this.fullfill.url.fileURLToPath(fromFilePath) : fromFilePath);
+            let fspath = ucUtil.toFilePath(this.fullfill.path.resolve(ius, toFilePath));
+            return fspath;
+            //return renderer.sendSync('path.resolveFilePath', [basePath, path]);
         },
-        relativeFilePath: (from: string, path: string): string => {
+        relativeFilePath: (fromFilePath: string, path: string): string => {
             path = ucUtil.devEsc(path);
-            return renderer.sendSync('path.relativeFilePath', [from, path]);
+            let ius = this.fullfill.path.dirname(fromFilePath.startsWith('file:') ? this.fullfill.url.fileURLToPath(fromFilePath) : fromFilePath);
+            let fspath = ucUtil.toFilePath(this.fullfill.path.relative(ius, path));
+            return fspath;
+            //return renderer.sendSync('path.relativeFilePath', [fromFilePath, path]);
         },
 
         subtractPath: (basePath: string, targetPath: string): string => {
-            return renderer.sendSync('path.subtractPath', [basePath, targetPath]);
+            const absBase = this.fullfill.path.resolve(basePath);
+            const absTarget = this.fullfill.path.resolve(targetPath);
+
+            // Get relative path from base to target
+            const relative = this.fullfill.path.relative(absBase, absTarget);
+            return relative;
+
+            //return renderer.sendSync('path.subtractPath', [basePath, targetPath]);
         },
         isSamePath: (path1: string, path2: string): string => {
             return renderer.sendSync('path.isSamePath', [path1, path2]);
         },
 
         join: (...paths: string[]): string => {
-            return renderer.sendSync('path.join', [paths]);
+            return nodeFn.fullfill.path.join(...paths);
+            //return renderer.sendSync('path.join', [paths]);
 
         },
         normalize: (path: string): string => {

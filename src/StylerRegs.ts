@@ -400,8 +400,8 @@ export class ThemeCssHandler {
                 accessName: '',
               });
               stpSrc.pushCSS(fspath, prj.project.importMetaURL);
-              _this.main.main.onRelease.push(() => {
-                stpSrc.release();
+              _this.main.main.onRelease.push(async () => {
+                await stpSrc.release();
               });
             }
             return "";

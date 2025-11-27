@@ -11,7 +11,7 @@ export class ShortcutNode {
         const rtrn: string[] = [];
         keys.forEach(key => {
             const combo = key.slice().sort().join("+");
-            
+
             if (!(combo in this.shortcutMap)) {
                 this.shortcutMap[combo] = callback;
                 console.log(`${combo} Registered`);
@@ -43,7 +43,7 @@ export class ShortcutNode {
         this.shortcutMap = {};
     }
 
-    callTask(combo: string,e:KeyboardEvent) {
+    callTask(combo: string, e: KeyboardEvent) {
         if (combo in this.shortcutMap) {
             const cb = this.shortcutMap[combo];
             if (cb) cb(e);
@@ -87,12 +87,12 @@ export class ShortcutManager {
 
         this.pressedKeys.add(e.code);
         //console.log('down.');
-        
+
         const combo = ShortcutManager.getComboString(this.pressedKeys);
         const src = this.source;
-        for(let i=0,ilen=src.length   ;   i < ilen   ;   i++){ 
+        for (let i = 0, ilen = src.length; i < ilen; i++) {
             const iItem = src[i];
-            if (iItem.callTask(combo,e)) return;
+            if (iItem.callTask(combo, e)) return;
         }
     }
 
@@ -157,14 +157,15 @@ export class WinManager {
 
     static initEvent() {
         const _this = this;
-        window.addEventListener('keydown', async (e) => {
-            //console.log(e.code);
+        //.log('======================>WinManager.initEvent');
 
-            //if (e.defaultPrevented) return;
+        window.addEventListener('keydown', async (e) => {
+            if (e.code == undefined) return; 
             await _this.event.keydown.fireAsync([e]);
+
         });
         window.addEventListener('keyup', async (e) => {
-            //  if (e.defaultPrevented) return;
+            if (e.code == undefined) return;
             await _this.event.keyup.fireAsync([e]);
         });
         this.shortcutManage = new ShortcutManager();
@@ -189,7 +190,7 @@ export class WinManager {
         return dta;
     }
     static focusMng: FocusManager = new FocusManager();
-    static push = (form: Usercontrol): void => {
+    static push = async (form: Usercontrol) => {
         let _this = this;
         const mainHT = form.ucExtends.wrapperHT;
         if (form.ucExtends.isForm) {
@@ -197,23 +198,24 @@ export class WinManager {
             if (prevNode != null) {
                 const wn = WinManager.getNode(prevNode) ?? WinManager.setNode(prevNode);
                 const activeElement = wn.uc.ucExtends.lastFocuedElement;// document.activeElement;
+
                 if (prevNode.contains(activeElement))
                     wn.lastFocusedAt = activeElement as any;
                 wn.display = prevNode.style.display;
                 let doStyleDisplay = form.ucExtends.Events.beforeUnFreez.fire([wn?.uc]);
-                this.setfreez(true, wn/*, doStyleDisplay*/);
+               await this.setfreez(true, wn/*, doStyleDisplay*/);
             }
+            await form.ucExtends.Events.activate.fireAsync([]);
         }
     }
 
-    static pop = (form: Usercontrol): void => {
+    static pop = async (form: Usercontrol) => {
         const prevHt = form.ucExtends.wrapperHT.previousElementSibling as HTMLElement;
         if (prevHt != undefined) {
             const wn = WinManager.getNode(prevHt);
             if (wn != undefined) {
-                this.setfreez(false, wn/*, res*/);
-            }
-
+                await this.setfreez(false, wn/*, res*/);
+            } 
         }
     }
 
@@ -228,29 +230,30 @@ export class WinManager {
         }
     }
 
-    static setfreez = (freez: boolean, wnode: WinNode/*, handeledDisplay: boolean*/): void => {
-        let element = wnode.uc.ucExtends.wrapperHT;
-
-        if (freez) {
-
-            this.event.onFreez(wnode.uc);
-            this.focusMng.fetch(wnode.uc.ucExtends.lastFocuedElement);
+    static setfreez = async (freez: boolean, wnode: WinNode/*, handeledDisplay: boolean*/)  => {
+        const uc = wnode.uc;
+        const element = uc.ucExtends.wrapperHT;
+        if (freez) { 
+            this.event.onFreez(uc);
+            this.focusMng.fetch(uc.ucExtends.lastFocuedElement);
             wnode.lastFocusedAt = this.focusMng.currentElement;
             wnode.display = element.style.display;
-            this.FreezThese(freez, element);
-            if (!wnode.uc.ucExtends.keepVisible) element.style.display = 'none';
+           await this.FreezThese(true, element);
+            uc.ucExtends.Events.deactivate.fireAsync([]);
+            if (!uc.ucExtends.keepVisible) element.style.display = 'none';
         } else {
-            this.event.onUnFreez(wnode.uc);
-            this.FreezThese(freez, element);
+            this.event.onUnFreez(uc);
+            await this.FreezThese(false, element);
             element.style.display = wnode.display;
             this.focusMng.currentElement = wnode.lastFocusedAt;
             requestAnimationFrame(() => {
                 this.focusMng.focus(element);
-            })
+            });
+            await uc.ucExtends.Events.activate.fireAsync([]);
         }
     }
 
-    static FreezThese(freez: boolean, ...elements: HTMLElement[]) {
+    static async FreezThese(freez: boolean, ...elements: HTMLElement[]) {
         if (freez) {
             for (let i = 0, ilen = elements.length; i < ilen; i++) {
                 const element = elements[i];

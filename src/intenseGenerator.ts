@@ -25,8 +25,8 @@ class intenseGenerator {
             super(); this.initializecomponent(arguments, this); 
         }*/
         uc['initializecomponent'](param0, uc);
-        if (pera.parentUc != undefined)
-            pera.parentUc.ucExtends.lastFocuedElement = document.activeElement as HTMLElement;
+       // if (pera.parentUc != undefined)
+       //     pera.parentUc.ucExtends.lastFocuedElement = document.activeElement as HTMLElement;
         
 
 

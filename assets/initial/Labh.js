@@ -1,4 +1,5 @@
 
+
 (async () => {
   let _api = window["<?=IPC_API_KEY?>"];
 
@@ -11,8 +12,10 @@
   
   <?= _preloadImport ?>        
   
-    
+  const { IPC_API_KEY } = await import('ucbuilder/out/ipc/enumAndMore.js');
+ 
   const { nodeFn } = await import('ucbuilder/out/nodeFn.js');
+  nodeFn.fullfill = window[IPC_API_KEY].fullFill;
   //console.log(nodeFn.path.resolve());
 
   const { PathBridge } = await import('ucbuilder/out/build/pathBridge.js');
