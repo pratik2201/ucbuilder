@@ -320,8 +320,9 @@ export class Usercontrol {
             //        debugger;
 
             //console.log(param0.source.cssBaseFilePath,ucExt.fileInfo.style.fullPath);
-            ucExt.srcNode = StampNode.registerSoruce({
+            ucExt.srcNode =  StampNode.registerSoruce({
                 key: ucExt.fileInfo.pathOf['.scss'],
+                cssKeyStamp: param0.cssKeyStamp,
                 cssFilePath: param0.source.cssBaseFilePath ?? ucExt.fileInfo.pathOf['.scss'],
                 accessName: param0.accessName,
                 project: ucExt.fileInfo.projectInfo,

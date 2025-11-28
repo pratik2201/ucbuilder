@@ -14,7 +14,8 @@ export const patternList = {
   subUcFatcher: /\[inside=([\"'`])((?:\\.|(?!\1)[^\\])*)\1\]([\S\s]*)/gim,
   themeCSSLoader: /\@(import|use)\s*([\"'`])((?:\\.|(?!\2)[^\\])*)\2\s*;/gim,
   mediaSelector: /^\s*@(media|keyframes|supports|container|document)\s+([\s\S]*)\s*/i,
-  animationNamePattern: /animation-name\s*:\s*([\w-]+)\s*;/gim,
+  animationNamePattern: /animation-name\s*:\s*-([lgit])-(\w+)\s*;/gim,
+  animationAccessPattern: /-([lgit])-(\w+)\s*/gim,
   varHandler: /(\$[lgit]-\w+)((?:\s*\:\s*(.*?)\s*;)|(?:\s+(.+?)\s*--)|\s*)/gim,
   rootExcludePattern: /(\w*)(:root|:exclude)/gi,
 };
@@ -115,12 +116,17 @@ export class StylerRegs {
   templateHT: HTMLElement = undefined;
   main: SourceNode;
   generateStamp = true;
-  constructor(main: SourceNode, generateStamp: boolean = true, cached_keys: IKeyStampNode, baseType?: StyleBaseType, mode?: CSSSearchAttributeCondition) {
+  constructor(main: SourceNode,
+    generateStamp: boolean = true,
+    cached_keys: IKeyStampNode,
+    baseType?: StyleBaseType,
+    mode?: CSSSearchAttributeCondition) {
     this.main = main;
     this.generateStamp = generateStamp;
     this.projectInfo = main.project;
     this.baseType = baseType;
     if (cached_keys == undefined) {
+
       StylerRegs.localID++;
       if (generateStamp) {
         StylerRegs.templateID++;
@@ -182,23 +188,8 @@ export class StylerRegs {
     let rtrn = StylerRegs.REMOVE_COMMENT(_params.data);
     rtrn = StylerRegs.REMOVE_EXTRASPACE(_this.themeCssHandler.match(rtrn));
 
-
-
-    rtrn = this.varHandler.handlerVariable(rtrn);
-    rtrn = rtrn.replace(
-      patternList.animationNamePattern,
-      (match: string,/* key: string, */ value: string) => {
-        //let ky: string = key.toLowerCase().trim();
-        _this.varHandler.GetCSSAnimationName(value);
-        return `animation-name : ${_this.varHandler.GetCSSAnimationName(value)}; `;
-      }
-    );
-    let STYLE_BLOCK_NODE: string[] = [];
-    let LINEAR_STYLES = '';
-    //let extraTextAtBegining = "";
     rtrn = this.opnClsr.doTask("{", "}", rtrn,
       (selectorText: string, styleContent: string, count: number): string => {
-        //if (selectorText.startsWith('@keyframes l-rotate')) debugger;
         let excludeContentList = this.rootAndExcludeHandler.checkRoot(selectorText, styleContent, _params);
         if (excludeContentList.length == 0) {
           let trimSelector: string = selectorText.trim();
@@ -211,13 +202,14 @@ export class StylerRegs {
               case '@container':
               case '@document':
                 let csnt = _this.parseStyleSeperator_sub(Object.assign({}, _args, { data: styleContent }));
-
-              //return `${trimSelector} { ${csnt} } `;
+                return `${trimSelector} { ${csnt} } `;
               case '@keyframes':
-                let v = _this.varHandler.GetCSSAnimationName(m[2].trim());
+                let v = m[2].trim().replace(patternList.animationAccessPattern, (ms, scope, name) => {
+                  return _this.varHandler.GetCSSAnimationName(scope, name);
+                });
                 return `@keyframes ${v} {${styleContent}} `;
             }
-          } else {  //  IF CURRENT IS SELECTOR
+          } else {
             let sel = '';
             let extraTextAtBegining = '';
             selectorText = selectorText.replace(/(.*?)([^;]*?)$/gim, (m, extraText, slctr) => {
@@ -227,18 +219,39 @@ export class StylerRegs {
             });
             sel = sel.trim();
 
-            return `${extraTextAtBegining} ${_this.selectorHandler.parseScopeSeperator({
+
+            //console.log(sel);
+            
+            const res = _this.selectorHandler.parseScopeSeperator({
               selectorText: sel,
               scopeSelectorText: _params.scopeSelectorText,
               project: _curProject,
               isForRoot: _params.isForRoot
-            })}{${styleContent}}`;
+            });
+            //console.log(res);
+            
+            
+            let grp = StylerRegs.groupByStyler(res);
+            let finalreturn = '';
+            grp.forEach(s => {
+              styleContent = s.styler.varHandler.handlerVariable(styleContent);
+              finalreturn += ` ${s.selectors.join(',')} {${styleContent}} `;
+            });
+            //console.log(grp);
+            //console.log(finalreturn);
+                        
+            return `${extraTextAtBegining} ${finalreturn}`;
+            // return `${extraTextAtBegining} ${res}{${styleContent}}`;
           }
         } else {
           return excludeContentList.join(' ');
         }
       }
     );
+    
+    rtrn = _this.varHandler.handlerVariable(rtrn);
+//    console.log(rtrn);
+    
     /// console.log(extraTextAtBegining);
     //rtrn = extraTextAtBegining + '' + rtrn;
     //debugger;
@@ -247,7 +260,22 @@ export class StylerRegs {
     //rtrn = rtrn.trim().replace(/(;|,|:|{|})[\n\r ]*/gi, "$1");
     return /*STYLE_BLOCK_NODE.join("") + " " +*/ rtrn;//.trim().replace(/(;|,|{|})[\n\r ]*/gi, "$1");
   }
+  static groupByStyler(nodes: SelSingleScopeNode[]) {
+    const map = new Map<StylerRegs, string[]>();
 
+    for (const node of nodes) {
+      if (!map.has(node.styler)) {
+        map.set(node.styler, []);
+      }
+      map.get(node.styler)!.push(node.selector);
+    }
+
+    // convert to final array if needed
+    return Array.from(map, ([styler, selectors]) => ({
+      styler,
+      selectors,
+    }));
+  }
 
 
   pushChild(path: string, node: StylerRegs, accessKey: string): void {
@@ -443,6 +471,15 @@ interface SelScopeMap {
   selectorOperation?: CSSSearchAttributeCondition;
   key?: string;
 }
+interface SelMultipleScopeNode {
+  selector: string,
+  styler: StylerRegs[],
+}
+
+interface SelSingleScopeNode {
+  selector: string,
+  styler: StylerRegs,
+}
 export class SelectorHandler {
   main: StylerRegs;
   _DEFAULT_KEYS = {
@@ -496,23 +533,23 @@ export class SelectorHandler {
       case '*': dkey.SCP.scope = 'g'; dkey.SCP.key = `_${mainKey.TEMPLATE}_`; break;
     }
   }
-  parseScopeSeperator(scopeOpt: IScopeSelectorOptions): string {
+  parseScopeSeperator(scopeOpt: IScopeSelectorOptions) {
+    let _this = this;
+    const result: SelSingleScopeNode[] = [];
     scopeOpt = Object.assign(ScopeSelectorOptions, scopeOpt);
     scopeOpt.hiddens.project = scopeOpt.project;
 
     scopeOpt.hiddens.scopeSelectorText = scopeOpt.scopeSelectorText;
     scopeOpt.hiddens.isForRoot = scopeOpt.isForRoot;
-    if (scopeOpt.selectorText.trim() == '') return '';
+    if (scopeOpt.selectorText.trim() == '') return result;
     let counter = scopeOpt.hiddens.counter;
-    let _this = this;
-    let oldSelector = scopeOpt.selectorText;
     let oc = new openCloser();
-    let rtrn = oc.doTask('(', ')', scopeOpt.selectorText, (selector, cssStyle, opened) => {
+    let _selctor = oc.doTask('(', ')', scopeOpt.selectorText, (selector, cssStyle, opened) => {
       if (opened > 1) {
         if (selector.endsWith(':has')) {
           scopeOpt.selectorText = cssStyle;
           let key = _this.KEY(scopeOpt.hiddens);
-          cssStyle = _this.parseScopeSeperator(scopeOpt);
+          cssStyle = _this.parseScopeSeperator(scopeOpt).map(s => s.selector).join(','); //.selector
           scopeOpt.hiddens.list[key] = { selector: cssStyle, funcName: 'has', value: '(' + cssStyle + ')' };
           return selector + '' + key;
         } else {
@@ -520,21 +557,19 @@ export class SelectorHandler {
         }
       }
       if (selector.endsWith(':has')) {
-        //let n = Object.assign({}, scopeOpt);
         scopeOpt.selectorText = cssStyle;
-        // let scss = cssStyle; // this.parseScopeSeperator_sub(n);
         let key = _this.KEY(scopeOpt.hiddens);
         scopeOpt.hiddens.list[key] = { selector: cssStyle, funcName: 'has', value: '(' + cssStyle + ')' };
         return selector + '' + key;
       } else {
         return selector + '(' + cssStyle + ')';
       }
-
     });
+    //result.selector =
     //let n = Object.assign({}, scopeOpt);
-    scopeOpt.selectorText = rtrn;
+    scopeOpt.selectorText = _selctor;
     if (counter == 0) {
-      rtrn = this.loopMultipleSelectors(rtrn, /*this.main,*/ scopeOpt.hiddens);
+      Object.assign(result, this.loopMultipleSelectors(_selctor, /*this.main,*/ scopeOpt.hiddens));
       //console.log([oldSelector, rtrn]);
       scopeOpt.hiddens.list = {};
       scopeOpt.hiddens.counter = 0;
@@ -542,25 +577,30 @@ export class SelectorHandler {
 
     //let sub = this.parseScopeSeperator_sub(scopeOpt);
     // console.log([sub, rtrn]);
-    return rtrn;
+    return result;
   }
-  loopMultipleSelectors(selector: string, /*stylers: StylerRegs,*/ hiddens: IHiddenScopeNode): string {
+  loopMultipleSelectors(selector: string, /*stylers: StylerRegs,*/ hiddens: IHiddenScopeNode) {
+
     let selectors = selector.split(',');
-    let rtrn = [];
+    const rtrn: SelSingleScopeNode[] = [];
     for (let i = 0, len = selectors.length; i < len; i++) {
       rtrn.push(this.splitselector(selectors[i], /*stylers,*/ hiddens));
     }
-    return rtrn.join(',');
+    return rtrn;//.join(',');
   }
   KEY(hiddens: IHiddenScopeNode) {
     hiddens.counter++;
     return '◄◘' + hiddens.counter + '◘▀';
   }
-  splitselector(selector: string, hiddens: IHiddenScopeNode): string {
+  splitselector(selector: string, hiddens: IHiddenScopeNode) {
+    let _this = this;
+    const rtrn: SelSingleScopeNode = {
+      selector: selector,
+      styler: _this.main
+    }
     let splitted = selector.split(' ');
     let hasUcFound = false;
     let kvNode: string;
-    let _this = this;
     let nSelector = '';
     let isStartWithSubUc = false;
     let sub_styler: StylerRegs = undefined;
@@ -587,7 +627,9 @@ export class SelectorHandler {
         splitted[i] = matchs;
         let nextSplitters = splitted.slice(i);
         let subSelector = nextSplitters.join(' ');
-        splitted[i] = sub_styler.selectorHandler.splitselector(subSelector.replace(kvNode, '&'), /*sub_styler,*/ hiddens);
+        const subRes = sub_styler.selectorHandler.splitselector(subSelector.replace(kvNode, '&'), /*sub_styler,*/ hiddens);
+        splitted[i] = subRes.selector;
+        rtrn.styler = subRes.styler;
         hasUcFound = false;
         splitted = splitted.slice(0, i + 1);
         break;
@@ -595,7 +637,8 @@ export class SelectorHandler {
       } else {
         let ntext = splitted[i];
         ntext = ntext.replace(/◄◘(\d+)◘▀/gm, (r) => {
-          return '(' + _this.loopMultipleSelectors(hiddens.list[r].selector, /* styler,*/ hiddens) + ')';
+          const _loopSel = _this.loopMultipleSelectors(hiddens.list[r].selector, /* styler,*/ hiddens);
+          return '(' + _loopSel.map(s => s.selector).join(',') + ')';
         });
         splitted[i] = ntext;
       }
@@ -615,12 +658,12 @@ export class SelectorHandler {
         switch (len) {
           case 1: splitted[0] = fsel.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR); break;
           default:
-            for(let i=0,ilen=splitted.length   ;   i < ilen   ;   i++){ 
+            for (let i = 0, ilen = splitted.length; i < ilen; i++) {
               const ispl = splitted[i];
               if (ispl.includes('&')) {
                 splitted[i] = ispl.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR);
                 break;
-              }else splitted[i] = ispl.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR);              
+              } else splitted[i] = ispl.replace('&', this._DEFAULT_KEYS.MAIN_ROOT_SELECTOR);
             }
             splitted[len - 1] = this.MISC_SELECTOR_CONDITION(fsel, {
               scope: 'r',
@@ -666,7 +709,8 @@ export class SelectorHandler {
       // }
     }
     splitted.unshift(hiddens.scopeSelectorText != undefined ? hiddens.scopeSelectorText : '');
-    return splitted.join(' ');
+    rtrn.selector = splitted.join(' ');
+    return rtrn;
   }
 
   MISC_SELECTOR_CONDITION(selector: string, xk: SelScopeMap) {
@@ -701,8 +745,18 @@ export class CssVariableHandler {
   static GetCSSVarValue = (key: string, uniqId: string, code: CSSVariableScopeSort, defaultVal: string): string => {
     return ` var(${this.GetCombinedCSSVarName(key, uniqId, code)},${defaultVal}) `;
   }
-  GetCSSAnimationName = (animName: string) => {
-    let r = animName.match(/^(\w)-(\w+)/i);
+  GetCSSAnimationName = (scope: string, name: string) => {
+    //scope = r[1] as CSSVariableScopeSort;
+    // name = r[2];
+    switch (scope) {
+      case 'g': return CssVariableHandler.GetCombinedCSSAnimationName(name, this.main.KEYS.ROOT, 'g');
+      case 't': return CssVariableHandler.GetCombinedCSSAnimationName(name, this.main.KEYS.TEMPLATE, 't');
+      case 'l': return CssVariableHandler.GetCombinedCSSAnimationName(name, this.main.KEYS.LOCAL, 'l');
+      case '': return name;
+      default: return CssVariableHandler.GetCombinedCSSAnimationName(name, this.main.KEYS.LOCAL, 'l');
+    }
+    /*
+    let r = animName.match(/^-(lgit)-(\w+)/i); // "g" | "l" | "i" | "t"
     let scope: CSSVariableScopeSort = '' as any;
     let name = animName;
     if (r == null) return CssVariableHandler.GetCombinedCSSAnimationName(name, this.main.KEYS.LOCAL, 'l');
@@ -715,7 +769,7 @@ export class CssVariableHandler {
         case 'l': return CssVariableHandler.GetCombinedCSSAnimationName(name, this.main.KEYS.LOCAL, 'l');
         default: return animName;
       }
-    }
+    }*/
   }
   main: StylerRegs;
   constructor(main: StylerRegs) {
@@ -785,7 +839,13 @@ export class CssVariableHandler {
         //console.log(scope, varName, defaultVal);
         return match;
       });
-
+    rtrn = rtrn.replace(
+      patternList.animationNamePattern,
+      (match: string, scope: string, value: string) => {
+        //_this.varHandler.GetCSSAnimationName(scope,value);
+        return `animation-name : ${_this.GetCSSAnimationName(scope, value)}; `;
+      }
+    );
     return rtrn;
   }
 }

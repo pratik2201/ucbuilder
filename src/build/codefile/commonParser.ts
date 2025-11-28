@@ -71,34 +71,34 @@ export class commonParser {
         let code = htmlContents ?? nodeFn.fs.readFileSync(_row.src.pathOf[".html"], undefined, _row.src.projectInfo.importMetaURL);
         code = code["#devEsc"]();
         this.tmaker.mainImportMeta = nodeFn.url.pathToFileURL(filePath);
-        let cccodeCallback = this.tmaker.compileTemplate(code);
-        code = cccodeCallback();
+        //let cccodeCallback = this.tmaker.compileTemplate(code);
+        //code = cccodeCallback();
+        let compileedCode = code;
         let rootpath = nodeFn.path.relative(projectPath, filePath);
         let isUserControl = _row.src.extCode == SpecialExtEnum.uc;
-        let primaryChild: HTMLElement = undefined;
         try {
-            if (code.trim() != '') {
-                this.codeHT = code["#PHP_REMOVE"]()["#$"]();
-                primaryChild = this.codeHT;
-                let xAt = this.codeHT.getAttribute('x-at');
-                if (xAt == null || !nodeFn.path.isSamePath(xAt, rootpath)) {
-                    this.codeHT.setAttribute('x-at', rootpath);
-                    _row.htmlFileContent = this.codeHT.outerHTML["#PHP_ADD"]();
+            if (compileedCode.trim() != '') { 
+                if (isUserControl) {
+                    let cccodeCallback = this.tmaker.compileTemplate(compileedCode);
+                    compileedCode = cccodeCallback();
                 }
+                compileedCode = ucUtil.PHP_REMOVE(code);
+                this.codeHT = compileedCode["#$"](); 
+                _row.htmlFileContent = code; 
             } else {
                 if (isUserControl) {
-                    code = `<wrapper x-caption="${_row.src.name}" x-at="${rootpath}" tabindex="0">
+                    code = `<wrapper x-caption="${_row.src.name}" tabindex="0">
                                 <!-- DONT MODIFY "x-at" ATTRIBUTE -->
                             </wrapper>`;
                 } else {
-                    code = `<x:template  x-at="${rootpath}" >
+                    code = `<x:template    >
                         <wrapper id="primary"></wrapper>
                         <wrapper id="header"></wrapper>
                         <wrapper id="footer"></wrapper>
                     </x:template>`;
                 }
                 this.codeHT = code["#$"]() as HTMLElement;
-                primaryChild = this.codeHT;
+
                 _row.htmlFileContent = code;
             }
         } catch (ex) {
@@ -155,8 +155,8 @@ export class commonParser {
                         generic: _generic,
                         proto: objectOpt.getClassName(element),
                         scope: scope,
-                    }); 
-                } 
+                    });
+                }
                 tpts.push({
                     name: template.accessKey,
                     scope: "public",
@@ -165,9 +165,9 @@ export class commonParser {
             });
         } else {
             _row.baseClassName = Usercontrol.name;
-            let outHT = code["#devEsc"]()["#PHP_REMOVE"]()["#$"]() as HTMLElement;
+            //let outHT = code["#devEsc"]()["#PHP_REMOVE"]()["#$"]() as HTMLElement;
 
-            const elements = Array.from(outHT.querySelectorAll(`[${ATTR_OF.X_NAME}]`));
+            const elements = Array.from(this.codeHT.querySelectorAll(`[${ATTR_OF.X_NAME}]`));
             let accessKeys = `"` + Array.from(this.codeHT.querySelectorAll(`[${ATTR_OF.ACCESSIBLE_KEY}]`))
                 .map(s => s.getAttribute(ATTR_OF.ACCESSIBLE_KEY))
             ["#distinct"]().join(`" | "`) + `"`;
@@ -231,7 +231,7 @@ export class commonParser {
         let fpath = nodeFn.path.join(nodeFn.path.resolve(), _path);
         return ucUtil.cleanNodeModulesPath(nodeFn.path.relative(fromPath, fpath))["#toFilePath"]();
     }
-    fillDefImports(name: string, url: string,   classList: ImportClassNode[], ctrlNode?: Control)/*: number */ {
+    fillDefImports(name: string, url: string, classList: ImportClassNode[], ctrlNode?: Control)/*: number */ {
         let _urlLowerCase = url.toLowerCase();
         let _import = classList.find(s => s.url.toLowerCase() == _urlLowerCase);
         if (ctrlNode != undefined) ctrlNode.importedClassName = name;

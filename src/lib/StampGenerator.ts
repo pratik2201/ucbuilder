@@ -286,11 +286,13 @@ export class StampNode {
         [key: string]: IKeyStampNode
     } = {};
 
-    static registerSoruce({ key, accessName = '',
-        mode = '^', baseType = StyleBaseType.UserControl,
+    static registerSoruce({ key,
+        accessName = '',cssKeyStamp,
+        mode = '^', baseType = StyleBaseType.UserControl,   
         cssFilePath = undefined, project, /*root,*/ generateStamp = true }: {
             key: string, accessName?: string, /*root?: RootPathRow,*/
-            cssFilePath?: string,
+            cssFilePath?: string,     
+            cssKeyStamp?:IKeyStampNode,
             baseType?: StyleBaseType,
             mode?: CSSSearchAttributeCondition,
             generateStamp?: boolean, project: ProjectRowR,
@@ -307,7 +309,7 @@ export class StampNode {
             rtrn.accessKey = accessName;
             this.childs[myObjectKey] = rtrn;
             // if (mode == '*') debugger;
-            rtrn.styler = new StylerRegs(rtrn, generateStamp, StampNode.cacheData[myObjectKey], baseType, mode);
+            rtrn.styler = new StylerRegs(rtrn, generateStamp, cssKeyStamp ?? StampNode.cacheData[myObjectKey], baseType, mode);
         } else rtrn.isNewSource = false;
         rtrn.counter++;
         //console.log([rtrn.counter,'open',myObjectKey]);

@@ -1,5 +1,7 @@
 import { codeFileInfo } from "./build/codeFileInfo.js";
 import { newObjectOpt } from "./global/objectOpt.js";
+import { SourceNode } from "./lib/StampGenerator.js";
+import { IKeyStampNode } from "./StylerRegs.js";
 import { Usercontrol } from "./Usercontrol.js";
 
 
@@ -72,6 +74,7 @@ export type WhatToDoWithTargetElement = "replace" | "append";
 
 export interface IUcOptions {
     cfInfo?: codeFileInfo;
+    cssKeyStamp?:IKeyStampNode,
     mode?: UCGenerateMode;
     session?: SessionOptions;
     source?: ISourceOptions;
